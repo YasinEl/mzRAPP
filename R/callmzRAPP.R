@@ -191,41 +191,160 @@ css <- "
     ),
     tabPanel(
       'Benchmark overview',
-      value = 'benachmark_results',
+      value = 'benchmark_results',
       mainPanel(
+        width = "100%",
         fluidRow(
-          column(6,
-            style = 'padding:0px;margin:0px;display: inline-flex;',
-            dropdownButton(
-              br(
-                paste0("Here the chromatographic peak area of each detected benchmark peak (excluding the most abundant isotopologue of each molecular formula)
-              is plotted against it", "'", "s predicted area. The prediction is made by multiplying the area of the most abundant isotopologue with the relative
-              isotopic abundace of the peak to be predicted. Therefore each point in the plot corresponds to one peak in one sample.")
-              ),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              status = 'info',
-              icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            plotlyOutput('graph_area_bench_1', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          ),
+          #column(6,
+          #  style = 'padding:0px;margin:0px;display: inline-flex;',
+          #  dropdownButton(
+          #    br(
+          ##      paste0("Here the chromatographic peak area of each detected benchmark peak (excluding the most abundant isotopologue of each molecular formula)
+           #   is plotted against it", "'", "s predicted area. The prediction is made by multiplying the area of the most abundant isotopologue with the relative
+           #   isotopic abundace of the peak to be predicted. Therefore each point in the plot corresponds to one peak in one sample.")
+           #   ),
+           #   tooltip = tooltipOptions(title = 'Click for description'),
+           #   circle = TRUE,
+           ##   status = 'info',
+            #  icon = icon('question-circle'),
+          #    size = 'sm'
+          #  ),
+          #  plotlyOutput('graph_area_bench_1', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+          #),
+
+          #column(
+          #  6,
+          #  #offset = 7,
+          #  style = 'padding:0px;margin:0px;display: inline-flex;',
+          #  dropdownButton(
+          #    br(
+          #      'Same points as in the plot to the left. However, here the error of the prediction is plotted instead of the measured area itselfe.'),
+          #    tooltip = tooltipOptions(title = 'Click for description'),
+          #    circle = TRUE,
+          #    status = 'info',
+          ##    icon = icon('question-circle'),
+           #   size = 'sm'
+          #  ),
+          #  plotlyOutput('graph_area_bench_2', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+          #),
 
           column(
-            6,
-            #offset = 7,
+            7,
             style = 'padding:0px;margin:0px;display: inline-flex;',
-            dropdownButton(
-              br(
-                'Same points as in the plot to the left. However, here the error of the prediction is plotted instead of the measured area itselfe.'),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              status = 'info',
+              dropdownButton(
+                br(
+                  paste0("Here the chromatographic peak area of each detected benchmark peak (excluding the most abundant isotopologue of each molecular formula)
+               is plotted against its predicted area. The prediction is made by multiplying the area of the most abundant isotopologue with the relative
+               isotopic abundace of the peak to be predicted. Therefore each point in the plot corresponds to one peak in one sample. Other peak variables
+                         can be plotted using the dropdown menues below the plot")
+               ),
+               tooltip = tooltipOptions(title = 'Click for description'),
+               circle = TRUE,
+               status = 'info',
               icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            plotlyOutput('graph_area_bench_2', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+                size = 'sm'
+              ),            plotlyOutput('bench_plotxy', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+          ),
+          column(5,
+                 style = 'padding:0px;margin:0px;display: inline-flex;',
+                 dropdownButton(
+                   br(
+                     paste0("histo")
+                   ),
+                   tooltip = tooltipOptions(title = 'Click for description'),
+                   circle = TRUE,
+                   status = 'info',
+                   icon = icon('question-circle'),
+                   size = 'sm'
+                 ),
+                 plotlyOutput('bench_plotHisto', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+
+                 )
+        ),
+        fluidRow(
+          column(2, selectInput('bench_plotxy_input_x', 'x-axis',
+                                  c(
+                                    'peaks.rt',
+                                    'peaks.PpP',
+                                    'peaks.sharpness',
+                                    'peaks.FW25M',
+                                    'peaks.FW50M',
+                                    'peaks.FW75M',
+                                    'peaks.zigZag_IDX',
+                                    'peaks.height',
+                                    'peaks.area',
+                                    'mz_acc',
+                                    'peaks.cor_w_M0',
+                                    'molecule',
+                                    'FileName',
+                                    'adduct',
+                                    'isoabb',
+                                    'Grp',
+                                    'ExpectedArea',
+                                    'ErrorRel_A',
+                                    'ErrorAbs_A',
+                                    'ExpectedHeight',
+                                    'ErrorRel_H',
+                                    'ErrorAbs_H'
+                                  ), selected = 'ExpectedArea'
+            )),
+            column(2, selectInput('bench_plotxy_input_y', 'y-axis',
+                                  c(
+                                    'peaks.rt',
+                                    'peaks.PpP',
+                                    'peaks.sharpness',
+                                    'peaks.FW25M',
+                                    'peaks.FW50M',
+                                    'peaks.FW75M',
+                                    'peaks.zigZag_IDX',
+                                    'peaks.height',
+                                    'peaks.area',
+                                    'mz_acc',
+                                    'peaks.cor_w_M0',
+                                    'molecule',
+                                    'FileName',
+                                    'adduct',
+                                    'isoabb',
+                                    'Grp',
+                                    'ExpectedArea',
+                                    'ErrorRel_A',
+                                    'ErrorAbs_A',
+                                    'ExpectedHeight',
+                                    'ErrorRel_H',
+                                    'ErrorAbs_H'
+                                  ), selected = 'peaks.area'
+                                  )
+                   ),
+          column(3),
+          column(2, selectInput('bench_plotHisto', 'Peak variable',
+                                c(
+                                  'peaks.rt',
+                                  'peaks.PpP',
+                                  'peaks.sharpness',
+                                  'peaks.FW25M',
+                                  'peaks.FW50M',
+                                  'peaks.FW75M',
+                                  'peaks.zigZag_IDX',
+                                  'peaks.height',
+                                  'peaks.area',
+                                  'mz_acc',
+                                  'peaks.cor_w_M0',
+                                  'molecule',
+                                  'FileName',
+                                  'adduct',
+                                  'isoabb',
+                                  'Grp',
+                                  'ExpectedArea',
+                                  'ErrorRel_A',
+                                  'ErrorAbs_A',
+                                  'ExpectedHeight',
+                                  'ErrorRel_H',
+                                  'ErrorAbs_H'
+                                ), selected = 'peaks.PpP'
           )
+
+
+        )
         ),
         fluidRow(
           column(6,
@@ -269,15 +388,14 @@ css <- "
         #  )
         #),
         fluidRow(
-          column(6,
-                 numericInput('index_number', 'Index Number', 1, step = 1)),
-          column(
-            6,
-            #offset = 7,
-            selectInput('mol', 'Molecule', c()),
-            selectInput('add', 'Adduct', c()),
-            selectInput('ia', 'Isotopic Abundance', c())
-          )
+          column(6, numericInput('index_number', 'Index Number', 1, step = 1)),
+          tags$style(HTML("#mol+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+          tags$style(HTML("#add+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+          tags$style(HTML("#ia+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+          column(2, selectInput('mol', 'Molecule', c())),
+          column(2, selectInput('add', 'Adduct', c())),
+          column(2, selectInput('ia', 'Isotopic Abundance', c()))
+
         )
 
       )
@@ -520,6 +638,11 @@ css <- "
   ))
 
   server <- function (input, output, session) {
+
+    shinyjs::js$disableTab('benchmark_results')
+    shinyjs::js$disableTab('results_tab_features')
+    shinyjs::js$disableTab('results_tab_peaks')
+
     volumes = getVolumes()
     observe({
       shinyFileChoose(input,
@@ -536,20 +659,27 @@ css <- "
 
 
     benchmark_data <- eventReactive(input$generate_benchmark, {
+
+      shinyjs::disable('generate_benchmark')
+
+
+
+
       if (!is.null(input$mzML_upload)) {
         mzML_files <- parseFilePaths(volumes, input$mzML_upload)
-        print(mzML_files)
+        #print(mzML_files)
       }
       if (!is.null(input$grps_upload)) {
         grps_file <- parseFilePaths(volumes, input$grps_upload)
-        print(grps_file)
+       # print(grps_file)
       }
       if (!is.null(input$coi_upload)) {
         coi_file <- parseFilePaths(volumes, input$coi_upload)
-        print(coi_file)
+        #print(coi_file)
       }
 
       withProgress(message = 'Calculation in progress',
+
                    detail = "calculating isotopologue MZs...", value = 0, {
 
                      #######List of files#######
@@ -590,7 +720,6 @@ css <- "
                        RelInt_threshold = input$RelInt_Thresh_input,
                        stick_method = "intensoid"
                      )
-                     print('End calculating isotopologue mz')
                      ###################################################
                      incProgress(1/15, detail = "detecting ROIs...")
                      print('Start ROI detection')
@@ -606,7 +735,6 @@ css <- "
                        AccurateMZtol = input$accurate_MZ_tol_input
                      )
 
-                     print('End ROI detection')
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
@@ -620,71 +748,75 @@ css <- "
                      )
 
 
-                     print('End peak detection and evaluation')
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 
                      print('Start peak alignment')
                      PCal <- align_PC(PCbp[Iso_count > 1],
                                       add = "main_adduct")
-                     print('End peak alignment')
 
                      #Entfernt damit es auch lokal geht
-                     write.csv(PCal, "NEW_BENCHMARK.csv")
 
-                     print(paste0("Exported benchmark dataset to ", getwd()))
+                     fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
+
+                     print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
 
 
 
                      incProgress(15/15, detail = "Finished")
+
+
+                     shinyjs::enable('generate_benchmark')
+                     shinyjs::js$enableTab('benchmark_results')
+
                      Sys.sleep(0.25)
                    })
 
+      SkyTranList <- SkylineTransitionList(PCal)
 
+      SkyPeakBo <- SkylinePeakBoundaries(PCal)
 
       return(PCal)
     })
 
 
 
-
-
-    observe({
+    observeEvent({input$mol; input$add; input$ia},{
       benchmark_data <- benchmark_data()
+      if(nrow(benchmark_data[molecule == input$mol & adduct == input$add & round(isoabb, 2) == input$ia]) > 0){
 
+        p <- suppressWarnings(
+          plot_Peak_per_mol(
+            benchmark_data,
+            mol = input$mol,
+            add = input$add,
+            ia = input$ia
+          )
+        )
 
-      updateSelectInput(session, 'mol', choices = as.character(unique(benchmark_data$molecule)), selected = as.character(unique(benchmark_data$molecule)[1]))
-      observeEvent(input$mol,{
-        updateSelectInput(session, 'add', choices = unique(benchmark_data[molecule == input$mol]$adduct))
-      })
-
-      observeEvent(c(input$mol, input$add),{
-        updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
-      })
-    })
-
-
-
-
-
-    observeEvent(input$algorithm_input, {
-      if (input$algorithm_input == '---'){
-        shinyjs::disable('ug_upload')
-        shinyjs::disable('g_upload')
-        shinyjs::disable('options_upload')
-        shinyjs::disable('benchmark_upload')
-        shinyjs::disable('start_compare')
-        shinyjs::js$disableTab('benachmark_results')
-
-      } else {
-        shinyjs::enable('ug_upload')
-        shinyjs::enable('g_upload')
-        shinyjs::enable('options_upload')
-        shinyjs::enable('benchmark_upload')
-        shinyjs::enable('start_compare')
-        shinyjs::js$enableTab('benachmark_results')
+        output$graph_area_bench_4 <- renderPlotly(p)
       }
-    })
+    }, ignoreInit = FALSE)
+
+
+    ##observeEvent(input$algorithm_input, {
+     # if (input$algorithm_input == '---'){
+    #    shinyjs::disable('ug_upload')
+    #    shinyjs::disable('g_upload')
+    #    shinyjs::disable('options_upload')
+    #    shinyjs::disable('benchmark_upload')
+    ##    shinyjs::disable('start_compare')
+      #  shinyjs::js$disableTab('benchmark_results')
+#
+ #     } else {
+#        shinyjs::enable('ug_upload')
+  #      shinyjs::enable('g_upload')
+  #      shinyjs::enable('options_upload')
+  #      shinyjs::enable('benchmark_upload')
+  #      shinyjs::enable('start_compare')
+  #      shinyjs::js$enableTab('benchmark_results')
+  #    }
+  #  })
 
 
 
@@ -692,12 +824,15 @@ css <- "
     ####COMPARISON####
     ##################
     comparison <- eventReactive(input$start_compare, {
+
+      shinyjs::disable('start_compare')
+
       ######
       #Import csv files
       #####################
       options_table <- import_options(input$options_upload$datapath)
       b_table <- import_benchmark(input$benchmark_upload$datapath, options_table)
-      print(input$ug_upload$datapath)
+      #print(input$ug_upload$datapath)
       import_results <- pick_algorithm(input$ug_upload$datapath, input$g_upload$datapath, options_table, input$algorithm_input)
       ug_table <- import_results$ug_table
       g_table <- import_results$g_table
@@ -705,13 +840,11 @@ css <- "
       ######
       #perform comparison
       #####################
-      if(input$algorithm_input == '???'){
-        comparison_ug_g <-
-        compare_peaks_ug_g_no_rt_start(b_table, ug_table, g_table, input$algorithm_input)
-      } else {
-        comparison_ug_g <-
-        compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input)
-      }
+      comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input)
+
+      shinyjs::js$enableTab('results_tab_features')
+      shinyjs::js$enableTab('results_tab_peaks')
+      shinyjs::enable('start_compare')
       return(comparison_ug_g)
     })
 
@@ -916,8 +1049,8 @@ css <- "
         cov_dt[, complete_group_set := ifelse(.N == max(samples_per_group_b, na.rm = TRUE), 'TRUE', 'FALSE'), by =
                  .(molecule_b, adduct_b, isoabb_b, grp_b)]
       cov_dt <- cov_dt[complete_group_set == 'TRUE']
-      View(cov_dt)
-      print('here')
+      #View(cov_dt)
+      #print('here')
 
       #grped_consideration for CV plot
       #nf_dt <- rbindlist(list(comparison$nf_g))
@@ -1099,16 +1232,13 @@ css <- "
         }
         output$graph_area_3 <- renderPlotly(plotly::ggplotly(the_plot1, dynamicTicks = TRUE))
       })
-      print('observe1 end')
     })
 
     observeEvent(input$start_compare, {
       updateTabsetPanel(session = session, 'main_panel', selected = 'results_tab_peaks')
-      print('observe2 end')
     })
     observeEvent(input$start_benchmark, {
       updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
-      print('observe3 end')
     })
 
     observe({
@@ -1121,11 +1251,9 @@ css <- "
 
       matched_dt <- matched_dt[, c("molecule_b", "adduct_b", "isoabb_b", "peak_area_g", "feature_id_g", "sample_name_b", "sample_id_b")]
 
-      View(matched_dt)
 
       if(!all(is.na(matched_dt$feature_id_g))){
 
-        print("SplitHM")
         hm_split_plot_dt <- matched_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
 
         hm_split_plot_dt <- hm_split_plot_dt[ut_feature_nr == 1]
@@ -1171,9 +1299,6 @@ css <- "
 
 
       }
-
-
-       print('observe4 end')
     })
 
 
@@ -1197,27 +1322,92 @@ css <- "
       updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
     })
 
+    observe({
+      benchmark <- benchmark_data()
+      updateSelectInput(session, 'mol', choices = as.character(unique(benchmark$molecule)), selected = as.character(unique(benchmark$molecule)[1]))
+    })
+
+    observeEvent(input$mol,{
+      benchmark <- benchmark_data()
+      updateSelectInput(session, 'add', choices = unique(benchmark[molecule == input$mol]$adduct))
+    })
+
+    observeEvent(c(input$mol, input$add),{
+      benchmark <- benchmark_data()
+      updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
+    })
 
     observe({
-      PC <- benchmark_data()
-      output$graph_area_bench_1 <-
-        renderPlotly(plot_vs_prediction(PC, y = peaks.area))
-      output$graph_area_bench_2 <-
-        renderPlotly(plot_vs_prediction(PC, y = ErrorRel_A))
+      benchmark <- benchmark_data()
+      #output$graph_area_bench_1 <-
+      #  renderPlotly(plot_vs_prediction(PC, y = peaks.area))
+      #output$graph_area_bench_2 <-
+      #  renderPlotly(plot_vs_prediction(PC, y = ErrorRel_A))
+
+
+      x = input$bench_plotxy_input_x
+      y = input$bench_plotxy_input_y
+
+      suppressWarnings(
+              p <- ggplot() +
+                geom_point(data = benchmark[!is.na(get(x)) & !is.na(get(y))], aes(x = get(x),
+                                                                                  y = get(y),
+                                                                                  color = molecule,
+                                                                                  adduct = adduct,
+                                                                                  isoabb = isoabb,
+                                                                                  sample_name = FileName)) +
+                labs(x = x,
+                     y = y) +
+                ggtitle("Overview - Peaks")
+      )
+        output$bench_plotxy <- renderPlotly(plotly::ggplotly(p,
+                                                             tooltip = c("molecule",
+                                                                         "adduct",
+                                                                         "isoabb",
+                                                                         "sample_name"),
+                                                             dynamicTicks = TRUE,
+                                                             width = 1000))
+    })
+
+
+    observe({
+      benchmark <- benchmark_data()
+
+
+      var = input$bench_plotHisto
+
+
+suppressWarnings(
+        if(!(var %in% c("molecule", "FileName", "Grp", "adduct"))){
+          p <- ggplot() +
+          geom_histogram(data = benchmark[!is.na(get(var))], aes(get(var)), bins = 30) +
+          ggtitle("Overview - Histogram") +
+          xlab(var)
+
+        } else{
+          p <- ggplot() +
+          geom_bar(data = benchmark[!is.na(get(var))], aes(get(var))) +
+          ggtitle("Overview - Histogram") +
+          xlab(var)
+
+        }
+)
+
+
+      output$bench_plotHisto <- renderPlotly(plotly::ggplotly(p, dynamicTicks = TRUE))
+
+
       output$graph_area_bench_3 <-
-        renderPlotly(plot_Peak_with_predicted_peak(PC,
+        renderPlotly(plot_Peak_with_predicted_peak(benchmark,
                                                    IndexNumber = input$index_number))
 
-      if(nrow(PC[molecule == input$mol & adduct == input$add & round(isoabb, 2) == input$ia]) > 0){
-        output$graph_area_bench_4 <- renderPlotly(plot_Peak_per_mol(
-          PC,
-          mol = input$mol,
-          add = input$add,
-          ia = input$ia
-        ))
-      }
-      print('observe5 end')
     })
+
+
+
+
+
+
   }
 
   shinyApp(ui, server)
