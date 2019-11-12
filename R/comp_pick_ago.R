@@ -1,0 +1,43 @@
+#' pick_algorithm
+#'
+#' @param ug_table_path
+#' @param g_table_path
+#' @param options_table
+#' @param algo
+#'
+#' @return
+#' @export
+#'
+#' @examples
+pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
+  switch(algo,
+    'XCMS' = {
+    ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
+    g_table <- import_grouped_xcms(g_table_path, options_table)
+    },
+    'MS-DIAL' = {
+      #####Pick the folder where file is located
+      #####Remove if switch to text based path input
+      folder_path <- dirname(ug_table_path)
+      print(folder_path)
+      ug_table <- import_ungrouped_msdial(folder_path, options_table)
+      g_table <- import_grouped_msdial(g_table_path, options_table)
+    },
+    'CompoundDiscoverer' = {
+      ug_table <- import_ungrouped_cd(ug_table_path, options_table)
+      g_table = NULL
+    },
+    'mzMine' = {
+      import_tables <- import_mzmine(ug_table_path, options_table)
+      print(import_tables)
+      ug_table <- import_tables$ug_table
+      print(class(ug_table))
+      g_table <- import_tables$g_table
+      print(class(g_table))
+    })
+  return(list('ug_table' = ug_table, 'g_table' = g_table))
+}
+
+
+#options_table <- import_options('Y:/Max/TestFiles_Compare/msdial/optionsframe msdialHILIC.csv')
+#pick_algorithm('Y:/Max/TestFiles_Compare/msdial/ungrouped/0_C13_1.txt', 'Y:/Max/TestFiles_Compare/msdial/Area_0_20188301418.txt', options_table, 'msDial')
