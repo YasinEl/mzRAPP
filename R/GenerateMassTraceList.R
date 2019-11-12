@@ -73,6 +73,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   ##################################
   #calculate theoretical isotope pattern
   ##################################
+
   pattern <- isopattern(isotopes,
                         chemforms = SF$new_formula,
                         plotit = FALSE,
@@ -81,6 +82,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
                         algo = 1,
                         rel_to = 0,
                         verbose = FALSE)
+
 
 
   ##################################
@@ -102,9 +104,11 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   ##################################
   #calculate discrete m/z values and abundandences
   ##################################
+  trash <- capture.output({
   sticks <- vdetect(profiles = profile,
                     detect = stick_method,
                     plotit = FALSE)
+  })
 
 
   ##################################

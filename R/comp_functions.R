@@ -227,11 +227,11 @@ compare_peak_groups <- function(dt) {
   dt <- dt[, features_in_iso_group := paste(isoabb_b, '-', feature_id_g, collapse = "; "), by=.(iso_groups, peak_group_b)]
 
   #dt <- dt[!duplicated(dt, by=c('iso_groups', 'peak_group_b', 'features_in_iso_group'))]
-  print(anyDuplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b', 'peak_group_b')))
+  #print(anyDuplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b', 'peak_group_b')))
 
   dt <- dt[!duplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b', 'peak_group_b'))]
 
-  fwrite(dt[molecule_b == 'Glutamate' & adduct_b == 'M-H'], file="peak_group_debug.csv")
+  #fwrite(dt[molecule_b == 'Glutamate' & adduct_b == 'M-H'], file="peak_group_debug.csv")
   ##Long to Wide Transormation, filtering represents each ne dt passed inside function later
   #dt <- dt[molecule_b == 'Glutamate' & adduct_b == 'M-H']
   ##Only one row per peak_group - file pair
@@ -347,7 +347,7 @@ compare_peak_groups_new <- function(dt){
   dt <- dt[, features_in_iso_group := paste(isoabb_b, '-', feature_id_g, collapse = "; "), by=.(molecule_b, adduct_b, sample_id_b, peak_group_b)]
   dt <- dt[, features_in_iso_group := strsplit(features_in_iso_group, '; ')]
   dt <- dt[, file_group := paste(sample_id_b)]
-  fwrite(dt, 'pre_loop_dt.csv')
+  #fwrite(dt, 'pre_loop_dt.csv')
 
 
   dt_list <- list()
@@ -363,7 +363,7 @@ compare_peak_groups_new <- function(dt){
         temp_dt <- temp_dt[, sample_id_view := file]
         temp_dt <- temp_dt[, test_iso_cols := list(list(testVec))]
         temp_dt <- temp_dt[, overlap_iso := lapply(temp_dt$features_in_iso_group, function(x) intersect(testVec, x))]
-        fwrite(temp_dt, file=paste0('temp_dt', row, '.csv'))
+        #fwrite(temp_dt, file=paste0('temp_dt', row, '.csv'))
         dt_list <- append(dt_list, list(copy(temp_dt)))
       }
   }
@@ -372,7 +372,7 @@ compare_peak_groups_new <- function(dt){
   #filter out duplicates by only file id and sample_id_view
   compared_dt <- compared_dt[!duplicated(compared_dt, by=c('sample_id_b', 'sample_id_view'))]
   compared_dt <- dcast(compared_dt, sample_id_b ~ sample_id_view, value.var='overlap_iso')
-  fwrite(compared_dt, file='DEBUG.csv')
+  #fwrite(compared_dt, file='DEBUG.csv')
 }
 
 

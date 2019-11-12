@@ -11,9 +11,6 @@
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from are retained
 #' @export
 #'
-#' @import xcms
-#' @import data.table
-#' @import foreach
 #'
 
 getROIsForEICs <-

@@ -216,7 +216,7 @@ plot_dt <- plot_dt[-1]
     geom_vline(data = plot_dt, aes(xintercept = start, colour = sample)) +
     geom_vline(data = plot_dt, aes(xintercept = end, colour = sample)) +
     theme(legend.position = "right") +
-    ggtitle(mol)
+    ggtitle(paste0(mol, " ", add, " ", ia))
   if(UT_comp == TRUE){
     p <- p +
     geom_vline(data = plot_dt, aes(xintercept = start.ut, colour = sample), linetype='dashed') +
