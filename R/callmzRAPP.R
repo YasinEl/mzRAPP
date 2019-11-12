@@ -263,11 +263,6 @@ css <- "
             plotlyOutput('graph_area_bench_4', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
           )
         ),
-        #fluidRow(
-        #  column(1,
-        #         br()
-        #  )
-        #),
         fluidRow(
           column(6,
                  numericInput('index_number', 'Index Number', 1, step = 1)),
@@ -306,7 +301,7 @@ css <- "
           column(
             12,
             style = "display: inline-flex;",
-            fileInput('ug_upload', 'Upload UT peaks (unaligned)', buttonLabel = 'Browse'),
+            fileInput('ug_upload', 'Upload UT peaks (unaligned)', buttonLabel = 'Browse', multiple = TRUE),
             div(style = "width: 20px;"),
             fileInput('g_upload', 'Upload UT features (aligned peaks)', buttonLabel = 'Browse')
           )
@@ -630,9 +625,8 @@ css <- "
                      print('End peak alignment')
 
                      #Entfernt damit es auch lokal geht
-                     write.csv(PCal, "NEW_BENCHMARK.csv")
+                     #write.csv(PCal, "D:/Yasin/Packages/mzRAPP_submit/NEW_BENCHMARK.csv")
 
-                     print(paste0("Exported benchmark dataset to ", getwd()))
 
 
 
@@ -906,8 +900,6 @@ css <- "
         rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
 
-#testDT <<- comparison
-
       #nf_dt <- rbindlist(list(comparison$nf_g))
 
       #View(nf_dt)
@@ -1168,10 +1160,7 @@ css <- "
       ))
 
      }
-
-
       }
-
 
        print('observe4 end')
     })

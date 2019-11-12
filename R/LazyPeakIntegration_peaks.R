@@ -32,7 +32,7 @@ findBenchPeaks <- function(files,
 {
   CompCol <-
     na.omit(CompCol_all,
-            cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
+            cols = c("eic_mzmin", "eic_mzmax", "StartTime.XIC", "EndTime.XIC"))
 
 
 
@@ -131,7 +131,7 @@ findBenchPeaks <- function(files,
                   ##################################
                   .ChromData <- MSnbase::chromatogram(
                     .raw_data,
-                    rt = as.matrix(unname(.CompCol_xic[, c("StartTime.EIC", "EndTime.EIC")])),
+                    rt = as.matrix(unname(.CompCol_xic[, c("StartTime.XIC", "EndTime.XIC")])),
                     mz = as.matrix(unname(.CompCol_xic[, .(MinMz = eic_mzmin - 0.0001,
                                                            MaxMz = eic_mzmax + 0.0001)][, .(MinMz, MaxMz)])),
                     missing = 0

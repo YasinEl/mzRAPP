@@ -175,9 +175,21 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
   #Creating temp columns to prevent over-writing by join
-  c_table[, peak_area_ug_temp := peak_area_ug]
+  #If statement is solution for msdial
+
+  if ('peak_area_rounded_ug' %in% colnames(c_table)){
+    c_table[, peak_area_ug_temp := peak_area_rounded_ug]
+    split_table[, peak_area_ug_temp := peak_area_rounded_ug]
+  } else {
+    c_table[, peak_area_ug_temp := peak_area_ug]
+    split_table[, peak_area_ug_temp := peak_area_ug]
+  }
   g_table[, peak_area_g_temp := peak_area_g]
-  split_table[, peak_area_ug_temp := peak_area_ug]
+
+  View(g_table)
+
+
+
 
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp),
@@ -185,6 +197,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
+
 
   #Remove _temp Columns
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
@@ -241,17 +254,36 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Get height diff to benchmark and pick peak with smallest diff
   print(paste('c_table: ', nrow(c_table)))
   c_table <- c_table[, height_diff := abs(peak_height_ug - peak_height_b)]
-  c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), 'TRUE', 'FALSE'), by=c('comp_id_b', 'comp_id_ug')]
+  c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
   c_table <- c_table[smaller_height == 'TRUE']
   print(paste('Eliminating dups based on height: ', nrow(c_table)))
-  #If dups still present take g peak with smallest rt_diff
-  c_table <- c_table[, rt_diff := rt_end_g - rt_start_g]
-  c_table <- c_table[, smaller_rt_diff := ifelse(rt_diff == min(rt_diff) | is.na(rt_end_g) | is.na(rt_start_g), 'TRUE', 'FALSE'), by=c('comp_id_b', 'comp_id_ug')]
-  c_table <- c_table[smaller_rt_diff == 'TRUE']
+
+
+  ######pick11111
+
+
+
+
+  ##TAKEN FORM NO START_RT|NO END_RT
+  ##If dups still present take g peak with rt  and mz closest to b
+  c_table <- c_table[, rt_diff := abs(rt_g - rt_b)]
+  c_table <- c_table[, mz_diff := abs(mz_g - mz_b)]
+  c_table <- c_table[, smaller_diff := ifelse((rt_diff == min(rt_diff) & mz_diff == min(mz_diff)) | is.na(rt_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
+  print(sapply(c_table, class))
+  View(c_table)
+  c_table <- c_table[smaller_diff == 'TRUE']
   print(paste('Eliminating dups based on rt: ', nrow(c_table)))
+
+
+  #If dups still present take g peak with smallest rt_diff
+  #c_table <- c_table[, rt_diff := rt_end_g - rt_start_g]
+  #c_table <- c_table[, smaller_rt_diff := ifelse(rt_diff == min(rt_diff) | is.na(rt_end_g) | is.na(rt_start_g), 'TRUE', 'FALSE'), by=c('comp_id_b', 'comp_id_ug')]
+  #c_table <- c_table[smaller_rt_diff == 'TRUE']
+  #print(paste('Eliminating dups based on rt: ', nrow(c_table)))
 
   #######REWROK WHEN FUCTION IS REWORKED
   c_table[, main_peak := eliminate_duplicates_no_for(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
+
 
   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
   split_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
