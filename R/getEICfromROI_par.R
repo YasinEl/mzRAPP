@@ -7,6 +7,7 @@
 #' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  \code{\link{xcms:::findmzROI}})
 #' @param plan number of cores to be used in parallel processing
 #'
+#' @import foreach
 #'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from are retained
 #' @export
@@ -51,7 +52,7 @@ getROIsForEICs <-
   ##################################
   doFuture::registerDoFuture()
   future::plan(plan)
-  Output <- foreach(file = seq(length(files)), .packages = c("lazypeaks")) %dopar% {
+  Output <- foreach(file = seq(length(files)), .packages = c("mzRAPP")) %dopar% {
 #for(file in seq(length(files))){
 
     ##################################
