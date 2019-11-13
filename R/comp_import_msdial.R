@@ -75,6 +75,8 @@ import_ungrouped_msdial <- function(folder_path, options_table){
 
   #Multiply rt by 60 to convert min to seconds MAKE OPTIONAL LATER
   ug_table[, rt := rt*60]
+  ug_table[, rt_start := rt_start*60]
+  ug_table[, rt_end := rt_end*60]
 
   # Add Rounding Column for later merge
   ug_table <- ug_table[, 'peak_area_rounded' := round(peak_area, 0)]
@@ -133,8 +135,9 @@ import_grouped_msdial <- function(file_path, options_table){
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
 
-  #Remove peaks where area is below 0
+  #Remove peaks where area is below or equal 0
   g_table <- g_table[peak_area > 0]
+
 
   #needs to be investigated further, no duplicates should be present
   #removing for now to make statistics work
@@ -161,5 +164,6 @@ import_grouped_msdial <- function(file_path, options_table){
 
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
+  View(g_table)
   return(g_table)
 }

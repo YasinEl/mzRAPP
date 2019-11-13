@@ -62,7 +62,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   }
 
   #G table check
-  g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_start_g', 'rt_end_g', 'rt_g', 'mz_g',
+  g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_g', 'mz_g',
                   'sample_name_g', 'peak_area_g', 'feature_id_g')
 
 
@@ -109,17 +109,21 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
   b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
 
+
   #Creating temp columns to prevent over-writing by join
   ug_table[, ':=' (sample_id_ug_temp = sample_id_ug,
                    rt_start_ug_temp = rt_start_ug,
                    rt_end_ug_temp = rt_end_ug,
                    mz_ug_temp = mz_ug)]
 
+
   b_table[, ':=' (sample_id_b_temp = sample_id_b,
                   new_rt_start_b_temp = new_rt_start_b,
                   new_rt_end_b_temp = new_rt_end_b,
                   mz_start_b_temp = mz_start_b,
                   mz_end_b_temp = mz_end_b)]
+
+
 
   ##############
   #Conducting non-equi join.
@@ -132,6 +136,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
                                     mz_start_b_temp <= mz_ug_temp,
                                     mz_end_b_temp >= mz_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+
+
 
 
   ##############
@@ -186,7 +193,8 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   }
   g_table[, peak_area_g_temp := peak_area_g]
 
-  View(g_table)
+
+
 
 
 
@@ -194,6 +202,13 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
+
+
+
+
+
+  #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)
+  #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
 
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
@@ -257,10 +272,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
   c_table <- c_table[smaller_height == 'TRUE']
   print(paste('Eliminating dups based on height: ', nrow(c_table)))
-
-
-  ######pick11111
-
 
 
 

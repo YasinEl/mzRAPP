@@ -9,7 +9,9 @@
 #' @examples
 import_ungrouped_xcms <- function(file_path, options_table){
 
-  print('start xcms import')
+  print('start xcms ug import')
+
+  print(file_path)
 
   #Check if filetype is csv
   print(file_ext(file_path))
@@ -71,6 +73,8 @@ import_ungrouped_xcms <- function(file_path, options_table){
 #'
 #' @examples
 import_grouped_xcms <- function (file_path, options_table) {
+
+  print('start xcms g import')
 
   #Check if filetype is csv
   if(file_ext(file_path) != 'csv'){

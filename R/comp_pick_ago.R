@@ -10,16 +10,19 @@
 #'
 #' @examples
 pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
+  print(ug_table_path)
+  print(ug_table_path$datapath)
+  print('------------')
   switch(algo,
     'XCMS' = {
     ug_table <- import_ungrouped_xcms(ug_table_path$datapath, options_table)
-    g_table <- import_grouped_xcms(g_table_path, options_table)
+    g_table <- import_grouped_xcms(g_table_path$datapath, options_table)
     },
     'msDial' = {
       #####Pick the folder where file is located
       #####Remove if switch to text based path input
       ug_table <- import_ungrouped_msdial(ug_table_path, options_table)
-      g_table <- import_grouped_msdial(g_table_path, options_table)
+      g_table <- import_grouped_msdial(g_table_path$datapath, options_table)
     },
     'CompoundDiscoverer' = {
       ug_table <- import_ungrouped_cd(ug_table_path$datapath, options_table)

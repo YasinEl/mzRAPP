@@ -37,7 +37,6 @@ css <- "
   library(V8)
   library(data.table)
   library(DT)
-  library(lazypeaks)
   library(tools)
   library(tictoc)
   library(shinyFiles)
@@ -827,7 +826,7 @@ css <- "
       options_table <- import_options(input$options_upload$datapath)
       b_table <- import_benchmark(input$benchmark_upload$datapath, options_table)
       #print(input$ug_upload$datapath)
-      import_results <- pick_algorithm(input$ug_upload$datapath, input$g_upload$datapath, options_table, input$algorithm_input)
+      import_results <- pick_algorithm(input$ug_upload, input$g_upload, options_table, input$algorithm_input)
       ug_table <- import_results$ug_table
       g_table <- import_results$g_table
 
@@ -914,6 +913,8 @@ css <- "
 
       hm_dt <- rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
+      View(hm_dt)
+
       hm_dt[, missing_peaks := find_r_s_error(
         comp_id_b,
         molecule_b,
@@ -924,6 +925,7 @@ css <- "
         peak_area_ug,
         peak_height_b
       ), by = .(molecule_b, adduct_b, isoabb_b)]
+
 
 
       hm_dt <- (hm_dt[, main_feature_check := ifelse((length(unique(na.omit(feature_id_g))) == 1) &
@@ -1233,63 +1235,64 @@ css <- "
       updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
     })
 
-    observe({
-      comparison <- comparison()
-      matched_dt <-
-        rbindlist(list(comparison$c_table), fill = TRUE)
-
-
-      if(length(unique(matched_dt$peak_area_g)) != 1){
-
-      matched_dt <- matched_dt[, c("molecule_b", "adduct_b", "isoabb_b", "peak_area_g", "feature_id_g", "sample_name_b", "sample_id_b")]
-
-
-      if(!all(is.na(matched_dt$feature_id_g))){
-
-        hm_split_plot_dt <- matched_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[ut_feature_nr == 1]
-
-        hm_split_plot_dt <- matched_dt[hm_split_plot_dt, on = .(molecule_b, adduct_b)]
-
-        hm_split_plot_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[, reindexedFeatures_g := reIndexFeatures(feature_id_g), by = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[hm_split_plot_dt[, .(mainFeature_g = names(sort(table(feature_id_g), decreasing = TRUE))[1]), by = .(plot_group)], on = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[, split_flag := (length(unique(reindexedFeatures_g)) > 1), by = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[split_flag == TRUE]
-
-        hm_split = ggplot(
-          hm_split_plot_dt,
-          aes(
-            x = as.character(plot_group),
-            y = as.character(sample_id_b),
-            fill = reindexedFeatures_g,
-            molecule = molecule_b,
-            isoabb = isoabb_b,
-            adduct = adduct_b,
-            FileName = sample_name_b
-          )
-        ) +
-          geom_tile() +
-          #scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
-          ggtitle("Split features") +
-          labs(x = "benchmark features", y = "sample IDs", fill = "b_peaks") +
-          theme(legend.title = element_blank())
-
-
-     output$graph_hm_split <- renderPlotly(plotly::ggplotly(
-       hm_split,
-       tooltip = c("molecule", "adduct", "isoabb", "FileName"),
-       dynamicTicks = TRUE
-      ))
-
-     }
-      }
-    })
+    ######
+    # observe({
+    #   comparison <- comparison()
+    #   matched_dt <-
+    #     rbindlist(list(comparison$c_table), fill = TRUE)
+    #
+    #   if(length(unique(matched_dt$peak_area_g)) != 1){
+    #
+    #   matched_dt <- matched_dt[, c("molecule_b", "adduct_b", "isoabb_b", "peak_area_g", "feature_id_g", "sample_name_b", "sample_id_b")]
+    #
+    #
+    #   if(!all(is.na(matched_dt$feature_id_g))){
+    #
+    #     hm_split_plot_dt <- matched_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
+    #
+    #     hm_split_plot_dt <- hm_split_plot_dt[ut_feature_nr == 1]
+    #
+    #     hm_split_plot_dt <- matched_dt[hm_split_plot_dt, on = .(molecule_b, adduct_b)]
+    #
+    #     hm_split_plot_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
+    #
+    #     hm_split_plot_dt <- hm_split_plot_dt[, reindexedFeatures_g := reIndexFeatures(feature_id_g), by = .(plot_group)]
+    #
+    #     hm_split_plot_dt <- hm_split_plot_dt[hm_split_plot_dt[, .(mainFeature_g = names(sort(table(feature_id_g), decreasing = TRUE))[1]), by = .(plot_group)], on = .(plot_group)]
+    #
+    #     hm_split_plot_dt <- hm_split_plot_dt[, split_flag := (length(unique(reindexedFeatures_g)) > 1), by = .(plot_group)]
+    #
+    #     hm_split_plot_dt <- hm_split_plot_dt[split_flag == TRUE]
+    #
+    #     hm_split = ggplot(
+    #       hm_split_plot_dt,
+    #       aes(
+    #         x = as.character(plot_group),
+    #         y = as.character(sample_id_b),
+    #         fill = reindexedFeatures_g,
+    #         molecule = molecule_b,
+    #         isoabb = isoabb_b,
+    #         adduct = adduct_b,
+    #         FileName = sample_name_b
+    #       )
+    #     ) +
+    #       geom_tile() +
+    #       #scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
+    #       ggtitle("Split features") +
+    #       labs(x = "benchmark features", y = "sample IDs", fill = "b_peaks") +
+    #       theme(legend.title = element_blank())
+    #
+    #
+    #  output$graph_hm_split <- renderPlotly(plotly::ggplotly(
+    #    hm_split,
+    #    tooltip = c("molecule", "adduct", "isoabb", "FileName"),
+    #    dynamicTicks = TRUE
+    #   ))
+    #
+    #  }
+    #   }
+    # })
+    ######
 
 
     #input buttons to be updated live
