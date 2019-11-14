@@ -1,4 +1,4 @@
-#' eliminate_duplicates_no_for
+#' choose_main_peak
 #'
 #' @param comp_id_b
 #' @param comp_id_ug
@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-eliminate_duplicates_no_for <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b){
+choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b){
 
   ##############
   #pick best iso 100 peak by comparing it to to iso group below
