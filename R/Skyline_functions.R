@@ -10,7 +10,7 @@
 SkylineTransitionList <-
   function(BM){
 
-    MassPrec <- round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
+    MassPrec <- max(BM$peaks.mz_span_ppm)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
 
     BM <- BM[, c("molecule", "adduct", "isoabb", "mz_acc", "charge")]
     BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]

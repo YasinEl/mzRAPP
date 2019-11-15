@@ -58,7 +58,7 @@ getROIsForEICs <-
     ##################################
     #read mzML files into xcmsRaw objects and determine clostest scans to attempted start and end points of XICs
     ##################################
-    .xr <- xcms::xcmsRaw(files[file], profstep=0)
+    .xr <- suppressWarnings(xcms::xcmsRaw(files[file], profstep=0))
     Target.table.wk <- Target.table[fileIdx == file]
 
     .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
@@ -74,13 +74,15 @@ getROIsForEICs <-
       #find ROIs and set up ROI-table and Target.table for their join
       ##################################
       trash <- capture.output({
+        suppressWarnings(
         ROI.list <- xcms:::findmzROI(xr,
-                                     dev = PrecisionMZtol * 1E-6,
+                                     dev = mean(Target.table.wk[molecule == molec]$mz) * PrecisionMZtol * 1E-6,
                                      minCentroids = minCentroids,
                                      scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
                                      prefilter = c(minCentroids,0),
                                      noise = 0)
-        })
+        )})
+
       ROI.dt <- rbindlist(ROI.list)
       ROI.dt <- ROI.dt[,.(rtmin = xr@scantime[scmin],
                           rtmax = xr@scantime[scmax],

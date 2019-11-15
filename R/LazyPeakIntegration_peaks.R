@@ -129,6 +129,7 @@ findBenchPeaks <- function(files,
                   ##################################
                   #extract EICs, add according file names and create empty list for storage of peak information
                   ##################################
+                    suppressWarnings(
                   .ChromData <- MSnbase::chromatogram(
                     .raw_data,
                     rt = as.matrix(unname(.CompCol_xic[, c("StartTime.EIC", "EndTime.EIC")])),
@@ -136,6 +137,7 @@ findBenchPeaks <- function(files,
                                                            MaxMz = eic_mzmax + 0.0001)][, .(MinMz, MaxMz)])),
                     missing = 0
                   )
+                    )
 
                   MSnbase::sampleNames(.ChromData) <-
                     basename(sub(
@@ -357,6 +359,18 @@ findBenchPeaks <- function(files,
                               )[2],
                               as.double(rtmax)
                             ))), by = .(idx)], on = .(idx)]
+
+
+                            #l.peaks$StartTime <- apply(l.peaks[, c("rt", "StartTime", "EndTime")], 1, function(peak_row){
+                            #  if(is.na(peak_row[1]) | is.na(peak_row[2] | is.na(peak_row[3]))) {return(peak_row[2])} else if(
+                            #    (peak_row[1] - peak_row[2])/(peak_row[3] - peak_row[1]) > 1.5/1) {return(2*peak_row[1] - peak_row[3])
+                            #    } else {return(peak_row[2])}
+                            #    })
+
+                            #l.peaks$EndTime <- apply(l.peaks[, c("rt", "StartTime", "EndTime")], 1, function(peak_row){
+                            #  if(is.na(peak_row[1]) | is.na(peak_row[2] | is.na(peak_row[3]))) {return(peak_row[3])} else if(
+                            #  (peak_row[3] - peak_row[1])/(peak_row[1] - peak_row[2]) > 1.5/1) {return(2*peak_row[1] - peak_row[2])} else {return(peak_row[3])}
+                            #})
 
 
 
@@ -588,6 +602,7 @@ findBenchPeaks <- function(files,
                   by = .(molecule, adduct, FileName, peaks.M0.grp)],
            on = .(molecule, adduct, FileName, peaks.M0.grp)]
 
+  Result <- Result[isoabb_ol == FALSE]
   Result <- Result[Iso_count >= Min.iso.count]
 
   if(return_unsuc_searches == TRUE){
