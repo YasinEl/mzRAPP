@@ -1,45 +1,12 @@
 Package: mzRAPP
 Type: Package
-Title: Benchmark Dataset Generation
+Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
-Maintainer: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
-Description: Generation and evaluation of LC-HRMS benchmark dataset from mzML files.
-License: GPL-3
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Depends: 
-    data.table,
-    enviPat,
-    ggplot2,
-    shiny,
-    shinyWidgets,
-    DT,
-    tools,
-    shinyFiles,
-    tictoc,
-    plotly,
-    dplyr
-biocViews:
-Imports:
-    retistruct,
-    xcms,
-    plotly,
-    stats,
-    parallel,
-    doBy,
-    BiocParallel,
-    doParallel,
-    MSnbase,
-    shinyjs,
-    DescTools,
-    signal,
-    intervals,
-    doFuture,
-    S4Vectors,
-    V8
-Suggests: 
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr

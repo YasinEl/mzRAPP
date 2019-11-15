@@ -52,7 +52,7 @@ getROIsForEICs <-
   ##################################
   doFuture::registerDoFuture()
   future::plan(plan)
-  Output <- foreach(file = seq(length(files)), .packages = c("mzRAPP")) %dopar% {
+  Output <- foreach(file = seq(length(files)), .packages = c("lazypeaks")) %dopar% {
 #for(file in seq(length(files))){
 
     ##################################

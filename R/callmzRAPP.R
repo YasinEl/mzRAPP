@@ -39,6 +39,7 @@ css <- "
   library(V8)
   library(data.table)
   library(DT)
+  #library(lazypeaks)
   library(tools)
   library(tictoc)
   library(shinyFiles)

@@ -13,6 +13,7 @@
 #' @param return_unsuc_searches
 #' @param Min.Res
 #'
+#' @import foreach
 #' @return
 #' @export
 #'
@@ -26,7 +27,7 @@ findBenchPeaks <- function(files,
                             Min.Res = 60,
                             plan = "multiprocess",
                             Min.cor.w.main_adduct = 0.8,
-                            Min.cor.w.M0 = 0.8,
+                            Min.cor.w.M0 = 0.85,
                             Min.iso.count = 2,
                             return_unsuc_searches = FALSE)
 {
@@ -46,7 +47,7 @@ findBenchPeaks <- function(files,
   Output <- list()
   Output <-
     foreach(file = 1:length(files),
-            .packages = c("mzRAPP", "data.table")) %dopar% {
+            .packages = c("lazypeaks", "data.table")) %dopar% {
   #            for(file in 1:length(files)){
 
 
@@ -193,7 +194,7 @@ findBenchPeaks <- function(files,
                       ##################################
                       #prepare table with smoothed an spike depleted EICs
                       ##################################
-                      EIC.dt <- mzRAPP:::get_EIC_table(rt = unname(ChromData[[i]]@rtime),
+                      EIC.dt <- lazypeaks:::get_EIC_table(rt = unname(ChromData[[i]]@rtime),
                                               int = unname(ChromData[[i]]@intensity),
                                               Min.PpP = Min.PointsperPeak)
 
@@ -361,79 +362,15 @@ findBenchPeaks <- function(files,
                             ))), by = .(idx)], on = .(idx)]
 
 
-                            #l.peaks$StartTime <- apply(l.peaks[, c("rt", "StartTime", "EndTime")], 1, function(peak_row){
-                            #  if(is.na(peak_row[1]) | is.na(peak_row[2] | is.na(peak_row[3]))) {return(peak_row[2])} else if(
-                            #    (peak_row[1] - peak_row[2])/(peak_row[3] - peak_row[1]) > 1.5/1) {return(2*peak_row[1] - peak_row[3])
-                            #    } else {return(peak_row[2])}
-                            #    })
-
-                            #l.peaks$EndTime <- apply(l.peaks[, c("rt", "StartTime", "EndTime")], 1, function(peak_row){
-                            #  if(is.na(peak_row[1]) | is.na(peak_row[2] | is.na(peak_row[3]))) {return(peak_row[3])} else if(
-                            #  (peak_row[3] - peak_row[1])/(peak_row[1] - peak_row[2]) > 1.5/1) {return(2*peak_row[1] - peak_row[2])} else {return(peak_row[3])}
-                            #})
-
-
 
                             ##################################
                             #extract different variables from detected peaks and add them to the table
                             ##################################
-                            suppressWarnings(
                             l.peaks <- l.peaks[l.peaks[, .(
                               PpP = sum(EIC.dt[!is.na(int_wo_spikes) &
                                                  rt >= StartTime &
                                                  rt <= EndTime]$int > 0),
 
-
-                              mz_accurate = {
-                                suppressWarnings(
-                                raw_data_lim <- raw_data %>%
-                                filterRt(rt = c(StartTime, EndTime)) %>%
-                                filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                weighted.mean(unlist(mz(raw_data_lim)), unlist(intensity(raw_data_lim)))
-                              },
-
-                              mz_accuracy_abs = {
-                                suppressWarnings(
-                                  raw_data_lim <- raw_data %>%
-                                    filterRt(rt = c(StartTime, EndTime)) %>%
-                                    filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                abs(weighted.mean(unlist(mz(raw_data_lim)), unlist(intensity(raw_data_lim))) - CompCol_xic[i]$mz)
-                              },
-
-                              mz_accuracy_ppm = {
-                                suppressWarnings(
-                                  raw_data_lim <- raw_data %>%
-                                    filterRt(rt = c(StartTime, EndTime)) %>%
-                                    filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                1e6*abs(weighted.mean(unlist(mz(raw_data_lim)), unlist(intensity(raw_data_lim))) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz
-
-                              },
-
-                              mz_span_abs = {
-                                suppressWarnings(
-                                  raw_data_lim <- raw_data %>%
-                                    filterRt(rt = c(StartTime, EndTime)) %>%
-                                    filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                max(unlist(mz(raw_data_lim))) - min(unlist(mz(raw_data_lim)))
-                              },
-
-                              mz_span_ppm = {
-                                suppressWarnings(
-                                  raw_data_lim <- raw_data %>%
-                                    filterRt(rt = c(StartTime, EndTime)) %>%
-                                    filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                1e6*(max(unlist(mz(raw_data_lim))) - min(unlist(mz(raw_data_lim)))) / mean(unlist(mz(raw_data_lim)))
-                              },
 
                               FW25M = as.double(
                                 GetFWXM(
@@ -531,7 +468,6 @@ findBenchPeaks <- function(files,
 
 
                             ), by = .(idx)], on = .(idx)]
-                            )
                           } else {
                             l.peaks <- NULL
                           }

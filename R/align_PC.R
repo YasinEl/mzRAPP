@@ -75,8 +75,8 @@ align_PC <- function(PC,
 
             if(ol > 50 & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt) ){
 
-              #ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
-              ol_matrix[ii, n] <- if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
+              ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
+              #ol_matrix[ii, n] <- if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
             }
 
           }
