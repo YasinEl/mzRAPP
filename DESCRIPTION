@@ -28,6 +28,7 @@ Imports:
     stats,
     parallel,
     doBy,
+    shinycssloaders,
     BiocParallel,
     doParallel,
     MSnbase,
