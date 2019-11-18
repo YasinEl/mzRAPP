@@ -3,7 +3,6 @@
 #' @param DT
 #'
 #' @return
-#' @export
 #'
 #' @examples
 get_main_UT_groups <- function(DT){
@@ -53,7 +52,6 @@ get_main_UT_groups <- function(DT){
 #' @param method
 #'
 #' @return
-#' @export
 #'
 #' @examples
 count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
