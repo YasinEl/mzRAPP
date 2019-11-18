@@ -38,7 +38,7 @@ css <- "
   library(data.table)
   library(DT)
   library(tools)
-  library(tictoc)
+  #library(tictoc)
   library(shinyFiles)
   library(plotly)
   library(dplyr)
