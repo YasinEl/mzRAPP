@@ -10,19 +10,19 @@ getROIsForEICs(files, Target.table, minCentroids = 4,
 \arguments{
 \item{files}{vector containing all mzML file paths}
 
+\item{Target.table}{output of function \code{\link{getMZtable}}}
+
 \item{minCentroids}{minimum number of consecutive scans > 0 for a ROI to be picked up}
 
 \item{AccurateMZtol}{mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{getMZtable}}}
 
-\item{PrecisionMZtol}{mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  \code{\link{xcms:::findmzROI}})}
+\item{PrecisionMZtol}{mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)}
 
-\item{plan}{number of cores to be used in parallel processing}
-
-\item{Target.Table}{output of function \code{\link{getMZtable}}}
+\item{plan}{see \code{\link{plan}}}
 }
 \value{
-data.table object with information on ROIs for each row in Target.table. additional columns from are retained
+data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 }
 \description{
-getROIsForEICs
+Takes a the output of \code{\link{getMZtable}} and adds columns with information on regions of interest (ROI).
 }

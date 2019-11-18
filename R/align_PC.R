@@ -9,6 +9,7 @@
 #'
 #' @return
 #' @export
+#' @import foreach
 #'
 #'
 #'
@@ -45,7 +46,7 @@ align_PC <- function(PC,
   future::plan(plan)
 
 
-  Bureau <- foreach(mai.c = seq(nrow(checkl)), .packages = c("lazypeaks"), .inorder = FALSE) %dopar%{
+  Bureau <- foreach(mai.c = seq(nrow(checkl)), .packages = c("mzRAPP"), .inorder = FALSE) %dopar%{
 
     df <- na.omit(PC[molecule == checkl[mai.c]$molecule & adduct == checkl[mai.c]$adduct & isoabb == checkl[mai.c]$isoabb])
 
@@ -75,8 +76,8 @@ align_PC <- function(PC,
 
             if(ol > 50 & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt) ){
 
-              ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
-              #ol_matrix[ii, n] <- if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
+              #ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
+              ol_matrix[ii, n] <- if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
             }
 
           }
@@ -153,8 +154,8 @@ align_PC <- function(PC,
     tmp <- tmp[rt.diff == MINrt.diff]
     outputT <- outputT[tmp, on = .(molecule, aligned.grp), nomatch = NULL, allow.cartesian = TRUE][, !c("MINrt.diff", "rt.diff")]
   } else if(pick_best == "highest_mean_area"){
-    tmp <- outputT[isoabb == 100, .(mean_area = abs(mean(peaks.rt) - mean(user.rt))), by = .(molecule, aligned.grp) ]
-    tmp <- tmp[, .(aligned.grp = aligned.grp, mean_area = mean_area, Max_mean_area = min(mean_area)), by = .(molecule) ]
+    tmp <- outputT[isoabb == 100, .(mean_area = mean(peaks.area)), by = .(molecule, aligned.grp) ]
+    tmp <- tmp[, .(aligned.grp = aligned.grp, mean_area = mean_area, Max_mean_area = max(mean_area)), by = .(molecule) ]
     tmp <- tmp[mean_area == Max_mean_area]
     outputT <- outputT[tmp, on = .(molecule, aligned.grp), nomatch = NULL, allow.cartesian = TRUE]
   }

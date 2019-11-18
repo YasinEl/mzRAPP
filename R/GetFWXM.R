@@ -6,11 +6,11 @@
 #' @param Int_vect vector with intensities
 #' @param baseL height of baseline
 #' @param X peak height at which width should be measured (e.g. 0.5 means width at halfe maximum)
-#' @param return_diff TRUE/FALSE; should the output be a difference of end point and start point, or both points
+#' @param return_diff TRUE/FALSE; should the output be a difference of end point and start point, or both points as a vector
 #'
 #' @return Width of the peak (numeric)
 #'
-#'@export
+#' @export
 #' @importFrom retistruct line.line.intersection
 #'
 

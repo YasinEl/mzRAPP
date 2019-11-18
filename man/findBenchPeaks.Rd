@@ -11,8 +11,33 @@ findBenchPeaks(files, Grps, CompCol_all, Min.PointsperPeak = 10,
   return_unsuc_searches = FALSE)
 }
 \arguments{
-\item{Min.Res}{}
+\item{files}{vector with file paths}
+
+\item{Grps}{data frame with two columns: one for filenames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).}
+
+\item{CompCol_all}{output from function \code{\link{getROIsForEICs}}}
+
+\item{Min.PointsperPeak}{minimum number of points per peak for a peak to be considered}
+
+\item{peak.spotting.factor}{relative height to the heighest point of the EIC above which points should be considered. e.g. 0.001 corresponds to 0.1\% of the maximum.}
+
+\item{Integration_baseL_factor}{height}
+
+\item{Min.Res}{At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as seperate peaks}
+
+\item{plan}{see \code{\link{plan}}}
+
+\item{Min.cor.w.main_adduct}{Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be considered}
+
+\item{Min.cor.w.M0}{Minimum pearson correlation coefficient between higher isotopologues and lower isotopologues for lower isotopologues to be considered}
+
+\item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output}
+
+\item{return_unsuc_searches}{Should unsuccsessfull searches be returned (TRUE/FALSE)}
+}
+\value{
+data table with peak variables extracted from found peaks.
 }
 \description{
-findBenchPeaks
+Takes a the output of \code{\link{getROIsForEICs}} and detects and filters peak candidates.
 }

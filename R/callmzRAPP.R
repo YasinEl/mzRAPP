@@ -3,8 +3,6 @@
 #' @return
 #' @export
 #'
-#' @import enviPat
-#'
 #' @examples
 callmzRAPP <- function(){
 
@@ -39,7 +37,6 @@ css <- "
   library(V8)
   library(data.table)
   library(DT)
-  #library(lazypeaks)
   library(tools)
   library(tictoc)
   library(shinyFiles)
@@ -567,7 +564,7 @@ css <- "
                      'Predicted height' = 'ExpectedHeight',
                      'Error_predicted height [%]' = 'ErrorRel_H',
                      'Error_predicted height (abs)' = 'ErrorAbs_H'
-                   )
+                     )
                  )
           ),
           column(3,
@@ -601,7 +598,7 @@ css <- "
                      'Predicted height' = 'ExpectedHeight',
                      'Error_predicted height [%]' = 'ErrorRel_H',
                      'Error_predicted height (abs)' = 'ErrorAbs_H'
-                   ),
+                     ),
                    selected = 'peak_height_b'
                  )
           ),
@@ -637,7 +634,7 @@ css <- "
                 'Predicted height' = 'ExpectedHeight',
                 'Error_predicted height [%]' = 'ErrorRel_H',
                 'Error_predicted height (abs)' = 'ErrorAbs_H'
-              )
+                )
             )
           )
         ),
@@ -723,9 +720,6 @@ css <- "
     )
 
   ))
-
-
-
 
   choice_vector_bench <-
   c(
@@ -888,7 +882,7 @@ css <- "
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
-
+ttrtt <<- rois
                      PCbp <- findBenchPeaks(
                        files = files,
                        Grps = grps,
@@ -896,14 +890,14 @@ css <- "
                        CompCol = rois,
                        Min.PointsperPeak = input$min_PpP_input
                      )
-
-
+tt11tt <<- PCbp
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 
                      print('Start peak alignment')
                      PCal <- align_PC(PCbp[Iso_count > 1],
-                                      add = "main_adduct")
+                                      add = "main_adduct",
+                                      pick_best = "highest_mean_area")
 
                      #Entfernt damit es auch lokal geht
 
@@ -1497,20 +1491,18 @@ css <- "
 
       x = input$bench_plotxy_input_x
       y = input$bench_plotxy_input_y
-      col = input$bench_plotxy_input_color
+      colb = input$bench_plotxy_input_color
 
       suppressWarnings(
               p <- ggplot() +
                 geom_point(data = benchmark[!is.na(get(x)) & !is.na(get(y))], aes(x = get(x),
                                                                                   y = get(y),
-                                                                                  color = get(col),
-                                                                                  molecule = molecule,
+                                                                                  color = get(colb),
                                                                                   adduct = adduct,
                                                                                   isoabb = isoabb,
                                                                                   sample_name = FileName)) +
-                labs(x = names(choice_vector_bench)[choice_vector_bench == x],
-                     y = names(choice_vector_bench)[choice_vector_bench == y]) +
-                labs(color=names(choice_vector_bench)[choice_vector_bench == col]) +
+                labs(x = x,
+                     y = y) +
                 ggtitle("Overview - Peaks")
       )
         output$bench_plotxy <- renderPlotly(plotly::ggplotly(p,
@@ -1535,13 +1527,13 @@ suppressWarnings(
           p <- ggplot() +
           geom_histogram(data = benchmark[!is.na(get(var))], aes(get(var)), bins = 30) +
           ggtitle("Overview - Histogram") +
-          xlab(names(choice_vector_bench)[choice_vector_bench == var])
+          xlab(var)
 
         } else{
           p <- ggplot() +
           geom_bar(data = benchmark[!is.na(get(var))], aes(get(var))) +
           ggtitle("Overview - Histogram") +
-          xlab(names(choice_vector_bench)[choice_vector_bench == var])
+          xlab(var)
 
         }
 )

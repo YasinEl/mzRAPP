@@ -1,5 +1,7 @@
 #' cutout_peaks
 #'
+#' @description detects peaks
+#'
 #' @param int
 #' @param rt
 #' @param Min.PpP

@@ -38,11 +38,11 @@ get_EIC_table <- function(rt, int, Min.PpP) {
       p =
         3,
       n = max(5, ifelse(
-        DescTools::IsOdd(round(0.05 * nrow(EIC.dt[int > 0]))) == TRUE,
+        DescTools::IsOdd(round(0.05 * nrow(EIC.dt[int > 0.1 * max(int)]))) == TRUE,
         round(0.05 * nrow(EIC.dt[int >
-                                   0])),
+                                   0.1 * max(int)])),
         round(0.05 * nrow(EIC.dt[int >
-                                   0])) + 1
+                                   0.1 * max(int)])) + 1
       ))
     ),
     function(ele) {if (ele < 0) ele = 0 else ele = ele})]

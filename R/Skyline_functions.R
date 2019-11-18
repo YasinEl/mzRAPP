@@ -1,16 +1,18 @@
 #' SkylineTransitionList
 #'
-#' @param BM
+#' @description Takes a the output of \code{\link{align_PC}} and generates a Skyline Transition list which can then be imported to Skyline via
+#' Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 #'
-#' @return
+#' @param BM output of \code{\link{align_PC}}
+#'
+#' @return Skyline Transtion List
 #' @export
 #'
-#' @examples
 #'
 SkylineTransitionList <-
   function(BM){
 
-    MassPrec <- max(BM$peaks.mz_span_ppm)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
+    MassPrec <- round(max(BM$peaks.mz_span_ppm) / 2, 1)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
 
     BM <- BM[, c("molecule", "adduct", "isoabb", "mz_acc", "charge")]
     BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
@@ -37,13 +39,14 @@ SkylineTransitionList <-
 
 
 #' SkylinePeakBoundaries
+#' @description Takes a the output of \code{\link{align_PC}} and generates a Peak boundaries which can then be imported to Skyline via
+#' Skyline -> File -> Import -> Peak Boundaries...
 #'
-#' @param BM
+#' @param BM output of \code{\link{align_PC}}
 #'
-#' @return
+#' @return Skyline peak boundaries
 #' @export
 #'
-#' @examples
 #'
 SkylinePeakBoundaries <-
   function(BM){

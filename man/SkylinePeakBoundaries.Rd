@@ -7,11 +7,12 @@
 SkylinePeakBoundaries(BM)
 }
 \arguments{
-\item{BM}{}
+\item{BM}{output of \code{\link{align_PC}}}
+}
+\value{
+Skyline peak boundaries
 }
 \description{
-SkylinePeakBoundaries
-}
-\examples{
-
+Takes a the output of \code{\link{align_PC}} and generates a Peak boundaries which can then be imported to Skyline via
+Skyline -> File -> Import -> Peak Boundaries...
 }
