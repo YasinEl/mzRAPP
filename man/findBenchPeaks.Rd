@@ -21,7 +21,7 @@ findBenchPeaks(files, Grps, CompCol_all, Min.PointsperPeak = 10,
 
 \item{peak.spotting.factor}{relative height to the heighest point of the EIC above which points should be considered. e.g. 0.001 corresponds to 0.1\% of the maximum.}
 
-\item{Integration_baseL_factor}{height}
+\item{Integration_baseL_factor}{h}
 
 \item{Min.Res}{At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as seperate peaks}
 
