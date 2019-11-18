@@ -43,7 +43,7 @@ cutout_peaks <-
     ##################################
     #pickup potential peaks by counting consectuive points above the base line
     ##################################
-    pot.peak.ranges <- lazypeaks::get_pot_peak_ranges2(int,
+    pot.peak.ranges <- mzRAPP::get_pot_peak_ranges2(int,
                                                       Min.PpP = Min.PpP,
                                                       peak.spotting.factor = peak.spotting.factor.)
     if (is.null(pot.peak.ranges)) {
