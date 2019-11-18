@@ -150,7 +150,6 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
     return(sum(unlist(error_list)))
 
   }
-  return(NULL)
 }
 
 
