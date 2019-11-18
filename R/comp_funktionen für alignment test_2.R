@@ -5,7 +5,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 get_main_UT_groups <- function(DT){
 
   DT[] <- lapply(DT, function(x) as.character(x))
@@ -55,10 +54,9 @@ get_main_UT_groups <- function(DT){
 #' @param main_UTgroups
 #' @param method
 #'
-#' @return
+#' @return integer number of errors in alignment
 #' @export
 #'
-#' @examples
 count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   DT[] <- lapply(DT, function(x) as.character(x))
@@ -152,6 +150,7 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
     return(sum(unlist(error_list)))
 
   }
+  return(NULL)
 }
 
 
