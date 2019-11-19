@@ -1504,7 +1504,7 @@ css <- "
                                                                                   sample_name = FileName)) +
                 labs(x = names(choice_vector_bench)[choice_vector_bench == x],
                      y = names(choice_vector_bench)[choice_vector_bench == y]) +
-                labs(color=names(choice_vector_bench)[choice_vector_bench == col]) +
+                labs(color=names(choice_vector_bench)[choice_vector_bench == colb]) +
                 ggtitle("Overview - Peaks")
       )
         output$bench_plotxy <- renderPlotly(plotly::ggplotly(p,
