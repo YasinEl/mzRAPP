@@ -609,6 +609,8 @@ findBenchPeaks <- function(files,
                         flag_extremes = TRUE
   )
 
+  Result <- Result[isoabb_ol == FALSE]
+
   Result <-
     Result[Result[!is.na(peaks.idx) &
                     (isoabb == 100 |

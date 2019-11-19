@@ -27,7 +27,7 @@ SkylineTransitionList <-
 
     fwrite(BM, file = "Skyline_Transition_List.csv", row.names = FALSE)
 
-    print(paste0("Transition List has been saved as ", getwd(), "/Skyline_Transition_List.csv"))
+    print(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
 
 
     print(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' and set 'Precursor mass analyzer' to 'Centroided' and ",
@@ -80,7 +80,7 @@ SkylinePeakBoundaries <-
 
     fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
 
-    print(paste0("Peak Boundaries have been saved as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
+    print(paste0("Peak Boundaries have been saved to your working directory as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
 
     print("After Transition List and mzML files have been loaded into Skyline you can apply these Peak Boundaries via 'Skyline -> File -> Import -> Peak Boundaries...'.")
 

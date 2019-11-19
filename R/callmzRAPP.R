@@ -1498,11 +1498,13 @@ css <- "
                 geom_point(data = benchmark[!is.na(get(x)) & !is.na(get(y))], aes(x = get(x),
                                                                                   y = get(y),
                                                                                   color = get(colb),
+                                                                                  molecule = molecule,
                                                                                   adduct = adduct,
                                                                                   isoabb = isoabb,
                                                                                   sample_name = FileName)) +
-                labs(x = x,
-                     y = y) +
+                labs(x = names(choice_vector_bench)[choice_vector_bench == x],
+                     y = names(choice_vector_bench)[choice_vector_bench == y]) +
+                labs(color=names(choice_vector_bench)[choice_vector_bench == col]) +
                 ggtitle("Overview - Peaks")
       )
         output$bench_plotxy <- renderPlotly(plotly::ggplotly(p,
@@ -1527,13 +1529,13 @@ suppressWarnings(
           p <- ggplot() +
           geom_histogram(data = benchmark[!is.na(get(var))], aes(get(var)), bins = 30) +
           ggtitle("Overview - Histogram") +
-          xlab(var)
+          xlab(names(choice_vector_bench)[choice_vector_bench == var])
 
         } else{
           p <- ggplot() +
           geom_bar(data = benchmark[!is.na(get(var))], aes(get(var))) +
           ggtitle("Overview - Histogram") +
-          xlab(var)
+          xlab(names(choice_vector_bench)[choice_vector_bench == var])
 
         }
 )
