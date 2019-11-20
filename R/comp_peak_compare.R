@@ -288,5 +288,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Return the found and 3 notfoundtables in a list
   ##############
   print('Compare Succesfull')
+  ##DEBUG: Count full featurs
+  debug_table <- rbindlist(list(c_table, nf_g_table), fill=TRUE)
+  debug_table <- debug_table[, .N, by=c('feature_id_g')]
+  debug_table <- debug_table[N == 40]
+  print(nrow(debug_table))
+
   return(list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table))
 }

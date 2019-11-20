@@ -829,7 +829,11 @@ css <- "
       shinyjs::js$enableTab('results_tab_peaks')
       shinyjs::enable('start_compare')
 
-      #comparison_ev <<- comparison_ug_g
+
+      ###For Debug
+      comparison_ev <<- comparison_ug_g
+      ###
+
       return(comparison_ug_g)
     })
 

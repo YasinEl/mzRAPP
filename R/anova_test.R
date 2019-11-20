@@ -23,7 +23,7 @@ vulcano_plot <- function (comparison, no_of_samples){
     if (length(unique(temp_data$grp_b))>=2){
       temp_data$grp_b <- as.factor(temp_data$grp_b)
       aov_temp <- aov(peak_area_g ~ grp_b, data=temp_data)
-      tukey_result <<- TukeyHSD(aov_temp)
+      tukey_result <- TukeyHSD(aov_temp)
       tukey_dt <- data.table(tukey_result$grp_b, keep.rownames = TRUE)
       tukey_dt[, anova_group := group]
       setnames(tukey_dt, c('rn', 'p adj'), c('comparison', 'p_adj'))
@@ -78,8 +78,8 @@ vulcano_plot <- function (comparison, no_of_samples){
 }
 
 
-plot_data <- vulcano_plot(comparison_ev, 5)
-print(plot_data)
-ggplotly(ggplot(plot_data, aes(x=plot_fold, y=plot_p, group=anova_group, comparison=comparison)) +
-                labs(x='log2(fold change)', y='-log10(p value)')+
-                 geom_point())
+#plot_data <- vulcano_plot(comparison_ev, 5)
+#print(plot_data)
+#ggplotly(ggplot(plot_data, aes(x=plot_fold, y=plot_p, group=anova_group, comparison=comparison)) +
+#                labs(x='log2(fold change)', y='-log10(p value)')+
+#                 geom_point())
