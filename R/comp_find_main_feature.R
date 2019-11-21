@@ -7,7 +7,8 @@ find_main_feature_1 <- function(dt, setting, nf_g_table, nf_b_table){
     return (dt)
   } else if (setting == 'match_iso_pattern'){
     #fwrite(dt[feature_id_g == 3152], 'debug.csv')
-    dt[,match_features_by_iso(feature_id_g, peak_area_g, isoabb_b, sample_id_g, nf_g_table, feature_id_b), by=c('molecule_b', 'adduct_b')]
+    dt <- dt[,match_features_by_iso(feature_id_g, peak_area_g, isoabb_b, sample_id_g, nf_g_table, feature_id_b), by=c('molecule_b', 'adduct_b')]
+    return(dt)
   }
 }
 
@@ -32,20 +33,22 @@ match_features_by_iso <- function(feature_id_g, peak_area_g, isoabb_b, sample_id
   all_iso_groups <- sort(unique(dt$isoabb_b), decreasing = TRUE)
   #generate list of maximum possible peaks found based on benchmark
   max_possible_found_peaks <- rbindlist(list(dt, nf_b_table), fill=TRUE)[, .N, by=feature_id_b]
-  if(nrow(max_possible_found_peaks[N == 40])){
-    print(max_possible_found_peaks)
-    print('here')
-    stop()
-  }
   #Find best Iso 100 feature by comparing it to the second iso group
   if(length(all_iso_groups >= 2)){
     all_iso_groups <- sort(unique(dt$isoabb_b), decreasing = TRUE)
     peaks_1 <- dt[isoabb_b == all_iso_groups[1]]
+    benchmark_feature_1 <- unique(peaks_1[,feature_id_b])
     peaks_nf_g_1 <- nf_g_table[feature_id_g %in% na.omit(unique(peaks_1$feature_id_g)), c('feature_id_g', 'peak_area_g', 'sample_id_g'), with=T]
     peaks_nf_g_1 <- peaks_nf_g_1[,':='('isoabb_b'=all_iso_groups[1],
                              'nf_tag' = TRUE)]
     peaks_1 <- rbindlist(list(peaks_1, peaks_nf_g_1), fill=TRUE)
+
+
+
     peaks_2 <- dt[isoabb_b == all_iso_groups[2]]
+
+    benchmark_feature_2 <- unique(peaks_2[,feature_id_b])
+
     peaks_nf_g_2 <- nf_g_table[feature_id_g %in% na.omit(unique(peaks_2$feature_id_g)), c('feature_id_g', 'peak_area_g', 'sample_id_g'), with=T]
     peaks_nf_g_2 <- peaks_nf_g_2[,':='('isoabb_b'=all_iso_groups[2],
                                        'nf_tag' = TRUE)]
@@ -58,16 +61,25 @@ match_features_by_iso <- function(feature_id_g, peak_area_g, isoabb_b, sample_id
 
     #Calc Expected Ratio, Start and End
     exp_ratio <- all_iso_groups[2]/all_iso_groups[1]
+
+
+    #ADJUST RATIO, make dynamic?
     exp_ratio_start <- exp_ratio-(exp_ratio*0.5)
     exp_ratio_end <- exp_ratio+(exp_ratio*0.5)
 
     #Calcultae the ratio of the areas to expected
     compare_dt[, area_ratio := (peak_area_g.y/peak_area_g.x)]
-    #Calc median area_ratio_diff per feature in 100 and occurances of feature
-    feature_median <- compare_dt[, list(median(area_ratio), .N, nrow(.SD[is.na(nf_tag.x)])), by=c('feature_id_g.x')]
-    setnames(feature_median, c('V1', 'N', 'V3'), c('area_ratio_median', 'count', 'count_found'))
+
+
+
+    #####
+    #Calc median area_ratio_diff per feature in 100 and occurances of feature) (do i need found_ratio? count should be enough! - no need ratio for later loop check)
+    feature_median <- compare_dt[, list(median(area_ratio), .N, length(unique(.SD[is.na(nf_tag.x), sample_id_g])), length(unique(.SD[is.na(nf_tag.x), sample_id_g]))/max_possible_found_peaks[feature_id_b == benchmark_feature_1, N]), by=c('feature_id_g.x')]
+    setnames(feature_median, c('V1', 'N', 'V3', 'V4'), c('area_ratio_median', 'count', 'count_found', 'found_ratio'))
     feature_median <- feature_median[, 'area_ratio_median_diff' := abs(area_ratio_median - exp_ratio)]
     feature_median <- feature_median[order(area_ratio_median_diff, decreasing = FALSE)]
+    ####
+
     # print(compare_dt)
     # print(feature_median)
 
@@ -83,27 +95,52 @@ match_features_by_iso <- function(feature_id_g, peak_area_g, isoabb_b, sample_id
     } else if(nrow(feature_median) >= 1) {
       print(unique(dt[,feature_id_b]))
       View(dt)
+      print(paste0('Benchmark Feature: ',benchmark_feature_1))
+      print(paste0('Benchmark Feature: ',benchmark_feature_2))
+      print(feature_median)
       print(max_possible_found_peaks)
       print(exp_ratio_start)
       print(exp_ratio_end)
 
       print(compare_dt)
-      print(feature_median)
-      print('---')
 
-      i <- 1
-      while (is.na(mait_feature)){
-        area_ratio <- feature_median[i, area_ratio_median]
-        #print(feature_median)
-        #print(area_ratio)
-        #print(exp_ratio_start)
-        #print(exp_ratio_end)
-        if((exp_ratio_start < area_ratio) & (area_ratio < exp_ratio_end)){
-          mait_feature <- feature_median[area_ratio_median == area_ratio, feature_id_g.x]
-          #print(mait_feature)
-        }
-        i <- i+1
-      }
+
+
+
+      #####Try New
+      ##Filter out peaks not in boundary
+      filterd_feature_median <- feature_median[(area_ratio_median > exp_ratio_start) & (area_ratio_median < exp_ratio_end)]
+      print(feature_median)
+      print(filterd_feature_median)
+      print('---')
+      filterd_feature_median <- filterd_feature_median[order(found_ratio, decreasing =TRUE)]
+      print(filterd_feature_median)
+      mait_feature <- filterd_feature_median[1, feature_id_g.x]
+      print(paste0('mait f: ',mait_feature))
+      mait_feature <- as.integer(9000000)
+
+
+      # #If feature with smallest median_diff hast match ratio of 1 pick it
+      # if(feature_median[1, found_ratio] == 1){
+      #   mait_feature <- feature_median[1, feature_id_g.x]
+      # }
+      #
+      # #If not complete group feature: Go through sotrted feature median list, check if element still in boundary
+      #
+      # i <- 1
+      #
+      # while (is.na(mait_feature)){
+      #   area_ratio <- feature_median[i, area_ratio_median]
+      #   print(feature_median)
+      #   print(area_ratio)
+      #   print(exp_ratio_start)
+      #   print(exp_ratio_end)
+      #   if((exp_ratio_start < area_ratio) & (area_ratio < exp_ratio_end)){
+      #     mait_feature <- feature_median[area_ratio_median == area_ratio, feature_id_g.x]
+      #     #print(mait_feature)
+      #   }
+      #   i <- i+1
+      # }
     }
 
 
