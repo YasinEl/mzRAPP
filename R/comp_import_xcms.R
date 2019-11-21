@@ -9,7 +9,9 @@
 #' @examples
 import_ungrouped_xcms <- function(file_path, options_table){
 
-  print('start xcms import')
+  print('start xcms ug import')
+
+  print(file_path)
 
   #Check if filetype is csv
   print(file_ext(file_path))
@@ -41,7 +43,7 @@ import_ungrouped_xcms <- function(file_path, options_table){
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(ug_table, by=c('peak_area', 'mz', 'rt')))){
     ug_table <- ug_table[!duplicated(ug_table, by='peak_area')]
-    warning('Duplicate peaks present in raw benchmark file')
+    warning('Duplicate peaks present in raw ut file')
   }
 
   #Filter out samples not present in ug_samples
@@ -71,6 +73,8 @@ import_ungrouped_xcms <- function(file_path, options_table){
 #'
 #' @examples
 import_grouped_xcms <- function (file_path, options_table) {
+
+  print('start xcms g import')
 
   #Check if filetype is csv
   if(file_ext(file_path) != 'csv'){

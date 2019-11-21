@@ -33,7 +33,7 @@ findBenchPeaks <- function(files,
 {
   CompCol <-
     na.omit(CompCol_all,
-            cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
+            cols = c("eic_mzmin", "eic_mzmax", "StartTime.XIC", "EndTime.XIC"))
 
 
 

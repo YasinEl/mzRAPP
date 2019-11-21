@@ -3,6 +3,8 @@
 #' @return
 #' @export
 #'
+#' @import enviPat
+#'
 #' @examples
 callmzRAPP <- function(){
 
@@ -42,6 +44,7 @@ css <- "
   library(shinyFiles)
   library(plotly)
   library(dplyr)
+  library(enviPat)
 
   options(shiny.reactlog = TRUE)
   options(shiny.trace = F)
@@ -429,11 +432,6 @@ css <- "
           )
 
         ),
-        #fluidRow(
-        #  column(1,
-        #         br()
-        #  )
-        #),
         fluidRow(
           column(6),
           #column(6, numericInput('index_number', 'Index Number', 1, step = 1)),
@@ -472,7 +470,7 @@ css <- "
           column(
             12,
             style = "display: inline-flex;",
-            fileInput('ug_upload', 'Upload UT peaks (unaligned)', buttonLabel = 'Browse'),
+            fileInput('ug_upload', 'Upload UT peaks (unaligned)', buttonLabel = 'Browse', multiple = TRUE),
             div(style = "width: 20px;"),
             fileInput('g_upload', 'Upload UT features (aligned peaks)', buttonLabel = 'Browse')
           )
@@ -905,7 +903,6 @@ css <- "
                                       add = "main_adduct",
                                       pick_best = "highest_mean_area")
 
-                     #Entfernt damit es auch lokal geht
 
                      fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
 
@@ -950,33 +947,20 @@ css <- "
     }, ignoreInit = FALSE)
 
 
-    ##observeEvent(input$algorithm_input, {
-     # if (input$algorithm_input == '---'){
-    #    shinyjs::disable('ug_upload')
-    #    shinyjs::disable('g_upload')
-    #    shinyjs::disable('options_upload')
-    #    shinyjs::disable('benchmark_upload')
-    ##    shinyjs::disable('start_compare')
-      #  shinyjs::js$disableTab('benchmark_results')
-#
- #     } else {
-#        shinyjs::enable('ug_upload')
-  #      shinyjs::enable('g_upload')
-  #      shinyjs::enable('options_upload')
-  #      shinyjs::enable('benchmark_upload')
-  #      shinyjs::enable('start_compare')
-  #      shinyjs::js$enableTab('benchmark_results')
-  #    }
-  #  })
-
-
-
     ##################
     ####COMPARISON####
     ##################
+
     comparison <- eventReactive(input$start_compare, {
 
+      #Disable Elements
       shinyjs::disable('start_compare')
+      shinyjs::js$disableTab('results_tab_features')
+      shinyjs::js$disableTab('results_tab_peaks')
+
+      #To-Do: Clear graphing Areas!!!!!
+
+
 
       ######
       #Import csv files
@@ -984,7 +968,7 @@ css <- "
       options_table <- import_options(input$options_upload$datapath)
       b_table <- import_benchmark(input$benchmark_upload$datapath, options_table)
       #print(input$ug_upload$datapath)
-      import_results <- pick_algorithm(input$ug_upload$datapath, input$g_upload$datapath, options_table, input$algorithm_input)
+      import_results <- pick_algorithm(input$ug_upload, input$g_upload, options_table, input$algorithm_input)
       ug_table <- import_results$ug_table
       g_table <- import_results$g_table
 
@@ -996,6 +980,12 @@ css <- "
       shinyjs::js$enableTab('results_tab_features')
       shinyjs::js$enableTab('results_tab_peaks')
       shinyjs::enable('start_compare')
+
+
+      ###For Debug
+      comparison_ev <<- comparison_ug_g
+      ###
+
       return(comparison_ug_g)
     })
 
@@ -1071,6 +1061,8 @@ css <- "
 
       hm_dt <- rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
+      fwrite(hm_dt[molecule_b == 'Uridine 5?-diphosphate'], 'debug_r_s.csv')
+
       hm_dt[, missing_peaks := find_r_s_error(
         comp_id_b,
         molecule_b,
@@ -1083,41 +1075,13 @@ css <- "
       ), by = .(molecule_b, adduct_b, isoabb_b)]
 
 
+
       hm_dt <- (hm_dt[, main_feature_check := ifelse((length(unique(na.omit(feature_id_g))) == 1) &
                                                            (isoabb_b == 100), 'TRUE', 'TRUE'),
                           by = .(molecule_b, adduct_b, isoabb_b)])
       hm_dt <- hm_dt[, overgroup := paste0(molecule_b, adduct_b)]
       hm_dt <- hm_dt[, if (any(missing_peaks != 'F')) .SD, by = .(molecule_b, adduct_b, isoabb_b)]
       hm_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
-
-      #r_s_Test <-
-      #  (r_s_dt[, main_feature_check := ifelse((length(unique(
-      #    na.omit(feature_id_g)
-      #  )) == 1) &
-      #    (isoabb_b == 100), 'TRUE', 'TRUE'), by = .(molecule_b, adduct_b, isoabb_b)])
-
-      #r_s_Test <-
-      #  r_s_dt[, overgroup := paste0(molecule_b, adduct_b)]
-      #r_s_Test <-
-      #  r_s_Test[, main_feature_check := ifelse(overgroup %in% unique(r_s_Test[main_feature_check ==
-      #                                                                           TRUE]$overgroup),
-      #                                          'TRUE',
-      #                                          'FALSE'), by = .(molecule_b, adduct_b)]
-
-      #print(unique(r_s_dt$molecule_b))
-
-
-      #r_s_Test <-
-      #  r_s_Test[main_feature_check == 'TRUE']
-
-
-      #r_s_Test <-
-       # r_s_Test[, if (any(missing_peaks != 'F'))
-        #  .SD, by = .(molecule_b, adduct_b, isoabb_b)]
-
-
-
-      #r_s_Test[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
 
 
       plot_r_s <- ggplot(
@@ -1189,8 +1153,6 @@ css <- "
       cov_dt <-
         rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
-
-#testDT <<- comparison
 
       #nf_dt <- rbindlist(list(comparison$nf_g))
 
@@ -1392,65 +1354,71 @@ css <- "
       updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
     })
 
-    observe({
-      comparison <- comparison()
-      matched_dt <-
-        rbindlist(list(comparison$c_table), fill = TRUE)
-
-
-      if(length(unique(matched_dt$peak_area_g)) != 1){
-
-      matched_dt <- matched_dt[, c("molecule_b", "adduct_b", "isoabb_b", "peak_area_g", "feature_id_g", "sample_name_b", "sample_id_b")]
-
-
-      if(!all(is.na(matched_dt$feature_id_g))){
-
-        hm_split_plot_dt <- matched_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[ut_feature_nr == 1]
-
-        hm_split_plot_dt <- matched_dt[hm_split_plot_dt, on = .(molecule_b, adduct_b)]
-
-        hm_split_plot_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[, reindexedFeatures_g := reIndexFeatures(feature_id_g), by = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[hm_split_plot_dt[, .(mainFeature_g = names(sort(table(feature_id_g), decreasing = TRUE))[1]), by = .(plot_group)], on = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[, split_flag := (length(unique(reindexedFeatures_g)) > 1), by = .(plot_group)]
-
-        hm_split_plot_dt <- hm_split_plot_dt[split_flag == TRUE]
-
-        hm_split = ggplot(
-          hm_split_plot_dt,
-          aes(
-            x = as.character(plot_group),
-            y = as.character(sample_id_b),
-            fill = reindexedFeatures_g,
-            molecule = molecule_b,
-            isoabb = isoabb_b,
-            adduct = adduct_b,
-            FileName = sample_name_b
-          )
-        ) +
-          geom_tile() +
-          #scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
-          ggtitle("Split features") +
-          labs(x = "benchmark features", y = "sample IDs", fill = "b_peaks") +
-          theme(legend.title = element_blank())
-
-
-     output$graph_hm_split <- renderPlotly(plotly::ggplotly(
-       hm_split,
-       tooltip = c("molecule", "adduct", "isoabb", "FileName"),
-       dynamicTicks = TRUE
-      ))
-
-     }
-
-
-      }
-    })
+    ######MS DAIL ERROR
+    # observe({
+    #   comparison <- comparison()
+    #   print(comparison)
+    #   matched_dt <-
+    #     rbindlist(list(comparison$c_table), fill = TRUE)
+    #
+    #   if(length(unique(matched_dt$peak_area_g)) != 1){
+    #
+    #   matched_dt <- matched_dt[, c("molecule_b", "adduct_b", "isoabb_b", "peak_area_g", "feature_id_g", "sample_name_b", "sample_id_b")]
+    #
+    #   print(matched_dt)
+    #   fwrite(matched_dt, 'matched.csv')
+    #
+    #
+    #   if(!all(is.na(matched_dt$feature_id_g))){
+    #
+    #     print('111')
+    #     hm_split_plot_dt <- matched_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
+    #     print('222')
+    #     hm_split_plot_dt <- hm_split_plot_dt[ut_feature_nr == 1]
+    #     print('333')
+    #     hm_split_plot_dt <- matched_dt[hm_split_plot_dt, on = .(molecule_b, adduct_b)]
+    #     print('444')
+    #     hm_split_plot_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
+    #     print('555')
+    #     hm_split_plot_dt <- hm_split_plot_dt[, reindexedFeatures_g := reIndexFeatures(feature_id_g), by = .(plot_group)]
+    #     print('666')
+    #     fwrite(hm_split_plot_dt, 'hm.csv')
+    #     hm_split_plot_dt <- hm_split_plot_dt[hm_split_plot_dt[, .(mainFeature_g = names(sort(table(feature_id_g), decreasing = TRUE))[1]), by = .(plot_group)], on = .(plot_group)]
+    #     print('777')
+    #     hm_split_plot_dt <- hm_split_plot_dt[, split_flag := (length(unique(reindexedFeatures_g)) > 1), by = .(plot_group)]
+    #     print('888')
+    #     hm_split_plot_dt <- hm_split_plot_dt[split_flag == TRUE]
+    #     print('999')
+    #
+    #     hm_split = ggplot(
+    #       hm_split_plot_dt,
+    #       aes(
+    #         x = as.character(plot_group),
+    #         y = as.character(sample_id_b),
+    #         fill = reindexedFeatures_g,
+    #         molecule = molecule_b,
+    #         isoabb = isoabb_b,
+    #         adduct = adduct_b,
+    #         FileName = sample_name_b
+    #       )
+    #     ) +
+    #       geom_tile() +
+    #       #scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
+    #       ggtitle("Split features") +
+    #       labs(x = "benchmark features", y = "sample IDs", fill = "b_peaks") +
+    #       theme(legend.title = element_blank())
+    #
+    #
+    #  output$graph_hm_split <- renderPlotly(plotly::ggplotly(
+    #    hm_split,
+    #    tooltip = c("molecule", "adduct", "isoabb", "FileName"),
+    #    dynamicTicks = TRUE
+    #   ))
+    #
+    #  }
+    #   }
+    # })
+    ######
 
 
     #input buttons to be updated live
