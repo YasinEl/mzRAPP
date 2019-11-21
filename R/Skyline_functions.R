@@ -15,7 +15,7 @@ SkylineTransitionList <-
     MassPrec <- round(max(BM$peaks.mz_span_ppm) / 2, 1)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
 
     BM <- BM[, c("molecule", "adduct", "isoabb", "mz_acc", "charge")]
-    BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Precursor Name" := paste0(adduct, "_", round(isoabb, 2))]
 
     BM <-  unique(BM[, c("Precursor Name", "charge")])[BM[, .(`Molecule List Name` = molecule,
                                                       `Precursor m/z` = mean(mz_acc),
@@ -57,7 +57,7 @@ SkylinePeakBoundaries <-
 
     BM[order(BM$isoabb, decreasing = TRUE),]
 
-    BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Peptide Modified Sequence" := paste0(adduct, "_", round(isoabb, 2))]
 
 
     files <- data.table("FileName" = sort(unique(BM$FileName)),

@@ -409,6 +409,10 @@ css <- "
           #),
           column(
             6,
+            plotlyOutput('graph_area_bench_hm', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+          ),
+          column(
+            6,
             #offset = 7,
             style = 'padding:0px;margin:0px;display: inline-flex;',
             dropdownButton(
@@ -423,6 +427,7 @@ css <- "
             ),
             plotlyOutput('graph_area_bench_4', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
           )
+
         ),
         #fluidRow(
         #  column(1,
@@ -430,6 +435,7 @@ css <- "
         #  )
         #),
         fluidRow(
+          column(6),
           #column(6, numericInput('index_number', 'Index Number', 1, step = 1)),
           tags$style(HTML("#mol+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
           tags$style(HTML("#add+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
@@ -868,7 +874,7 @@ css <- "
                      incProgress(1/15, detail = "detecting ROIs...")
                      print('Start ROI detection')
 
-
+#mt <<- MassTraces
 
                      rois <- getROIsForEICs(
                        files = files,
@@ -920,13 +926,14 @@ css <- "
 
       SkyPeakBo <- SkylinePeakBoundaries(PCal)
 
-      return(PCal)
+      return(list(files = files, targets = targets, PCal = PCal))
     })
 
 
 
     observeEvent({input$mol; input$add; input$ia},{
       benchmark_data <- benchmark_data()
+      benchmark_data <- benchmark_data$PCal
       if(nrow(benchmark_data[molecule == input$mol & adduct == input$add & round(isoabb, 2) == input$ia]) > 0){
 
         p <- suppressWarnings(
@@ -1468,21 +1475,25 @@ css <- "
 
     observe({
       benchmark <- benchmark_data()
+      benchmark <- benchmark$PCal
       updateSelectInput(session, 'mol', choices = as.character(unique(benchmark$molecule)), selected = as.character(unique(benchmark$molecule)[1]))
     })
 
     observeEvent(input$mol,{
       benchmark <- benchmark_data()
+      benchmark <- benchmark$PCal
       updateSelectInput(session, 'add', choices = unique(benchmark[molecule == input$mol]$adduct))
     })
 
     observeEvent(c(input$mol, input$add),{
       benchmark <- benchmark_data()
+      benchmark <- benchmark$PCal
       updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
     })
 
     observe({
       benchmark <- benchmark_data()
+      benchmark <- benchmark$PCal
       #output$graph_area_bench_1 <-
       #  renderPlotly(plot_vs_prediction(PC, y = peaks.area))
       #output$graph_area_bench_2 <-
@@ -1519,6 +1530,7 @@ css <- "
 
     observe({
       benchmark <- benchmark_data()
+      benchmark <- benchmark$PCal
 
 
       var = input$bench_plotHisto
@@ -1550,7 +1562,52 @@ suppressWarnings(
 
     })
 
+observe({
+  benchmark_set <- benchmark_data()
+  benchmark <- benchmark_set$PCal
+  benchmark <- unique(benchmark[!is.na(peaks.PpP) & isoabb == 100, c("molecule", "FileName", "isoabb")], by = c("molecule", "FileName"))
+  benchmark_files <- benchmark_set$files
+  benchmark_targets <- benchmark_set$targets
+  benchmark_targets <- unique(benchmark_targets[, "molecule"])
 
+
+
+  files.dt <- data.table(FileName = sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(benchmark_files)))
+  files.dt[,fileIdx:= seq(nrow(files.dt))]
+  benchmark_targets$fileIdx <- rep(1, nrow(benchmark_targets))
+  benchmark_targets <- benchmark_targets[files.dt, on=.(fileIdx<=fileIdx), allow.cartesian = TRUE]
+
+  plot.dt <- benchmark[benchmark_targets, on = .(molecule, FileName), nomatch = NA]
+
+  plot.dt$Found <- !is.na(plot.dt$isoabb)
+
+
+  plot.dt <- plot.dt[Found == TRUE, .(nr = .N), by = .(molecule, Found)][, !"Found"][plot.dt, on =.(molecule), nomatch = NA]
+  plot.dt[is.na(nr)]$nr <- 0
+
+  plot_hm <- ggplot(
+    plot.dt,
+    aes(
+      x = reorder(as.character(molecule), nr),
+      y = as.character(FileName),
+      fill = as.factor(Found),
+    )
+  ) +
+    geom_tile() +
+    scale_fill_manual(values=c("firebrick", "forestgreen")) +
+    ggtitle("Screened compounds") +
+    labs(x = "molecule", y = "file name", fill = "Found")
+#    theme(legend.title = element_blank())
+#
+  output$graph_area_bench_hm <-
+    renderPlotly(plotly::ggplotly(
+      plot_hm,
+      width = 1000
+      #tooltip = c("molecule", "adduct", "isoabb", "FileName", "mz")
+ ))
+
+
+})
 
 
 

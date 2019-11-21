@@ -32,6 +32,9 @@ cutout_peaks <-
     ##################################
     #limit peak-detection to specific rt-region
     ##################################
+    #if(is.na(l) | is.null(l)) l = 1
+    #if(is.na(r) | is.null(l)) l = length(int)
+
     vl <- length(int)
     int <- int[l:r]
     rt <- rt[l:r]

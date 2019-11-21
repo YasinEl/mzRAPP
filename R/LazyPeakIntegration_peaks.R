@@ -27,7 +27,7 @@ findBenchPeaks <- function(files,
                            Min.Res = 60,
                            plan = "multiprocess",
                            Min.cor.w.main_adduct = 0.8,
-                           Min.cor.w.M0 = 0.85,
+                           Min.cor.w.M0 = 0.8,
                            Min.iso.count = 2,
                            return_unsuc_searches = FALSE)
 {
@@ -96,18 +96,20 @@ findBenchPeaks <- function(files,
                           na.omit(.CompCol_xic[unique(MA.Isos[peaks.PpP > Min.PointsperPeak &
                                                                 !is.na(peaks.PpP), c("molecule", "FileName")]),
                                                on = .(molecule, FileName),
-                                               allow.cartesian = TRUE])
+                                               allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
                       } else .CompCol_xic <- data.table(NULL)
                     }
 
                   } else if (iso.run == "LAisos") {
                     if(nrow(MA.Isos) > 0){
                       if (adduct.run == "main_adduct") {
-                        .CompCol_xic <- CompCol[isoabb < 100 &
+                        .CompCol_xic <- na.omit(CompCol[isoabb < 100 &
                                                   FileName == sub(pattern = "(.*)\\..*$",
                                                                   replacement = "\\1",
                                                                   basename(files[file])) &
-                                                  adduct == main_adduct]
+                                                  adduct == main_adduct], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
+                        #tt <- .CompCol_xic
+                        #return(tt)
                       } else {
                         .CompCol_xic <- CompCol[isoabb < 100 &
                                                   FileName == sub(pattern = "(.*)\\..*$",
@@ -120,7 +122,7 @@ findBenchPeaks <- function(files,
                         na.omit(.CompCol_xic[unique(MA.Isos[peaks.PpP > Min.PointsperPeak &
                                                               !is.na(peaks.PpP), c("molecule", "adduct", "FileName")]),
                                              on = .(molecule, adduct, FileName),
-                                             allow.cartesian = TRUE])
+                                             allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
                     } else .CompCol_xic <- data.table(NULL)
                   }
 
@@ -244,7 +246,13 @@ findBenchPeaks <- function(files,
                               Min.PpP = Min.PointsperPeak,
                               peak.spotting.factor. = peak.spotting.factor,
                               Integration_baseL_factor. = Integration_baseL_factor,
-                              Min.Res. = Min.Res
+                              Min.Res. = Min.Res,
+                              l = if(is.null(CompCol_xic[i]$user.rtmin)){1} else{if(!is.na(as.numeric(CompCol_xic[i]$user.rtmin))){
+                                which.min(abs(CompCol_xic[i]$user.rtmin - EIC.dt[!is.na(as.numeric(int_wo_spikes))]$rt))}else {1}},
+                              r = if(is.null(CompCol_xic[i]$user.rtmax)){length(EIC.dt[!is.na(int_wo_spikes)]$rt)} else{
+                                if(!is.na(CompCol_xic[i]$user.rtmax)){
+                                which.min(abs(CompCol_xic[i]$user.rtmax - EIC.dt[!is.na(int_wo_spikes)]$rt))}else{length(EIC.dt[!is.na(int_wo_spikes)]$rt)}}
+
                             )
 
 
