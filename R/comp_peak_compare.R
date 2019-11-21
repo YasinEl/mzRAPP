@@ -62,7 +62,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   }
 
   #G table check
-  g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_start_g', 'rt_end_g', 'rt_g', 'mz_g',
+  g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_g', 'mz_g',
                   'sample_name_g', 'peak_area_g', 'feature_id_g')
 
 
@@ -109,17 +109,21 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
   b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
 
+
   #Creating temp columns to prevent over-writing by join
   ug_table[, ':=' (sample_id_ug_temp = sample_id_ug,
                    rt_start_ug_temp = rt_start_ug,
                    rt_end_ug_temp = rt_end_ug,
                    mz_ug_temp = mz_ug)]
 
+
   b_table[, ':=' (sample_id_b_temp = sample_id_b,
                   new_rt_start_b_temp = new_rt_start_b,
                   new_rt_end_b_temp = new_rt_end_b,
                   mz_start_b_temp = mz_start_b,
                   mz_end_b_temp = mz_end_b)]
+
+
 
   ##############
   #Conducting non-equi join.
@@ -132,6 +136,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
                                     mz_start_b_temp <= mz_ug_temp,
                                     mz_end_b_temp >= mz_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+
+
 
 
   ##############
@@ -175,16 +182,37 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
   #Creating temp columns to prevent over-writing by join
-  c_table[, peak_area_ug_temp := peak_area_ug]
+  #If statement is solution for msdial
+
+  if ('peak_area_rounded_ug' %in% colnames(c_table)){
+    c_table[, peak_area_ug_temp := peak_area_rounded_ug]
+    split_table[, peak_area_ug_temp := peak_area_rounded_ug]
+  } else {
+    c_table[, peak_area_ug_temp := peak_area_ug]
+    split_table[, peak_area_ug_temp := peak_area_ug]
+  }
   g_table[, peak_area_g_temp := peak_area_g]
-  split_table[, peak_area_ug_temp := peak_area_ug]
+
+
+
+
+
+
 
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
+
+
+
+
+  #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)
+  #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
+
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
+
 
   #Remove _temp Columns
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
@@ -207,51 +235,30 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
 
-
-  #print(nrow(c_table[duplicated(c_table, by = c('comp_id_b', 'comp_id_ug')) | duplicated(c_table, by = c('comp_id_b', 'comp_id_ug'), fromLast = TRUE)]))
-  #fwrite(c_table[duplicated(c_table, by = c('comp_id_b', 'comp_id_ug'))| duplicated(c_table, by = c('comp_id_b', 'comp_id_ug'), fromLast = TRUE)], 'finddups.csv')
-  #print(nrow(c_table[duplicated(c_table, by=c('feature_id_g', 'sample_name_g', ))]))
-  #fwrite(c_table[duplicated(c_table, by=c('feature_id_g', 'sample_name_g', 'molecule_b', 'adduct_b')) | duplicated(c_table, by=c('feature_id_g', 'sample_name_g', 'molecule_b', 'adduct_b'), fromLast = TRUE)], 'duptest.csv')
-  #######
-  #Eleminiate Double joined peaks (same peak was grouped several times)
-  #REWORK FOR LOOP LATER
-  #Not sure if good comparison since feature_id can be duplicated for different ug peaks
-  ########################################FIX LATER, FOR NOE REMOVE DUPLICATES############################
-  #######
-  #duplicate_table <- c_table[duplicated(c_table, by = c('comp_id_b', 'comp_id_ug')) | duplicated(c_table, by = c('comp_id_b', 'comp_id_ug'), fromLast = TRUE)]
-  #for (i in 1:nrow(duplicate_table)){
-  #  dup_feature_id <- duplicate_table[i, feature_id_g]
-  #  dup_molecule <- duplicate_table[i, molecule_b]
-  #  dup_adduct <- duplicate_table[i, adduct_b]
-  #  #Count occurance of feature
-  #  print(paste(dup_adduct, dup_molecule, dup_feature_id))
-  #  count <- nrow(c_table[molecule_b == dup_molecule & adduct_b == dup_adduct & feature_id_g == dup_feature_id])
-  #  duplicate_table[feature_id_g == dup_feature_id, feature_count := count]
-  #}
-
-
-  #duplicate_table <- duplicate_table[, max_feature_count := max(feature_count), by = c('comp_id_b', 'comp_id_ug')]
-  #duplicate_table <- duplicate_table[max_feature_count == max_feature_count]
-
-  #fwrite(duplicate_table, 'dupCount.csv')
-
-
-  ####FIND BETTER WAY TO GET RID OF DUPLICATES
-
   #Get height diff to benchmark and pick peak with smallest diff
   print(paste('c_table: ', nrow(c_table)))
   c_table <- c_table[, height_diff := abs(peak_height_ug - peak_height_b)]
-  c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), 'TRUE', 'FALSE'), by=c('comp_id_b', 'comp_id_ug')]
+  c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
   c_table <- c_table[smaller_height == 'TRUE']
   print(paste('Eliminating dups based on height: ', nrow(c_table)))
-  #If dups still present take g peak with smallest rt_diff
-  c_table <- c_table[, rt_diff := rt_end_g - rt_start_g]
-  c_table <- c_table[, smaller_rt_diff := ifelse(rt_diff == min(rt_diff) | is.na(rt_end_g) | is.na(rt_start_g), 'TRUE', 'FALSE'), by=c('comp_id_b', 'comp_id_ug')]
-  c_table <- c_table[smaller_rt_diff == 'TRUE']
+
+
+
+  ##TAKEN FORM NO START_RT|NO END_RT
+  ##If dups still present take g peak with rt  and mz closest to b
+  c_table <- c_table[, rt_diff := abs(rt_g - rt_b)]
+  c_table <- c_table[, mz_diff := abs(mz_g - mz_b)]
+  c_table <- c_table[, smaller_diff := ifelse((rt_diff == min(rt_diff) & mz_diff == min(mz_diff)) | is.na(rt_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
+  View(c_table[smaller_diff == 'FALSE'])
+  c_table <- c_table[smaller_diff == 'TRUE']
   print(paste('Eliminating dups based on rt: ', nrow(c_table)))
 
   #######REWROK WHEN FUCTION IS REWORKED
-  c_table[, main_peak := eliminate_duplicates_no_for(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
+  #Needs to be last
+  print(paste('Befor Main Peak: ', nrow(c_table)))
+  c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
+  print(paste('After Main Peak: ', nrow(c_table[main_peak == TRUE])))
+
 
   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
   split_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
@@ -281,5 +288,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Return the found and 3 notfoundtables in a list
   ##############
   print('Compare Succesfull')
+  ##DEBUG: Count full featurs
+  debug_table <- rbindlist(list(c_table, nf_g_table), fill=TRUE)
+  debug_table <- debug_table[, .N, by=c('feature_id_g')]
+  debug_table <- debug_table[N == 40]
+  print(nrow(debug_table))
+
   return(list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table))
 }

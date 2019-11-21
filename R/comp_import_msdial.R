@@ -10,15 +10,16 @@
 import_ungrouped_msdial <- function(folder_path, options_table){
 
   print('start ungroupd msdial import')
+  print(folder_path)
 
   #Get list of all Textfiles in folder_path
-  ungrouped_txt_files <- list.files(folder_path, pattern = ".txt", full.names = TRUE)
-  print(ungrouped_txt_files)
+  #ungrouped_txt_files <- list.files(folder_path, pattern = ".txt", full.names = TRUE)
+  #print(ungrouped_txt_files)
 
   #Error if no Textfiles are found
-  if(isEmpty(ungrouped_txt_files)){
-    stop(paste0('No textfiles found in ', folder_path))
-  }
+  #if(isEmpty(ungrouped_txt_files)){
+  #  stop(paste0('No textfiles found in ', folder_path))
+  #}
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){
@@ -26,17 +27,20 @@ import_ungrouped_msdial <- function(folder_path, options_table){
   }
 
   #Add files to ut dt if name is in options ug_samples
-  for (file in ungrouped_txt_files){
+  for (i in rownames(folder_path)){
+    row = folder_path[i, ]
     #Check if filename is in samplelist
-    file_name <- file_path_sans_ext(basename(file))
+
+    #file_name <- file_path_sans_ext(basename(row$datapath))
+    file_name <- row$name
     if (file_name %in% options_table$ug_samples){
       #Check if ug_table exists, if not: create
       if(!exists("ug_table")){
-        ug_table <- fread(file)
+        ug_table <- fread(row$datapath)
         ug_table <- ug_table[, sample_name := file_name]
       }
       if(exists("ug_table")){
-        temp_data <- fread(file)
+        temp_data <- fread(row$datapath)
         temp_data <- temp_data[, sample_name := file_name]
         ug_table <- rbind(ug_table, temp_data)
         rm(temp_data)
@@ -74,9 +78,11 @@ import_ungrouped_msdial <- function(folder_path, options_table){
   ug_table[, rt_start := rt_start*60]
   ug_table[, rt_end := rt_end*60]
 
+  # Add Rounding Column for later merge
+  ug_table <- ug_table[, 'peak_area_rounded' := round(peak_area, 0)]
+
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
-
 
   return(ug_table)
 }
@@ -100,7 +106,8 @@ import_grouped_msdial <- function(file_path, options_table){
   }
 
   #Import text file
-  g_table <- fread(file_path, skip=3)
+  #Make skip variable/search for nrwos
+  g_table <- fread(file_path, skip=4)
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){
@@ -128,8 +135,9 @@ import_grouped_msdial <- function(file_path, options_table){
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
 
-  #Remove peaks where area is below 0
+  #Remove peaks where area is below or equal 0
   g_table <- g_table[peak_area > 0]
+
 
   #needs to be investigated further, no duplicates should be present
   #removing for now to make statistics work
@@ -156,5 +164,6 @@ import_grouped_msdial <- function(file_path, options_table){
 
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
+  View(g_table)
   return(g_table)
 }

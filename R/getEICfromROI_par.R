@@ -27,7 +27,7 @@ getROIsForEICs <-
   if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
   if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
 
-  missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
+  missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.XIC", "EndTime.XIC"), colnames(Target.table))
   if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", missing_cols))}
 
   if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
@@ -66,8 +66,8 @@ getROIsForEICs <-
     .xr <- suppressWarnings(xcms::xcmsRaw(files[file], profstep=0))
     Target.table.wk <- Target.table[fileIdx == file]
 
-    .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
-                                                                        EndXICScan = which.min(abs(.xr@scantime - max(EndTime.EIC)))),
+    .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.XIC))),
+                                                                        EndXICScan = which.min(abs(.xr@scantime - max(EndTime.XIC)))),
                                                        by=.(molecule)],
                                        on = .(molecule)]
 
