@@ -3,6 +3,7 @@
 #' @param DT
 #'
 #' @return
+#' @export
 #'
 #' @examples
 get_main_UT_groups <- function(DT){
