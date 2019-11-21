@@ -12,5 +12,5 @@ cutout_peaks(int, rt, Min.PpP = 10, peak.spotting.factor. = 0.01,
 \item{Min.Res.}{}
 }
 \description{
-cutout_peaks
+detects peaks
 }

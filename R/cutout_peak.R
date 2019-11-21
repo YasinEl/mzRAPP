@@ -1,5 +1,7 @@
 #' cutout_peaks
 #'
+#' @description detects peaks
+#'
 #' @param int
 #' @param rt
 #' @param Min.PpP
@@ -30,6 +32,9 @@ cutout_peaks <-
     ##################################
     #limit peak-detection to specific rt-region
     ##################################
+    #if(is.na(l) | is.null(l)) l = 1
+    #if(is.na(r) | is.null(l)) l = length(int)
+
     vl <- length(int)
     int <- int[l:r]
     rt <- rt[l:r]
@@ -41,7 +46,7 @@ cutout_peaks <-
     ##################################
     #pickup potential peaks by counting consectuive points above the base line
     ##################################
-    pot.peak.ranges <- lazypeaks::get_pot_peak_ranges2(int,
+    pot.peak.ranges <- mzRAPP::get_pot_peak_ranges2(int,
                                                       Min.PpP = Min.PpP,
                                                       peak.spotting.factor = peak.spotting.factor.)
     if (is.null(pot.peak.ranges)) {

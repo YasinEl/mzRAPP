@@ -1,28 +1,3 @@
-library(data.table)
-
-DT <- data.table(sample_id_b = c("F1","F2","F3", "F4", "F5", "F6", "F7", "F8", "F9"),
-                 X100 = as.character(c(568, "Lost_b.A" , 568, 568, 568 , 568, 568, 568, 568)),
-                 X6.3 = as.character(c(234, 234, "Lost_b.A", 234, 234, 234, 234, 234, 234)),
-                 X1.2 = as.character(c("Lost_b.A", 654, 654, 6542, NA, 654, 654, "Lost_b.A", 654)))
-
-
-DT <- DT[1]
-
-DT
-
-DT[] <-  lapply(DT, function(x) as.character(x))
-
-DT
-
-
-DT <- data.table(sample_id_b = c("F1","F2","F3", "F4", "F5", "F6", "F7", "F8", "F9"),
-                 X100 = as.character(c(568, "Lost_b.A" , 568, 568, 568 , 568, 568, 568, 568)))
-
-
-DT <- DT[1]
-
-
-
 #' get_main_UT_groups
 #'
 #' @param DT
@@ -69,9 +44,6 @@ get_main_UT_groups <- function(DT){
   }
 
 }
-
-
-
 
 
 #' count_alignment_errors
@@ -178,19 +150,6 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   }
 }
-
-
-
-t1 <- get_main_UT_groups(DT)
-
-t1
-
-count_alignment_errors(DT, t1, method = "self-critical")
-
-
-count_alignment_errors(DT, method = "trustfull")
-
-
 
 
 

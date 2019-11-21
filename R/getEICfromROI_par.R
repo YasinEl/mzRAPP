@@ -1,14 +1,16 @@
 #' getROIsForEICs
 #'
+#' @description Takes a the output of \code{\link{getMZtable}} and adds columns with information on regions of interest (ROI).
+#'
 #' @param files vector containing all mzML file paths
-#' @param Target.Table output of function \code{\link{getMZtable}}
+#' @param Target.table output of function \code{\link{getMZtable}}
 #' @param minCentroids minimum number of consecutive scans > 0 for a ROI to be picked up
 #' @param AccurateMZtol mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{getMZtable}}
-#' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  \code{\link{xcms:::findmzROI}})
-#' @param plan number of cores to be used in parallel processing
+#' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)
+#' @param plan see \code{\link{plan}}
 #'
 #'
-#' @return data.table object with information on ROIs for each row in Target.table. additional columns from are retained
+#' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export
 #'
 #'
@@ -22,7 +24,7 @@ getROIsForEICs <-
            plan = "multiprocess"){
 
 
-  if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame!"))}
+  if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
   if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
 
   missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.XIC", "EndTime.XIC"), colnames(Target.table))
@@ -51,13 +53,13 @@ getROIsForEICs <-
   ##################################
   doFuture::registerDoFuture()
   future::plan(plan)
-  Output <- foreach(file = seq(length(files)), .packages = c("lazypeaks")) %dopar% {
+  Output <- foreach(file = seq(length(files)), .packages = c("mzRAPP")) %dopar% {
 #for(file in seq(length(files))){
 
     ##################################
     #read mzML files into xcmsRaw objects and determine clostest scans to attempted start and end points of XICs
     ##################################
-    .xr <- xcms::xcmsRaw(files[file], profstep=0)
+    .xr <- suppressWarnings(xcms::xcmsRaw(files[file], profstep=0))
     Target.table.wk <- Target.table[fileIdx == file]
 
     .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.XIC))),
@@ -73,13 +75,15 @@ getROIsForEICs <-
       #find ROIs and set up ROI-table and Target.table for their join
       ##################################
       trash <- capture.output({
+        suppressWarnings(
         ROI.list <- xcms:::findmzROI(xr,
                                      dev = PrecisionMZtol * 1E-6,
                                      minCentroids = minCentroids,
                                      scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
                                      prefilter = c(minCentroids,0),
                                      noise = 0)
-        })
+        )})
+
       ROI.dt <- rbindlist(ROI.list)
       ROI.dt <- ROI.dt[,.(rtmin = xr@scantime[scmin],
                           rtmax = xr@scantime[scmax],
@@ -122,8 +126,8 @@ getROIsForEICs <-
         test_xr <<- xr
         mat_sum <<- matches_summary
 
-        matches_summary <- matches_summary[matches_summary[,.(roi_overlaps_max = xr@scantime[which.min(abs(round(lazypeaks:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))],
-                                                              roi_overlaps_max_sc = which.min(abs(round(lazypeaks:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))),
+        matches_summary <- matches_summary[matches_summary[,.(roi_overlaps_max = xr@scantime[which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))],
+                                                              roi_overlaps_max_sc = which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))),
                                                            by=.(molecule, adduct, fileIdx)],
                                            on=.(molecule, adduct, fileIdx)]
         return(matches_summary)

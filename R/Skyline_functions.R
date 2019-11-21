@@ -1,19 +1,21 @@
 #' SkylineTransitionList
 #'
-#' @param BM
+#' @description Takes a the output of \code{\link{align_PC}} and generates a Skyline Transition list which can then be imported to Skyline via
+#' Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 #'
-#' @return
+#' @param BM output of \code{\link{align_PC}}
+#'
+#' @return Skyline Transtion List
 #' @export
 #'
-#' @examples
 #'
 SkylineTransitionList <-
   function(BM){
 
-    MassPrec <- round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
+    MassPrec <- round(max(BM$peaks.mz_span_ppm) / 2, 1)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
 
     BM <- BM[, c("molecule", "adduct", "isoabb", "mz_acc", "charge")]
-    BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Precursor Name" := paste0(adduct, "_", round(isoabb, 2))]
 
     BM <-  unique(BM[, c("Precursor Name", "charge")])[BM[, .(`Molecule List Name` = molecule,
                                                       `Precursor m/z` = mean(mz_acc),
@@ -25,7 +27,7 @@ SkylineTransitionList <-
 
     fwrite(BM, file = "Skyline_Transition_List.csv", row.names = FALSE)
 
-    print(paste0("Transition List has been saved as ", getwd(), "/Skyline_Transition_List.csv"))
+    print(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
 
 
     print(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' and set 'Precursor mass analyzer' to 'Centroided' and ",
@@ -37,13 +39,14 @@ SkylineTransitionList <-
 
 
 #' SkylinePeakBoundaries
+#' @description Takes a the output of \code{\link{align_PC}} and generates a Peak boundaries which can then be imported to Skyline via
+#' Skyline -> File -> Import -> Peak Boundaries...
 #'
-#' @param BM
+#' @param BM output of \code{\link{align_PC}}
 #'
-#' @return
+#' @return Skyline peak boundaries
 #' @export
 #'
-#' @examples
 #'
 SkylinePeakBoundaries <-
   function(BM){
@@ -54,7 +57,7 @@ SkylinePeakBoundaries <-
 
     BM[order(BM$isoabb, decreasing = TRUE),]
 
-    BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Peptide Modified Sequence" := paste0(adduct, "_", round(isoabb, 2))]
 
 
     files <- data.table("FileName" = sort(unique(BM$FileName)),
@@ -77,7 +80,7 @@ SkylinePeakBoundaries <-
 
     fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
 
-    print(paste0("Peak Boundaries have been saved as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
+    print(paste0("Peak Boundaries have been saved to your working directory as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
 
     print("After Transition List and mzML files have been loaded into Skyline you can apply these Peak Boundaries via 'Skyline -> File -> Import -> Peak Boundaries...'.")
 

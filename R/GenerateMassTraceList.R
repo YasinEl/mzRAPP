@@ -46,7 +46,6 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   #data("resolution_list", envir = environment())
   #df <- resolution_list$`OTFusion,QExactiveHF_120000@200`
 
-
   ##################################
   #check sum formulas and create working-table
   ##################################
@@ -54,7 +53,6 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   SF <- check_chemform(isotopes,DT$SumForm_c)
   DT <- cbind(DT,SF)
   DT <- merge(DT, adducts, by.x="adduct_c", by.y="Name")
-
 
   ##################################
   #calculate new sum formulas from adducts
@@ -64,11 +62,15 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") subform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_ded)
 
 
+
   ##################################
   #check new sum formulas
   ##################################
   SF <- check_chemform(isotopes,DT$SumForm2_c)
 
+
+#print(nrow(SF[warning == TRUE]))
+if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not correct, namely ", setDT(SF)[warning == TRUE]$new_formula))}
 
   ##################################
   #calculate theoretical isotope pattern
@@ -82,8 +84,6 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
                         algo = 1,
                         rel_to = 0,
                         verbose = FALSE)
-
-
 
   ##################################
   #calculate theoretical profile at given resolution
@@ -100,7 +100,6 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
                                         spar = 0.1,
                                         plotit = FALSE))
 
-
   ##################################
   #calculate discrete m/z values and abundandences
   ##################################
@@ -109,7 +108,6 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
                     detect = stick_method,
                     plotit = FALSE)
   })
-
 
   ##################################
   #reformate into final output table

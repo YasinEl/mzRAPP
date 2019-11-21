@@ -7,11 +7,12 @@
 SkylineTransitionList(BM)
 }
 \arguments{
-\item{BM}{}
+\item{BM}{output of \code{\link{align_PC}}}
+}
+\value{
+Skyline Transtion List
 }
 \description{
-SkylineTransitionList
-}
-\examples{
-
+Takes a the output of \code{\link{align_PC}} and generates a Skyline Transition list which can then be imported to Skyline via
+Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 }
