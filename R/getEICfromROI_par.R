@@ -30,6 +30,10 @@ getROIsForEICs <-
   missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
   if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", missing_cols))}
 
+  if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
+                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adduct names
+                                                                                in the column 'adduct'" ))
+
   conflicting_cols <- intersect(c("eic_mzmin", "eic_mzmax", "mz_acc", "roi_rtmin", "roi_rtmax", "roi_scmin", "roi_scmax",
                                   "ROI_count", "roi_overlaps_max", "roi_overlaps_max_sc"), colnames(Target.table))
   if(length(conflicting_cols > 0)) stop(paste0("Target.table includes reserved column names! Specificly:", conflicting_cols))
