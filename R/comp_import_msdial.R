@@ -38,6 +38,7 @@ import_ungrouped_msdial <- function(folder_path, options_table){
       if(!exists("ug_table")){
         ug_table <- fread(row$datapath)
         ug_table <- ug_table[, sample_name := file_name]
+        print(ug_table)
       }
       if(exists("ug_table")){
         temp_data <- fread(row$datapath)
