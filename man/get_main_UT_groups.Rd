@@ -9,9 +9,6 @@ get_main_UT_groups(DT)
 \arguments{
 \item{DT}{}
 }
-\value{
-
-}
 \description{
 get_main_UT_groups
 }

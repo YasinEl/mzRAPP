@@ -165,6 +165,5 @@ import_grouped_msdial <- function(file_path, options_table){
 
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  View(g_table)
   return(g_table)
 }

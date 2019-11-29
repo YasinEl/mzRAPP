@@ -175,10 +175,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Combine the split peak tables
   split_table <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
 
-  print(paste('Befor Main Peak: ', nrow(c_table)))
+  print(paste('Before Main Peak Check: ', nrow(c_table)))
   c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
-  print(paste('After Main Peak: ', nrow(c_table[main_peak == TRUE])))
-  c_table <- c_table[main_peak == TRUE]
+  print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
 
 
 
@@ -292,6 +291,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
+
+  print(paste0('Before Main Feature: ', nrow(c_table)))
+  c_table <- find_main_feature_1(c_table, 'match_iso_pattern', nf_g_table, nf_b_table)
+  c_table <- c_table[is_main_feature == TRUE]
+  print(paste0('After Main Feature: ', nrow(c_table)))
 
   ##############
   #Return the found and 3 notfoundtables in a list

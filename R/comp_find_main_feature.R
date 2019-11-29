@@ -1,3 +1,14 @@
+#' find_main_feature_1
+#'
+#' @param c_table
+#' @param setting
+#' @param nf_g_table
+#' @param nf_b_table
+#'
+#' @return
+#' @export
+#'
+#' @examples
 find_main_feature_1 <- function(c_table, setting, nf_g_table, nf_b_table){
 
   if (setting == 'correct'){
@@ -9,13 +20,23 @@ find_main_feature_1 <- function(c_table, setting, nf_g_table, nf_b_table){
     #fwrite(dt[feature_id_g == 3152], 'debug.csv')
     max_possible_found_peaks <- rbindlist(list(c_table, nf_b_table), fill=TRUE)[, .N, by=feature_id_b]
     print(max_possible_found_peaks)
-    #Find 100 iso feature
-
       best_max_iso <- c_table[,match_features_by_iso(.SD, max_possible_found_peaks, nf_g_table, 0.5), by=c('molecule_b', 'adduct_b')]
-    }
+      best_max_iso <- best_max_iso[, 'is_main_feature' := ifelse((main_feature == feature_id_g) & !is.na(feature_id_g), TRUE, FALSE)]
+      fwrite(best_max_iso, 'dbug.csv')
       return(best_max_iso)
+    }
+
   }
 
+#' find_most_occuring_feature
+#'
+#' @param feature_id_g
+#' @param peak_area_g
+#'
+#' @return
+#' @export
+#'
+#' @examples
 find_most_occuring_feature <- function (feature_id_g, peak_area_g){
   dt <- setDT(list('feature_id_g' = feature_id_g, 'peak_area_g' = peak_area_g))
   if (!all(is.na(dt$feature_id_g))){
@@ -31,127 +52,62 @@ find_most_occuring_feature <- function (feature_id_g, peak_area_g){
   return(main_feature)
 }
 
+#' match_features_by_iso
+#'
+#' @param dt
+#' @param max_possible_found_peaks
+#' @param nf_g_table
+#' @param factor
+#'
+#' @return
+#' @export
+#'
+#' @examples
 match_features_by_iso <- function(dt, max_possible_found_peaks, nf_g_table, factor){
   if (length(unique(dt$feature_id_b)) >= 2){
   all_isos <- sort(unique(dt$isoabb_b), decreasing = TRUE)
-  best_max_iso <- find_best_matching_iso_pairs(dt, all_isos[1], all_isos[2], max_possible_found_peaks, nf_g_table, 0.5)
-  best_feature_list <- best_max_iso
+  best_first_isos <- find_best_matching_iso_pairs(dt, all_isos[1], all_isos[2], max_possible_found_peaks, nf_g_table, 0.5)
+  dt <- merge(dt, best_first_isos, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
+  best_first_iso_feature <- best_first_isos[1, best_feature]
+  print(best_first_iso_feature)
   if (length(all_isos) >= 3){
-    for (i in 3:length(all_isos)){
-      print(all_isos)
-      best_feature_list <- mapply(best_feature_list, find_best_matching_iso_pairs(dt, all_isos[1], all_isos[i], max_possible_found_peaks, nf_g_table, 0.5, iso_1_feature = best_max_iso[1]), FUN = list, SIMPLIFY = TRUE)
+    best_feature_list <- data.table()
+    for (i in 2:length(all_isos)){
+      print('$$$')
+      print(all_isos[i])
+      best_feature_list <- rbindlist(list(best_feature_list, find_best_matching_iso_pairs(dt, all_isos[1], all_isos[i], max_possible_found_peaks, nf_g_table, 0.5, iso_1_feature = best_first_iso_feature)))
+      best_feature_list <- best_feature_list[!duplicated(best_feature_list)]
     }
+    print(best_feature_list)
+    dt <- merge(dt, best_first_isos, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
   }
 
-  temp_list <<- best_feature_list
-  print(best_feature_list)
+
+  #print(dt)
   print('-----')
-  return(best_max_iso)
+  return(dt)
   }
-#######
-  # iso_1 <- 2
-  # iso_2 <- 3
-  #
-  #
-  # dt <- setDT(list('feature_id_g' = feature_id_g, 'peak_area_g' = peak_area_g, 'isoabb_b' = isoabb_b, 'sample_id_g' = sample_id_g, 'feature_id_b' = feature_id_b))
-  # all_iso_groups <- sort(unique(dt$isoabb_b), decreasing = TRUE)
-  # #generate list of maximum possible peaks found based on benchmark
-  # max_possible_found_peaks <- rbindlist(list(dt, nf_b_table), fill=TRUE)[, .N, by=feature_id_b]
-  # #Find best Iso 100 feature by comparing it to the second iso group
-  # if(length(all_iso_groups >= 2) & length(all_iso_groups) >= iso_2){
-  #   all_iso_groups <- sort(unique(dt$isoabb_b), decreasing = TRUE)
-  #   peaks_1 <- dt[isoabb_b == all_iso_groups[iso_1]]
-  #   benchmark_feature_1 <- unique(peaks_1[,feature_id_b])
-  #   peaks_nf_g_1 <- nf_g_table[feature_id_g %in% na.omit(unique(peaks_1$feature_id_g)), c('feature_id_g', 'peak_area_g', 'sample_id_g'), with=T]
-  #   peaks_nf_g_1 <- peaks_nf_g_1[,':='('isoabb_b'=all_iso_groups[iso_1],
-  #                            'nf_tag' = TRUE)]
-  #   peaks_1 <- rbindlist(list(peaks_1, peaks_nf_g_1), fill=TRUE)
-  #
-  #
-  #
-  #   peaks_2 <- dt[isoabb_b == all_iso_groups[iso_2]]
-  #
-  #   benchmark_feature_2 <- unique(peaks_2[,feature_id_b])
-  #
-  #   peaks_nf_g_2 <- nf_g_table[feature_id_g %in% na.omit(unique(peaks_2$feature_id_g)), c('feature_id_g', 'peak_area_g', 'sample_id_g'), with=T]
-  #   peaks_nf_g_2 <- peaks_nf_g_2[,':='('isoabb_b'=all_iso_groups[iso_2],
-  #                                      'nf_tag' = TRUE)]
-  #   peaks_2 <- rbindlist(list(peaks_2, peaks_nf_g_2), fill=TRUE)
-  #
-  #
-  #   compare_dt <- merge(peaks_1, peaks_2, by=c('sample_id_g'), allow.cartesian =T)
-  #   #Filter out NAs
-  #   compare_dt <- compare_dt[!is.na(feature_id_g.x) & !is.na(feature_id_g.y)]
-  #
-  #   #Calc Expected Ratio, Start and End
-  #   exp_ratio <- all_iso_groups[iso_2]/all_iso_groups[iso_1]
-  #
-  #
-  #   #ADJUST RATIO, make dynamic?
-  #   exp_ratio_start <- exp_ratio-(exp_ratio*0.5)
-  #   exp_ratio_end <- exp_ratio+(exp_ratio*0.5)
-  #
-  #   #Calcultae the ratio of the areas to expected
-  #   compare_dt[, area_ratio := (peak_area_g.y/peak_area_g.x)]
-  #
-  #
-  #
-  #   #####
-  #   #Calc median area_ratio_diff per feature in 100 and occurances of feature) (do i need found_ratio? count should be enough! - no need ratio for later loop check)
-  #   feature_median <- compare_dt[, list(median(area_ratio), .N, length(unique(.SD[is.na(nf_tag.x), sample_id_g])), length(unique(.SD[is.na(nf_tag.x), sample_id_g]))/max_possible_found_peaks[feature_id_b == benchmark_feature_1, N]), by=c('feature_id_g.x')]
-  #   setnames(feature_median, c('V1', 'N', 'V3', 'V4'), c('area_ratio_median', 'count', 'count_found', 'found_ratio'))
-  #   feature_median <- feature_median[, 'area_ratio_median_diff' := abs(area_ratio_median - exp_ratio)]
-  #   feature_median <- feature_median[order(area_ratio_median_diff, decreasing = FALSE)]
-  #   ####
-  #
-  #   # print(compare_dt)
-  #   # print(feature_median)
-  #
-  #   #print(feature_median[count == 40])
-  #
-  #
-  #
-  #   #Fin best 100 feature: check highest count, if in border of ration take, if not go to next
-  #   mait_feature <- NA
-  #   if(nrow(feature_median) == 1){
-  #     mait_feature <- feature_median[,feature_id_g.x]
-  #     #print(mait_feature)
-  #   } else if(nrow(feature_median) >= 1) {
-  #     print(unique(dt[,feature_id_b]))
-  #     View(dt)
-  #     print(paste0('Benchmark Feature: ',benchmark_feature_1))
-  #     print(paste0('Benchmark Feature: ',benchmark_feature_2))
-  #     print(feature_median)
-  #     print(max_possible_found_peaks)
-  #     print(exp_ratio_start)
-  #     print(exp_ratio_end)
-  #
-  #     print(compare_dt)
-  #
-  #
-  #
-  #
-  #     #####Try New
-  #     ##Filter out peaks not in boundary
-  #     filterd_feature_median <- feature_median[(area_ratio_median > exp_ratio_start) & (area_ratio_median < exp_ratio_end)]
-  #     print(feature_median)
-  #     print(filterd_feature_median)
-  #     print('---')
-  #     filterd_feature_median <- filterd_feature_median[order(found_ratio,area_ratio_median_diff, decreasing =TRUE)]
-  #     print(filterd_feature_median)
-  #     mait_feature <- as.integer(filterd_feature_median[1, feature_id_g.x])
-  #     print(paste0('mait f: ',mait_feature))
-  #     return(mait_feature)
-  #   }
-  # }
 }
 
 
+#' find_best_matching_iso_pairs
+#'
+#' @param dt
+#' @param iso_1
+#' @param iso_2
+#' @param max_possible_found_peaks
+#' @param nf_g_table
+#' @param factor
+#' @param iso_1_feature
+#'
+#' @return
+#' @export
+#'
+#' @examples
 find_best_matching_iso_pairs <- function(dt, iso_1, iso_2, max_possible_found_peaks, nf_g_table, factor, iso_1_feature = NA){
 
   #Flter dt, propably not needed when apply
   dt <- dt[, c('feature_id_g', 'peak_area_g', 'isoabb_b', 'sample_id_g', 'feature_id_b')]
-  print(dt)
   all_isos <- sort(unique(dt$isoabb_b), decreasing = TRUE)
 
   #Takes 2 benchmark features and two iso_abbs and finds the best matching pair between them
@@ -246,10 +202,13 @@ find_best_matching_iso_pairs <- function(dt, iso_1, iso_2, max_possible_found_pe
     best_feature_2 <- as.integer(filterd_feature_median_2[1, feature_id_g.y])
   }
 
-  iso_list <- list(iso_1, iso_2)
-  best_feature_list <- list(best_feature_1, best_feature_2)
-  names(best_feature_list) <- iso_list
-return(best_feature_list)
+  iso_vec <- c(iso_1, iso_2)
+  print(iso_vec)
+  best_feature_vec <- c(best_feature_1, best_feature_2)
+  print(best_feature_vec)
+  return_dt <- as.data.table(list(isoabb = iso_vec, best_feature = best_feature_vec))
+  #return_dt <- return_dt[order(by='isoabb', decreasing=TRUE)]
+return(return_dt)
 }
 
 
