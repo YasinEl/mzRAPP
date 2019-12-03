@@ -13,7 +13,7 @@ find_main_feature_1 <- function(c_table, setting, nf_g_table, nf_b_table){
 
   if (setting == 'correct'){
 
-    c_table[, 'main_feature' := find_most_occuring_feature(feature_id_g, peak_area_g), by=c('feature_id_b')]
+    c_table[, 'main_feature' := as.integer(find_most_occuring_feature(feature_id_g, peak_area_g)), by=c('feature_id_b')]
     c_table <- c_table[, 'is_main_feature' := ifelse((main_feature == feature_id_g) & !is.na(feature_id_g), TRUE, FALSE)]
     return (c_table)
   } else if (setting == 'match_iso_pattern'){
@@ -38,16 +38,21 @@ find_main_feature_1 <- function(c_table, setting, nf_g_table, nf_b_table){
 #' @examples
 find_most_occuring_feature <- function (feature_id_g, peak_area_g){
   dt <- setDT(list('feature_id_g' = feature_id_g, 'peak_area_g' = peak_area_g))
+  print(dt)
   if (!all(is.na(dt$feature_id_g))){
     main_feature <- as.list(names(which(table(dt$feature_id_g) == max(table(dt$feature_id_g)))))
     #If features occure same number of times, pick the one with higher mean area
     if (length(main_feature) >= 2){
       dt <- dt[feature_id_g %in% main_feature, mean(peak_area_g), by=c('feature_id_g')]
+      print(dt)
       main_feature <- dt[V1 == max(V1), feature_id_g]
     }
   } else {
     main_feature <- NA
   }
+  print('----')
+  print(main_feature)
+  print('----')
   return(main_feature)
 }
 

@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
+compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_method){
 
   info_list <- list()
 
@@ -235,6 +235,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
 
+
   ##############
   #Create main_peak column to identify main peaks
   #when several peaks have been asigned to on benchmark peak
@@ -292,9 +293,13 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
 
+  fwrite(c_table, 'msdial_dbug.csv')
+
   print(paste0('Before Main Feature: ', nrow(c_table)))
-  c_table <- find_main_feature_1(c_table, 'match_iso_pattern', nf_g_table, nf_b_table)
-  c_table <- c_table[is_main_feature == TRUE]
+  if (main_feature_method != '---'){
+    c_table <- find_main_feature_1(c_table, main_feature_method, nf_g_table, nf_b_table)
+    c_table <- c_table[is_main_feature == TRUE]
+  }
   print(paste0('After Main Feature: ', nrow(c_table)))
 
   ##############
