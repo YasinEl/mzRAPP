@@ -19,9 +19,8 @@ find_main_feature_1 <- function(c_table, setting, nf_g_table, nf_b_table){
   } else if (setting == 'match_iso_pattern'){
     #fwrite(dt[feature_id_g == 3152], 'debug.csv')
     max_possible_found_peaks <- rbindlist(list(c_table, nf_b_table), fill=TRUE)[, .N, by=feature_id_b]
-    print(max_possible_found_peaks)
       best_max_iso <- c_table[,match_features_by_iso(.SD, max_possible_found_peaks, nf_g_table, 0.5), by=c('molecule_b', 'adduct_b')]
-      best_max_iso <- best_max_iso[, 'is_main_feature' := ifelse((main_feature == feature_id_g) & !is.na(feature_id_g), TRUE, FALSE)]
+      best_max_iso <- best_max_iso[, 'is_main_feature' := ifelse((best_feature == feature_id_g) & !is.na(feature_id_g), TRUE, FALSE)]
       fwrite(best_max_iso, 'dbug.csv')
       return(best_max_iso)
     }
@@ -67,24 +66,15 @@ match_features_by_iso <- function(dt, max_possible_found_peaks, nf_g_table, fact
   if (length(unique(dt$feature_id_b)) >= 2){
   all_isos <- sort(unique(dt$isoabb_b), decreasing = TRUE)
   best_first_isos <- find_best_matching_iso_pairs(dt, all_isos[1], all_isos[2], max_possible_found_peaks, nf_g_table, 0.5)
-  dt <- merge(dt, best_first_isos, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
+  #dt <- merge(dt, best_first_isos, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
   best_first_iso_feature <- best_first_isos[1, best_feature]
-  print(best_first_iso_feature)
-  if (length(all_isos) >= 3){
     best_feature_list <- data.table()
     for (i in 2:length(all_isos)){
-      print('$$$')
-      print(all_isos[i])
       best_feature_list <- rbindlist(list(best_feature_list, find_best_matching_iso_pairs(dt, all_isos[1], all_isos[i], max_possible_found_peaks, nf_g_table, 0.5, iso_1_feature = best_first_iso_feature)))
       best_feature_list <- best_feature_list[!duplicated(best_feature_list)]
     }
-    print(best_feature_list)
-    dt <- merge(dt, best_first_isos, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
-  }
+  dt <- merge(dt, best_feature_list, by.x = 'isoabb_b', by.y = 'isoabb', all.x = TRUE)
 
-
-  #print(dt)
-  print('-----')
   return(dt)
   }
 }
@@ -203,9 +193,7 @@ find_best_matching_iso_pairs <- function(dt, iso_1, iso_2, max_possible_found_pe
   }
 
   iso_vec <- c(iso_1, iso_2)
-  print(iso_vec)
   best_feature_vec <- c(best_feature_1, best_feature_2)
-  print(best_feature_vec)
   return_dt <- as.data.table(list(isoabb = iso_vec, best_feature = best_feature_vec))
   #return_dt <- return_dt[order(by='isoabb', decreasing=TRUE)]
 return(return_dt)
