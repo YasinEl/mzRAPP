@@ -180,7 +180,7 @@ match_features_by_iso <- function(feature_id_g, peak_area_g, isoabb_b, sample_id
 #fwrite(test, 'debug_main_feature.csv')
 
 
-test_dt_1 <- rbindlist(list(comparison_ev$c_table))#, comparison_ev$nf_b_table), fill=TRUE)#[feature_id_b == 66]#[c(1,2,7,13,3,4,5,6)]
-test_dt <- find_main_feature_1(test_dt_1, setting = 'match_iso_pattern', comparison_ev$nf_g_table, comparison_ev$nf_b_table)
-print(length(unique(na.omit(test_dt[]))))#[,.(feature_id_g, feature_id_b, main_feature, is_main_feature), with=T])
+#test_dt_1 <- rbindlist(list(comparison_ev$c_table))#, comparison_ev$nf_b_table), fill=TRUE)#[feature_id_b == 66]#[c(1,2,7,13,3,4,5,6)]
+#test_dt <- find_main_feature_1(test_dt_1, setting = 'match_iso_pattern', comparison_ev$nf_g_table, comparison_ev$nf_b_table)
+#print(length(unique(na.omit(test_dt[]))))#[,.(feature_id_g, feature_id_b, main_feature, is_main_feature), with=T])
 #fwrite(test_dt[,.(feature_id_g, feature_id_b, main_feature, is_main_feature), with=T], 'debug_main_feature.csv')

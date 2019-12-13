@@ -19,7 +19,8 @@ Depends:
     tools,
     shinyFiles,
     plotly,
-    dplyr
+    dplyr,
+    bit64
 biocViews:
 Imports:
     retistruct,

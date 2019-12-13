@@ -69,13 +69,11 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   SF <- check_chemform(isotopes,DT$SumForm2_c)
 
 
-#print(nrow(SF[warning == TRUE]))
 if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not correct, namely ", setDT(SF)[warning == TRUE]$new_formula))}
 
   ##################################
   #calculate theoretical isotope pattern
   ##################################
-
   pattern <- isopattern(isotopes,
                         chemforms = SF$new_formula,
                         plotit = FALSE,
@@ -84,6 +82,28 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
                         algo = 1,
                         rel_to = 0,
                         verbose = FALSE)
+
+
+  ##################################
+  #find and delete molecular formulas out of resolution calibration range
+  ##################################
+  filter.vct <- lapply(pattern, function(x, .instrumentRes = as.data.table(instrumentRes)){
+    isotopologue.table <- as.data.table(x)
+    if(nrow(isotopologue.table[`m/z` < min(.instrumentRes$`m/z`) | `m/z` > max(.instrumentRes$`m/z`)])){
+      return(FALSE)
+    } else{ return(TRUE)}
+  })
+  filter.vct <- as.data.table(filter.vct)
+  filter.vct <- suppressWarnings(melt.data.table(filter.vct))
+  if(nrow(filter.vct[value == FALSE]) > 0){
+    pattern <- pattern[filter.vct$value]
+    DT <- DT[filter.vct$value]
+    SF <- SF[filter.vct$value]
+    warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package.
+                   Those formulas are excldued. In case this leads to problems for you please contact the devlopers. The following molecular formulas have been excluded: ",
+                   paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")))
+  }
+
 
   ##################################
   #calculate theoretical profile at given resolution
@@ -133,6 +153,6 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DTreg[, adduct := adduct_c]
     Output <- Output[DTreg[, !c("adduct_c", "SumForm_c")], on = .(molecule, adduct)]
   }
-
+testmasslist <<- Output
   return(Output)
 }

@@ -9,6 +9,7 @@
 #' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)
 #' @param plan see \code{\link{plan}}
 #'
+#' @import foreach
 #'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export
@@ -27,12 +28,12 @@ getROIsForEICs <-
   if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
   if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
 
-  missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.XIC", "EndTime.XIC"), colnames(Target.table))
+  missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
   if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", missing_cols))}
 
   if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
-                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adduct names
-                                                                                in the column 'adduct'" ))
+                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adducts
+                                                                                in the column 'adduct'!" ))
 
   conflicting_cols <- intersect(c("eic_mzmin", "eic_mzmax", "mz_acc", "roi_rtmin", "roi_rtmax", "roi_scmin", "roi_scmax",
                                   "ROI_count", "roi_overlaps_max", "roi_overlaps_max_sc"), colnames(Target.table))
@@ -40,6 +41,7 @@ getROIsForEICs <-
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
 
+  if(!is.character(Target.table$molecule)) {Target.table$molecule <- as.character(Target.table$molecule)}
 
   ##################################
   #replicate rows for each file if that did not already happen before
@@ -66,8 +68,8 @@ getROIsForEICs <-
     .xr <- suppressWarnings(xcms::xcmsRaw(files[file], profstep=0))
     Target.table.wk <- Target.table[fileIdx == file]
 
-    .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.XIC))),
-                                                                        EndXICScan = which.min(abs(.xr@scantime - max(EndTime.XIC)))),
+    .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
+                                                                        EndXICScan = which.min(abs(.xr@scantime - max(EndTime.EIC)))),
                                                        by=.(molecule)],
                                        on = .(molecule)]
 
