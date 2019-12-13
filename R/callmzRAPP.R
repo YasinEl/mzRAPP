@@ -497,7 +497,18 @@ css <- "
         ),
         fluidRow(
           column(
-            12, strong('4. Start!'), br(), br()
+            12, strong('4. Select Main Feature Selection Method'), br(), br()
+          )
+        ),
+        fluidRow(
+          column(
+
+            12, selectInput('main_feature_method_input', 'main feature method used', c('---', 'correct', 'match_iso_pattern'), selected = '---')
+          )
+        ),
+        fluidRow(
+          column(
+            12, strong('5. Start!'), br(), br()
           )
         ),
         fluidRow(
@@ -992,7 +1003,7 @@ css <- "
       ######
       #perform comparison
       #####################
-      comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input)
+      comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input, input$main_feature_method_input)
 
       shinyjs::js$enableTab('results_tab_features')
       shinyjs::js$enableTab('results_tab_peaks')
