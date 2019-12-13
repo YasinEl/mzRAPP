@@ -36,12 +36,12 @@ import_ungrouped_msdial <- function(folder_path, options_table){
     if (file_name %in% options_table$ug_samples){
       #Check if ug_table exists, if not: create
       if(!exists("ug_table")){
-        ug_table <- fread(row$datapath)
+        ug_table <- fread(row$datapath, integer64 = 'numeric')
         ug_table <- ug_table[, sample_name := file_name]
         print(ug_table)
       }
       if(exists("ug_table")){
-        temp_data <- fread(row$datapath)
+        temp_data <- fread(row$datapath, integer64 = 'numeric')
         temp_data <- temp_data[, sample_name := file_name]
         ug_table <- rbind(ug_table, temp_data)
         rm(temp_data)
@@ -108,7 +108,7 @@ import_grouped_msdial <- function(file_path, options_table){
 
   #Import text file
   #Make skip variable/search for nrwos
-  g_table <- fread(file_path, skip=4)
+  g_table <- fread(file_path, skip=4, integer64 = 'numeric')
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){

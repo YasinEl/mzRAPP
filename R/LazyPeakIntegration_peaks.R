@@ -15,6 +15,8 @@
 #' @param return_unsuc_searches Should unsuccsessfull searches be returned (TRUE/FALSE)
 #' @param Min.Res At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as seperate peaks
 #'
+#'
+#' @import foreach
 #' @return data table with peak variables extracted from found peaks.
 #' @export
 
@@ -31,9 +33,14 @@ findBenchPeaks <- function(files,
                            Min.iso.count = 2,
                            return_unsuc_searches = FALSE)
 {
+
+
+
+  if(!is.character(CompCol_all$molecule)) {CompCol_all$molecule <- as.character(CompCol_all$molecule)}
+
   CompCol <-
     na.omit(CompCol_all,
-            cols = c("eic_mzmin", "eic_mzmax", "StartTime.XIC", "EndTime.XIC"))
+            cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
 
 
 
@@ -138,7 +145,9 @@ findBenchPeaks <- function(files,
                       rt = as.matrix(unname(.CompCol_xic[, c("StartTime.EIC", "EndTime.EIC")])),
                       mz = as.matrix(unname(.CompCol_xic[, .(MinMz = eic_mzmin - 0.0001,
                                                              MaxMz = eic_mzmax + 0.0001)][, .(MinMz, MaxMz)])),
-                      missing = 0
+                      missing = 0,
+                      msLevel = 1L,
+                      aggregationFun = "max"
                     )
 
                     MSnbase::sampleNames(.ChromData) <-
@@ -606,7 +615,7 @@ findBenchPeaks <- function(files,
 
   #still have to deal with double isotopologues per M0.grp
 
-  Result <- Result[!is.na(peaks.FW50M)]
+  Result <- Result[!is.na(peaks.FW75M)]
 
   Result$IDX <- seq.int(nrow(Result))
 

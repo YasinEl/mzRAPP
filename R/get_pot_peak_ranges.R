@@ -34,9 +34,11 @@ get_pot_peak_ranges2 <- function(int, Min.PpP = 10, peak.spotting.factor = 0.01)
   consec.points[s>1]$s <- as.integer(consec.points[s>1]$s - 1)
   consec.points[e<length(int)]$e <- as.integer(consec.points[e<length(int)]$e + 1)
   consec.points$idx <- seq(nrow(consec.points))
+  consec.points <- consec.points[consec.points[, .(height = max(int[s:e])), by = .(idx)], on = .(idx)]
+  consec.points <- consec.points[height > 0.01 * max(consec.points$height)]
 
 
-  return(consec.points[,!c("v", "l")])
+  return(consec.points[,!c("v", "l", "height")])
 }
 
 

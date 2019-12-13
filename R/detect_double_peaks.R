@@ -30,7 +30,7 @@ detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(
 
   peak.dt_list <-
 lapply((pot.doubleP.v[pot.doubleP.v > susp.noise &
-                               pot.doubleP.v < 0.8 * max(pot.doubleP.v)] + 1), function(point, peak.dt = peak.dt.) {
+                               pot.doubleP.v < (Min.Res/100) * max(pot.doubleP.v)] + 1), function(point, peak.dt = peak.dt.) {
 
     doublePeak.rle <- S4Vectors::Rle(pot.doubleP.v > point)
 
@@ -51,7 +51,9 @@ lapply((pot.doubleP.v[pot.doubleP.v > susp.noise &
     if (nrow(doublePeak.rle.dt_p) > 1) {
 
 
-      for(peak in 1:nrow(doublePeak.rle.dt_p)-1){
+      for(peak in 1:nrow(doublePeak.rle.dt_p) - 1){
+
+        #valley between two peaks
         doublePeak.rle.dt_v <- doublePeak.rle.dt[idx > doublePeak.rle.dt_p[peak]$idx & idx < doublePeak.rle.dt_p[peak + 1]$idx]
 
 

@@ -12,8 +12,8 @@ get_EIC_table <- function(rt, int, Min.PpP) {
   EIC.dt <- data.table(
     rt = rt,
     int = int,
-    val = as.vector(Rle(int > 0)),
-    len = unlist(lapply(Rle(int > 0)@lengths, function(x) {
+    val = as.vector(S4Vectors::Rle(int > 0)),
+    len = unlist(lapply(S4Vectors::Rle(int > 0)@lengths, function(x) {
       rep(x, x)
     })),
     int_wo_spikes = int
@@ -22,9 +22,9 @@ get_EIC_table <- function(rt, int, Min.PpP) {
   EIC.dt[val == TRUE &
            len <= max(Min.PpP / 3, 3)]$int_wo_spikes <- 0
 
-  EIC.dt$val <- as.vector(Rle(EIC.dt$int_wo_spikes > 0))
+  EIC.dt$val <- as.vector(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0))
   EIC.dt$len <-
-    unlist(lapply(Rle(EIC.dt$int_wo_spikes > 0)@lengths, function(x) {
+    unlist(lapply(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0)@lengths, function(x) {
       rep(x, x)
     }))
 
