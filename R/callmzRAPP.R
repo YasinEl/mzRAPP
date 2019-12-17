@@ -884,7 +884,7 @@ css <- "
                      incProgress(1/15, detail = "detecting ROIs...")
                      print('Start ROI detection')
 
-#mt <<- MassTraces
+
 
                      rois <- getROIsForEICs(
                        files = files,
@@ -898,7 +898,7 @@ css <- "
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
-#ttrtt <<- rois
+
                      PCbp <- findBenchPeaks(
                        files = files,
                        Grps = grps,
@@ -906,7 +906,7 @@ css <- "
                        CompCol = rois,
                        Min.PointsperPeak = input$min_PpP_input
                      )
-#tt11tt <<- PCbp
+
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 

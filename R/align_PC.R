@@ -62,7 +62,11 @@ align_PC <- function(PC,
       idf <- intervals::Intervals(df[,c("peaks.StartTime", "peaks.EndTime")])
       as.data.frame(intervals::interval_union(idf))
 
-      idl <- lapply(unique(df$id),function(x){var <- as(intervals::Intervals(df[df$id==x,c("peaks.StartTime", "peaks.EndTime")]),"Intervals_full");intervals::closed(var)[,1]<- FALSE;return(var)})
+      idl <- lapply(unique(df$id),function(x){
+        var <- as(intervals::Intervals(df[df$id==x,c("peaks.StartTime", "peaks.EndTime")]),"Intervals_full")#;
+        intervals::closed(var)[,1]<- FALSE#;
+        return(var)
+        })
 
       for(ii in rev(seq(length(idl)))[1:(length(idl)-1)]){
         idt_p <- idl[[ii]]
