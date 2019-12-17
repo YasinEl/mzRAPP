@@ -61,5 +61,11 @@ import_benchmark <- function (file_path, options_table, from_csv = TRUE) {
   #Add "_b" as suffix to each column name
   colnames(b_table) <- paste(colnames(b_table), 'b', sep = '_')
 
+
+  ##############################
+  #b_table <- b_table[isoabb_b == 100]
+  #print(nrow(b_table))
+  ##############################
+
   return(b_table)
 }

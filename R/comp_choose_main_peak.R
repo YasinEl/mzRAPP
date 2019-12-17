@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b){
+choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug){
 
   ##############
   #pick best iso 100 peak by comparing it to to iso group below
@@ -19,7 +19,7 @@ choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak
   ##############
 
   #Convert input columns back to data.table
-  dt <- data.table(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b)
+  dt <- data.table(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug)
 
   #Check if necesary to run
   if(any(duplicated(dt, by='comp_id_b'))){
@@ -57,6 +57,11 @@ choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak
       #Choose higher peak if only one iso group is present
       dt[, height_diff := abs(peak_height_b - peak_height_ug)]
       dt <- dt[, main_peak := ifelse(height_diff == min(height_diff), 'TRUE', 'FALSE')]
+      #When peaks have same height check for rt_diff
+      if(nrow(dt[main_peak == TRUE]) >= 2){
+        dt <- dt[, 'rt_diff' := abs((rt_end_b-rt_start_b)-(rt_end_ug-rt_start_ug))]
+        dt <- dt[, main_peak := ifelse(rt_diff == min(rt_diff) & (main_peak == TRUE), 'TRUE', 'FALSE')]
+      }
     }
   } else {
     #If no duplicate peaks are present mark all as main peak

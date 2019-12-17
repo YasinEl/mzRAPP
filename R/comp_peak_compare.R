@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
+compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_method){
 
   info_list <- list()
 
@@ -175,6 +175,13 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   #Combine the split peak tables
   split_table <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
 
+  print(paste('Before Main Peak Check: ', nrow(c_table)))
+  c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
+  print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
+
+
+
+
   ##############
   #Joining peaks from groupd file onto found areas of ungrouped
   #Could be a problem with rounded areas
@@ -203,7 +210,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
-
+  print(nrow(c_table))
 
 
 
@@ -228,6 +235,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
 
+
   ##############
   #Create main_peak column to identify main peaks
   #when several peaks have been asigned to on benchmark peak
@@ -236,28 +244,29 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
 
   #Get height diff to benchmark and pick peak with smallest diff
-  print(paste('c_table: ', nrow(c_table)))
-  c_table <- c_table[, height_diff := abs(peak_height_ug - peak_height_b)]
-  c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
-  c_table <- c_table[smaller_height == 'TRUE']
-  print(paste('Eliminating dups based on height: ', nrow(c_table)))
+  #print(paste('c_table: ', nrow(c_table)))
+  #c_table <- c_table[, height_diff := abs(peak_height_ug - peak_height_b)]
+  #c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
+  #c_table <- c_table[smaller_height == 'TRUE']
+  #print(paste('Eliminating dups based on height: ', nrow(c_table)))
 
 
 
   ##TAKEN FORM NO START_RT|NO END_RT
   ##If dups still present take g peak with rt  and mz closest to b
-  c_table <- c_table[, rt_diff := abs(rt_g - rt_b)]
-  c_table <- c_table[, mz_diff := abs(mz_g - mz_b)]
-  c_table <- c_table[, smaller_diff := ifelse((rt_diff == min(rt_diff) & mz_diff == min(mz_diff)) | is.na(rt_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
-  View(c_table[smaller_diff == 'FALSE'])
-  c_table <- c_table[smaller_diff == 'TRUE']
-  print(paste('Eliminating dups based on rt: ', nrow(c_table)))
+  #c_table <- c_table[, rt_diff := abs(rt_g - rt_b)]
+  #c_table <- c_table[, mz_diff := abs(mz_g - mz_b)]
+  #c_table <- c_table[, smaller_diff := ifelse((rt_diff == min(rt_diff) & mz_diff == min(mz_diff)) | is.na(rt_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
+  #View(c_table[smaller_diff == 'FALSE'])
+  #c_table <- c_table[smaller_diff == 'TRUE']
+  #print(paste('Eliminating dups based on rt: ', nrow(c_table)))
 
   #######REWROK WHEN FUCTION IS REWORKED
   #Needs to be last
-  print(paste('Befor Main Peak: ', nrow(c_table)))
-  c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
-  print(paste('After Main Peak: ', nrow(c_table[main_peak == TRUE])))
+  #fwrite(c_table, 'c_dbug.csv')
+  #print(paste('Befor Main Peak: ', nrow(c_table)))
+  #c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
+  #print(paste('After Main Peak: ', nrow(c_table[main_peak == TRUE])))
 
 
   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
@@ -283,6 +292,15 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo){
 
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
+
+  fwrite(c_table, 'msdial_dbug.csv')
+
+  print(paste0('Before Main Feature: ', nrow(c_table)))
+  if (main_feature_method != '---'){
+    c_table <- find_main_feature_1(c_table, main_feature_method, nf_g_table, nf_b_table)
+    c_table <- c_table[is_main_feature == TRUE]
+  }
+  print(paste0('After Main Feature: ', nrow(c_table)))
 
   ##############
   #Return the found and 3 notfoundtables in a list

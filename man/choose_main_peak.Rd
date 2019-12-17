@@ -5,7 +5,8 @@
 \title{choose_main_peak}
 \usage{
 choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug,
-  peak_height_ug, peak_height_b)
+  peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug,
+  rt_end_ug)
 }
 \arguments{
 \item{peak_height_b}{}
