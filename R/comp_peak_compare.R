@@ -225,14 +225,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
 
-  fwrite(split_left_table, "split_left_debug.csv")
-  fwrite(split_right_table, "split_right_debug.csv")
-  fwrite(split_middle_table, "split_middle_debug.csv")
-  fwrite(split_table, "split_debug.csv")
-
-
-
-
+  fwrite(c_table, 'grouping_check.csv')
 
 
 
