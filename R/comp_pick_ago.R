@@ -10,9 +10,6 @@
 #'
 #' @examples
 pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
-  print(ug_table_path)
-  print(ug_table_path$datapath)
-  print('------------')
   switch(algo,
     'XCMS' = {
     ug_table <- import_ungrouped_xcms(ug_table_path$datapath, options_table)
@@ -29,11 +26,11 @@ pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
       g_table = NULL
     },
     'mzMine' = {
-      import_tables <- import_mzmine(ug_table_path$datapath, options_table)
-      print(import_tables)
-      ug_table <- import_tables$ug_table
+      #import_tables <- import_ungrouped_mzmine(ug_table_path, options_table)
+      #print(import_tables)
+      ug_table <-import_ungrouped_mzmine(ug_table_path, options_table)
       print(class(ug_table))
-      g_table <- import_tables$g_table
+      g_table <- import_grouped_mzmine(g_table_path$datapath, options_table)
       print(class(g_table))
     })
   return(list('ug_table' = ug_table, 'g_table' = g_table))

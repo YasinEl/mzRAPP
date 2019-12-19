@@ -33,6 +33,7 @@ import_ungrouped_msdial <- function(folder_path, options_table){
 
     #file_name <- file_path_sans_ext(basename(row$datapath))
     file_name <- row$name
+    print(file_name)
     if (file_name %in% options_table$ug_samples){
       #Check if ug_table exists, if not: create
       if(!exists("ug_table")){
@@ -164,6 +165,8 @@ import_grouped_msdial <- function(file_path, options_table){
   g_table[, rt := rt*60]
 
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
+
+  fwrite(g_table, 'msdail_area_dbug.csv')
 
   return(g_table)
 }
