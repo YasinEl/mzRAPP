@@ -896,7 +896,6 @@ css <- "
                      print('Start ROI detection')
 
 
-
                      rois <- getROIsForEICs(
                        files = files,
                        Target.table = MassTraces,
@@ -905,7 +904,7 @@ css <- "
                        minCentroids = input$min_centroids_input,
                        AccurateMZtol = input$accurate_MZ_tol_input
                      )
-
+#rois.t1 <<- rois
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
@@ -917,7 +916,7 @@ css <- "
                        CompCol = rois,
                        Min.PointsperPeak = input$min_PpP_input
                      )
-
+#PCbp.t1 <<- PCbp
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 
@@ -926,7 +925,7 @@ css <- "
                                       add = "main_adduct",
                                       pick_best = "highest_mean_area")
 
-
+#PCal.t1 <<- PCal
                      fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
 
                      print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
