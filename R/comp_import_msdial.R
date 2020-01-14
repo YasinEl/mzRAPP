@@ -37,12 +37,12 @@ import_ungrouped_msdial <- function(folder_path, options_table){
     if (file_name %in% options_table$ug_samples){
       #Check if ug_table exists, if not: create
       if(!exists("ug_table")){
-        ug_table <- fread(row$datapath, integer64 = 'numeric')
+        ug_table <- fread(row$datapath)#, integer64 = 'numeric')
         ug_table <- ug_table[, sample_name := file_name]
         print(ug_table)
       }
       if(exists("ug_table")){
-        temp_data <- fread(row$datapath, integer64 = 'numeric')
+        temp_data <- fread(row$datapath)#, integer64 = 'numeric')
         temp_data <- temp_data[, sample_name := file_name]
         ug_table <- rbind(ug_table, temp_data)
         rm(temp_data)
@@ -104,12 +104,12 @@ import_grouped_msdial <- function(file_path, options_table){
 
   #Check if filetype is text
   if(file_ext(file_path) != 'txt'){
-    stop('ungrouped dataset is not a valid txt file')
+    stop('grouped dataset is not a valid txt file')
   }
 
   #Import text file
   #Make skip variable/search for nrwos
-  g_table <- fread(file_path, skip=4, integer64 = 'numeric')
+  g_table <- fread(file_path, skip=4)#, integer64 = 'numeric')
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){
@@ -130,9 +130,13 @@ import_grouped_msdial <- function(file_path, options_table){
   #Transforming table from wide to long format
   #Creating 1 peak-per-row format
   #########
+  fwrite(g_table, 'before_melt_debug.csv')
   id_vars <- append(na.omit(options_table[['g_columns']]), 'feature_id')
   measure_vars = na.omit(options_table[, g_samples])
+  print(measure_vars)
   g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
+  fwrite(g_table[sample_name == '0_C13_2'], 'sample_2_debug.csv')
+  print(lapply(g_table, class))
 
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
@@ -164,9 +168,22 @@ import_grouped_msdial <- function(file_path, options_table){
   #Multiply rt by 60 to convert min to seconds MAKE OPTIONAL LATER
   g_table[, rt := rt*60]
 
+  ##Round Area values for comparison, hope for explanation from msDail
+  ##Assumes no decimal places in area
+  #g_table[, 'peak_area' := as.numeric(peak_area)]
+  #g_table[, 'area_digits' := nchar(trunc(as.numeric(peak_area)))]
+  #print(g_table, class=TRUE)
+  #print('!!!')
+  #g_table[, 'peak_area_rounded' := ifelse(area_digits >= 8, round(peak_area, 7 - area_digits), peak_area)]
+  #print(g_table, class=TRUE)
+
+  #Left over from debug, fix in final if work
+  g_table[, 'peak_area_rounded' :=  peak_area]
+
+
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
   fwrite(g_table, 'msdail_area_dbug.csv')
-
+  print('import done')
   return(g_table)
 }

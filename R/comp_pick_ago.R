@@ -13,7 +13,11 @@ pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
   switch(algo,
     'XCMS' = {
     ug_table <- import_ungrouped_xcms(ug_table_path$datapath, options_table)
-    g_table <- import_grouped_xcms(g_table_path$datapath, options_table)
+    if (is.null(g_table_path)){
+      g_table = NULL
+    } else {
+      g_table <- import_grouped_xcms(g_table_path$datapath, options_table)
+    }
     },
     'msDial' = {
       #####Pick the folder where file is located
@@ -32,7 +36,8 @@ pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
       print(class(ug_table))
       g_table <- import_grouped_mzmine(g_table_path$datapath, options_table)
       print(class(g_table))
-    })
+    },
+    {return (NULL)})
   return(list('ug_table' = ug_table, 'g_table' = g_table))
 }
 

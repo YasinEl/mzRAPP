@@ -946,7 +946,6 @@ css <- "
 
       SkyPeakBo <- SkylinePeakBoundaries(PCal)
 
-
       print(Sys.time() - starttime)
 
       updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
@@ -980,6 +979,19 @@ css <- "
     ##################
 
     comparison <- eventReactive(input$start_compare, {
+      tryCatch({
+
+
+
+
+
+      ######
+      #Import csv files
+      #####################
+      options_table <- import_options(input$options_upload$datapath)
+      b_table <- import_benchmark(input$benchmark_upload$datapath, options_table)
+      import_results <- pick_algorithm(input$ug_upload, input$g_upload, options_table, input$algorithm_input)
+      req(import_results)
 
       #Disable Elements
       shinyjs::disable('start_compare')
@@ -989,14 +1001,9 @@ css <- "
       #To-Do: Clear graphing Areas!!!!!
 
 
+      updateTabsetPanel(session = session, 'main_panel', selected = 'results_tab_peaks')
 
-      ######
-      #Import csv files
-      #####################
-      options_table <- import_options(input$options_upload$datapath)
-      b_table <- import_benchmark(input$benchmark_upload$datapath, options_table)
-      #print(input$ug_upload$datapath)
-      import_results <- pick_algorithm(input$ug_upload, input$g_upload, options_table, input$algorithm_input)
+
       ug_table <- import_results$ug_table
       g_table <- import_results$g_table
 
@@ -1015,6 +1022,14 @@ css <- "
       ###
 
       return(comparison_ug_g)
+      },
+      error=function(error_message){
+        print('Lol')
+        print(error_message)
+        return(NULL)
+      })
+
+
     })
 
 
@@ -1025,6 +1040,8 @@ css <- "
     #EIC_plot
     observeEvent({input$mol_c; input$add_c; input$ia_c},{
       comp <- comparison()
+      print(comp)
+      req(comp)
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
 
       if(nrow(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c & round(isoabb_b, 2) == input$ia_c]) > 0){
@@ -1047,6 +1064,7 @@ css <- "
     observe({
     #observeEvent(c(input$overview_plot_input_x, input$overview_plot_input_y),{
       comp <- comparison()
+      req(comp)
       f_nf_plot <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
 
       f_nf_plot <- f_nf_plot[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
@@ -1087,9 +1105,11 @@ css <- "
     observe({
       comparison <- comparison()
 
+      req(comparison)
+
       hm_dt <- rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
-      fwrite(hm_dt[molecule_b == 'Uridine 5?-diphosphate'], 'debug_r_s.csv')
+      fwrite(hm_dt, 'debug_r_s.csv')
 
       hm_dt[, missing_peaks := find_r_s_error(
         comp_id_b,
@@ -1284,6 +1304,9 @@ css <- "
 
 
       observeEvent(input$graph_select_input, {
+
+        req(comparison)
+
         f_nf_plot <-
           rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
         f_nf_plot <-
@@ -1375,9 +1398,15 @@ css <- "
       })
     })
 
-    observeEvent(input$start_compare, {
-      updateTabsetPanel(session = session, 'main_panel', selected = 'results_tab_peaks')
-    })
+
+    ####Test Move
+    #observeEvent(input$start_compare, {
+    #  updateTabsetPanel(session = session, 'main_panel', selected = 'results_tab_peaks')
+    #})
+    #######
+
+
+
     #observeEvent(input$generate_benchmark, {
     #  updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
     #})
@@ -1453,18 +1482,21 @@ css <- "
     ####
     observe({
       comp <- comparison()
+      req(comp)
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
       updateSelectInput(session, 'mol_c', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
     })
 
     observeEvent(input$mol_c,{
       comp <- comparison()
+      req(comp)
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
       updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
     })
 
     observeEvent(c(input$mol_c, input$add_c),{
       comp <- comparison()
+      req(comp)
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
       updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
     })
@@ -1620,3 +1652,6 @@ observe({
   shinyApp(ui, server)
 
 }
+
+
+callmzRAPP()

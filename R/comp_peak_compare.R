@@ -192,13 +192,19 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #If statement is solution for msdial
 
   if ('peak_area_rounded_ug' %in% colnames(c_table)){
-    c_table[, peak_area_ug_temp := peak_area_rounded_ug]
+    c_table[, peak_area_ug_temp := as.integer64(peak_area_rounded_ug)]
+    c_table[, sample_id_b_temp := sample_id_b]
     split_table[, peak_area_ug_temp := peak_area_rounded_ug]
+    g_table[, peak_area_g_temp := peak_area_rounded_g]
+    g_table[, sample_id_g_temp := sample_id_g]
   } else {
     c_table[, peak_area_ug_temp := peak_area_ug]
+    c_table[, sample_id_b_temp := sample_id_b]
     split_table[, peak_area_ug_temp := peak_area_ug]
+    g_table[, peak_area_g_temp := peak_area_g]
+    g_table[, sample_id_g_temp := sample_id_g]
   }
-  g_table[, peak_area_g_temp := peak_area_g]
+
 
 
 
@@ -207,7 +213,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
   #Join
-  c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp),
+  c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
   print(nrow(c_table))
@@ -225,6 +231,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
 
+  fwrite(g_table, 'msdail_full_g_debug.csv')
   fwrite(c_table, 'grouping_check.csv')
 
 
@@ -294,6 +301,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
     c_table <- c_table[is_main_feature == TRUE]
   }
   print(paste0('After Main Feature: ', nrow(c_table)))
+  print(paste0('Only Main Peak: ', nrow(c_table[main_peak == TRUE])))
 
   ##############
   #Return the found and 3 notfoundtables in a list
