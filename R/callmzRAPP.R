@@ -1040,7 +1040,6 @@ css <- "
     #EIC_plot
     observeEvent({input$mol_c; input$add_c; input$ia_c},{
       comp <- comparison()
-      print(comp)
       req(comp)
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
 
@@ -1652,6 +1651,3 @@ observe({
   shinyApp(ui, server)
 
 }
-
-
-callmzRAPP()

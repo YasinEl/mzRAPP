@@ -220,7 +220,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
 
-  #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)
+  #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
   #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
 
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
@@ -279,6 +279,54 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   if (any(duplicated(c_table[main_peak==TRUE]))){
     stop('Duplicate Peaks still present after analysis')
   }
+
+  ##############
+  #Compare Feature with Feature
+  ##############
+
+  #Generate Feature Table from Benchmarl
+  bf_table <- b_table[, .(mean_area_b = mean(peak_area_b), rt_start_b = min(rt_start_b), rt_end_b = max(rt_end_b),
+                          mz_start_b = min(mz_start_b), mz_end_b = max(mz_end_b), isoabb_b = unique(isoabb_b), molecule_b = unique(molecule_b), adduct_b = unique(adduct_b)), by=.(feature_id_b)]
+  gf_table <- g_table[, .(mean_area_g = mean(peak_area_g), rt_g = mean(rt_g), mz_g = min(mz_g)), by=.(feature_id_g)]
+
+  ###Create Temp cols for merge
+
+  bf_table <- bf_table[, ':=' (rt_start_b_temp = rt_start_b, rt_end_b_temp = rt_end_b, mz_start_b_temp = mz_start_b, mz_end_b_temp = mz_end_b)]
+  gf_table <- gf_table[, ':=' (rt_g_temp = rt_g, mz_g_temp = mz_g)]
+
+
+  print(bf_table)
+
+  cf_table <- bf_table[gf_table, on=.(rt_start_b_temp < rt_g_temp,
+                                      rt_end_b_temp >  rt_g_temp,
+                                      mz_start_b_temp < mz_g_temp  ,
+                                      mz_end_b_temp > mz_g_temp), allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+  cf_table <- cf_table[,grep('_temp$', colnames(c_table)):=NULL]
+
+
+    #c_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
+    #                                  new_rt_start_b_temp >= rt_start_ug_temp,
+    #                                  new_rt_end_b_temp <= rt_end_ug_temp,
+    #                                  mz_start_b_temp <= mz_ug_temp,
+    #                                  mz_end_b_temp >= mz_ug_temp),
+    #                   allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+
+  fwrite(bf_table, 'bfdebug.csv')
+  fwrite(gf_table, 'gfdebug.csv')
+  fwrite(cf_table, 'cfdebug.csv')
+
+  print(cf_table, class=TRUE)
+
+  main_feature_dt <<- cf_table[, find_best_feature_feature(.SD, .BY), by=.(molecule_b, adduct_b)]
+  print(main_feature_dt)
+
+
+  browser()
+
+
+
 
   ##############
   #Create benchmark, ungrouped and grouped tables for not found peaks

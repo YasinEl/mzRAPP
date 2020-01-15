@@ -117,8 +117,6 @@ match_features_by_iso <- function(dt, max_possible_found_peaks, nf_g_table, fact
 #' @examples
 find_best_matching_iso_pairs <- function(dt, iso_1, iso_2, max_possible_found_peaks, nf_g_table, factor, iso_1_feature = NA){
 
-  #print(iso_1_feature)
-
   #Flter dt, propably not needed when apply
   dt <- dt[, c('feature_id_g', 'peak_area_g', 'isoabb_b', 'sample_id_g', 'feature_id_b')]
   all_isos <- sort(unique(dt$isoabb_b), decreasing = TRUE)
