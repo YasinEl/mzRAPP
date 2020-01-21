@@ -323,8 +323,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   print(main_feature_dt)
 
 
-  browser()
-
 
 
 
