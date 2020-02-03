@@ -107,7 +107,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ##############
   b_table[, rt_add_temp := ifelse((rt_end_b - rt_b) < (rt_b - rt_start_b),
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
-  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
+  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.5,new_rt_end_b = rt_b + rt_add_temp*0.5)]
 
 
   #Creating temp columns to prevent over-writing by join
@@ -319,7 +319,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   print(cf_table, class=TRUE)
 
-  main_feature_dt <<- cf_table[, find_best_feature_feature(.SD, .BY), by=.(molecule_b, adduct_b)]
+  #main_feature_dt <<- cf_table[, find_best_feature_feature(.SD, .BY), by=.(molecule_b, adduct_b)]
   print(main_feature_dt)
 
 
