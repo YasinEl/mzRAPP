@@ -29,8 +29,8 @@ detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(
   peak.dt. <- peak.dt.ini
 
   peak.dt_list <-
-lapply((pot.doubleP.v[pot.doubleP.v > susp.noise &
-                               pot.doubleP.v < (Min.Res/100) * max(pot.doubleP.v)] + 1), function(point, peak.dt = peak.dt.) {
+lapply((pot.doubleP.v[pot.doubleP.v > max(susp.noise, 0.1 * max(pot.doubleP.v)) &
+                        pot.doubleP.v < (Min.Res/100) * max(pot.doubleP.v)] + 1), function(point, peak.dt = peak.dt.) {
 
     doublePeak.rle <- S4Vectors::Rle(pot.doubleP.v > point)
 

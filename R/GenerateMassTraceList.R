@@ -100,7 +100,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DT <- DT[filter.vct$value]
     SF <- SF[filter.vct$value]
     warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package.
-                   Those formulas are excldued. In case this leads to problems for you please contact the devlopers. The following molecular formulas have been excluded: ",
+                   Those formulas are excldued. In case this leads to problems for you please contact the developers. The following molecular formulas have been excluded: ",
                    paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")))
   }
 
@@ -155,5 +155,5 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   }
 
 
-  return(na.omit(Output, by = "mz"))
+  return(na.omit(Output, col = "mz"))
 }
