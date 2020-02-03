@@ -895,7 +895,6 @@ css <- "
                      incProgress(1/15, detail = "detecting ROIs...")
                      print('Start ROI detection')
 
-#mt <<- MassTraces
 
                      rois <- getROIsForEICs(
                        files = files,
@@ -905,11 +904,11 @@ css <- "
                        minCentroids = input$min_centroids_input,
                        AccurateMZtol = input$accurate_MZ_tol_input
                      )
-
+rois.t1 <<- rois
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
-#ttrtt <<- rois
+
                      PCbp <- findBenchPeaks(
                        files = files,
                        Grps = grps,
@@ -917,7 +916,7 @@ css <- "
                        CompCol = rois,
                        Min.PointsperPeak = input$min_PpP_input
                      )
-#tt11tt <<- PCbp
+PCbp.t1 <<- PCbp
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 
@@ -926,7 +925,7 @@ css <- "
                                       add = "main_adduct",
                                       pick_best = "highest_mean_area")
 
-
+#PCal.t1 <<- PCal
                      fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
 
                      print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
@@ -1198,103 +1197,129 @@ css <- "
 
 
       cov_dt <-
-        rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
-
-
+        comparison$c_table
+      cov_dt <- na.omit(cov_dt, cols = c('peak_area_ug'))
+#cov_dt$main_peak <- rep(TRUE, nrow(cov_dt))
       #nf_dt <- rbindlist(list(comparison$nf_g))
 
       #View(nf_dt)
-      cov_dt <- na.omit(cov_dt, cols = c('peak_area_ug'))
-      cov_dt <-
-        cov_dt[, complete_group_set := ifelse(.N == max(samples_per_group_b, na.rm = TRUE), 'TRUE', 'FALSE'), by =
-                 .(molecule_b, adduct_b, isoabb_b, grp_b)]
-      cov_dt <- cov_dt[complete_group_set == 'TRUE']
-      #View(cov_dt)
-      #print('here')
-
-      #grped_consideration for CV plot
-      #nf_dt <- rbindlist(list(comparison$nf_g))
-
-
-      #tmp <- cov_dt[isoabb_b == 100 & !is.na(feature_id_g), .(ut_feature_nr = length(unique(feature_id_g))), by = .(molecule_b, adduct_b)]
-
-      #tmp <- tmp[ut_feature_nr == 1]
-
-      #cov_dt2 <- cov_dt[tmp, on = .(molecule_b, adduct_b)]
-
-      #cov_dt2[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
-
-      #cov_dt2 <- cov_dt2[, reindexedFeatures_g := reIndexFeatures(feature_id_g), by = .(plot_group)]
-
-      #cov_dt2 <- cov_dt2[cov_dt2[, .(mainFeature_g = names(sort(table(feature_id_g), decreasing = TRUE))[1]), by = .(plot_group)], on = .(plot_group)]
-
-      #cov2 <- dt_test[cov_dt[, !c("peak_area_g", "feature_id_g")], on = .(molecule_b, adduct_b, isoabb_b, sample_name_b), nomatch = NA]
-
-      #FOI <- unique(cov_dt$mainFeature_g)
-
-      #unexpMF <- nf_dt[feature_id_g %in% FOI]
 
 
 
-      #tmp <- rbindlist(list(tmp[mainFeature_g == feature_id_g], unexpMF), fill = TRUE)
 
-      #cov_dt <- tmp
-      #cov_dt_plot_dt2 <-
-      #  tmp[, .(benchmark_peaks = sd(peak_area_g, na.rm = TRUE) / mean(peak_area_g, na.rm = TRUE) * 100,
-      #             UT_unaligned_peaks = sd(peak_area_ug, na.rm = TRUE) / mean(peak_area_ug, na.rm = TRUE) * 100
-      #  ), by = .(molecule_b, adduct_b, isoabb_b, grp_b)]
-      ##grpd end
-
-
-      ####test
-      cov_dt_plot_dt <-
-        cov_dt[, .(benchmark_peaks = sd(peak_area_b, na.rm = TRUE) / mean(peak_area_b, na.rm = TRUE) * 100,
-                   UT_unaligned_peaks = sd(peak_area_ug, na.rm = TRUE) / mean(peak_area_ug, na.rm = TRUE) * 100
-        ), by = .(molecule_b, adduct_b, isoabb_b, grp_b)]
+      ####wieder einblenden
+      #cov_dt <- na.omit(cov_dt, cols = c('peak_area_ug'))
+      #cov_dt <-
+      #  cov_dt[, complete_group_set := ifelse(.N == max(samples_per_group_b, na.rm = TRUE), 'TRUE', 'FALSE'), by =
+      #           .(molecule_b, adduct_b, isoabb_b, grp_b)]
+      #cov_dt <- cov_dt[complete_group_set == 'TRUE']
 
 
-      cov_dt_plot_dt[, diffH10PP := as.character(UT_unaligned_peaks - benchmark_peaks > 10)]
 
-      cov_dt_plot_dt[diffH10PP == "TRUE"]$diffH10PP <- "Inc. > 10%p"
-      cov_dt_plot_dt[diffH10PP == "FALSE"]$diffH10PP <- "Inc. < 10%p"
+     # cov_dt_plot_dt <-
+    #    cov_dt[, .(benchmark_peaks = sd(peak_area_b, na.rm = TRUE) / mean(peak_area_b, na.rm = TRUE) * 100,
+    #               UT_unaligned_peaks = sd(peak_area_ug, na.rm = TRUE) / mean(peak_area_ug, na.rm = TRUE) * 100
+    #    ), by = .(molecule_b, adduct_b, isoabb_b, grp_b)]
 
-      cov_dt_plot_dt <-
-        melt(
-          cov_dt_plot_dt,
-          id.vars = c('molecule_b', 'adduct_b', 'grp_b', 'isoabb_b', 'diffH10PP'),
-          measure.vars = c('benchmark_peaks', 'UT_unaligned_peaks'),
-          variable.name = 'data_type',
-          value.name = 'CV'
-        )
 
-      cov_dt_plot_dt[, grp_col := paste0(molecule_b, adduct_b, grp_b, isoabb_b)]
+    #  cov_dt_plot_dt[, diffH10PP := as.character(UT_unaligned_peaks - benchmark_peaks > 10)]
 
-      plot_cov <- ggplot(cov_dt_plot_dt) +
+     # cov_dt_plot_dt[diffH10PP == "TRUE"]$diffH10PP <- "Inc. > 10%p"
+    #  cov_dt_plot_dt[diffH10PP == "FALSE"]$diffH10PP <- "Inc. < 10%p"
+
+     # cov_dt_plot_dt <-
+    #    melt(
+    #      cov_dt_plot_dt,
+    #      id.vars = c('molecule_b', 'adduct_b', 'grp_b', 'isoabb_b', 'diffH10PP'),
+    #      measure.vars = c('benchmark_peaks', 'UT_unaligned_peaks'),
+    #      variable.name = 'data_type',
+    #      value.name = 'CV'
+    #    )
+
+    #  cov_dt_plot_dt[, grp_col := paste0(molecule_b, adduct_b, grp_b, isoabb_b)]
+  #########################################
+  #experiment for ratio instead of cv
+
+      newcols <- c("benchmark", "non_targeted")
+
+
+      cov_dt <- na.omit(cov_dt, cols = c("peak_area_b", "peak_area_ug"))
+
+      cov_dt <- cov_dt[main_peak == TRUE]
+
+
+
+      DT_tmp <- cov_dt[isoabb_b != 100][cov_dt[isoabb_b == 100],
+                                            on=.(sample_name_b, molecule_b, adduct_b),
+                                            nomatch = 0L, allow.cartesian=TRUE][,(newcols) := .((peak_area_b / ((i.peak_area_b * isoabb_b) / 100) - 1) * 100,
+                                                                                                (peak_area_ug / ((i.peak_area_ug * isoabb_b) / 100) - 1) * 100)]
+
+
+      cov_dt_plot_dt <- merge(cov_dt, DT_tmp[,.(comp_id_b, benchmark, non_targeted)], by = 'comp_id_b', all.x = TRUE, allow.cartesian = TRUE)
+
+
+
+      #cov_dt_plot_dt[, diffH10PP := as.character(abs(benchmark) < abs(non_targeted) &
+      #                                             abs(non_targeted - benchmark) > 20)]
+
+
+      cov_dt_plot_dt[, diffH20PP := as.character(abs(abs(benchmark) - abs(non_targeted)) > 10 &
+                                                   abs(non_targeted - benchmark) > 20 &
+                                                   abs(non_targeted) > 30)]
+
+
+
+      cov_dt_plot_dt[diffH20PP == "TRUE"]$diffH20PP <- "Inc. > 20%p"
+      cov_dt_plot_dt[diffH20PP == "FALSE"]$diffH20PP <- "Inc. < 20%p"
+
+       cov_dt_plot_dt <-
+          melt(
+            cov_dt_plot_dt,
+            id.vars = c('molecule_b', 'adduct_b', 'grp_b', 'isoabb_b', 'sample_name_b', 'diffH20PP'),
+            measure.vars = c("benchmark", "non_targeted"),
+            variable.name = 'data_type',
+            value.name = 'Pred_error'
+          )
+
+
+      cov_dt_plot_dt[, grp_col := paste0(molecule_b, adduct_b, grp_b, isoabb_b, sample_name_b)]
+
+      cov_dt_plot_dt <- na.omit(cov_dt_plot_dt, cols = "diffH20PP")
+
+
+  ####################
+
+
+      aplot_table_test <<- cov_dt_plot_dt
+
+      plot_cov <- ggplot(cov_dt_plot_dt[isoabb_b < 100]) +
         suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,
-                                                          y = CV,
-                                                          group = paste(grp_col, diffH10PP),
-                                                          color = diffH10PP,
+                                                          y = Pred_error,
+                                                          group = paste(grp_col, diffH20PP),
+                                                          color = diffH20PP,
                                                           molecule = molecule_b,
                                                           adduct = adduct_b,
                                                           isoabb = isoabb_b,
-                                                          grp = grp_b,
-                                                          diffH10PP = diffH10PP
+                                                          sample = sample_name_b,
+                                                          #grp = grp_b,
+                                                          diffH20PP = diffH20PP
         )), alpha = 0.3)) +
-        scale_color_manual(name = "+ > 10%p", values=c("blue", "red")) +
-        ggtitle("Quality of peak borders") +
-        labs(x = "", y = "CV [%]") +
+        scale_color_manual(name = "+ > 20%p", values=c("blue", "red")) +
+        ggtitle("Quality of peak abundances") +
+        labs(x = "", y = "IT pred error [%]") +
         theme(legend.title = element_blank())
+#plot_test <<- plot_cov
 
-      output$graph_area_2 <- renderPlotly(ggplotly(plot_cov, tooltip = c("molecule", "adduct", "isoabb", "grp")))
-
+      output$graph_area_2 <- renderPlotly(ggplotly(plot_cov, tooltip = c("molecule", "adduct", "isoabb", "sample", "Pred_error")))#"grp")))
 
       peak_i <- generate_results_text(comparison = comparison)
 
+
       output$results_text <- renderText(paste0(peak_i,
                                                "     Missing values (S|R): ", nrow(hm_dt[missing_peaks == "S"]), "|", nrow(hm_dt[missing_peaks == "R"]),
-                                               "     CV increase (>10%p): ", nrow(cov_dt_plot_dt[diffH10PP == "Inc. > 10%p"]), "/", nrow(cov_dt_plot_dt), " (",
-                                               round(nrow(cov_dt_plot_dt[diffH10PP == "Inc. > 10%p"])/nrow(cov_dt_plot_dt) * 100, 1), "%)",
-                                               "     Min. # of alignment errors: ", sum(test$errors)))
+                                               "     Pred. error increase >20%p: ", nrow(cov_dt_plot_dt[diffH20PP == "Inc. > 20%p"])/2, "/", nrow(cov_dt_plot_dt[!is.na(diffH20PP)]) / 2, " (",
+                                               round(nrow(cov_dt_plot_dt[diffH20PP == "Inc. > 20%p"])/nrow(cov_dt_plot_dt) * 100, 1), "%)",
+                                               "     Min. # of alignment errors: ", sum(test$errors, na.rm = TRUE)))
 
 
 

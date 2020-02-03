@@ -34,7 +34,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   if(length(conflicting_cols > 0)) stop(paste0("DT includes reserved column names! Specificly:", conflicting_cols))
 
   DT$molecule <- as.character(DT$molecule)
-
+  DT$SumForm_c <- as.character(DT$SumForm_c)
   ##################################
   #load necessary data
   ##################################
@@ -60,7 +60,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   DT$SumForm2_c <- mapply(multiform,DT$new_formula,DT$Mult)
   DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") mergeform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_add)
   DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") subform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_ded)
-
+  DT <- DT[SumForm2_c != "H from formula 2 not part of formula1"]
 
 
   ##################################
@@ -100,7 +100,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DT <- DT[filter.vct$value]
     SF <- SF[filter.vct$value]
     warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package.
-                   Those formulas are excldued. In case this leads to problems for you please contact the devlopers. The following molecular formulas have been excluded: ",
+                   Those formulas are excldued. In case this leads to problems for you please contact the developers. The following molecular formulas have been excluded: ",
                    paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")))
   }
 
@@ -153,6 +153,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DTreg[, adduct := adduct_c]
     Output <- Output[DTreg[, !c("adduct_c", "SumForm_c")], on = .(molecule, adduct)]
   }
-testmasslist <<- Output
-  return(Output)
+
+
+  return(na.omit(Output, col = "mz"))
 }

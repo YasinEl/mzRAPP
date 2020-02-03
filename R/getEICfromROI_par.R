@@ -67,7 +67,6 @@ getROIsForEICs <-
     ##################################
     .xr <- suppressWarnings(xcms::xcmsRaw(files[file], profstep=0))
     Target.table.wk <- Target.table[fileIdx == file]
-
     .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
                                                                         EndXICScan = which.min(abs(.xr@scantime - max(EndTime.EIC)))),
                                                        by=.(molecule)],
@@ -91,6 +90,9 @@ getROIsForEICs <-
         )})
 
       ROI.dt <- rbindlist(ROI.list)
+
+      if(molec == "Xanthine") ROI.dt_check <<- ROI.dt
+
       ROI.dt <- ROI.dt[,.(rtmin = xr@scantime[scmin],
                           rtmax = xr@scantime[scmax],
                           mzlowerBD = mz,
