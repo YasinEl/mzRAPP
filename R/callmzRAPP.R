@@ -34,6 +34,7 @@ css <- "
 }"
 
   options(shiny.reactlog = TRUE)
+  options(useFancyQuotes = FALSE)
   options(shiny.trace = F)
   options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
   options(spinner.type = 4)
@@ -229,7 +230,7 @@ css <- "
                status = 'info',
               icon = icon('question-circle'),
                 size = 'sm'
-              ),            plotlyOutput('bench_plotxy', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+              ),            plotlyOutput('graph_area_bench_overview', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
           ),
           column(5,
                  style = 'padding:0px;margin:0px;display: inline-flex;',
@@ -244,12 +245,12 @@ css <- "
                    icon = icon('question-circle'),
                    size = 'sm'
                  ),
-                 plotlyOutput('bench_plotHisto', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+                 plotlyOutput('graph_area_bench_histo', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
 
                  )
         ),
         fluidRow(
-          column(2, selectInput('bench_plotxy_input_x', 'x-axis',
+          column(2, selectInput('bench_overview_input_x', 'x-axis',
                                 choices = c(
                                   'Retention time [sec]' = 'peaks.rt',
                                   'Points per peak' = 'peaks.PpP',
@@ -279,7 +280,7 @@ css <- "
                                   'Error_predicted height (abs)' = 'ErrorAbs_H'
                                 ), selected = 'ExpectedArea'
             )),
-            column(2, selectInput('bench_plotxy_input_y', 'y-axis',
+            column(2, selectInput('bench_overview_input_y', 'y-axis',
                                   choices = c(
                                     'Retention time [sec]' = 'peaks.rt',
                                     'Points per peak' = 'peaks.PpP',
@@ -310,7 +311,7 @@ css <- "
                                   ), selected = 'peaks.area'
                                   )
                    ),
-          column(2, selectInput('bench_plotxy_input_color', 'Color-by',
+          column(2, selectInput('bench_overview_input_color', 'Color-by',
                                 choices = c(
                                   'Retention time [sec]' = 'peaks.rt',
                                   'Points per peak' = 'peaks.PpP',
@@ -342,7 +343,7 @@ css <- "
           )
           ),
           column(2),
-          column(2, selectInput('bench_plotHisto', 'Peak variable',
+          column(2, selectInput('select_bench_histo', 'Peak variable',
                                 choices = c(
                                   'Retention time [sec]' = 'peaks.rt',
                                   'Points per peak' = 'peaks.PpP',
@@ -377,24 +378,6 @@ css <- "
         )
         ),
         fluidRow(
-          #column(6,
-          #  #offset = 0,
-          #  style = 'padding:0px;margin:0px;display: inline-flex;',
-          #  dropdownButton(
-          #    br(
-          #      "Individiual peaks depicted in the plots above can be plotted here by typing the IDX number of the peak in the textbox below.
-          #    Simply slide with the mouse over the points in one of the plots above and take the IDX number from the tooltip box.
-          #    The grey peak corresponds to the peak as it is predicted from the most abundant isotoplogue. The black line corresponds to the
-          #    actually measured peak."
-          #    ),
-          #    tooltip = tooltipOptions(title = 'Click for description'),
-          #    circle = TRUE,
-          #    status = 'info',
-          #    icon = icon('question-circle'),
-          #    size = 'sm'
-          #  ),
-          #  plotlyOutput('graph_area_bench_3', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          #),
           column(
             7,
             plotlyOutput('graph_area_bench_hm', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
@@ -414,7 +397,7 @@ css <- "
               icon = icon('question-circle'),
               size = 'sm'
             ),
-            plotlyOutput('graph_area_bench_4', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
+            plotlyOutput('graph_area_bench_peak_overview', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
           )
 
         ),
@@ -793,6 +776,7 @@ css <- "
 
     ##Reactive Values
     data_dir <- reactiveVal(getwd())
+    benchmark_data <- reactiveVal(NULL)
 
     ##File Filters for choice cialogues
     mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
@@ -813,7 +797,6 @@ css <- "
       else {
         file <- rchoose.files(default = isolate(data_dir()), caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
         if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
-        print(file)
         return(file)
       }
     })
@@ -834,10 +817,12 @@ css <- "
 
 
 
-    benchmark_data <- eventReactive(input$generate_benchmark, {
+    observeEvent(input$generate_benchmark, {
 
       #Disable the generate benchmark button to prevent multiple clicks
       shinyjs::disable('generate_benchmark')
+      shinyjs::js$disableTab('benchmark_results')
+
 
       #Get Files from reactives
       #mzML
@@ -862,75 +847,65 @@ css <- "
         if(!is.character(targets$molecule)) {targets$molecule <- as.character(targets$molecule)}
       }
 
+      #Resolution
+      res_input <- input$resolution_drop
+      resolution_df <- resolution_list[[res_input]]
+
       withProgress(message = 'Calculation in progress',
                    detail = "calculating isotopologue MZs...", value = 0, {
-                     starttime <- Sys.time()
+                   starttime <- Sys.time()
+
+                   ###################################################
+                   print('Start calculating isotopologue mz')
+
+                   MassTraces <- getMZtable(targets,
+                                            instrumentRes = resolution_df,
+                                            RelInt_threshold = input$RelInt_Thresh_input,
+                                            stick_method = "intensoid"
+                                           )
+
+                   ###################################################
+                   incProgress(1/15, detail = "detecting ROIs...")
+                   print('Start ROI detection')
 
 
+                   rois <- getROIsForEICs(files = files,
+                                          Target.table = MassTraces,
+                                          PrecisionMZtol = input$percision_mz_tol_input,
+                                          plan = input$plan_input,
+                                          minCentroids = input$min_centroids_input,
+                                          AccurateMZtol = input$accurate_MZ_tol_input
+                                         )
+
+                   ################################################
+                   incProgress(3/15, detail = "detecting peaks...")
+                   print('Start peak detection and evaluation')
+
+                   PCbp <- findBenchPeaks(files = files,
+                                          Grps = grps,
+                                          plan = input$plan_input,
+                                          CompCol_all = rois,
+                                          Min.PointsperPeak = input$min_PpP_input
+                                         )
+
+                   #####################################################
+                   incProgress(10/15, detail = "aligning peaks over samples...")
+                   print('Start peak alignment')
+
+                   PCal <- align_PC(PCbp[Iso_count > 1],
+                                    add = "main_adduct",
+                                    pick_best = "highest_mean_area"
+                                   )
+
+                   #####################################################
+                   fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
+                   print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
+                   incProgress(15/15, detail = "Finished")
 
 
-
-                     ####### PAR !
-                     res_input <- input$resolution_drop
-                     df <- resolution_list[[res_input]]
-
-                     print('Start calculating isotopologue mz')
-
-                     MassTraces <- getMZtable(
-                       targets,
-                       instrumentRes = df,
-                       RelInt_threshold = input$RelInt_Thresh_input,
-                       stick_method = "intensoid"
-                     )
-                     ###################################################
-                     incProgress(1/15, detail = "detecting ROIs...")
-                     print('Start ROI detection')
-
-
-                     rois <- getROIsForEICs(
-                       files = files,
-                       Target.table = MassTraces,
-                       PrecisionMZtol = input$percision_mz_tol_input,
-                       plan = input$plan_input,
-                       minCentroids = input$min_centroids_input,
-                       AccurateMZtol = input$accurate_MZ_tol_input
-                     )
-rois.t1 <<- rois
-                     incProgress(3/15, detail = "detecting peaks...")
-                     ################################################
-                     print('Start peak detection and evaluation')
-
-                     PCbp <- findBenchPeaks(
-                       files = files,
-                       Grps = grps,
-                       plan = input$plan_input,
-                       CompCol = rois,
-                       Min.PointsperPeak = input$min_PpP_input
-                     )
-PCbp.t1 <<- PCbp
-                     incProgress(10/15, detail = "aligning peaks over samples...")
-                     #####################################################
-
-                     print('Start peak alignment')
-                     PCal <- align_PC(PCbp[Iso_count > 1],
-                                      add = "main_adduct",
-                                      pick_best = "highest_mean_area")
-
-#PCal.t1 <<- PCal
-                     fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
-
-                     print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
-
-
-
-                     incProgress(15/15, detail = "Finished")
-
-
-                     shinyjs::enable('generate_benchmark')
-                     shinyjs::js$enableTab('benchmark_results')
-
-                     Sys.sleep(0.25)
-                   })
+                   shinyjs::enable('generate_benchmark')
+                   shinyjs::js$enableTab('benchmark_results')
+                }) #End of With Progress
 
       SkyTranList <- SkylineTransitionList(PCal)
 
@@ -940,28 +915,68 @@ PCbp.t1 <<- PCbp
 
       updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
 
-      return(list(files = files, targets = targets, PCal = PCal))
+      bench_temp <<- PCal
+
+      benchmark_data(list(files = files, targets = targets, PCal = PCal))
+    })
+
+    #Benchmark Plot Functions
+    #Benchmark overview plot
+    observeEvent({benchmark_data(); input$bench_overview_input_x; input$bench_overview_input_y; input$bench_overview_input_color}, {
+      benchmark_data <- isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        output$graph_area_bench_overview <- renderPlotly(plot_bench_overview(benchmark_data, input$bench_overview_input_x, input$bench_overview_input_y, input$bench_overview_input_color, choice_vector_bench))
+      }
+    })
+    #Benchmark historgramm plot
+    observeEvent({benchmark_data(); input$select_bench_histo}, {
+      benchmark_data <- isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        output$graph_area_bench_histo <- renderPlotly(plot_bench_histo(benchmark_data, input$select_bench_histo, choice_vector_bench))
+      }
+    })
+
+    #Benchmark heatmap plot
+    observeEvent({benchmark_data()}, {
+      benchmark_data <- isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        plot_and_text <- plot_bench_heatmap(benchmark_data)
+        output$graph_area_bench_hm <- renderPlotly(plot_and_text$p)
+        output$results_text_b <- renderText(plot_and_text$t)
+      }
     })
 
 
-
-    observeEvent({input$mol; input$add; input$ia},{
-      benchmark_data <- benchmark_data()
-      benchmark_data <- benchmark_data$PCal
-      if(nrow(benchmark_data[molecule == input$mol & adduct == input$add & round(isoabb, 2) == input$ia]) > 0){
-
-        p <- suppressWarnings(
-          plot_Peak_per_mol(
-            benchmark_data,
-            mol = input$mol,
-            add = input$add,
-            ia = input$ia
-          )
-        )
-
-        output$graph_area_bench_4 <- renderPlotly(p)
+    #Benchmark peak overview plot
+    observeEvent(benchmark_data(),{
+      benchmark_data<-isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        benchmark_data <- benchmark_data$PCal
+        updateSelectInput(session, 'mol', choices = as.character(unique(benchmark_data$molecule)), selected = as.character(unique(benchmark_data$molecule)[1]))
       }
-    }, ignoreInit = FALSE)
+    })
+    observeEvent(input$mol, {
+      benchmark_data<-isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        benchmark_data <- benchmark_data$PCal
+        updateSelectInput(session, 'add', choices = unique(benchmark_data[molecule == input$mol]$adduct))
+      }
+    })
+
+    observeEvent({input$mol; input$add}, {
+      benchmark_data<-isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        benchmark_data <- benchmark_data$PCal
+        updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
+      }
+    })
+
+    observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
+      benchmark_data<-isolate(benchmark_data())
+      if(!is.null(benchmark_data)){
+        output$graph_area_bench_peak_overview <- renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia))
+      }
+    })
 
 
     ##################
@@ -1515,152 +1530,6 @@ PCbp.t1 <<- PCbp
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
       updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
     })
-
-    observe({
-      benchmark <- benchmark_data()
-      benchmark <- benchmark$PCal
-      updateSelectInput(session, 'mol', choices = as.character(unique(benchmark$molecule)), selected = as.character(unique(benchmark$molecule)[1]))
-    })
-
-    observeEvent(input$mol,{
-      benchmark <- benchmark_data()
-      benchmark <- benchmark$PCal
-      updateSelectInput(session, 'add', choices = unique(benchmark[molecule == input$mol]$adduct))
-    })
-
-    observeEvent(c(input$mol, input$add),{
-      benchmark <- benchmark_data()
-      benchmark <- benchmark$PCal
-      updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
-    })
-
-    observe({
-      benchmark <- benchmark_data()
-      benchmark <- benchmark$PCal
-      #output$graph_area_bench_1 <-
-      #  renderPlotly(plot_vs_prediction(PC, y = peaks.area))
-      #output$graph_area_bench_2 <-
-      #  renderPlotly(plot_vs_prediction(PC, y = ErrorRel_A))
-
-
-      x = input$bench_plotxy_input_x
-      y = input$bench_plotxy_input_y
-      colb = input$bench_plotxy_input_color
-
-      suppressWarnings(
-              p <- ggplot() +
-                geom_point(data = benchmark[!is.na(get(x)) & !is.na(get(y))], aes(x = get(x),
-                                                                                  y = get(y),
-                                                                                  color = get(colb),
-                                                                                  molecule = molecule,
-                                                                                  adduct = adduct,
-                                                                                  isoabb = isoabb,
-                                                                                  sample_name = FileName)) +
-                labs(x = names(choice_vector_bench)[choice_vector_bench == x],
-                     y = names(choice_vector_bench)[choice_vector_bench == y]) +
-                labs(color=names(choice_vector_bench)[choice_vector_bench == colb]) +
-                ggtitle("Overview - Peaks")
-      )
-        output$bench_plotxy <- renderPlotly(plotly::ggplotly(p,
-                                                             tooltip = c("molecule",
-                                                                         "adduct",
-                                                                         "isoabb",
-                                                                         "sample_name"),
-                                                             dynamicTicks = TRUE,
-                                                             width = 1000))
-    })
-
-
-    observe({
-      benchmark <- benchmark_data()
-      benchmark <- benchmark$PCal
-
-
-      var = input$bench_plotHisto
-
-
-suppressWarnings(
-        if(!(var %in% c("molecule", "FileName", "Grp", "adduct"))){
-          p <- ggplot() +
-          geom_histogram(data = benchmark[!is.na(get(var))], aes(get(var)), bins = 30) +
-          ggtitle("Overview - Histogram") +
-          xlab(names(choice_vector_bench)[choice_vector_bench == var])
-
-        } else{
-          p <- ggplot() +
-          geom_bar(data = benchmark[!is.na(get(var))], aes(as.character(get(var)))) +
-          ggtitle("Overview - Histogram") +
-          xlab(names(choice_vector_bench)[choice_vector_bench == var])
-
-        }
-)
-
-
-      output$bench_plotHisto <- renderPlotly(plotly::ggplotly(p, dynamicTicks = TRUE))
-
-
-      output$graph_area_bench_3 <-
-        renderPlotly(plot_Peak_with_predicted_peak(benchmark,
-                                                   IndexNumber = input$index_number))
-
-    })
-
-observe({
-  benchmark_set <- benchmark_data()
-  benchmark_all <- benchmark_set$PCal
-  benchmark <- unique(benchmark_all[!is.na(peaks.PpP) & isoabb == 100, c("molecule", "FileName", "isoabb")], by = c("molecule", "FileName"))
-  benchmark_files <- benchmark_set$files
-  benchmark_targets <- benchmark_set$targets
-  benchmark_targets <- unique(benchmark_targets[, "molecule"])
-
-
-
-  files.dt <- data.table(FileName = sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(benchmark_files)))
-  files.dt[,fileIdx:= seq(nrow(files.dt))]
-  benchmark_targets$fileIdx <- rep(1, nrow(benchmark_targets))
-  benchmark_targets <- benchmark_targets[files.dt, on=.(fileIdx<=fileIdx), allow.cartesian = TRUE]
-
-  plot.dt <- benchmark[benchmark_targets, on = .(molecule, FileName), nomatch = NA]
-
-  plot.dt$Found <- !is.na(plot.dt$isoabb)
-
-
-  plot.dt <- plot.dt[Found == TRUE, .(nr = .N), by = .(molecule, Found)][, !"Found"][plot.dt, on =.(molecule), nomatch = NA]
-  plot.dt[is.na(nr)]$nr <- 0
-
-  plot_hm <- ggplot(
-    plot.dt,
-    aes(
-      x = reorder(as.character(molecule), nr),
-      y = as.character(FileName),
-      fill = as.factor(Found),
-      molecule = molecule,
-      FileName = FileName
-    )
-  ) +
-    geom_tile() +
-    scale_fill_manual(values=c("firebrick", "forestgreen")) +
-    ggtitle("Found/not found compounds per sample") +
-    labs(x = "molecule", y = "file name", fill = "Found")# +
-    #theme(axis.text.x = element_text(angle = 45))
-#    theme(legend.title = element_blank())
-#
-  output$graph_area_bench_hm <-
-    renderPlotly(plotly::ggplotly(
-      plot_hm,
-      width = 1000,
-      tooltip = c("molecule", "FileName")
- ))
-
-  output$results_text_b <- renderText(paste0("# of benchmark peaks: ", nrow(benchmark_all), "       # of compounds: " , length(unique(benchmark_all$molecule)),
-                                           "       median FWHM [s]: ", round(median(benchmark_all$peaks.FW50M, na.rm = TRUE), 1), "       median # points per peak: ",
-                                           median(benchmark_all$peaks.PpP), "       median mz accuracy [ppm]: ",
-                                           round(median(benchmark_all$peaks.mz_accuracy_ppm), 1)))
-
-})
-
-
-
 
   }
 
