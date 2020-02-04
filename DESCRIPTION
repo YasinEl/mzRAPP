@@ -17,9 +17,9 @@ Depends:
     shinyWidgets,
     DT,
     tools,
-    shinyFiles,
     plotly,
     dplyr,
+    rChoiceDialogs,
     bit64
 biocViews:
 Imports:

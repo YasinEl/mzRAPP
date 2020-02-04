@@ -33,19 +33,6 @@ css <- "
   border-color: #aaa !important;
 }"
 
-  #library(shiny)
-  #library(shinyWidgets)
-  #library(shinyjs)
-  #library(V8)
-  #library(data.table)
-  #library(DT)
-  #library(tools)
-  ##library(tictoc)
-  #library(shinyFiles)
-  #library(plotly)
-  #library(dplyr)
-  #library(enviPat)
-
   options(shiny.reactlog = TRUE)
   options(shiny.trace = F)
   options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
@@ -57,52 +44,48 @@ css <- "
                 shinyjs::extendShinyjs(text = jscode),
                 shinyjs::inlineCSS(css),
                 navbarPage(
+
+    #App Title
     'mzRAPP',
+    #ID for entire Page
     id = 'main_panel',
+
+    #First Tab: Gnerate Benchmark
     tabPanel(
-      'Generate benchmark',
+      title = 'Generate benchmark',
       value = 'generate_benchmark_tab',
-      mainPanel(
+
+        #1st Row
         fluidRow(
           column(4,
-                 strong(
-                   "1. Select necessary files:", style = "font-size:30px"
-                 ),
-                 br(),
-                 p("(and choose resolution used)")
+            strong("1. Select necessary files:", style = "font-size:30px"),
+            p("(and choose resolution used)")
           )
-
         ),
+
+        #2nd Row
         fluidRow(
-          column(
-            6,
+          column(6,
             style = "display: inline-flex;",
-            shinyFilesButton(
-              'mzML_upload',
-              'Select mzML files',
-              title = 'Select mzML files',
-              multiple = TRUE,
-              style = "width:190px"
-            ),
-            div(style = "width: 20px;"),
-            shinyFilesButton(
-              'grps_upload',
-              'Select sample-group file',
-              title = 'Select sample-group file',
-              multiple = TRUE,
-              style = "width:190px"
-            ),
-            div(style = "width: 20px;"),
-            shinyFilesButton(
-              'coi_upload',
-              'Select target file',
-              title = 'Select target file',
-              multiple = TRUE,
-              style = "width:190px"
-            )
-          )
 
-        ),
+            actionButton(inputId = 'mzML_upload',
+                         label = 'Select mzML files',
+                         width = '190px'),
+
+            div(style = "width: 20px;"),
+
+            actionButton(inputId = 'grps_upload',
+                         label = 'Select sample-group file',
+                         width = '190px'),
+
+            div(style = "width: 20px;"),
+
+            actionButton(inputId = 'coi_upload',
+                         label = 'Select target file',
+                         width = '190px'),
+            )
+          ),
+
         fluidRow(
           column(4,
                  br()
@@ -186,9 +169,6 @@ css <- "
           )
         ),
         tableOutput('debug_table')
-
-
-      )
 
     ),
     tabPanel(
@@ -810,78 +790,89 @@ css <- "
     shinyjs::js$disableTab('results_tab_features')
     shinyjs::js$disableTab('results_tab_peaks')
 
-    volumes = getVolumes()
-    observe({
-      shinyFileChoose(input,
-                      'mzML_upload',
-                      roots = volumes,
-                      session = session)
-      shinyFileChoose(input,
-                      'grps_upload',
-                      roots = volumes,
-                      session = session)
-      shinyFileChoose(input, 'coi_upload', roots = volumes, session = session)
+
+    ##Reactive Values
+    data_dir <- reactiveVal(getwd())
+
+    ##File Filters for choice cialogues
+    mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
+    csv_filter <- matrix(c('csv Files (*.csv)', '*.csv'), nrow = 1, ncol = 2)
+
+    #File input reactives
+    mzML_files <- reactive({
+      if (input$mzML_upload[1] == 0){return(NULL)}
+      else {
+        files <- rchoose.files(default = isolate(data_dir()), caption = 'Select .mzML Files', multi = TRUE, filters = mzML_filter)
+        if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        return(files)
+      }
     })
+
+    grps_file <- reactive({
+      if(input$grps_upload[1] == 0){return(NULL)}
+      else {
+        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        print(file)
+        return(file)
+      }
+    })
+
+    coi_file <- reactive({
+      if(input$coi_upload == 0){return(NULL)}
+      else {
+        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        return(file)
+      }
+    })
+
+    #Reactive Observers
+    observe({mzML_files()})
+    observe({grps_file()})
+    observe({coi_file()})
 
 
 
     benchmark_data <- eventReactive(input$generate_benchmark, {
 
+      #Disable the generate benchmark button to prevent multiple clicks
       shinyjs::disable('generate_benchmark')
 
-
-
-
-      if (!is.null(input$mzML_upload)) {
-        mzML_files <- parseFilePaths(volumes, input$mzML_upload)
-        #print(mzML_files)
+      #Get Files from reactives
+      #mzML
+      if(is.null(mzML_files()) || length(mzML_files()) == 0){
+        stop('no mzML files selected')
+      } else {
+        files <- mzML_files()
       }
-      if (!is.null(input$grps_upload)) {
-        grps_file <- parseFilePaths(volumes, input$grps_upload)
-       # print(grps_file)
+
+      #grps
+      if(is.null(grps_file()) || length(grps_file()) == 0){
+        stop('No grps file selected')
+      } else {
+        grps <- fread(grps_file())
       }
-      if (!is.null(input$coi_upload)) {
-        coi_file <- parseFilePaths(volumes, input$coi_upload)
-        #print(coi_file)
+
+      #coi
+      if(is.null(coi_file()) || length(coi_file()) == 0){
+        stop('No coi file selected')
+      } else {
+        targets <- fread(coi_file())
+        if(!is.character(targets$molecule)) {targets$molecule <- as.character(targets$molecule)}
       }
 
       withProgress(message = 'Calculation in progress',
-
                    detail = "calculating isotopologue MZs...", value = 0, {
-
-
-
                      starttime <- Sys.time()
-                     #######List of files#######
-                     ###########################
-                     files <-
-                       mzML_files$datapath######list.files(input$mzML_upload$datapath, pattern = ".mzML", full.names = TRUE)#list.files("Z:/QE-HF/Yasin/Column Tests/RP_pos_YE_MM_MoMixCalib_12CMatrix oder 13C Matrix/centroided/13C", pattern = ".mzML", full.names = TRUE)## # par
 
-                     #######Grps################
-                     ##########################
-                     grps <- fread(grps_file$datapath) # par
 
-                     ###Compounds of interest###
-                     ###########################
 
-                     targets <- fread(coi_file$datapath) # par
 
-                     if(!is.character(targets$molecule)) {targets$molecule <- as.character(targets$molecule)}
 
                      ####### PAR !
                      res_input <- input$resolution_drop
                      df <- resolution_list[[res_input]]
-
-
-                     ######################OVERWRITE
-                     #files <- list.files("Z:/QE-HF/Yasin/Column Tests/RP_pos_YE_MM_MoMixCalib_12CMatrix oder 13C Matrix/centroided/13C", pattern = ".mzML", full.names = TRUE)
-                     #targets <- fread("Y:/Max/momix_hsst3_13C_compcol.csv")
-                     #grps <- fread("Y:/Max/momix_hsst3_13C_grp.csv")
-
-                     #df <- resolution_list$`OTFusion,QExactiveHF_120000@200`
-
-
-                     #######################################
 
                      print('Start calculating isotopologue mz')
 
