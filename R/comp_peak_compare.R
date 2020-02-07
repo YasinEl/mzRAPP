@@ -15,7 +15,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   info_list <- list()
 
-
   #If no g_table exists crate empty one
   if(is.null(g_table)){
     g_table = data.table('comp_id_g' = integer(),
@@ -81,6 +80,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                                       nr_of_g_features = length(unique(g_table$feature_id_g)),
                                       algorithm = algo))
 
+  print(info_list)
+
+
   ##############
   #Check for duplicate peaks
   ##############
@@ -99,11 +101,12 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #Start comparison!
   ##############
 
+
   ##############
   #Generating minimum peak bounderies in benchmark
   #Untrageted rt range must completely envelope these bounderies
   #Defined as taking the shorter of rt_start_b to rt_b or rt_end_b to rt_b,
-  #taking 30% of this distance, adding and subtracting it from rt_b
+  #taking 50% of this distance, adding and subtracting it from rt_b
   ##############
   b_table[, rt_add_temp := ifelse((rt_end_b - rt_b) < (rt_b - rt_start_b),
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
@@ -125,6 +128,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
 
+  fwrite(b_table, 'bdebug.csv')
+  fwrite(ug_table, 'ugdebug.csv')
+
+
+
   ##############
   #Conducting non-equi join.
   #rt range must be larger on both sides than calculated peak limits,
@@ -136,6 +144,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                                     mz_start_b_temp <= mz_ug_temp,
                                     mz_end_b_temp >= mz_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+
+  fwrite(c_table, 'firstJoinDebug.csv')
 
 
 
@@ -174,6 +185,15 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   #Combine the split peak tables
   split_table <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
+
+
+  fwrite(c_table[comp_id_b %in% c(2705, 2704)], 'multipeak_b_debug.csv')
+  fwrite(c_table[comp_id_ug %in% c(118163, 122656, 122659, 122661, 122664)], 'multipeak_ug_debug.csv')
+
+  temp_c_table <<- c_table
+
+  stop()
+
 
   print(paste('Before Main Peak Check: ', nrow(c_table)))
   c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
@@ -318,9 +338,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   fwrite(cf_table, 'cfdebug.csv')
 
   print(cf_table, class=TRUE)
-
-  #main_feature_dt <<- cf_table[, find_best_feature_feature(.SD, .BY), by=.(molecule_b, adduct_b)]
-  print(main_feature_dt)
 
 
 
