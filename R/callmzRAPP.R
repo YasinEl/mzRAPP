@@ -1236,6 +1236,15 @@ PCbp.t1 <<- PCbp
                                                                                                 (peak_area_ug / ((i.peak_area_ug * isoabb_b) / 100) - 1) * 100)]
 
 
+      #DT_tmp <- cov_dt[isoabb_b != 100][cov_dt[isoabb_b == 100],
+      #                                  on=.(sample_name_b, molecule_b, adduct_b),
+      #                                  nomatch = 0L, allow.cartesian=TRUE][,(newcols) := .((peak_area_b / ((i.peak_area_b * isoabb_b/100))) - 1,
+      #                                                                                      (peak_area_ug / ((i.peak_area_ug * isoabb_b/100))) - 1)]
+
+
+      test_this <<- DT_tmp
+      #(peaks.area / ((i.peaks.area * get(IsoAbb_col)) / 100) - 1) * 100
+      #peaks.area - ((i.peaks.area * get(IsoAbb_col)) / 100)
       cov_dt_plot_dt <- merge(cov_dt, DT_tmp[,.(comp_id_b, benchmark, non_targeted)], by = 'comp_id_b', all.x = TRUE, allow.cartesian = TRUE)
 
 

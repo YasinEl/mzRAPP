@@ -31,8 +31,10 @@ choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak
       peaks_1 <- dt[isoabb_b == all_iso_groups[1]][, merge_key := 1]
       peaks_2 <- dt[isoabb_b == all_iso_groups[2]][, merge_key := 1]
       merged_peaks <- merge(peaks_1, peaks_2, by='merge_key', all=FALSE, allow.cartesian=TRUE)
-      merged_peaks[, diff_area := abs(((peak_area_ug.x*isoabb_b.y)/100)-peak_area_ug.y)]
+      #merged_peaks[, diff_area := abs(((peak_area_ug.x*isoabb_b.y)/100)-peak_area_ug.y)]
+      merged_peaks[, diff_area := abs(((peak_area_ug.x*isoabb_b.y)/100)-peak_area_ug.y)/((peak_area_ug.x*isoabb_b.y)/100)]
       #Get M0 Peak with minimal area_diff
+
       m0_peak_id <- merged_peaks[diff_area == min(diff_area), comp_id_ug.x]
       m0_peak <- dt[comp_id_ug == m0_peak_id][, merge_key := 1]
 
@@ -41,7 +43,8 @@ choose_main_peak <- function(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak
       rest_peaks <- dt[isoabb_b != all_iso_groups[1]][, merge_key := 1]
       merged_peaks <- merge(rest_peaks, m0_peak, by='merge_key', all=FALSE, allow.cartesian=TRUE)
       #Calculate area diff between m0 and all others
-      merged_peaks[, diff_area := abs(((peak_area_ug.y*isoabb_b.x)/100)-peak_area_ug.x)]
+      #merged_peaks[, diff_area := abs(((peak_area_ug.y*isoabb_b.x)/100)-peak_area_ug.x)]
+      merged_peaks[, diff_area := abs(((peak_area_ug.y*isoabb_b.x)/100)-peak_area_ug.x)/((peak_area_ug.y*isoabb_b.x)/100)]
 
       #select peaks per iso abb with lowest diff
       merged_peaks[, min_diff_area := min(diff_area), by=isoabb_b.x]

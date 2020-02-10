@@ -29,12 +29,10 @@ findBenchPeaks <- function(files,
                            Min.Res = 60,
                            plan = "multiprocess",
                            Min.cor.w.main_adduct = 0.8,
-                           Min.cor.w.M0 = 0.8,
+                           Min.cor.w.M0 = 0.75,
                            Min.iso.count = 2,
                            return_unsuc_searches = FALSE)
 {
-
-
 
   if(!is.character(CompCol_all$molecule)) {CompCol_all$molecule <- as.character(CompCol_all$molecule)}
 
@@ -526,7 +524,7 @@ findBenchPeaks <- function(files,
                                              !is.na(int_wo_spikes)]$rt,
                                     EIC.dt[rt >= rtmin &
                                              rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$int_smooth,
+                                             !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.25,
                                     return_diff = TRUE
@@ -540,7 +538,7 @@ findBenchPeaks <- function(files,
                                              !is.na(int_wo_spikes)]$rt,
                                     EIC.dt[rt >= rtmin &
                                              rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$int_smooth,
+                                             !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.50,
                                     return_diff = TRUE
@@ -554,7 +552,7 @@ findBenchPeaks <- function(files,
                                              !is.na(int_wo_spikes)]$rt,
                                     EIC.dt[rt >= rtmin &
                                              rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$int_smooth,
+                                             !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.75,
                                     return_diff = TRUE
@@ -638,13 +636,20 @@ findBenchPeaks <- function(files,
                   if (iso.run == "MAiso") {
 
                     MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+                    ##
+                    #print(colnames(MA.Isos))
+                    if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & adduct.run == "main_adduct") fwrite(MA.Isos[molecule == "Octanoyl-carnitine"], paste0("D:/mzRAPP_sub/", unique(MA.Isos$FileName) ,"_allM0.csv"))
+                    ##
                     if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)) MA.Isos[peaks.PpP >= Min.PointsperPeak]
                     if (adduct.run == "screen_adducts"){
-                      if(nrow(MA.Isos) > 0 & !is.null(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct & peaks.PpP >= Min.PointsperPeak]
+                      if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct & peaks.PpP >= Min.PointsperPeak]
                     }
                   } else if (iso.run == "LAisos"){
                     LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 & peaks.PpP >= Min.PointsperPeak]
+                    ##
+                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & adduct.run == "main_adduct") fwrite(LA.Isos[molecule == "Octanoyl-carnitine"], paste0("D:/mzRAPP_sub/", unique(LA.Isos$FileName) ,"_allIsos.csv"))
+                    ##
+                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.cor_w_M0"  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 & peaks.PpP >= Min.PointsperPeak]
                     if (adduct.run == "main_adduct") {
 
                       ALL.Isos.perfile <-
@@ -683,7 +688,7 @@ findBenchPeaks <- function(files,
                         "isoabb",
                         flag_extremes = TRUE
   )
-
+fwrite(Result, "peaklist_no_iso_filtering.csv")
   Result <- Result[isoabb_ol == FALSE]
 
   Result <-

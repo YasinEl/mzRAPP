@@ -39,7 +39,8 @@ Imports:
     intervals,
     doFuture,
     S4Vectors,
-    V8
+    V8,
+    future.apply
 Suggests: 
     knitr,
     rmarkdown

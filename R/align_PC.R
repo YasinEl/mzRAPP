@@ -164,6 +164,16 @@ align_PC <- function(PC,
     outputT <- outputT[tmp, on = .(molecule, aligned.grp), nomatch = NULL, allow.cartesian = TRUE]
   }
 
+  #filter out isotopologues which do not have at least in one file a prediction error < 30
+  Isoab_summary_table <- outputT[isoabb < 100,.(lowest_IsoabError = min(abs(ErrorRel_A))), by = .(molecule, adduct, isoabb)]
+  Isoab_summary_table <- Isoab_summary_table[lowest_IsoabError >= 30]
+  if(nrow(Isoab_summary_table) > 1){
+    outputT <- Isoab_summary_table[outputT, on = .(molecule, adduct, isoabb), nomatch = NA]
+    outputT_f <- outputT[is.na(lowest_IsoabError), !"lowest_IsoabError"]
+    isoCountT <- outputT[,.(Iso_count = .N), by = .(molecule, adduct, FileName)]
+    outputT <- isoCountT[outputT[,!"Iso_count"], on = .(molecule, adduct, FileName), nomatch = NA]
+    outputT <- outputT[Iso_count > 1]
+  }
 
 
 
