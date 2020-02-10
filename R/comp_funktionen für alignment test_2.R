@@ -1,4 +1,4 @@
-#' get_main_UT_groups
+#' @title get_main_UT_groups
 #'
 #' @param DT
 #'
@@ -46,7 +46,7 @@ get_main_UT_groups <- function(DT){
 }
 
 
-#' count_alignment_errors
+#' @title count_alignment_errors
 #'
 #' @param DT
 #' @param main_UTgroups

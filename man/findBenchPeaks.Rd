@@ -7,7 +7,7 @@
 findBenchPeaks(files, Grps, CompCol_all, Min.PointsperPeak = 10,
   peak.spotting.factor = 0.001, Integration_baseL_factor = 0.1,
   Min.Res = 60, plan = "multiprocess", Min.cor.w.main_adduct = 0.8,
-  Min.cor.w.M0 = 0.8, Min.iso.count = 2,
+  Min.cor.w.M0 = 0.75, Min.iso.count = 2,
   return_unsuc_searches = FALSE)
 }
 \arguments{
