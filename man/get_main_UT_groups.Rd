@@ -10,5 +10,5 @@ get_main_UT_groups(DT)
 \item{DT}{}
 }
 \description{
-get_main_UT_groups
+Find most occuring feature ID within matched peaks of a benchmark feature
 }
