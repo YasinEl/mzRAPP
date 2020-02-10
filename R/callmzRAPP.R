@@ -904,7 +904,7 @@ css <- "
                        minCentroids = input$min_centroids_input,
                        AccurateMZtol = input$accurate_MZ_tol_input
                      )
-rois.t1 <<- rois
+#rois.t1 <<- rois
                      incProgress(3/15, detail = "detecting peaks...")
                      ################################################
                      print('Start peak detection and evaluation')
@@ -916,7 +916,7 @@ rois.t1 <<- rois
                        CompCol = rois,
                        Min.PointsperPeak = input$min_PpP_input
                      )
-PCbp.t1 <<- PCbp
+#PCbp.t1 <<- PCbp
                      incProgress(10/15, detail = "aligning peaks over samples...")
                      #####################################################
 
@@ -1010,7 +1010,7 @@ PCbp.t1 <<- PCbp
 
 
       ###For Debug
-      comparison_ev <<- comparison_ug_g
+      #comparison_ev <<- comparison_ug_g
       ###
 
       return(comparison_ug_g)
@@ -1242,7 +1242,7 @@ PCbp.t1 <<- PCbp
       #                                                                                      (peak_area_ug / ((i.peak_area_ug * isoabb_b/100))) - 1)]
 
 
-      test_this <<- DT_tmp
+      #test_this <<- DT_tmp
       #(peaks.area / ((i.peaks.area * get(IsoAbb_col)) / 100) - 1) * 100
       #peaks.area - ((i.peaks.area * get(IsoAbb_col)) / 100)
       cov_dt_plot_dt <- merge(cov_dt, DT_tmp[,.(comp_id_b, benchmark, non_targeted)], by = 'comp_id_b', all.x = TRUE, allow.cartesian = TRUE)
@@ -1280,7 +1280,7 @@ PCbp.t1 <<- PCbp
   ####################
 
 
-      aplot_table_test <<- cov_dt_plot_dt
+      #aplot_table_test <<- cov_dt_plot_dt
 
       plot_cov <- ggplot(cov_dt_plot_dt[isoabb_b < 100]) +
         suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,
