@@ -1,4 +1,4 @@
-#' @title get_main_UT_groups
+#' get_main_UT_groups
 #'
 #' @param DT
 #'
@@ -6,6 +6,9 @@
 #' @export
 #'
 #' @examples
+
+
+
 get_main_UT_groups <- function(DT){
 
   DT[] <- lapply(DT, function(x) as.character(x))
@@ -46,7 +49,7 @@ get_main_UT_groups <- function(DT){
 }
 
 
-#' @title count_alignment_errors
+#' count_alignment_errors
 #'
 #' @param DT
 #' @param main_UTgroups
@@ -56,6 +59,7 @@ get_main_UT_groups <- function(DT){
 #' @export
 #'
 #' @examples
+
 count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   DT[] <- lapply(DT, function(x) as.character(x))
