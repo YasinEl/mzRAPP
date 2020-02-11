@@ -128,11 +128,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
 
-  fwrite(b_table, 'bdebug.csv')
-  fwrite(ug_table, 'ugdebug.csv')
-
-
-
   ##############
   #Conducting non-equi join.
   #rt range must be larger on both sides than calculated peak limits,
@@ -187,16 +182,10 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   split_table <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
 
 
-  fwrite(c_table[comp_id_b %in% c(2705, 2704)], 'multipeak_b_debug.csv')
-  fwrite(c_table[comp_id_ug %in% c(118163, 122656, 122659, 122661, 122664)], 'multipeak_ug_debug.csv')
-
-  temp_c_table <<- c_table
-
-  stop()
-
 
   print(paste('Before Main Peak Check: ', nrow(c_table)))
-  c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
+  c_table <- pick_main_peak(c_table)
+  #c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
   print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
 
 

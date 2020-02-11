@@ -1059,6 +1059,7 @@ css <- "
       comparison_data(comparison_ug_g)
       },
       error=function(error_message){
+        shinyjs::enable('start_compare')
         print('Lol')
         print(error_message)
         return(NULL)
