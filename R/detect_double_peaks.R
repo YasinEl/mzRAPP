@@ -6,8 +6,9 @@
 #' @param r
 #' @param Min.Res
 #'
-#' @return
+#' @keyword Internal
 #' @export
+#' @return
 #'
 #' @examples
 detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(pot.doubleP.v), Min.Res = 70) {

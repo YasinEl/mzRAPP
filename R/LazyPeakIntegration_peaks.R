@@ -636,19 +636,12 @@ findBenchPeaks <- function(files,
                   if (iso.run == "MAiso") {
 
                     MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    ##
-                    #print(colnames(MA.Isos))
-                    if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & adduct.run == "main_adduct") fwrite(MA.Isos[molecule == "Octanoyl-carnitine"], paste0("D:/mzRAPP_sub/", unique(MA.Isos$FileName) ,"_allM0.csv"))
-                    ##
                     if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)) MA.Isos[peaks.PpP >= Min.PointsperPeak]
                     if (adduct.run == "screen_adducts"){
                       if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct & peaks.PpP >= Min.PointsperPeak]
                     }
                   } else if (iso.run == "LAisos"){
                     LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    ##
-                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & adduct.run == "main_adduct") fwrite(LA.Isos[molecule == "Octanoyl-carnitine"], paste0("D:/mzRAPP_sub/", unique(LA.Isos$FileName) ,"_allIsos.csv"))
-                    ##
                     if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.cor_w_M0"  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 & peaks.PpP >= Min.PointsperPeak]
                     if (adduct.run == "main_adduct") {
 
@@ -688,7 +681,6 @@ findBenchPeaks <- function(files,
                         "isoabb",
                         flag_extremes = TRUE
   )
-fwrite(Result, "peaklist_no_iso_filtering.csv")
   Result <- Result[isoabb_ol == FALSE]
 
   Result <-

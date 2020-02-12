@@ -9,6 +9,9 @@ get_EIC_table(rt, int, Min.PpP)
 \arguments{
 \item{Min.PpP}{}
 }
+\value{
+
+}
 \description{
 get_EIC_table
 }

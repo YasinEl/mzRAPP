@@ -22,16 +22,16 @@ get_main_UT_groups <- function(DT){
   used_UTgrps <- c()
 
 
-  keep <- apply(DT[,!c("sample_id_b")], 1, function(x){any(!x %in% c("Lost_b.PP", "Lost_b.A", NA))}) #find samples without any UT_groupes
+  keep <- apply(DT[,!c("sample_id_b")], 1, function(x){any(!x %in% c("Lost_b.PP", "Lost_b.A", NA, ""))}) #find samples without any UT_groupes
   DT <- DT[keep,] #remove samples without any UN_groupes
 
   #maybe check if some ut_groupes apper in more then one isoabb (mz error)
 
   repeat {
 
-    bestIso <- suppressWarnings(names(which.max(apply(DT[,-1], 2, function(x) {max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, used_UTgrps) ]))}))))
+    bestIso <- suppressWarnings(names(which.max(apply(DT[,-1], 2, function(x) {max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, "", used_UTgrps) ]))}))))
 
-    best_UTgrp <- names(which.max(table(na.omit(DT[!DT[[bestIso]] %in% c("Lost_b.PP", "Lost_b.A", NA, used_UTgrps), ..bestIso]))))
+    best_UTgrp <- names(which.max(table(na.omit(DT[!DT[[bestIso]] %in% c("Lost_b.PP", "Lost_b.A", NA, "", used_UTgrps), ..bestIso]))))
 
     used_UTgrps <- c(used_UTgrps, best_UTgrp)
 
@@ -71,41 +71,50 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
     if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(0L)}
 
+    #going through isotopologues which are necessary to cover all samples!
   error_list <- lapply(main_UTgroups[[1]], function(x) {
 
-    entrustedGrp <- main_UTgroups[[2]][x]
-
-    DTsub <- DT[DT[[entrustedGrp]] == main_UTgroups[[3]][x]]
-
+    entrustedGrp <- main_UTgroups[[2]][x] #isotopologue for this round
+#print(paste0("entrustedGrp: ", entrustedGrp))
+    DTsub <- DT[DT[[entrustedGrp]] == main_UTgroups[[3]][x]] #samples for which this isotopologues can be used
+    #print(paste0("DT_sub: "))
+    #print(DTsub)
     if(x>1){
 
       for(i in seq(x-1)){
 
         already_testedGrp <- main_UTgroups[[2]][i]
+        #print(paste0("alreadyTestedGRP: ", already_testedGrp))
 
         DTsub <- DTsub[DTsub[[already_testedGrp]] != main_UTgroups[[3]][i]]
 
       }
 
     }
-
+    #print(paste0("DT_sub: "))
+    #print(DTsub)
 
     DT <- DT[DT[[entrustedGrp]] == main_UTgroups[[3]][x]]
+    #print(paste0("DT: "))
+    #print(DT)
 
-
-    isos_to_test <- list(seq(length(DTsub[, !c("sample_id_b", ..entrustedGrp)])),
+    isos_to_test <- list(seq(length(DTsub[, !c("sample_id_b", ..entrustedGrp)])), #all isotopologues which should now be checked via the one used in this round
                          colnames(DTsub[, !c("sample_id_b", ..entrustedGrp)]))
 
-
+    #print("Isos to test:")
+#print(isos_to_test)
 
     errors <- lapply(isos_to_test[[1]], function(y){
 
-      iso_to_test <- isos_to_test[[2]][y]
+      iso_to_test <- isos_to_test[[2]][y] #iso checked in this round
 
       yDTsub <- unname(unlist(DTsub[, ..iso_to_test]))
       yDTall <- unname(unlist(DT[, ..iso_to_test]))
-
-      best_UTgrp <- names(which.max(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA)])))
+      #print(paste0("ydtsub: "))
+      #print(yDTsub)
+      #print(paste0("ydtall: "))
+      #print(yDTall)
+      best_UTgrp <- names(which.max(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
 
 
 
@@ -118,8 +127,9 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
         if(length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "FALSE"]) > 1 &
            length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "TRUE"]) > 0){
 
-          problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.PP", NA)]
-
+          problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.PP", NA, "")]
+#print(paste0("problematic joins: "))
+#print(problematic_joins)
           return(length(problematic_joins))
 
 
@@ -143,10 +153,10 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
     error_list <- apply(DT[, !c("sample_id_b")], 2, function(x) {
 
       if(length(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA)]) > 0) {
-          best_UTgrp <- names(which.max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA)])))
+          best_UTgrp <- names(which.max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
       } else best_UTgrp <- NULL
 
-      errors <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA)])
+      errors <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA, "")])
       return(errors)
 
 

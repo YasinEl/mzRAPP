@@ -10,6 +10,9 @@ detect_double_peaks2(pot.doubleP.v, Min.PpP = 10, l = 1,
 \arguments{
 \item{Min.Res}{}
 }
+\value{
+
+}
 \description{
 detect_double_peaks2
 }

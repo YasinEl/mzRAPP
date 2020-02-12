@@ -9,6 +9,9 @@ get_pot_peak_ranges2(int, Min.PpP = 10, peak.spotting.factor = 0.01)
 \arguments{
 \item{peak.spotting.factor}{}
 }
+\value{
+
+}
 \description{
 get_pot_peak_ranges2
 }

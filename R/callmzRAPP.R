@@ -734,8 +734,16 @@ css <- "
         fluidRow(
           column(3, tableOutput('error_count')),
 
-          column(4,
+          column(9,
                  plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1"))
+
+        ),
+        fluidRow(
+          column(5),
+          tags$style(HTML("#mol_align+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+          tags$style(HTML("#add_align+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+          column(2, selectInput('mol_align', 'Molecule', c())),
+          column(1, selectInput('add_align', 'Adduct', c()))
 
         )
       )
@@ -1145,6 +1153,7 @@ css <- "
       testDT <-
         rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
 
+      test_this <<- testDT
       #if(length(unique(testDT$peak_area_g)) != 1){
       #testDT <-
       #  testDT[, main_feature := as.numeric(names(which.max(table(feature_id_g)))), by =
@@ -1165,7 +1174,19 @@ css <- "
 
 #}
 
+      observeEvent({input$mol_align; input$add_align},{
 
+        testDT <- rbindlist(list(comparison$c_table, comparison$nf_b_table), fill = TRUE)
+
+
+        if(nrow(testDT[molecule_b == input$mol_align & adduct_b == input$add_align]) > 0){
+          p <- Alignment_error_plot(testDT, mol = input$mol_align, add = input$add_align)
+        } else p <- ggplot()
+
+
+          output$graph_hm_split <- renderPlotly(plotly::ggplotly(p, tooltip = c("peak_area_ug")))
+
+      }, ignoreInit = FALSE)
 
 
 
@@ -1485,6 +1506,18 @@ css <- "
 
     #input buttons to be updated live
     ####
+    observe({
+      comp <- comparison()
+      comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
+      updateSelectInput(session, 'mol_align', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
+    })
+
+    observeEvent(input$mol_align,{
+      comp <- comparison()
+      comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)
+      updateSelectInput(session, 'add_align', choices = unique(comp.dt[molecule_b == input$mol_align]$adduct_b))
+    })
+
     observe({
       comp <- comparison()
       comp.dt <-  rbindlist(list(comp$c_table, comp$nf_b_table), fill = TRUE)

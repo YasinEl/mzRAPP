@@ -13,8 +13,9 @@
 #' @param main_adduct.grp
 #' @param Min.Res.
 #'
-#' @return
+#' @keyword Internal
 #' @export
+#' @return
 #'
 cutout_peaks <-
   function(int,
