@@ -167,8 +167,9 @@ findBenchPeaks <- function(files,
                                                                CompCol_xic = .CompCol_xic,
                                                                raw_data = .raw_data,
                                                                ChromData = .ChromData) {
-
-
+##
+#tryCatch(
+##
                         ##################################
                         #prepare list for collecting information on one peak
                         ##################################
@@ -192,14 +193,10 @@ findBenchPeaks <- function(files,
                         Drawer_fill[["molecule"]] <- CompCol_xic[i]$molecule
                         Drawer_fill[["adduct"]] <-  CompCol_xic[i]$adduct
                         Drawer_fill[["isoabb"]] <- CompCol_xic[i]$isoabb
-                        Drawer_fill[["FileName"]] <-
-                          raw_data@phenoData@data[["sample_name"]]
-                        Drawer_fill[["Grp"]] <-
-                          raw_data@phenoData@data[["sample_group"]]
-                        Drawer_fill[["RT.v"]] <-
-                          paste(as.character(unname(ChromData[[i]]@rtime)), collapse = ",")
-                        Drawer_fill[["Intensities.v"]] <-
-                          paste(as.character(unname(ChromData[[i]]@intensity)), collapse = ",")
+                        Drawer_fill[["FileName"]] <- raw_data@phenoData@data[["sample_name"]]
+                        Drawer_fill[["Grp"]] <- raw_data@phenoData@data[["sample_group"]]
+                        Drawer_fill[["RT.v"]] <- paste(as.character(unname(ChromData[[i]]@rtime)), collapse = ",")
+                        Drawer_fill[["Intensities.v"]] <- paste(as.character(unname(ChromData[[i]]@intensity)), collapse = ",")
 
 
                         #print(as.character(CompCol_xic[i]$molecule))
@@ -398,7 +395,7 @@ findBenchPeaks <- function(files,
                               #  filterRt(rt = c(min(l.peaks$StartTime), max(l.peaks$EndTime))) %>%
                               #  filterMz(mz = c(mz_min_t, mz_max_t))
 
-
+                              tryCatch(
 
                               ##################################
                               #extract different variables from detected peaks and add them to the table
@@ -559,6 +556,9 @@ findBenchPeaks <- function(files,
                                   )
                                 ),
 
+                              data_rate = mean(diff(EIC.dt[rt >= StartTime &
+                                                   rt <= EndTime]$rt)),
+
                                 rt.unsm = EIC.dt[rt >= StartTime &
                                                    rt <= EndTime &
                                                    int == max(EIC.dt[rt >= StartTime &
@@ -613,7 +613,9 @@ findBenchPeaks <- function(files,
 
 
                               ), by = .(idx)], on = .(idx)]
-                              )#}
+                              ), error = function(e) print(paste0(Drawer_fill[["molecule"]]) ))#}
+
+
                             } else {
                               l.peaks <- NULL
                             }
@@ -626,7 +628,9 @@ findBenchPeaks <- function(files,
                         }
                         Drawer_closed <-
                           data.frame(Drawer_fill, stringsAsFactors = FALSE)
-                        return(Drawer_closed)
+                        return(Drawer_closed)#,
+                        #error = function(e) print(e))
+                        ##include error
                       })
 
                   }
@@ -666,12 +670,11 @@ findBenchPeaks <- function(files,
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
 
-  saveforcheck <<- Result
-
-
   #still have to deal with double isotopologues per M0.grp
 
-  Result <- Result[!is.na(peaks.FW75M)]
+  Result <- Result[!is.na(peaks.FW25M)]
+
+  Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
 
   Result$IDX <- seq.int(nrow(Result))
 
@@ -681,6 +684,9 @@ findBenchPeaks <- function(files,
                         "isoabb",
                         flag_extremes = TRUE
   )
+
+  saveforcheck <<- Result
+
   Result <- Result[isoabb_ol == FALSE]
 
   Result <-
