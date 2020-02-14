@@ -391,11 +391,11 @@ tryCatch(
                                   xcms::filterRt(rt = c(min(l.peaks$StartTime), max(l.peaks$EndTime))) %>%
                                   xcms::filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
                               )
-                              suppressWarnings(
-                                  raw_data_lim1 <- raw_data_lim %>%
-                                    xcms::filterRt(rt = c(StartTime, EndTime))
+                              #suppressWarnings(
+                              #    raw_data_lim1 <- raw_data_lim %>%
+                              #      xcms::filterRt(rt = c(l.peaks$StartTime, EndTime))#
 
-                              )
+                              #)
 
 
                               #mz_min_t <- CompCol_xic[i]$mz_acc - (CompCol_xic[i]$mz_acc - CompCol_xic[i]$eic_mzmin) * 5
@@ -417,52 +417,52 @@ tryCatch(
                                                    rt <= EndTime]$int > 0),
 
                                 mz_accurate = {
-                                  #suppressWarnings(
-                                  #  raw_data_lim1 <- raw_data_lim %>%
-                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                       #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  #)
+                                  )
 
                                   weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1)))
                                 },
 
                                 mz_accuracy_abs = {
-                                  #suppressWarnings(
-                                  #  raw_data_lim1 <- raw_data_lim %>%
-                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  #)
+                                  )
 
                                   abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz)
                                 },
 
                                 mz_accuracy_ppm = {
-                                  #suppressWarnings(
-                                  #  raw_data_lim1 <- raw_data_lim %>%
-                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  #)
+                                  )
 
                                   1e6*abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz
 
                                 },
 
                                 mz_span_abs = {
-                                  #suppressWarnings(
-                                  #  raw_data_lim1 <- raw_data_lim %>%
-                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  #)
+                                  )
 
                                   max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))
                                 },
 
                                 mz_span_ppm = {
-                                  #suppressWarnings(
-                                  #  raw_data_lim1 <- raw_data_lim %>%
-                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  #)
+                                  )
 
                                   1e6*(max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))) / mean(unlist(xcms::mz(raw_data_lim1)))
                                 },
