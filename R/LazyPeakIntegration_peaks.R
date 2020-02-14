@@ -48,7 +48,7 @@ findBenchPeaks <- function(files,
   #prepare parallel processing
   ##################################
   doFuture::registerDoFuture()
-  future::plan(plan)
+  future::plan(plan, workers = min(future::availableCores(), length(files)))
   #future::plan(list("sequential", "multiprocess"))
   #future::plan(multiprocess(workers = 40))
   Output <- list()
@@ -308,7 +308,7 @@ findBenchPeaks <- function(files,
                           if (!is.null(l.peaks)) {
                             if (nrow(l.peaks) > 0 & length(l.peaks) > 1) {
 
-
+tryCatch(
                               ##################################
                               #get start and end time for detected peaks at height of integration baseline and add them to the table
                               ##################################
@@ -379,12 +379,22 @@ findBenchPeaks <- function(files,
                                 as.double(rtmax)
                               ))), by = .(idx)], on = .(idx)]
 
-
+                    , error = function(e){
+                      print(l.peaks)
+                      print(paste0("first: " ,Drawer_fill[["molecule"]]) )
+                      assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
+                      table_f_t <<- EIC.dt
+                      print(l.peaks)})
 
                               suppressWarnings(
                                 raw_data_lim <- raw_data %>%
                                   xcms::filterRt(rt = c(min(l.peaks$StartTime), max(l.peaks$EndTime))) %>%
                                   xcms::filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
+                              )
+                              suppressWarnings(
+                                  raw_data_lim1 <- raw_data_lim %>%
+                                    xcms::filterRt(rt = c(StartTime, EndTime))
+
                               )
 
 
@@ -407,52 +417,52 @@ findBenchPeaks <- function(files,
                                                    rt <= EndTime]$int > 0),
 
                                 mz_accurate = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  #suppressWarnings(
+                                  #  raw_data_lim1 <- raw_data_lim %>%
+                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                       #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                  #)
 
                                   weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1)))
                                 },
 
                                 mz_accuracy_abs = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  #suppressWarnings(
+                                  #  raw_data_lim1 <- raw_data_lim %>%
+                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                  #)
 
                                   abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz)
                                 },
 
                                 mz_accuracy_ppm = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  #suppressWarnings(
+                                  #  raw_data_lim1 <- raw_data_lim %>%
+                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                  #)
 
                                   1e6*abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz
 
                                 },
 
                                 mz_span_abs = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  #suppressWarnings(
+                                  #  raw_data_lim1 <- raw_data_lim %>%
+                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                  #)
 
                                   max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))
                                 },
 
                                 mz_span_ppm = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                  #suppressWarnings(
+                                  #  raw_data_lim1 <- raw_data_lim %>%
+                                  #    xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
                                     #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                  #)
 
                                   1e6*(max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))) / mean(unlist(xcms::mz(raw_data_lim1)))
                                 },
@@ -516,11 +526,11 @@ findBenchPeaks <- function(files,
 
                                 FW25M = as.double(
                                   GetFWXM(
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.25,
@@ -530,11 +540,11 @@ findBenchPeaks <- function(files,
 
                                 FW50M = as.double(
                                   GetFWXM(
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.50,
@@ -544,11 +554,11 @@ findBenchPeaks <- function(files,
 
                                 FW75M = as.double(
                                   GetFWXM(
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
                                              !is.na(int_wo_spikes)]$int,
                                     baseL,
                                     0.75,
@@ -613,7 +623,11 @@ findBenchPeaks <- function(files,
 
 
                               ), by = .(idx)], on = .(idx)]
-                              ), error = function(e) print(paste0(Drawer_fill[["molecule"]]) ))#}
+                              ), error = function(e) {assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
+                                table_f_t <<- EIC.dt
+                                print(l.peaks)
+                                print(paste0(Drawer_fill[["molecule"]]) )
+                              })#}
 
 
                             } else {
@@ -672,8 +686,8 @@ findBenchPeaks <- function(files,
 
   #still have to deal with double isotopologues per M0.grp
 
-  Result <- Result[!is.na(peaks.FW25M)]
-
+  Result <- Result[!is.na(peaks.FW25M) | !is.na(peaks.unres.e) | !is.na(peaks.unres.s)]
+  Result <- Result[!is.na(peaks.FW75M)]
   Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
 
   Result$IDX <- seq.int(nrow(Result))

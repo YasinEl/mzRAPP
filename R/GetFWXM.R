@@ -32,15 +32,29 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
     if(peak_borders == FALSE | peak_borders == TRUE & v[1] == FALSE){
 
+      #fs <- 1
+      #if(length(l) > 4 & peak_borders == TRUE){
+
+      #  if(l[2] < 4 &
+      #     v[2] == TRUE &
+      #     l[3] > 2 &
+      #     max(l[which(v)]) >= 4) {fs <- sum(l[1:3])}
+
+      #}
+
       fs <- 1
       if(length(l) > 4 & peak_borders == TRUE){
 
-        if(l[2] < 4 &
-           v[2] == TRUE &
-           l[3] > 2 &
-           max(l[which(v)]) >= 4) {fs <- sum(l[1:3])}
 
+        repeat{
+        if(l[(fs + 1)] < 4 &
+           v[(fs + 1)] == TRUE &
+           l[(fs + 2)] > 2 &
+           length(l) - fs > 3) {fs <- fs + 2} else {break}
+
+        }
       }
+
 
 
       P1 <- c(RT_vect[l[which(!v)][fs]], Int_vect[l[which(!v)][fs]])
@@ -53,20 +67,24 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
 
     if(peak_borders == FALSE | peak_borders == TRUE & v[length(v)] == FALSE){
-      u <- sum(l) - l[length(l)] + 1
+      #u <- sum(l) - l[length(l)] + 1
 
 
-
+      ifr <- 0
       if(length(l) > 4 & peak_borders == TRUE){
 
-        if(l[(length(l) - 1)] < 4 &
-           v[(length(l) - 1)] == TRUE &
-           l[(length(l) - 2)] > 2 &
-           max(l[which(v)]) >= 4){ u <- sum(l) - sum(l[(length(l) - 2): length(l)]) + 1}
+        repeat{
+
+        if(l[(length(l) - ifr)] < 4 &
+           v[(length(l) - ifr)] == TRUE &
+           l[(length(l) - ifr - 1)] > 2 &
+           length(l) - ifr > 2){ifr <- ifr + 2 } else {break}
+
+        }
 
       }
 
-
+      u <- sum(l) - sum(l[(length(l) - ifr): length(l)]) + 1
 
       P1 <- c(RT_vect[u], Int_vect[u])
       P2 <- c(RT_vect[u - 1], Int_vect[u - 1])
