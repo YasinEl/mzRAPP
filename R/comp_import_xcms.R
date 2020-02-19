@@ -35,8 +35,6 @@ import_ungrouped_xcms <- function(file, options_dt){
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
 
-  #Remove identical peaks
-  ug_table <- remove_identical_peaks(ug_table)
   #Generate comp_id for each peak
   ug_table$comp_id <- seq.int(nrow(ug_table))
 
@@ -80,6 +78,7 @@ import_grouped_xcms <- function (file, options_dt) {
   #Add feature_id for each row
   g_table$feature_id <- seq.int(nrow(g_table))
 
+
   #Transforming table from wide to long format, creating 1 peak-per-row format
   id_vars <- append(na.omit(options_dt[['g_columns']]), 'feature_id')
   measure_vars = na.omit(options_dt[, g_samples])
@@ -95,7 +94,7 @@ import_grouped_xcms <- function (file, options_dt) {
   g_table <- g_table[peak_area > 0]
 
   #Remove identical peaks
-  g_table <- remove_identical_peaks(g_table, grouped = TRUE)
+  #g_table <- remove_identical_peaks(g_table, grouped = TRUE)
 
   #Add comp_id for each peak
   g_table$comp_id <- seq.int(nrow(g_table))

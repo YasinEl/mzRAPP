@@ -57,7 +57,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
-    stop('Columns not present in benchmark dataset: ', paste0(cols_not_found, sep = " - "))
+    stop('Columns not present in ug dataset: ', paste0(cols_not_found, sep = " - "))
   }
 
   #G table check
@@ -67,8 +67,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
-    stop('Columns not present in benchmark dataset: ', paste0(cols_not_found, sep = " - "))
+    stop('Columns not present in g dataset: ', paste0(cols_not_found, sep = " - "))
   }
+
 
   ##############
   #Write relevant information to info list
@@ -204,7 +205,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
     c_table[, peak_area_ug_temp := as.integer64(peak_area_rounded_ug)]
     c_table[, sample_id_b_temp := sample_id_b]
     split_table[, peak_area_ug_temp := peak_area_rounded_ug]
-    g_table[, peak_area_g_temp := peak_area_rounded_g]
+    g_table[, peak_area_g_temp := peak_area_g]
     g_table[, sample_id_g_temp := sample_id_g]
   } else {
     c_table[, peak_area_ug_temp := peak_area_ug]
@@ -244,40 +245,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   fwrite(c_table, 'grouping_check.csv')
 
 
-
-  ##############
-  #Create main_peak column to identify main peaks
-  #when several peaks have been asigned to on benchmark peak
-  ##############
-
-
-
-  #Get height diff to benchmark and pick peak with smallest diff
-  #print(paste('c_table: ', nrow(c_table)))
-  #c_table <- c_table[, height_diff := abs(peak_height_ug - peak_height_b)]
-  #c_table <- c_table[, smaller_height := ifelse(height_diff == min(height_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
-  #c_table <- c_table[smaller_height == 'TRUE']
-  #print(paste('Eliminating dups based on height: ', nrow(c_table)))
-
-
-
-  ##TAKEN FORM NO START_RT|NO END_RT
-  ##If dups still present take g peak with rt  and mz closest to b
-  #c_table <- c_table[, rt_diff := abs(rt_g - rt_b)]
-  #c_table <- c_table[, mz_diff := abs(mz_g - mz_b)]
-  #c_table <- c_table[, smaller_diff := ifelse((rt_diff == min(rt_diff) & mz_diff == min(mz_diff)) | is.na(rt_diff), TRUE, FALSE), by=c('comp_id_b', 'comp_id_ug')]
-  #View(c_table[smaller_diff == 'FALSE'])
-  #c_table <- c_table[smaller_diff == 'TRUE']
-  #print(paste('Eliminating dups based on rt: ', nrow(c_table)))
-
-  #######REWROK WHEN FUCTION IS REWORKED
-  #Needs to be last
-  #fwrite(c_table, 'c_dbug.csv')
-  #print(paste('Befor Main Peak: ', nrow(c_table)))
-  #c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
-  #print(paste('After Main Peak: ', nrow(c_table[main_peak == TRUE])))
-
-
   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
   split_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
 
@@ -294,24 +261,24 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ##############
 
   #Generate Feature Table from Benchmarl
-  bf_table <- b_table[, .(mean_area_b = mean(peak_area_b), rt_start_b = min(rt_start_b), rt_end_b = max(rt_end_b),
-                          mz_start_b = min(mz_start_b), mz_end_b = max(mz_end_b), isoabb_b = unique(isoabb_b), molecule_b = unique(molecule_b), adduct_b = unique(adduct_b)), by=.(feature_id_b)]
-  gf_table <- g_table[, .(mean_area_g = mean(peak_area_g), rt_g = mean(rt_g), mz_g = min(mz_g)), by=.(feature_id_g)]
+  #bf_table <- b_table[, .(mean_area_b = mean(peak_area_b), rt_start_b = min(rt_start_b), rt_end_b = max(rt_end_b),
+  #                        mz_start_b = min(mz_start_b), mz_end_b = max(mz_end_b), isoabb_b = unique(isoabb_b), molecule_b = unique(molecule_b), adduct_b = unique(adduct_b)), by=.(feature_id_b)]
+  #gf_table <- g_table[, .(mean_area_g = mean(peak_area_g), rt_g = mean(rt_g), mz_g = min(mz_g)), by=.(feature_id_g)]
 
   ###Create Temp cols for merge
 
-  bf_table <- bf_table[, ':=' (rt_start_b_temp = rt_start_b, rt_end_b_temp = rt_end_b, mz_start_b_temp = mz_start_b, mz_end_b_temp = mz_end_b)]
-  gf_table <- gf_table[, ':=' (rt_g_temp = rt_g, mz_g_temp = mz_g)]
+  #bf_table <- bf_table[, ':=' (rt_start_b_temp = rt_start_b, rt_end_b_temp = rt_end_b, mz_start_b_temp = mz_start_b, mz_end_b_temp = mz_end_b)]
+  #gf_table <- gf_table[, ':=' (rt_g_temp = rt_g, mz_g_temp = mz_g)]
 
 
-  print(bf_table)
+  #print(bf_table)
 
-  cf_table <- bf_table[gf_table, on=.(rt_start_b_temp < rt_g_temp,
-                                      rt_end_b_temp >  rt_g_temp,
-                                      mz_start_b_temp < mz_g_temp  ,
-                                      mz_end_b_temp > mz_g_temp), allow.cartesian=TRUE, nomatch=NULL, mult='all']
+  #cf_table <- bf_table[gf_table, on=.(rt_start_b_temp < rt_g_temp,
+  #                                    rt_end_b_temp >  rt_g_temp,
+  #                                    mz_start_b_temp < mz_g_temp  ,
+  #                                    mz_end_b_temp > mz_g_temp), allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
-  cf_table <- cf_table[,grep('_temp$', colnames(c_table)):=NULL]
+  #cf_table <- cf_table[,grep('_temp$', colnames(c_table)):=NULL]
 
 
     #c_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
@@ -322,11 +289,17 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
     #                   allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
 
-  fwrite(bf_table, 'bfdebug.csv')
-  fwrite(gf_table, 'gfdebug.csv')
-  fwrite(cf_table, 'cfdebug.csv')
+  #fwrite(bf_table, 'bfdebug.csv')
+  #fwrite(gf_table, 'gfdebug.csv')
+  #fwrite(cf_table, 'cfdebug.csv')
 
-  print(cf_table, class=TRUE)
+  #print(cf_table, class=TRUE)
+
+  ###################################################################################################################
+  #feature_feature comparison
+  ###################################################################################################################
+  ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
+  fwrite(ff_table_dt, 'ff_comp_dt.csv')
 
 
 
@@ -359,11 +332,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #Return the found and 3 notfoundtables in a list
   ##############
   print('Compare Succesfull')
-  ##DEBUG: Count full featurs
-  debug_table <- rbindlist(list(c_table, nf_g_table), fill=TRUE)
-  debug_table <- debug_table[, .N, by=c('feature_id_g')]
-  debug_table <- debug_table[N == 40]
-  print(nrow(debug_table))
 
-  return(list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table))
+  return(list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table, 'ff_table' = ff_table_dt))
 }

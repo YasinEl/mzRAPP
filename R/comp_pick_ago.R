@@ -31,9 +31,7 @@ pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
       #import_tables <- import_ungrouped_mzmine(ug_table_path, options_table)
       #print(import_tables)
       ug_table <-import_ungrouped_mzmine(ug_table_path, options_table)
-      print(class(ug_table))
       g_table <- import_grouped_mzmine(g_table_path, options_table)
-      print(class(g_table))
     },
     {return (NULL)})
   return(list('ug_table' = ug_table, 'g_table' = g_table))

@@ -8,7 +8,7 @@
 #' @examples
 pick_main_peak <- function(dt){
   (unique(dt$sample_id_b))
-  main_peak_dt <- rbind(dt[, pick_main_peak_sd(.SD), by=c('molecule_b', 'adduct_b', 'sample_id_b'), .SDcols=c('comp_id_b', 'comp_id_ug', 'isoabb_b', 'peak_area_ug', 'rt_start_ug', 'rt_end_ug')])
+  main_peak_dt <- rbind(dt[, pick_main_peak_sd(.SD), by=c('molecule_b', 'adduct_b', 'sample_id_b'), .SDcols=c('molecule_b', 'comp_id_b', 'comp_id_ug', 'isoabb_b', 'peak_area_ug', 'rt_start_ug', 'rt_end_ug')])
   (nrow(main_peak_dt))
   (nrow(dt))
   dt <- merge(dt, main_peak_dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'comp_id_b', 'comp_id_ug'), all.x = TRUE)
@@ -16,14 +16,14 @@ pick_main_peak <- function(dt){
   group_check_dt <- dt[, sum(main_peak, na.rm = TRUE), by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b')]
   #Make sure no main peak dosnt happen
   if (any(is.na(group_check_dt$V1))){
-    (group_check_dt[is.na(V1)])
-    stop()
+    print(group_check_dt[is.na(V1)])
+    stop("Not main peak")
   }
   #make sure not more than one main peak
   if(any(group_check_dt$V1 != 1)){
     ('Error picking main peak at:')
-    (group_check_dt[V1 != 1])
-    stop()
+    print(group_check_dt[V1 != 1])
+    stop("Too many main peak")
   }
   #Set NA to False
   dt <- dt[, 'main_peak' := ifelse(is.na(main_peak), FALSE, main_peak)]
@@ -61,15 +61,12 @@ pick_main_peak_sd <- function(dt){
     #Iso_abb Comparison
     dt[, merge_key := 1]
     dt[, peak_length := rt_end_ug - rt_start_ug]
-    #(dt)
 
-    #Check for peaks with same lenght and area per iso_abb, if present pick first one
+    #Check for peaks with same lenght and area, if present pick first one
     dt <- dt[!duplicated(dt, by=c('peak_area_ug', 'peak_length'))]
     dt <- dt[, 'smallest_length' := ifelse(peak_length == min(peak_length), TRUE, FALSE), by=c('peak_area_ug')]
     dt <- dt[smallest_length==TRUE]
 
-
-    #(dt)
     #Build compariosn DT
     temp_dt <- merge(dt, dt, by=c('merge_key'), allow.cartesian = TRUE)
     temp_dt <- temp_dt[isoabb_b.x > isoabb_b.y]
@@ -79,10 +76,6 @@ pick_main_peak_sd <- function(dt){
     temp_dt <- temp_dt[, row_id := seq_len(.N)]
     temp_dt <- temp_dt[, grp_id := .GRP, by=c('isoabb_b.x', 'isoabb_b.y')]
     temp_dt <- temp_dt[, id_in_group := seq_len(.N), by=c('isoabb_b.x', 'isoabb_b.y')]
-    #(temp_dt)
-    #Build all posible combinations of all rows
-    #combination_list <- vector(mode='list', length = length(unique(tt$grp_id)))
-    #(combination_list)
     combination_dt <- data.table()
     for (i in unique(temp_dt$grp_id)){
       if (i == 1){
@@ -105,13 +98,20 @@ pick_main_peak_sd <- function(dt){
       ratio_error_dt <- rbindlist(list(ratio_error_dt, ratio_error))
     }
 
+
     ratio_error_dt <- ratio_error_dt[, 'correct_rows' := ifelse(error == min(error), TRUE, FALSE)]
-    (ratio_error_dt)
-    #(sum(ratio_error_dt$correct_rows))
-    #(unlist(strsplit(ratio_error_dt[correct_rows == TRUE, rows], ',')))
     if(nrow(ratio_error_dt[correct_rows == TRUE]) == 1){
       temp_dt <- temp_dt[, 'main_peak' := ifelse(row_id %in% unlist(strsplit(ratio_error_dt[correct_rows == TRUE, rows], ',')), TRUE, FALSE)]
       main_peaks <- unique(append(temp_dt[main_peak == TRUE, comp_id_ug.x], temp_dt[main_peak == TRUE, comp_id_ug.y]))
+      if(length(main_peaks) > length(all_iso_abs)){
+        dup_peaks <- dt[duplicated(dt, by=c('isoabb_b')) | duplicated(dt, by=c('isoabb_b'), fromLast = TRUE)]
+        not_highest_peak <- dup_peaks[, 'smallest_length' := ifelse(peak_length == min(peak_length), TRUE, FALSE), by=c('comp_id_b')][smallest_length == FALSE, comp_id_ug]
+        main_peaks <- main_peaks[!(main_peaks %in% not_highest_peak)]
+        if(length(main_peaks) > length(all_iso_abs)){ stop("Still to many main peaks") }
+      }
+      if(length(main_peaks) < length(all_iso_abs)){
+        stop("Not enough main peaks")
+      }
       dt <- dt[, 'main_peak' := ifelse(comp_id_ug %in% main_peaks, TRUE, FALSE)]
     } else {
       #Hier rein wenn es mehrere gleiche ratios gibt
