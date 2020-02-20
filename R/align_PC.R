@@ -152,6 +152,7 @@ align_PC <- function(PC,
   outputT <- outputT[!is.na(aligned.grp)]
 
 #print(outputT[molecule == "m1" & isoabb == 100, c("FileName", "molecule", "peaks.StartTime", "peaks.EndTime", "aligned.grp")])
+
   #decide for best aligned.grp
   if(pick_best == "rt_match"){
     tmp <- outputT[isoabb == 100, .(rt.diff = abs(mean(peaks.rt) - mean(user.rt))), by = .(molecule, aligned.grp) ]
@@ -176,6 +177,12 @@ align_PC <- function(PC,
     outputT <- outputT[Iso_count > 1]
   }
 
+  #tmp <- outputT[isoabb == 100, .(peaks.StartTime_range = max(peaks.StartTime) - min(peaks.StartTime),
+  #                                peaks.EndTime_range = max(peaks.EndTime) - min(peaks.EndTime)),
+  #               by = .(molecule, adduct)]
+
+  #tmp$start_end_med <- abs(peaks.StartTime_range - peaks.EndTime_range)
+  #tmp$start_end_diff <- abs(peaks.StartTime_range - peaks.EndTime_range)
 
 
   return(outputT)

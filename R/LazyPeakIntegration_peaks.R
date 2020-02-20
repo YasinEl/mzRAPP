@@ -380,8 +380,10 @@ tryCatch(
                               ))), by = .(idx)], on = .(idx)]
 
                     , error = function(e){
+                      message(e)
                       print(l.peaks)
                       print(paste0("first: " ,Drawer_fill[["molecule"]]) )
+                      print(raw_data@phenoData@data[["sample_name"]])
                       assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
                       table_f_t <<- EIC.dt
                       print(l.peaks)})
