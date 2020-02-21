@@ -15,6 +15,13 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   info_list <- list()
 
+  print('b table')
+  str(b_table)
+  print('ug table')
+  str(ug_table)
+  print('g table')
+  str(g_table)
+
   #If no g_table exists crate empty one
   if(is.null(g_table)){
     g_table = data.table('comp_id_g' = integer(),
@@ -202,7 +209,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #If statement is solution for msdial
 
   if ('peak_area_rounded_ug' %in% colnames(c_table)){
-    c_table[, peak_area_ug_temp := as.integer64(peak_area_rounded_ug)]
+    c_table[, peak_area_ug_temp := peak_area_rounded_ug]
     c_table[, sample_id_b_temp := sample_id_b]
     split_table[, peak_area_ug_temp := peak_area_rounded_ug]
     g_table[, peak_area_g_temp := peak_area_g]
@@ -214,6 +221,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
     g_table[, peak_area_g_temp := peak_area_g]
     g_table[, sample_id_g_temp := sample_id_g]
   }
+
+  str(c_table[, 'peak_area_ug_temp'])
+  str(g_table)
 
 
 
@@ -331,7 +341,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ##############
   #Return the found and 3 notfoundtables in a list
   ##############
+
+  return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table, 'ff_table' = ff_table_dt)
+  ev_return_list <<- return_list
+
   print('Compare Succesfull')
 
-  return(list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table, 'ff_table' = ff_table_dt))
+  return(return_list)
 }

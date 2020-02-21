@@ -18,14 +18,15 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
     #Check if ug_table exists, if not: create
     if(!exists("ug_table")){
-      ug_table <- fread(file_path)
+      ug_table <- fread(file_path, integer64 = "numeric")
       ug_table <- ug_table[, sample_name := file_name]
     } else if (exists("ug_table")){
-      temp_data <- fread(file_path)
+      temp_data <- fread(file_path, integer64 = "numeric")
       temp_data <- temp_data[, sample_name := file_name]
       ug_table <- rbind(ug_table, temp_data)
     }
   }
+
 
   #Check if all columns defined in optionsframe are present
   ug_req_cols <- na.omit(options_dt$ug_columns)
@@ -42,6 +43,9 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
+
+  #make sure area is not bit64
+  ug_table <- ug_table[, 'peak_area' := as.double(peak_area)]
 
   #Multiply rt by 60 to convert min to seconds ##MAKE OPTIONAL LATER
   ug_table[, ':=' (rt = rt*60, rt_start = rt_start*60, rt_end = rt_end*60)]
@@ -82,7 +86,11 @@ import_grouped_msdial <- function(file_path, options_dt){
 
   #Import text file
   #Make skip variable
-  g_table <- fread(file_path, skip=4)
+
+  #options(datatable.verbose = TRU)
+
+  g_table <- fread(file_path, skip=4, integer64 = "double", verbose = TRUE)
+
 
   #Check if all columns defined in optionsframe are present
   g_req_cols <- na.omit(options_dt$g_columns)
@@ -101,6 +109,11 @@ import_grouped_msdial <- function(file_path, options_dt){
 
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_dt, 'g_columns', 'internal_columns')
+
+
+  #make sure area is not bit64
+  g_table <- g_table[, 'peak_area' := as.double(peak_area)]
+
 
   #Add a sample_id and grp_id column based on the sample_names in options_dt
   g_table <- g_table[options_dt, ':=' (sample_id = i.sample_id, grp_id = i.grp_id), on=c(sample_name = 'g_samples')]

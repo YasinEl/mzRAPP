@@ -32,6 +32,8 @@ pick_main_feature <- function(dt){
 #'
 #' @examples
 pick_main_feature_sd <- function(dt){
+  ######################TO DO#################
+  #Unify returns with error checks
   dt <- copy(dt)
   #Get list of all avaiable iso_abbs
   all_iso_abs <- sort(unique(dt[,isoabb_b]), decreasing = TRUE)
@@ -40,8 +42,13 @@ pick_main_feature_sd <- function(dt){
     dt <- dt[, 'main_feature' := TRUE]
     return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])
   } else if(length(all_iso_abs) == 1){
-    #DECIDING FACTOR???
-    stop()
+    #DECIDING FACTOR??? - Pick feature with higher mean area
+    dt$average_area <- apply(dt, 1, function(x){compare_samples <- paste0('sample_', unlist(x['samples_to_compare']), '_g')
+                                                return(mean(unlist(x[compare_samples])))
+                                               })
+    dt <- dt[, 'main_feature' := ifelse(average_area == min(average_area), TRUE, FALSE)]
+    return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])
+    #stop("Deciding Factor")
   } else {
     #Iso_abb Comparison
     dt[, merge_key := 1]
@@ -61,12 +68,12 @@ pick_main_feature_sd <- function(dt){
                                                         compare_samples <- paste0('sample_', compare_samples, '_g')
                                                         ratio_errors <- list()
                                                         for (i in compare_samples){
-                                                          x[[paste0(i,'.y')]]
+                                                          #x[[paste0(i,'.y')]]
                                                           if(i == 'sample__g'){
                                                             #print(compare_samples)
                                                             #print(x)
                                                             #print(as.data.table(x))
-                                                            stop()
+                                                            stop("Sample_g error")
                                                           }
                                                           ratio_errors <- append(ratio_errors, (x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]])/x[['compare_ratio']])
                                                         }
@@ -74,6 +81,7 @@ pick_main_feature_sd <- function(dt){
                                                         #print(typeof(Reduce('sum',ratio_errors)))
                                                         if(length(Reduce('sum',ratio_errors))<1){
                                                           #print(ratio_errors)
+                                                          stop("ratio_error")
                                                         }
                                                         return(Reduce('sum',ratio_errors))
                                                        }))

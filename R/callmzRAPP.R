@@ -1051,11 +1051,6 @@ css <- "
       shinyjs::js$enableTab('results_tab_peaks')
       shinyjs::enable('start_compare')
 
-
-      ###For Debug
-      comparison_ev <<- comparison_ug_g
-      ###
-
       comparison_data(comparison_ug_g)
       },
       error=function(error_message){
