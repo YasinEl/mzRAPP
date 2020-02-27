@@ -26,7 +26,6 @@ count_errors_max <- function(dt){
   dt <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
   #fwrite(dt, 'pre_loop_dt.csv')
   #if(theMolecule == 'cis-Aconitate'){View(dt)}
-dt_t_countError <<- dt
 
   theReturn <- count_alignment_errors(dt, get_main_UT_groups(dt))
   if(theReturn > 0){print(paste(theMolecule, theAdduct, theReturn, sep = ' | '))
