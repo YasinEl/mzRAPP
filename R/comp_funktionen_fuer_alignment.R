@@ -143,7 +143,21 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
 
   })
-  return(sum(unlist(error_list)))
+
+
+
+
+  empty_samples <- apply(DT[, !"sample_id_b"], 1, function(x) {
+
+    if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
+      count.table <- data.table(table(x))
+      if("Lost_b.A" %in% count.table$x){return(count.table[x == "Lost_b.A"]$N)}
+    }
+  })
+
+
+
+  return(sum(unlist(error_list), unlist(empty_samples)))
   }
 
 
