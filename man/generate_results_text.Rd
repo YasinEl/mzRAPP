@@ -4,7 +4,7 @@
 \alias{generate_results_text}
 \title{generate_results_text}
 \usage{
-generate_results_text(comparison)
+generate_results_text(comparison_data)
 }
 \arguments{
 \item{comparison}{}

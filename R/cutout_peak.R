@@ -13,8 +13,9 @@
 #' @param main_adduct.grp
 #' @param Min.Res.
 #'
-#' @return
+#' @keyword Internal
 #' @export
+#' @return
 #'
 cutout_peaks <-
   function(int,
@@ -81,7 +82,8 @@ cutout_peaks <-
       l.peaks <- double.peak.borders[pot.peak.ranges,
                                      assemble_peaks(idx, s, e, x.breakP),
                                      on = .(breakP > s, breakP < e),
-                                     by = .EACHI][,-(1:2)][, c("unres.s", "unres.e", "idx") := .(!is.na(match(s, double.peak.borders$breakP)),!is.na(match(e, double.peak.borders$breakP)),
+                                     by = .EACHI][,-(1:2)][, c("unres.s", "unres.e", "idx") := .(!is.na(match(s, double.peak.borders$breakP)),
+                                                                                                 !is.na(match(e, double.peak.borders$breakP)),
                                                                                                  seq(1:length(s)))][]
     }
 

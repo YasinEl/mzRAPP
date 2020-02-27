@@ -11,6 +11,9 @@ cutout_peaks(int, rt, Min.PpP = 10, peak.spotting.factor. = 0.01,
 \arguments{
 \item{Min.Res.}{}
 }
+\value{
+
+}
 \description{
 detects peaks
 }

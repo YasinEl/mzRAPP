@@ -7,10 +7,11 @@
 #' @param SampleIdentifier_col name of column(s) with file names
 #' @param Molecule_Adduct_col name of column(s) with molecule and adduct identifiers
 #' @param IsoAbb_col name of column with isotopic abundance information
-#' @param flag_extremes whether outliers should be flagged (more than 20\% of in area or more than 30\% of in area but with area and height being in agreement within 20\%)
+#' @param flag_extremes whether outliers should be flagged (more than 30\% of in area or more than 30\% of in area but with area and height being in agreement within 30\%)
 #'
-#' @return
+#' @keyword Internal
 #' @export
+#' @return
 #'
 predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, IsoAbb_col, flag_extremes = FALSE)
 {
@@ -39,7 +40,8 @@ predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, IsoAbb_c
   if(flag_extremes == TRUE){
 
     Output$isoabb_ol <- TRUE
-    Output[abs(ErrorRel_A) < 20 | (abs(ErrorRel_A) < 30 & abs(ErrorRel_H - ErrorRel_A) < 20) | isoabb == 100]$isoabb_ol <- FALSE
+    #Output[abs(ErrorRel_A) < 20 | (abs(ErrorRel_A) < 35 & abs(ErrorRel_H - ErrorRel_A) < 20) | isoabb == 100]$isoabb_ol <- FALSE
+    Output[(abs(ErrorRel_A) < 35 & abs(ErrorRel_H - ErrorRel_A) < 30) | isoabb == 100]$isoabb_ol <- FALSE
 
   }
   Output

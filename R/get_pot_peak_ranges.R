@@ -4,8 +4,9 @@
 #' @param Min.PpP
 #' @param peak.spotting.factor
 #'
-#' @return
+#' @keyword Internal
 #' @export
+#' @return
 #'
 #' @examples
 get_pot_peak_ranges2 <- function(int, Min.PpP = 10, peak.spotting.factor = 0.01){

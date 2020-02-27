@@ -91,7 +91,7 @@ compare_peaks_ug_g_no_rt_start <- function(b_table, ug_table, g_table, algo){
   ##############
   b_table[, rt_add_temp := ifelse((rt_end_b - rt_b) < (rt_b - rt_start_b),
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
-  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
+  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.5,new_rt_end_b = rt_b + rt_add_temp*0.5)]
 
   #Creating temp columns to prevent over-writing by join
   ug_table[, ':=' (sample_id_ug_temp = sample_id_ug,

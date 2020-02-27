@@ -16,7 +16,10 @@ predict_Iso(DTT, SampleIdentifier_col, Molecule_Adduct_col, IsoAbb_col,
 
 \item{IsoAbb_col}{name of column with isotopic abundance information}
 
-\item{flag_extremes}{whether outliers should be flagged (more than 20\% of in area or more than 30\% of in area but with area and height being in agreement within 20\%)}
+\item{flag_extremes}{whether outliers should be flagged (more than 30\% of in area or more than 30\% of in area but with area and height being in agreement within 30\%)}
+}
+\value{
+
 }
 \description{
 Takes the output of \code{\link{findBenchPeaks}} predicts peak areas as well as peak heights for lower abundant isotopologues

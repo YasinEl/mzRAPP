@@ -78,10 +78,10 @@ align_PC <- function(PC,
 
             ol <- (100 * (res$V2 - res$V1) / min( i[[2]] - i[[1]], idt_p[[2]] - idt_p[[1]]  ))
 
-            if(ol > 50 & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt) ){
+            if(ol > 5){# & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt) ){
 
               #ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
-              ol_matrix[ii, n] <- if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
+              ol_matrix[ii, n] <- TRUE#if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
             }
 
           }
@@ -98,6 +98,7 @@ align_PC <- function(PC,
       df[, aligned.flag := rep(FALSE, nrow(df))]
 
       align.grps = 1
+
 
 
       for(i in seq(nrow(ol_matrix))){
@@ -150,6 +151,7 @@ align_PC <- function(PC,
   outputT <- outputT[!dplT]
   outputT <- outputT[!is.na(aligned.grp)]
 
+#print(outputT[molecule == "m1" & isoabb == 100, c("FileName", "molecule", "peaks.StartTime", "peaks.EndTime", "aligned.grp")])
 
   #decide for best aligned.grp
   if(pick_best == "rt_match"){
@@ -164,7 +166,23 @@ align_PC <- function(PC,
     outputT <- outputT[tmp, on = .(molecule, aligned.grp), nomatch = NULL, allow.cartesian = TRUE]
   }
 
+  #filter out isotopologues which do not have at least in one file a prediction error < 30
+  Isoab_summary_table <- outputT[isoabb < 100,.(lowest_IsoabError = min(abs(ErrorRel_A))), by = .(molecule, adduct, isoabb)]
+  Isoab_summary_table <- Isoab_summary_table[lowest_IsoabError >= 30]
+  if(nrow(Isoab_summary_table) > 1){
+    outputT <- Isoab_summary_table[outputT, on = .(molecule, adduct, isoabb), nomatch = NA]
+    outputT_f <- outputT[is.na(lowest_IsoabError), !"lowest_IsoabError"]
+    isoCountT <- outputT[,.(Iso_count = .N), by = .(molecule, adduct, FileName)]
+    outputT <- isoCountT[outputT[,!"Iso_count"], on = .(molecule, adduct, FileName), nomatch = NA]
+    outputT <- outputT[Iso_count > 1]
+  }
 
+  #tmp <- outputT[isoabb == 100, .(peaks.StartTime_range = max(peaks.StartTime) - min(peaks.StartTime),
+  #                                peaks.EndTime_range = max(peaks.EndTime) - min(peaks.EndTime)),
+  #               by = .(molecule, adduct)]
+
+  #tmp$start_end_med <- abs(peaks.StartTime_range - peaks.EndTime_range)
+  #tmp$start_end_diff <- abs(peaks.StartTime_range - peaks.EndTime_range)
 
 
   return(outputT)
