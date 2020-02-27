@@ -4,7 +4,7 @@
 \alias{rename_columns_from_options}
 \title{rename_columns_from_options}
 \usage{
-rename_columns_from_options(dt, options_table, old_columns, new_columns)
+rename_columns_from_options(dt, options_dt, old_columns, new_columns)
 }
 \arguments{
 \item{new_columns}{}

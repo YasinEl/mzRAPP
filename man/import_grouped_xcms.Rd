@@ -4,10 +4,10 @@
 \alias{import_grouped_xcms}
 \title{import_grouped_xcms}
 \usage{
-import_grouped_xcms(file_path, options_table)
+import_grouped_xcms(file, options_dt)
 }
 \arguments{
-\item{options_table}{}
+\item{options_dt}{}
 }
 \description{
 import_grouped_xcms

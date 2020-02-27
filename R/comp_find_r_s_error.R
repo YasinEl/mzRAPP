@@ -41,23 +41,3 @@ find_r_s_error <- function(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_
 
   return(temp_dt$r_s_error)
 }
-
-
-#r_s_dt <- rbindlist(list(comparison_ug_g$c_table, comparison_ug_g$nf_b_table), fill=TRUE)
-#r_s_dt <- testDT
-#r_s_dt[, r_s_error := find_r_s_error(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_b, peak_area_b, peak_area_ug), by=.(molecule_b, adduct_b, isoabb_b)]
-#r_s_dt[, plot_group := paste(molecule_b, adduct_b, isoabb_b, sep='_')]
-
-#print(r_s_dt)#
-
-#plot_r_s = ggplot(r_s_dt, aes(x=plot_group, y=sample_id_b, fill=r_s_error)) +
-#  geom_tile()
-
-#ggplotly(plot_r_s)
-
-
-#test_dt <- rbindlist(list(comparison_ug_g$c_table, comparison_ug_g$nf_b_table), fill=TRUE)
-
-#test_dt[, r_s_error := find_r_s_error(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_b, peak_area_b, peak_area_ug), by=.(molecule_b, adduct_b, isoabb_b)]
-#print(test_dt)
-#fwrite(test_dt, 'debug.csv')
