@@ -14,6 +14,7 @@
 compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_method){
 
   info_list <- list()
+  tic()
 
   print('b table')
   str(b_table)
@@ -222,22 +223,10 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
     g_table[, sample_id_g_temp := sample_id_g]
   }
 
-  str(c_table[, 'peak_area_ug_temp'])
-  str(g_table)
-
-
-
-
-
-
-
 
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
-
-  print(nrow(c_table))
-
 
 
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
@@ -308,12 +297,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ###################################################################################################################
   #feature_feature comparison
   ###################################################################################################################
+  print('Start FF Compare')
   ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
   fwrite(ff_table_dt, 'ff_comp_dt.csv')
-
-
-
-
 
   ##############
   #Create benchmark, ungrouped and grouped tables for not found peaks
@@ -338,14 +324,88 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   print(paste0('After Main Feature: ', nrow(c_table)))
   print(paste0('Only Main Peak: ', nrow(c_table[main_peak == TRUE])))
 
+  #Generate Random and systematic error DT
+  rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
+
+  rs_table[, missing_peaks := find_r_s_error(
+    comp_id_b,
+    molecule_b,
+    adduct_b,
+    sample_id_b,
+    isoabb_b,
+    peak_area_b,
+    peak_area_ug,
+    peak_height_b
+  ), by = .(molecule_b, adduct_b, isoabb_b)]
+
+
+  #Generate Isotopologe error dt
+  iso_err_dt <- na.omit(c_table, cols = c('peak_area_ug'))
+
+  iso_err_dt <- na.omit(iso_err_dt, cols = c("peak_area_b", "peak_area_ug"))
+
+  iso_err_dt <- iso_err_dt[main_peak == TRUE]
+
+
+
+  DT_tmp <- iso_err_dt[isoabb_b != 100][iso_err_dt[isoabb_b == 100],
+                                        on=.(sample_name_b, molecule_b, adduct_b),
+                                        nomatch = 0L, allow.cartesian=TRUE][,c("benchmark", "non_targeted") := .((peak_area_b / ((i.peak_area_b * isoabb_b) / 100) - 1) * 100,
+                                                                                                                 (peak_area_ug / ((i.peak_area_ug * isoabb_b) / 100) - 1) * 100)]
+
+
+  iso_err_dt <- merge(iso_err_dt, DT_tmp[,.(comp_id_b, benchmark, non_targeted)], by = 'comp_id_b', all.x = TRUE, allow.cartesian = TRUE)
+
+
+  iso_err_dt[, diffH20PP := as.character(abs(abs(benchmark) - abs(non_targeted)) > 10 &
+                                           abs(non_targeted - benchmark) > 20 &
+                                           abs(non_targeted) > 30)]
+
+  iso_err_dt[diffH20PP == "TRUE"]$diffH20PP <- "Inc. > 20%p"
+  iso_err_dt[diffH20PP == "FALSE"]$diffH20PP <- "Inc. < 20%p"
+
+  iso_err_dt <-
+    melt(
+      iso_err_dt,
+      id.vars = c('molecule_b', 'adduct_b', 'Grp_b', 'isoabb_b', 'sample_name_b', 'diffH20PP'),
+      measure.vars = c("benchmark", "non_targeted"),
+      variable.name = 'data_type',
+      value.name = 'Pred_error'
+    )
+
+
+  iso_err_dt[, grp_col := paste0(molecule_b, adduct_b, Grp_b, isoabb_b, sample_name_b)]
+
+  iso_err_dt <- na.omit(iso_err_dt, cols = "diffH20PP")
+
+  #Generate alignment error table
+  ali_error_table <-
+    rbindlist(list(c_table, nf_b_table), fill = TRUE)
+
+  ali_error_table <- ali_error_table[, count_errors_max(.SD), .SDcols=c('molecule_b',
+                                                    'adduct_b',
+                                                    'main_peak',
+                                                    'sample_id_b',
+                                                    'isoabb_b',
+                                                    'feature_id_g',
+                                                    'peak_group_b',
+                                                    'peak_area_g',
+                                                    'peak_area_ug'),
+                 by=.(molecule_b, adduct_b)]
+  ali_error_table <- setnames(ali_error_table, c('V1', 'molecule_b', 'adduct_b'), c('errors', 'Molecule', 'Adduct'))
+
   ##############
   #Return the found and 3 notfoundtables in a list
   ##############
 
-  return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list, 'split_table' = split_table, 'ff_table' = ff_table_dt)
+  return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list,
+                      'split_table' = split_table, 'ff_table' = ff_table_dt, 'rs_table'=rs_table, 'iso_err_dt' = iso_err_dt, 'ali_error_table' = ali_error_table)
   ev_return_list <<- return_list
+  toc()
 
+  saveRDS(return_list, "RObject.rds")
   print('Compare Succesfull')
+
 
   return(return_list)
 }

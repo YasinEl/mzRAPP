@@ -40,8 +40,11 @@ feature_compare <- function(b_table, g_table){
                                     min_rt_start < rt_g,
                                     max_rt_end > rt_g), allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
+  fwrite(cf_table, "debug_cf_table.csv")
+
+
 
   cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
-
+  print('Done feature compare')
   return(cf_table)
 }

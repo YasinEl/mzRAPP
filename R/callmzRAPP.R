@@ -688,6 +688,35 @@ css <- "
 
   ))
 
+  choice_vector_comp <- c(
+    'Retention time [sec]' = 'rt_b',
+    'Points per peak' = 'peaks.PpP_b',
+    'Sharpness' = 'peaks.sharpness_b',
+    'FW25M' = 'peaks.FW25M_b',
+    'FW50M'= 'peaks.FW50M_b',
+    'FW75M' = 'peaks.FW75M_b',
+    'Zigzag index' = 'peaks.zigZag_IDX_b',
+    'Height' = 'peak_height_b',
+    'Area' = 'peak_area_b',
+    'mz measured' = 'peaks.mz_accurate_b',
+    'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
+    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
+    'mz range (abs)' = 'peaks.mz_span_abs_b',
+    'mz range [ppm]' = 'peaks.mz_span_ppm_b',
+    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
+    'Molecule' = 'molecule_b',
+    'Filename' = 'sample_name_b',
+    'Adduct' = 'adduct_b',
+    'Theoretic isotopic abundance' = 'isoabb_b',
+    'Introduced sample group' = 'Grp_b',
+    'Predicted area' = 'ExpectedArea_b',
+    'Error_predicted area [%]' = 'ErrorRel_A_b',
+    'Error_predicted area (abs)' = 'ErrorAbs_A_b',
+    'Predicted height' = 'ExpectedHeight_b',
+    'Error_predicted height [%]' = 'ErrorRel_H_b',
+    'Error_predicted height (abs)' = 'ErrorAbs_H_b'
+  )
+
   choice_vector_bench <-
   c(
     'Retention time [sec]' = 'peaks.rt',
@@ -716,36 +745,6 @@ css <- "
     'Predicted height' = 'ExpectedHeight',
     'Error_predicted height [%]' = 'ErrorRel_H',
     'Error_predicted height (abs)' = 'ErrorAbs_H'
-  )
-
-
-  choice_vector_comp <- c(
-    'Retention time [sec]' = 'rt_b',
-    'Points per peak' = 'peaks.PpP_b',
-    'Sharpness' = 'peaks.sharpness_b',
-    'FW25M' = 'peaks.FW25M_b',
-    'FW50M'= 'peaks.FW50M_b',
-    'FW75M' = 'peaks.FW75M_b',
-    'Zigzag index' = 'peaks.zigZag_IDX_b',
-    'Height' = 'peak_height_b',
-    'Area' = 'peak_area_b',
-    'mz measured' = 'peaks.mz_accurate_b',
-    'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
-    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
-    'mz range (abs)' = 'peaks.mz_span_abs_b',
-    'mz range [ppm]' = 'peaks.mz_span_ppm_b',
-    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
-    'Molecule' = 'molecule_b',
-    'Filename' = 'sample_name_b',
-    'Adduct' = 'adduct_b',
-    'Theoretic isotopic abundance' = 'isoabb_b',
-    'Introduced sample group' = 'Grp_b',
-    'Predicted area' = 'ExpectedArea_b',
-    'Error_predicted area [%]' = 'ErrorRel_A_b',
-    'Error_predicted area (abs)' = 'ErrorAbs_A_b',
-    'Predicted height' = 'ExpectedHeight_b',
-    'Error_predicted height [%]' = 'ErrorRel_H_b',
-    'Error_predicted height (abs)' = 'ErrorAbs_H_b'
   )
 
   server <- function (input, output, session) {
@@ -1062,10 +1061,83 @@ css <- "
 
 
     })
+    ######
+    #Comparison Plot functions
+    #####################
+
+    #Comparison peak overview plot
+    observeEvent(comparison_data(),{
+      comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        updateSelectInput(session, 'mol_c', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
+      }
+    })
+    observeEvent(input$mol_c, {
+      comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        print('add_c')
+        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
+      }
+    })
+
+    observeEvent({input$mol_c; input$add_c}, {
+      comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        print('ia_c')
+        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
+      }
+    })
+
+    #EIC_plot
+    observeEvent({comparison_data(); input$mol_c; input$add_c; input$ia_c},{
+      comparison_data <- isolate(comparison_data())
+      if (!is.null(comparison_data)){
+        output$graph_area_4 <- renderPlotly(plot_comp_peak_overview(comparison_data, input$mol_c, input$add_c, input$ia_c))
+      }
+    })
 
 
+    #Scatter_plot
+    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y}, {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data, input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp))
+      }
+    })
 
+    #R/S Heatmap Plot
+    observeEvent(comparison_data(), {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data))
+      }
+    })
 
+    #Ditsribution of peaks plot
+    observeEvent({comparison_data(); input$graph_select_input}, {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data, input$graph_select_input, choice_vector_comp))
+      }
+    })
+    #Isotopologe prediction error
+    observeEvent(comparison_data(), {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data))
+      }
+    })
+    #Results Text
+    observeEvent(comparison_data(), {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$results_text <- renderText(generate_results_text(comparison_data))
+
+      }
+    })
   }
 
   shinyApp(ui, server)

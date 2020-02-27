@@ -18,6 +18,7 @@ pick_main_feature <- function(dt){
   #print(nrow(main_feature_dt[main_feature==TRUE]))
   #print('-----')
   dt <- merge(dt, main_feature_dt[,c('feature_id_b', 'feature_id_g', 'main_feature')], by=c('feature_id_b', 'feature_id_g'), all.x=TRUE)
+  gc(verbose = TRUE)
   #print(nrow(dt[main_feature==TRUE]))
   #print(nrow(dt))
   #temp_dup_dt <<- dt[duplicated(dt, by=c('molecule_b', 'adduct_b', 'isoabb_b')) | duplicated(dt, by=c('molecule_b', 'adduct_b', 'isoabb_b'), fromLast=TRUE)][main_feature==TRUE]
@@ -97,9 +98,18 @@ pick_main_feature_sd <- function(dt){
     #temp_dt <- temp_dt[, grp_id := .GRP, by=c('feature_id_b.x')]
     #temp_dt <- temp_dt[, id_in_group := seq_len(.N), by=c('feature_id_b.x')]
 
+    print(temp_dt)
+    if(nrow(temp_dt)>40){
+      print(temp_dt)
+      print(length(unique(temp_dt$grp_id)))
+      fwrite(temp_dt, 'temp_temp_debug.csv')
+    }
 
     combination_dt <- data.table()
     for (i in unique(temp_dt$grp_id)){
+      if(nrow(temp_dt)>40){
+        print(i)
+      }
       if (i == 1){
         combination_dt <- combination_dt[, eval(quote(as.character(i))) := unique(temp_dt[grp_id == i, row_id])]
         combination_dt <- combination_dt[, 'merge_key' := 1]
@@ -112,12 +122,19 @@ pick_main_feature_sd <- function(dt){
     }
     combination_dt[,'merge_key' := NULL]
 
-    new_combination_dt <- combination_dt
+    if(nrow(temp_dt)>40){
+      print(combination_dt)
+      object.size(combination_dt)
+      print(object.size(combination_dt))
+    }
 
-    new_combination_dt$rows <- apply(new_combination_dt,1,function(x){paste(x, collapse = ',')})
-    new_combination_dt <- melt(new_combination_dt, id.vars='rows', variable.name='position', value.name='row_id')
-    new_combination_dt <- new_combination_dt[temp_dt[,c('row_id', 'ratio_diff')], on=c('row_id')]
-    new_ratio_error_dt <- new_combination_dt[, sum(ratio_diff), by=c('rows')]
+    combination_dt$rows <- pbapply(combination_dt,1,function(x){paste(x, collapse = ',')})
+    #print('Start call')
+    #combination_dt$rows <- do.call(paste, c(combination_dt, sep=','))
+    #print('end call')
+    combination_dt <- melt(combination_dt, id.vars='rows', variable.name='position', value.name='row_id')
+    combination_dt <- combination_dt[temp_dt[,c('row_id', 'ratio_diff')], on=c('row_id')]
+    new_ratio_error_dt <- combination_dt[, sum(ratio_diff), by=c('rows')]
     setnames(new_ratio_error_dt, c('V1'), c('error'))
     new_ratio_error_dt <- new_ratio_error_dt[, 'correct_rows' := ifelse(error == min(error), TRUE, FALSE)]
     ratio_error_dt <- new_ratio_error_dt[order(error)]
@@ -125,6 +142,10 @@ pick_main_feature_sd <- function(dt){
       print('here')
       ratio_error_dt <- ratio_error_dt[1,][correct_rows == TRUE]
       print(ratio_error_dt)
+    }
+    if(nrow(temp_dt)>40){
+      print(ratio_error_dt)
+
     }
 
     if(nrow(ratio_error_dt[correct_rows == TRUE]) == 1){
@@ -169,6 +190,7 @@ pick_main_feature_sd <- function(dt){
         }
       }
     }
+    rm(temp_dt)
     return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])
   }
 }
