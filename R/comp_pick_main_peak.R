@@ -107,7 +107,9 @@ pick_main_peak_sd <- function(dt){
         dup_peaks <- dt[duplicated(dt, by=c('isoabb_b')) | duplicated(dt, by=c('isoabb_b'), fromLast = TRUE)]
         not_highest_peak <- dup_peaks[, 'smallest_length' := ifelse(peak_length == min(peak_length), TRUE, FALSE), by=c('comp_id_b')][smallest_length == FALSE, comp_id_ug]
         main_peaks <- main_peaks[!(main_peaks %in% not_highest_peak)]
-        if(length(main_peaks) > length(all_iso_abs)){ stop("Still to many main peaks") }
+        if(length(main_peaks) > length(all_iso_abs)){
+          print(main_peaks)
+          warning("Still to many main peaks") }
       }
       if(length(main_peaks) < length(all_iso_abs)){
         stop("Not enough main peaks")

@@ -45,6 +45,7 @@ feature_compare <- function(b_table, g_table){
 
 
   cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
+  fwrite(cf_table, 'cf_debug.csv')
   print('Done feature compare')
   return(cf_table)
 }

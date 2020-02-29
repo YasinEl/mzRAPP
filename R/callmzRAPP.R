@@ -409,14 +409,40 @@ css <- "
             actionButton(inputId = 'ug_upload',
                          label = 'Select ungrouped file(s)',
                          width = '190px'),
-            div(style = "width: 20px;"),
+            div(style = "width: 110px;"),
             actionButton(inputId = 'g_upload',
                          label = 'Select grouped file',
                          width = '190px'),
-            div(style = "width: 20px;"),
+            div(style = "width: 110px;"),
             actionButton(inputId = 'options_upload',
                          label = 'Select options files',
                          width = '190px')
+          )
+        ),
+        fluidRow(
+          column(
+            12,
+            style = "display: inline-flex;",
+            textAreaInput(inputId = 'ug_upload_files',
+                         label = NULL,
+                         width = '190px',
+                         height = '307px',
+                         placeholder = 'Selcted ungrouped file(s)',
+                         resize = 'none'),
+            #div(style = "width: 20px;"),
+            textAreaInput(inputId = 'g_upload_files',
+                          label = NULL,
+                          width = '190px',
+                          height = '307px',
+                          placeholder = 'Selcted grouped file',
+                          resize = 'none'),
+            #div(style = "width: 20px;"),
+            textAreaInput(inputId = 'options_upload_files',
+                          label = NULL,
+                          width = '190px',
+                          height = '307px',
+                          placeholder = 'Selcted options file',
+                          resize = 'none')
           )
         ),
         fluidRow(
@@ -799,6 +825,7 @@ css <- "
       else {
         files <- rchoose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
         if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        updateTextAreaInput(session = session, inputId = 'ug_upload_files', value = paste0(basename(files), sep="\n"))
         return(files)
       }
     })
