@@ -1,7 +1,7 @@
 Package: mzRAPP
 Type: Package
 Title: Benchmark Dataset Generation
-Version: 0.2.0
+Version: 0.2.0.9999
 Author: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
 Maintainer: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
 Description: Generation and evaluation of LC-HRMS benchmark dataset from mzML files.
@@ -19,7 +19,7 @@ Depends:
     tools,
     plotly,
     dplyr,
-    rChoiceDialogs,
+    tcltk,
     bit64
 biocViews:
 Imports:
