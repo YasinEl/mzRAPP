@@ -409,14 +409,40 @@ css <- "
             actionButton(inputId = 'ug_upload',
                          label = 'Select ungrouped file(s)',
                          width = '190px'),
-            div(style = "width: 20px;"),
+            div(style = "width: 110px;"),
             actionButton(inputId = 'g_upload',
                          label = 'Select grouped file',
                          width = '190px'),
-            div(style = "width: 20px;"),
+            div(style = "width: 110px;"),
             actionButton(inputId = 'options_upload',
                          label = 'Select options files',
                          width = '190px')
+          )
+        ),
+        fluidRow(
+          column(
+            12,
+            style = "display: inline-flex;",
+            textAreaInput(inputId = 'ug_upload_files',
+                         label = NULL,
+                         width = '190px',
+                         height = '307px',
+                         placeholder = 'Selcted ungrouped file(s)',
+                         resize = 'none'),
+            #div(style = "width: 20px;"),
+            textAreaInput(inputId = 'g_upload_files',
+                          label = NULL,
+                          width = '190px',
+                          height = '307px',
+                          placeholder = 'Selcted grouped file',
+                          resize = 'none'),
+            #div(style = "width: 20px;"),
+            textAreaInput(inputId = 'options_upload_files',
+                          label = NULL,
+                          width = '190px',
+                          height = '307px',
+                          placeholder = 'Selcted options file',
+                          resize = 'none')
           )
         ),
         fluidRow(
@@ -768,8 +794,9 @@ css <- "
     mzML_files <- reactive({
       if (input$mzML_upload == 0){return(NULL)}
       else {
-        files <- rchoose.files(default = isolate(data_dir()), caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
-        if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        #files <- rchoose.files(default = isolate(data_dir()), caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
+        files <- tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
+        #if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
         return(files)
       }
     })
@@ -777,8 +804,9 @@ css <- "
     grps_file <- reactive({
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
-        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
-        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        file <- tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         return(file)
       }
     })
@@ -786,8 +814,9 @@ css <- "
     coi_file <- reactive({
       if(input$coi_upload == 0){return(NULL)}
       else {
-        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select target file', multi = FALSE, filters = csv_filter)
-        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        file <- tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         return(file)
       }
     })
@@ -797,32 +826,37 @@ css <- "
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
-        files <- rchoose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
-        if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        #files <- rchoose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        files <- tk_choose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        #if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        updateTextAreaInput(session = session, inputId = 'ug_upload_files', value = paste0(basename(files), sep="\n"))
         return(files)
       }
     })
     g_file <- reactive({
       if (input$g_upload == 0){return(NULL)}
       else {
-        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
-        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
+        file <- tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
+        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         return(file)
       }
     })
     benchmark_file <- reactive({
       if (input$benchmark_upload == 0){return(NULL)}
       else {
-        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
-        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
+        file <- tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
+        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         return(file)
       }
     })
     options_file <- reactive({
       if (input$options_upload == 0){return(NULL)}
       else {
-        file <- rchoose.files(default = isolate(data_dir()), caption = 'Select options file', multi = FALSE, filters = csv_filter)
-        if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select options file', multi = FALSE, filters = csv_filter)
+        file <- tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
+        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         return(file)
       }
     })

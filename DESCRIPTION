@@ -19,7 +19,8 @@ Depends:
     tools,
     plotly,
     dplyr,
-    rChoiceDialogs,
+    tcltk,
+    bit64
     bit64,
     hutils
 biocViews:
