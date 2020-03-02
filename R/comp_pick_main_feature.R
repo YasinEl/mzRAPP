@@ -133,6 +133,26 @@ best_feature_per_comparison <- function(dt){
   return(list(dt$ratio_diff, dt$min_ratio_diff))
 }
 
+
+
+
+##############################
+#Old Function, only for reference
+##############################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #' pick_main_feature_sd
 #'
 #' @param dt

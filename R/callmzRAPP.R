@@ -409,11 +409,11 @@ css <- "
             actionButton(inputId = 'ug_upload',
                          label = 'Select ungrouped file(s)',
                          width = '190px'),
-            div(style = "width: 110px;"),
+            div(style = "width: 20px;"),
             actionButton(inputId = 'g_upload',
                          label = 'Select grouped file',
                          width = '190px'),
-            div(style = "width: 110px;"),
+            div(style = "width: 20px;"),
             actionButton(inputId = 'options_upload',
                          label = 'Select options files',
                          width = '190px')
@@ -426,21 +426,18 @@ css <- "
             textAreaInput(inputId = 'ug_upload_files',
                          label = NULL,
                          width = '190px',
-                         height = '307px',
                          placeholder = 'Selcted ungrouped file(s)',
                          resize = 'none'),
-            #div(style = "width: 20px;"),
+            div(style = "width: 20px;"),
             textAreaInput(inputId = 'g_upload_files',
                           label = NULL,
                           width = '190px',
-                          height = '307px',
                           placeholder = 'Selcted grouped file',
                           resize = 'none'),
-            #div(style = "width: 20px;"),
+            div(style = "width: 20px;"),
             textAreaInput(inputId = 'options_upload_files',
                           label = NULL,
                           width = '190px',
-                          height = '307px',
                           placeholder = 'Selcted options file',
                           resize = 'none')
           )
@@ -778,6 +775,7 @@ css <- "
     shinyjs::js$disableTab('benchmark_results')
     shinyjs::js$disableTab('results_tab_features')
     shinyjs::js$disableTab('results_tab_peaks')
+    shinyjs::disable('ug_upload_files')
 
 
     ##Reactive Values
@@ -1046,6 +1044,10 @@ css <- "
     ##################
 
     comparison <- observeEvent(input$start_compare, {
+      #Disable Elements
+      shinyjs::disable('start_compare')
+      shinyjs::js$disableTab('results_tab_features')
+      shinyjs::js$disableTab('results_tab_peaks')
       tryCatch({
       #####################
       #Import csv files
@@ -1061,11 +1063,6 @@ css <- "
       ug_table <- import_results$ug_table
       g_table <- import_results$g_table
       req(import_results)
-
-      #Disable Elements
-      shinyjs::disable('start_compare')
-      shinyjs::js$disableTab('results_tab_features')
-      shinyjs::js$disableTab('results_tab_peaks')
 
       #To-Do: Clear graphing Areas!!!!!
 
