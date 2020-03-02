@@ -9,6 +9,9 @@ import_ungrouped_mzmine(folder_path, options_table)
 \arguments{
 \item{options_table}{}
 }
+\value{
+
+}
 \description{
 import_ungrouped_mzmine
 }

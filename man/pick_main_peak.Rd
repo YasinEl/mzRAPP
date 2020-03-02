@@ -9,6 +9,9 @@ pick_main_peak(dt)
 \arguments{
 \item{dt}{}
 }
+\value{
+
+}
 \description{
 pick_main_peak
 }

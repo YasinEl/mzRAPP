@@ -4,8 +4,14 @@
 \alias{getROIsForEICs}
 \title{getROIsForEICs}
 \usage{
-getROIsForEICs(files, Target.table, minCentroids = 4,
-  AccurateMZtol = 5, PrecisionMZtol = 5, plan = "multiprocess")
+getROIsForEICs(
+  files,
+  Target.table,
+  minCentroids = 4,
+  AccurateMZtol = 5,
+  PrecisionMZtol = 5,
+  plan = "multiprocess"
+)
 }
 \arguments{
 \item{files}{vector containing all mzML file paths}

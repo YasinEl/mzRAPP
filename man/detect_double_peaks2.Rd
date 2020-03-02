@@ -4,8 +4,13 @@
 \alias{detect_double_peaks2}
 \title{detect_double_peaks2}
 \usage{
-detect_double_peaks2(pot.doubleP.v, Min.PpP = 10, l = 1,
-  r = length(pot.doubleP.v), Min.Res = 70)
+detect_double_peaks2(
+  pot.doubleP.v,
+  Min.PpP = 10,
+  l = 1,
+  r = length(pot.doubleP.v),
+  Min.Res = 70
+)
 }
 \arguments{
 \item{Min.Res}{}

@@ -4,8 +4,7 @@
 \alias{GetFWXM}
 \title{GetFWXM}
 \usage{
-GetFWXM(RT_vect, Int_vect, baseL, X, peak_borders = FALSE,
-  return_diff = FALSE)
+GetFWXM(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_diff = FALSE)
 }
 \arguments{
 \item{RT_vect}{vector with retention times}

@@ -9,6 +9,9 @@ compare_peaks_ug_g_no_rt_start(b_table, ug_table, g_table, algo)
 \arguments{
 \item{algo}{}
 }
+\value{
+
+}
 \description{
 compare_peaks_ug_g_no_rt_start
 }

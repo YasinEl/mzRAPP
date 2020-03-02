@@ -9,6 +9,9 @@ plot_bench_overview(benchmark_data, x, y, colb, choice_vector_bench)
 \arguments{
 \item{choice_vector_bench}{}
 }
+\value{
+
+}
 \description{
 plot_bench_overview
 }

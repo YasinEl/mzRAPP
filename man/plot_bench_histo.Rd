@@ -9,6 +9,9 @@ plot_bench_histo(benchmark_data, var, choice_vector_bench)
 \arguments{
 \item{choice_vector_bench}{}
 }
+\value{
+
+}
 \description{
 plot_bench_histo
 }
