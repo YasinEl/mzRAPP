@@ -8,7 +8,7 @@ Description: Generation and evaluation of LC-HRMS benchmark dataset from mzML fi
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Depends: 
     data.table,
     enviPat,
@@ -20,7 +20,8 @@ Depends:
     plotly,
     dplyr,
     rChoiceDialogs,
-    bit64
+    bit64,
+    hutils
 biocViews:
 Imports:
     retistruct,
@@ -39,8 +40,7 @@ Imports:
     intervals,
     doFuture,
     S4Vectors,
-    V8,
-    future.apply
+    V8
 Suggests: 
     knitr,
     rmarkdown

@@ -6,6 +6,9 @@
 \usage{
 callmzRAPP()
 }
+\value{
+
+}
 \description{
 callmzRAPP
 }

@@ -9,6 +9,9 @@ plot_comp_iso_pred_error(comparison_data)
 \arguments{
 \item{comparison_data}{}
 }
+\value{
+
+}
 \description{
 plot_comp_iso_pred_error
 }

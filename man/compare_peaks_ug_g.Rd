@@ -9,6 +9,9 @@ compare_peaks_ug_g(b_table, ug_table, g_table, algo, main_feature_method)
 \arguments{
 \item{algo}{}
 }
+\value{
+
+}
 \description{
 compare_peaks_ug_g
 }

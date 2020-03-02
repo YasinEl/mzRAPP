@@ -9,6 +9,9 @@ plot_comp_scatter_plot(comparison_data, x, y, choice_vector_comp)
 \arguments{
 \item{plot_input_y}{}
 }
+\value{
+
+}
 \description{
 plot_comp_scatter_plot
 }

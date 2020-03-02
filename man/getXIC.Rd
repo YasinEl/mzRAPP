@@ -9,6 +9,9 @@ getXIC(PC, IndexNumber)
 \arguments{
 \item{IndexNumber}{}
 }
+\value{
+
+}
 \description{
 getXIC
 }

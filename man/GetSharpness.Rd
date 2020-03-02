@@ -9,6 +9,9 @@ GetSharpness(int)
 \arguments{
 \item{int}{}
 }
+\value{
+
+}
 \description{
 GetSharpness
 }

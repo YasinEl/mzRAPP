@@ -9,6 +9,9 @@ Filter_WrongCompounds(PeakCandidates, ErrorRel_H_Mp1_tol = 10)
 \arguments{
 \item{IsoAbb_col}{}
 }
+\value{
+
+}
 \description{
 Filter_WrongCompounds
 }

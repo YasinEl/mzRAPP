@@ -99,9 +99,9 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     pattern <- pattern[filter.vct$value]
     DT <- DT[filter.vct$value]
     SF <- SF[filter.vct$value]
-    warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package.
-                   Those formulas are excldued. In case this leads to problems for you please contact the developers. The following molecular formulas have been excluded: ",
-                   paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")))
+    warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package.",
+                   "Those formulas are excldued. In case this leads to problems for you please contact the developers. The following molecular formulas have been excluded: ",
+                   paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")), noBreaks. = TRUE)
   }
 
 
@@ -154,6 +154,9 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     Output <- Output[DTreg[, !c("adduct_c", "SumForm_c")], on = .(molecule, adduct)]
   }
 
+  Output <- na.omit(Output, col = "mz")
 
-  return(na.omit(Output, col = "mz"))
+
+
+  return(Output)
 }

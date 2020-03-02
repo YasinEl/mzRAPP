@@ -9,6 +9,9 @@ rename_columns_from_options(dt, options_dt, old_columns, new_columns)
 \arguments{
 \item{new_columns}{}
 }
+\value{
+
+}
 \description{
 rename_columns_from_options
 }

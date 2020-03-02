@@ -9,6 +9,9 @@ plot_Peak_per_mol(PC_object, mol, ia = 100, add = "M+H")
 \arguments{
 \item{add}{}
 }
+\value{
+
+}
 \description{
 plot_Peak_per_mol
 }

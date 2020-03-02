@@ -9,6 +9,9 @@ import_benchmark(file, options_table, from_csv = TRUE)
 \arguments{
 \item{from_csv}{}
 }
+\value{
+
+}
 \description{
 import_benchmark
 }
