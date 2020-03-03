@@ -1,22 +1,18 @@
 #' find_r_s_error
 #'
-#' @param comp_id_b
-#' @param molecule_b
-#' @param adduct_b
-#' @param sample_id_b
-#' @param isoabb_b
 #' @param peak_area_b
 #' @param peak_area_ug
+#' @param peak_height_b
 #'
 #' @return
 #' @export
 #'
 #' @examples
-find_r_s_error <- function(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_b, peak_area_b, peak_area_ug, peak_height_b){
+find_r_s_error <- function(peak_area_b, peak_area_ug, peak_height_b){
 
-  temp_dt <- data.table(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_b,  peak_area_b, peak_area_ug, peak_height_b)
+  temp_dt <- data.table(peak_area_b, peak_area_ug, peak_height_b)
 
-  temp_dt[, r_s_error := as.character(NA)]
+  temp_dt[, r_s_error := NA_character_]
 
   if (all(is.na(temp_dt$peak_area_ug))){
     first_found_ug_area <- NA
