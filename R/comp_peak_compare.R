@@ -14,7 +14,6 @@
 compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_method){
 
   info_list <- list()
-  tic()
 
   print('b table')
   str(b_table)
@@ -101,6 +100,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   }
   if (any(duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug')))){
     warning('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
+    total_ug_peaks <- nrow(ug_table)
+    ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug'))]
+    warning(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate peaks to prevent errors'))
   }
   if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){
     warning('Duplicate peaks present in grouped. This can lead to further errors during analysis.')
@@ -134,7 +136,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                   new_rt_end_b_temp = new_rt_end_b,
                   mz_start_b_temp = mz_start_b,
                   mz_end_b_temp = mz_end_b)]
-
 
 
   ##############
@@ -193,9 +194,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
   print(paste('Before Main Peak Check: ', nrow(c_table)))
-  c_table <- pick_main_peak(c_table)
+  c_table <- pick_main_peak_2(c_table)
   #c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
   print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
+
+  fwrite(c_table, 'after_merge_debug.csv')
 
 
 
@@ -254,45 +257,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   if (any(duplicated(c_table[main_peak==TRUE]))){
     stop('Duplicate Peaks still present after analysis')
   }
-
-  ##############
-  #Compare Feature with Feature
-  ##############
-
-  #Generate Feature Table from Benchmarl
-  #bf_table <- b_table[, .(mean_area_b = mean(peak_area_b), rt_start_b = min(rt_start_b), rt_end_b = max(rt_end_b),
-  #                        mz_start_b = min(mz_start_b), mz_end_b = max(mz_end_b), isoabb_b = unique(isoabb_b), molecule_b = unique(molecule_b), adduct_b = unique(adduct_b)), by=.(feature_id_b)]
-  #gf_table <- g_table[, .(mean_area_g = mean(peak_area_g), rt_g = mean(rt_g), mz_g = min(mz_g)), by=.(feature_id_g)]
-
-  ###Create Temp cols for merge
-
-  #bf_table <- bf_table[, ':=' (rt_start_b_temp = rt_start_b, rt_end_b_temp = rt_end_b, mz_start_b_temp = mz_start_b, mz_end_b_temp = mz_end_b)]
-  #gf_table <- gf_table[, ':=' (rt_g_temp = rt_g, mz_g_temp = mz_g)]
-
-
-  #print(bf_table)
-
-  #cf_table <- bf_table[gf_table, on=.(rt_start_b_temp < rt_g_temp,
-  #                                    rt_end_b_temp >  rt_g_temp,
-  #                                    mz_start_b_temp < mz_g_temp  ,
-  #                                    mz_end_b_temp > mz_g_temp), allow.cartesian=TRUE, nomatch=NULL, mult='all']
-
-  #cf_table <- cf_table[,grep('_temp$', colnames(c_table)):=NULL]
-
-
-    #c_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
-    #                                  new_rt_start_b_temp >= rt_start_ug_temp,
-    #                                  new_rt_end_b_temp <= rt_end_ug_temp,
-    #                                  mz_start_b_temp <= mz_ug_temp,
-    #                                  mz_end_b_temp >= mz_ug_temp),
-    #                   allow.cartesian=TRUE, nomatch=NULL, mult='all']
-
-
-  #fwrite(bf_table, 'bfdebug.csv')
-  #fwrite(gf_table, 'gfdebug.csv')
-  #fwrite(cf_table, 'cfdebug.csv')
-
-  #print(cf_table, class=TRUE)
 
   ###################################################################################################################
   #feature_feature comparison
@@ -401,7 +365,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list,
                       'split_table' = split_table, 'ff_table' = ff_table_dt, 'rs_table'=rs_table, 'iso_err_dt' = iso_err_dt, 'ali_error_table' = ali_error_table)
   ev_return_list <<- return_list
-  toc()
 
   saveRDS(return_list, "RObject.rds")
   print('Compare Succesfull')

@@ -10,11 +10,8 @@ import_ungrouped_cd(file_path, options_table)
 }
 \arguments{
 \item{options_table}{}
-}
-\value{
 
-
-
+\item{options_table}{}
 }
 \description{
 import_ungrouped_cd

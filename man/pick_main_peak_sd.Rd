@@ -9,9 +9,6 @@ pick_main_peak_sd(dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 pick_main_peak_sd
 }

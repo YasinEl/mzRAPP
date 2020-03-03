@@ -9,9 +9,6 @@ plot_comp_missing_value_hm(comparison_data)
 \arguments{
 \item{comparison_data}{}
 }
-\value{
-
-}
 \description{
 plot_comp_missing_value_hm
 }

@@ -4,13 +4,8 @@
 \alias{predict_Iso}
 \title{predict_Iso}
 \usage{
-predict_Iso(
-  DTT,
-  SampleIdentifier_col,
-  Molecule_Adduct_col,
-  IsoAbb_col,
-  flag_extremes = FALSE
-)
+predict_Iso(DTT, SampleIdentifier_col, Molecule_Adduct_col, IsoAbb_col,
+  flag_extremes = FALSE)
 }
 \arguments{
 \item{DTT}{output of \code{\link{findBenchPeaks}}}

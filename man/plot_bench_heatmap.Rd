@@ -9,9 +9,6 @@ plot_bench_heatmap(benchmark_data)
 \arguments{
 \item{benchmark_data}{}
 }
-\value{
-
-}
 \description{
 plot_bench_heatmap
 }

@@ -11,6 +11,10 @@ import_ungrouped_xcms <- function(file, options_dt){
 
   print('start xcms ug import')
 
+  if(is.null(file)){
+    stop('No ungrouped file selected')
+  }
+
   #Check if filetype is csv
   if(file_ext(file) != 'csv'){
     stop('ungrouped dataset is not a valid csv file')
@@ -59,6 +63,10 @@ import_ungrouped_xcms <- function(file, options_dt){
 import_grouped_xcms <- function (file, options_dt) {
 
   print('start xcms g import')
+
+  if(is.null(file)){
+    stop('No grouped file selected')
+  }
 
   #Check if filetype is csv
   if(file_ext(file) != 'csv'){

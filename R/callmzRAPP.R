@@ -409,11 +409,11 @@ css <- "
             actionButton(inputId = 'ug_upload',
                          label = 'Select ungrouped file(s)',
                          width = '190px'),
-            div(style = "width: 110px;"),
+            div(style = "width: 20px;"),
             actionButton(inputId = 'g_upload',
                          label = 'Select grouped file',
                          width = '190px'),
-            div(style = "width: 110px;"),
+            div(style = "width: 20px;"),
             actionButton(inputId = 'options_upload',
                          label = 'Select options files',
                          width = '190px')
@@ -423,26 +423,26 @@ css <- "
           column(
             12,
             style = "display: inline-flex;",
-            textAreaInput(inputId = 'ug_upload_files',
-                         label = NULL,
-                         width = '190px',
-                         height = '307px',
-                         placeholder = 'Selcted ungrouped file(s)',
-                         resize = 'none'),
-            #div(style = "width: 20px;"),
-            textAreaInput(inputId = 'g_upload_files',
-                          label = NULL,
-                          width = '190px',
-                          height = '307px',
-                          placeholder = 'Selcted grouped file',
-                          resize = 'none'),
-            #div(style = "width: 20px;"),
-            textAreaInput(inputId = 'options_upload_files',
-                          label = NULL,
-                          width = '190px',
-                          height = '307px',
-                          placeholder = 'Selcted options file',
-                          resize = 'none')
+            #textAreaInput(inputId = 'ug_upload_files',
+            #             label = NULL,
+            #             width = '190px',
+            #             placeholder = 'Selcted ungrouped file(s)',
+            #             resize = 'none'),
+            div(style='width:190px; font-size:8px', verbatimTextOutput(outputId = 'ug_upload_files',placeholder = TRUE)),
+            div(style = "width: 20px;"),
+            #textAreaInput(inputId = 'g_upload_files',
+            #              label = NULL,
+            #              width = '190px',
+            #              placeholder = 'Selcted grouped file',
+            #              resize = 'none'),
+            div(style='width:190px', verbatimTextOutput(outputId = 'g_upload_file',placeholder = TRUE)),
+            div(style = "width: 20px;"),
+            #textAreaInput(inputId = 'options_upload_files',
+            #              label = NULL,
+            #              width = '190px',
+            #              placeholder = 'Selcted options file',
+            #              resize = 'none')
+            div(style='width:190px', verbatimTextOutput(outputId = 'options_upload_file',placeholder = TRUE))
           )
         ),
         fluidRow(
@@ -775,15 +775,25 @@ css <- "
 
   server <- function (input, output, session) {
 
-    shinyjs::js$disableTab('benchmark_results')
-    shinyjs::js$disableTab('results_tab_features')
-    shinyjs::js$disableTab('results_tab_peaks')
+    #shinyjs::js$disableTab('benchmark_results')
+    #shinyjs::js$disableTab('results_tab_features')
+    #shinyjs::js$disableTab('results_tab_peaks')
+    #shinyjs::disable('ug_upload_files')
 
 
     ##Reactive Values
     data_dir <- reactiveVal(getwd())
     benchmark_data <- reactiveVal(NULL)
     comparison_data <- reactiveVal(NULL)
+
+    observe({
+      if((input$main_panel == 'benchmark_results') & is.null(benchmark_data())) {
+        sendSweetAlert(session, title = 'No benchmark file generated', text = 'Benchmark must be generated before viewing the results', type = 'warning')
+      }
+      if(((input$main_panel == 'results_tab_peaks') |(input$main_panel == 'results_tab_features')) & is.null(comparison_data())) {
+        sendSweetAlert(session, title = 'No peak comparison file generated', text = 'Peak comparison must be generated before viewing the results', type = 'warning')
+      }
+    })
 
     ##File Filters for choice cialogues
     mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
@@ -827,9 +837,14 @@ css <- "
       if (input$ug_upload == 0){return(NULL)}
       else {
         #files <- rchoose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
-        files <- tk_choose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        files <- tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
         #if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
-        updateTextAreaInput(session = session, inputId = 'ug_upload_files', value = paste0(basename(files), sep="\n"))
+        #updateTextAreaInput(session = session, inputId = 'ug_upload_files', value = paste0(basename(files), sep="\n"))
+        if (length(files) > 1){
+          output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))#renderText(paste0(basename(files), sep="\n"))
+        } else {
+          output$ug_upload_files <- renderText(paste0(basename(files)))
+        }
         return(files)
       }
     })
@@ -839,6 +854,7 @@ css <- "
         #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
         #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -857,6 +873,7 @@ css <- "
         #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select options file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
         #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        output$options_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -882,12 +899,6 @@ css <- "
 
 
     observeEvent(input$generate_benchmark, {
-
-      #Disable the generate benchmark button to prevent multiple clicks
-      shinyjs::disable('generate_benchmark')
-      shinyjs::js$disableTab('benchmark_results')
-
-
       #Get Files from reactives
       #mzML
       if(is.null(mzML_files()) || length(mzML_files()) == 0){
@@ -965,10 +976,6 @@ css <- "
                    fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
                    print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
                    incProgress(15/15, detail = "Finished")
-
-
-                   shinyjs::enable('generate_benchmark')
-                   shinyjs::js$enableTab('benchmark_results')
                 }) #End of With Progress
 
       SkyTranList <- SkylineTransitionList(PCal)
@@ -976,8 +983,6 @@ css <- "
       SkyPeakBo <- SkylinePeakBoundaries(PCal)
 
       print(Sys.time() - starttime)
-
-      updateTabsetPanel(session = session, 'main_panel', selected = 'benchmark_results')
 
       benchmark_data(list(files = files, targets = targets, PCal = PCal))
     })
@@ -1047,48 +1052,37 @@ css <- "
 
     comparison <- observeEvent(input$start_compare, {
       tryCatch({
-      #####################
-      #Import csv files
-      #####################
-      options_table <- import_options(options_file())
-      if (input$use_generated_benchmark == TRUE) {
-        b_table <- import_benchmark(isolate(benchmark_data())$PCal, options_table, from_csv = FALSE)
-      } else {
-        b_table <- import_benchmark(benchmark_file(), options_table)
-      }
-      print(ug_files())
-      import_results <- pick_algorithm(ug_files(), g_file(), options_table, input$algorithm_input)
-      ug_table <- import_results$ug_table
-      g_table <- import_results$g_table
-      req(import_results)
-
-      #Disable Elements
-      shinyjs::disable('start_compare')
-      shinyjs::js$disableTab('results_tab_features')
-      shinyjs::js$disableTab('results_tab_peaks')
-
-      #To-Do: Clear graphing Areas!!!!!
+        #To-Do: Clear graphing Areas!!!!!
+        shinybusy::show_modal_spinner(spin='scaling-squares', text='Genretaing Comparison')
+        #####################
+        #Import csv files
+        #####################
+        options_table <- import_options(options_file())
+        if (input$use_generated_benchmark == TRUE) {
+          b_table <- import_benchmark(isolate(benchmark_data())$PCal, options_table, from_csv = FALSE)
+        } else {
+          b_table <- import_benchmark(benchmark_file(), options_table)
+        }
+        if(input$algorithm_input == '---'){
+          stop('Please select an algorithm')
+        }
+        import_results <- pick_algorithm(ug_files(), g_file(), options_table, input$algorithm_input)
+        ug_table <- import_results$ug_table
+        g_table <- import_results$g_table
+        req(import_results)
 
 
-      #updateTabsetPanel(session = session, 'main_panel', selected = 'results_tab_peaks')
-
-
-
-
-      ######
-      #perform comparison
-      #####################
-      comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input, input$main_feature_method_input)
-
-      shinyjs::js$enableTab('results_tab_features')
-      shinyjs::js$enableTab('results_tab_peaks')
-      shinyjs::enable('start_compare')
-
-      comparison_data(comparison_ug_g)
+        #####################
+        #perform comparison
+        #####################
+        comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input, input$main_feature_method_input)
+        comparison_data(comparison_ug_g)
+        shinybusy::remove_modal_spinner()
       },
       error=function(error_message){
-        shinyjs::enable('start_compare')
-        print('Lol')
+        shinybusy::remove_modal_spinner()
+        #Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
+        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error')
         print(error_message)
         return(NULL)
       })

@@ -9,9 +9,6 @@ plot_comp_dist_of_found_peaks(comparison_data, var, choice_vector_comp)
 \arguments{
 \item{var}{}
 }
-\value{
-
-}
 \description{
 plot_comp_dist_of_found_peaks
 }

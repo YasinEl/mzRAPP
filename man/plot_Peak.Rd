@@ -11,9 +11,6 @@ plot_Peak(PC, IndexNumber)
 
 \item{IndexNumber}{IDX number of peak to be plotted}
 }
-\value{
-
-}
 \description{
 plot_Peak
 }

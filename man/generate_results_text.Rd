@@ -9,9 +9,6 @@ generate_results_text(comparison_data)
 \arguments{
 \item{comparison}{}
 }
-\value{
-
-}
 \description{
 generate_results_text
 }
