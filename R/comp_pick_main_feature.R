@@ -109,7 +109,7 @@ pick_main_feature_sd_2 <- function(dt){
 
 best_feature_per_comparison <- function(dt){
   dt <- copy(dt)
-  dt$ratio_diff <- as.numeric(pbapply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
+  dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
                                                           if(length(compare_samples) < 1){
                                                             return(as.numeric(NULL))
                                                           }
@@ -257,7 +257,7 @@ pick_main_feature_sd <- function(dt){
       print(object.size(combination_dt))
     }
 
-    combination_dt$rows <- pbapply(combination_dt,1,function(x){paste(x, collapse = ',')})
+    combination_dt$rows <- apply(combination_dt,1,function(x){paste(x, collapse = ',')})
     #print('Start call')
     #combination_dt$rows <- do.call(paste, c(combination_dt, sep=','))
     #print('end call')

@@ -13,6 +13,10 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   print('start ungroupd mzmine import')
   #print(folder_path)
 
+  if(is.null(folder_path)){
+    stop('No ungrouped files selected')
+  }
+
   for (i in 1:length(folder_path)){
     file_path <- folder_path[i]
     print(file_path)
@@ -101,6 +105,10 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 import_grouped_mzmine <- function(file_path, options_table){
 
   print('start mzMine g import')
+
+  if(is.null(file_path)){
+    stop('No grouped file selected')
+  }
 
   #Check if filetype is csv
   if(file_ext(file_path) != 'csv'){

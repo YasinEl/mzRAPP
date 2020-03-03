@@ -9,9 +9,6 @@ compare_each_row(test_vec, dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 compare_each_row
 }

@@ -9,9 +9,6 @@ GetZigzagIDX(int, height)
 \arguments{
 \item{height}{}
 }
-\value{
-
-}
 \description{
 GetZigzagIDX
 }

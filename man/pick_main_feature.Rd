@@ -9,9 +9,6 @@ pick_main_feature(dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 pick_main_feature
 }

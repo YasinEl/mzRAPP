@@ -9,9 +9,6 @@ compare_peak_groups(dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 compare_peak_groups
 }

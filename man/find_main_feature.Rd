@@ -9,9 +9,6 @@ find_main_feature(dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 find_main_feature
 }

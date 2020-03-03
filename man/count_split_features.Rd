@@ -9,9 +9,6 @@ count_split_features(feature_id_ug)
 \arguments{
 \item{feature_id_ug}{}
 }
-\value{
-
-}
 \description{
 count_split_features
 }

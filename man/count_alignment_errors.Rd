@@ -9,9 +9,6 @@ count_alignment_errors(DT, main_UTgroups, method = "self-critical")
 \arguments{
 \item{method}{}
 }
-\value{
-
-}
 \description{
 count alignment errors occuring within a compound
 }
