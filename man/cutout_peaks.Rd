@@ -4,18 +4,9 @@
 \alias{cutout_peaks}
 \title{cutout_peaks}
 \usage{
-cutout_peaks(
-  int,
-  rt,
-  Min.PpP = 10,
-  peak.spotting.factor. = 0.01,
-  Integration_baseL_factor. = 0.1,
-  l = 1,
-  r = length(int),
-  M0.grp = NA,
-  main_adduct.grp = NA,
-  Min.Res. = 70
-)
+cutout_peaks(int, rt, Min.PpP = 10, peak.spotting.factor. = 0.01,
+  Integration_baseL_factor. = 0.1, l = 1, r = length(int),
+  M0.grp = NA, main_adduct.grp = NA, Min.Res. = 70)
 }
 \arguments{
 \item{Min.Res.}{}

@@ -40,7 +40,8 @@ Imports:
     intervals,
     doFuture,
     S4Vectors,
-    V8
+    V8,
+    shinybusy
 Suggests: 
     knitr,
     rmarkdown

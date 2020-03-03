@@ -4,14 +4,8 @@
 \alias{getMZtable}
 \title{getMZtable}
 \usage{
-getMZtable(
-  DT,
-  instrumentRes,
-  RelInt_threshold = 0.05,
-  stick_method = "intensoid",
-  adducts,
-  isotopes
-)
+getMZtable(DT, instrumentRes, RelInt_threshold = 0.05,
+  stick_method = "intensoid", adducts, isotopes)
 }
 \arguments{
 \item{DT}{data.table with columns "molecule", "SumForm_c" and "adduct_c" (see details)}

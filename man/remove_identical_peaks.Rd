@@ -9,9 +9,6 @@ remove_identical_peaks(dt, grouped = FALSE)
 \arguments{
 \item{incl_height}{}
 }
-\value{
-
-}
 \description{
 remove_identical_peaks
 }

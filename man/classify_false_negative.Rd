@@ -9,9 +9,6 @@ classify_false_negative(dt)
 \arguments{
 \item{dt}{}
 }
-\value{
-
-}
 \description{
 classify_false_negative
 }

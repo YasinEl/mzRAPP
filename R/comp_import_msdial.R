@@ -11,6 +11,10 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
   print('start msdial ug import')
 
+  if(is.null(file_list)){
+    stop('No ungrouped files selected')
+  }
+
   #Add files to ut dt if name is in options ug_samples
   for (i in 1:length(file_list)){
     file_path <- file_list[i]
@@ -78,6 +82,10 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 import_grouped_msdial <- function(file_path, options_dt){
 
   print('start msdial g import')
+
+  if(is.null(file_path)){
+    stop('No grouped file selected')
+  }
 
   #Check if filetype is text
   if(file_ext(file_path) != 'txt'){

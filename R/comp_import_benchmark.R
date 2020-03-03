@@ -11,10 +11,14 @@
 import_benchmark <- function (file, options_table, from_csv = TRUE) {
 
   if(from_csv){
+    if(is.null(file)){
+      stop('No benchmark file selected')
+    }
     #Make sure file points to a csv file
     if(file_ext(file) != 'csv'){
       stop('benchmark is not a valid csv file')
     }
+
     #Import csv file
     b_table <- fread(file)
   } else {

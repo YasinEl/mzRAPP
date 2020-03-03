@@ -9,9 +9,6 @@ import_options(file_path)
 \arguments{
 \item{file_path}{}
 }
-\value{
-
-}
 \description{
 import_options
 }

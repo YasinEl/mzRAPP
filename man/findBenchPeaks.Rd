@@ -4,22 +4,12 @@
 \alias{findBenchPeaks}
 \title{findBenchPeaks}
 \usage{
-findBenchPeaks(
-  files,
-  Grps,
-  CompCol_all,
-  Min.PointsperPeak = 10,
-  peak.spotting.factor = 0.001,
-  Integration_baseL_factor = 0.1,
-  Min.Res = 60,
-  plan = "multiprocess",
-  Min.cor.w.main_adduct = 0.8,
-  Min.cor.w.M0 = 0.75,
-  Min.iso.count = 2,
-  return_unsuc_searches = FALSE,
-  max.rt.diff_sec = 20,
-  max.mz.diff_ppm = 5
-)
+findBenchPeaks(files, Grps, CompCol_all, Min.PointsperPeak = 10,
+  peak.spotting.factor = 0.001, Integration_baseL_factor = 0.1,
+  Min.Res = 60, plan = "multiprocess", Min.cor.w.main_adduct = 0.8,
+  Min.cor.w.M0 = 0.75, Min.iso.count = 2,
+  return_unsuc_searches = FALSE, max.rt.diff_sec = 20,
+  max.mz.diff_ppm = 5)
 }
 \arguments{
 \item{files}{vector with file paths}

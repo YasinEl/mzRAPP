@@ -9,9 +9,6 @@ pick_algorithm(ug_table_path, g_table_path, options_table, algo)
 \arguments{
 \item{algo}{}
 }
-\value{
-
-}
 \description{
 pick_algorithm
 }

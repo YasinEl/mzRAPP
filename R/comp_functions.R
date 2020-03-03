@@ -7,10 +7,18 @@
 #'
 #' @examples
 import_options <- function (file_path) {
-
-
-  ####ADD CHECK FUNCTIONS
+  print(file_path)
+  if(is.null(file_path)){
+    stop('No options file selected')
+  }
+  if(file_ext(file_path) != 'csv'){
+    stop('options file is not a valid csv file')
+  }
   options_table = fread(file_path, na.strings = c(""))
+
+  if (!is.data.table(options_table)){
+    stop('Options is not type DataTable')
+  }
   return(options_table)
 }
 

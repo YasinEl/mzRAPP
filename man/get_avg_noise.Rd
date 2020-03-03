@@ -9,9 +9,6 @@ get_avg_noise(int)
 \arguments{
 \item{int}{}
 }
-\value{
-
-}
 \description{
 get_avg_noise
 }
