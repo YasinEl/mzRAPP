@@ -66,8 +66,8 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   #rename all columns for internal use according to optiosn frame
   ug_table <- rename_columns_from_options(ug_table, options_table, 'ug_columns', 'internal_columns')
 
-  #Add a sample_id and grp_id column based on the sample_names in options_dt
-  ug_table <- ug_table[options_table, ':=' (sample_id = i.sample_id, grp_id = i.grp_id), on=c(sample_name = 'ug_samples')]
+  #Add a sample_id column based on the sample_names in options_dt
+  ug_table <- ug_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
 
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
@@ -139,8 +139,8 @@ import_grouped_mzmine <- function(file_path, options_table){
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
 
-  #Add a sample_id and grp_id column based on the sample_names in options_dt
-  g_table <- g_table[options_table, ':=' (sample_id = i.sample_id, grp_id = i.grp_id), on=c(sample_name = 'g_samples')]
+  #Add a sample_id column based on the sample_names in options_dt
+  g_table <- g_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'g_samples')]
 
   #Remove peaks where area is below or equal 0
   g_table <- g_table[peak_area > 0]
