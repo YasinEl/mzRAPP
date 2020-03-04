@@ -720,23 +720,25 @@ css <- "
       mainPanel(
         width = '100%',
         fluidRow(
-          column(3, tableOutput('error_count')),
+          column(3, tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
 
-          column(4,
-                 plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1"))
+          column(9,
+                 fluidRow(
+                   column(12,
+                          plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1")
+                         )),
+                   fluidRow(
+                     column(2, pickerInput('mol_a', 'Molecule', c())),
+                     column(1, pickerInput('add_a', 'Adduct', c()))
+                   )
 
-        ),
-
-        fluidRow(
-          column(3),
-          column(2, selectInput('mol_a', 'Molecule', c())),
-          column(1, selectInput('add_a', 'Adduct', c()))
         )
+
       )
 
     )
 
-  ))
+  )))
 
   choice_vector_comp <- c(
     'Retention time [sec]' = 'rt_b',
@@ -1194,7 +1196,6 @@ css <- "
       comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data)){
         output$error_count <- renderTable(comparison_data$ali_error_table[errors > 0])
-
       }
     })
 
@@ -1202,16 +1203,23 @@ css <- "
     observeEvent(comparison_data(),{
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$c_table), fill = TRUE)
-        updateSelectInput(session, 'mol_a', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
+        error_molecules <- comparison_data$ali_error_table[errors > 0, Molecule]
+        print(typeof(error_molecules))
+        no_error_molecules <- comparison_data$ali_error_table[errors == 0, Molecule]
+        choices <- list('Errors:' = as.character(error_molecules), 'No errors:' = as.character(no_error_molecules))
+        print(choices)
+        updateSelectInput(session, 'mol_a', choices = choices)
       }
     })
     observeEvent(input$mol_a, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        print('add_a')
-        comp.dt <-  rbindlist(list(comparison_data$c_table), fill = TRUE)
-        updateSelectInput(session, 'add_a', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
+        error_adducts <- comparison_data$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct]
+        print(typeof(error_adducts))
+        no_error_adducts <- comparison_data$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct]
+        choices <- list('Errors:' = as.character(error_adducts), 'No errors:' = as.character(no_error_adducts))
+        print(choices)
+        updateSelectInput(session, 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
