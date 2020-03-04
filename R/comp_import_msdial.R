@@ -42,8 +42,8 @@ import_ungrouped_msdial <- function(file_list, options_dt){
   #rename all columns for internal use according to option frame
   ug_table <- rename_columns_from_options(ug_table, options_dt, 'ug_columns', 'internal_columns')
 
-  #Add a sample_id and grp_id column based on the sample_names in options_dt
-  ug_table <- ug_table[options_dt, ':=' (sample_id = i.sample_id, grp_id = i.grp_id), on=c(sample_name = 'ug_samples')]
+  #Add a sample_id based on the sample_names in options_dt
+  ug_table <- ug_table[options_dt, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
 
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
@@ -123,8 +123,8 @@ import_grouped_msdial <- function(file_path, options_dt){
   g_table <- g_table[, 'peak_area' := as.double(peak_area)]
 
 
-  #Add a sample_id and grp_id column based on the sample_names in options_dt
-  g_table <- g_table[options_dt, ':=' (sample_id = i.sample_id, grp_id = i.grp_id), on=c(sample_name = 'g_samples')]
+  #Add a sample_id column based on the sample_names in options_dt
+  g_table <- g_table[options_dt, ':=' (sample_id = i.sample_id), on=c(sample_name = 'g_samples')]
 
   #Remove peaks where area is below or equal 0
   g_table <- g_table[peak_area > 0]

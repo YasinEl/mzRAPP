@@ -399,7 +399,7 @@ css <- "
         ),
         fluidRow(
           column(
-            12, strong('2. Select ungrouped, groupedand option files'), br(), br()
+            12, strong('2. Select ungrouped and grouped files'), br(), br()
           )
         ),
         fluidRow(
@@ -407,15 +407,11 @@ css <- "
             12,
             style = "display: inline-flex;",
             actionButton(inputId = 'ug_upload',
-                         label = 'Select ungrouped file(s)',
+                         label = 'Select unaligned file(s)',
                          width = '190px'),
             div(style = "width: 20px;"),
             actionButton(inputId = 'g_upload',
-                         label = 'Select grouped file',
-                         width = '190px'),
-            div(style = "width: 20px;"),
-            actionButton(inputId = 'options_upload',
-                         label = 'Select options files',
+                         label = 'Select aligned file',
                          width = '190px')
           )
         ),
@@ -423,46 +419,68 @@ css <- "
           column(
             12,
             style = "display: inline-flex;",
-            #textAreaInput(inputId = 'ug_upload_files',
-            #             label = NULL,
-            #             width = '190px',
-            #             placeholder = 'Selcted ungrouped file(s)',
-            #             resize = 'none'),
-            div(style='width:190px; font-size:8px', verbatimTextOutput(outputId = 'ug_upload_files',placeholder = TRUE)),
+            div(style='width:190px', verbatimTextOutput(outputId = 'ug_upload_files',placeholder = TRUE)),
             div(style = "width: 20px;"),
-            #textAreaInput(inputId = 'g_upload_files',
-            #              label = NULL,
-            #              width = '190px',
-            #              placeholder = 'Selcted grouped file',
-            #              resize = 'none'),
             div(style='width:190px', verbatimTextOutput(outputId = 'g_upload_file',placeholder = TRUE)),
-            div(style = "width: 20px;"),
-            #textAreaInput(inputId = 'options_upload_files',
-            #              label = NULL,
-            #              width = '190px',
-            #              placeholder = 'Selcted options file',
-            #              resize = 'none')
-            div(style='width:190px', verbatimTextOutput(outputId = 'options_upload_file',placeholder = TRUE))
+            div(style = "width: 20px;")
           )
         ),
         fluidRow(
           column(
-            12, strong('3. Use previously generated benchmark or upload benchmark file'), br(), br()
+            12, strong('3. Use previously generated benchmark and/or options file?'), br(), br()
           )
         ),
         fluidRow(
           column(
             12,
             style = "display: inline-flex;",
-            checkboxInput(inputId = 'use_generated_benchmark',
+            prettySwitch(inputId = 'use_generated_benchmark',
                           label = 'Use generated benchmark',
                           value = FALSE,
                           width = '190px'),
             div(style = "width: 20px;"),
-            actionButton(inputId = 'benchmark_upload',
-                         label = 'Select benchmark file',
+            prettySwitch(inputId = 'use_generated_options',
+                         label = 'Use generated options',
+                         value = TRUE,
                          width = '190px')
-
+          )
+        ),
+        fluidRow(
+          column(
+            12,
+            style = "display: inline-flex;",
+            div(style = "width:190px",
+              conditionalPanel(condition = "!input.use_generated_benchmark",
+                               actionButton(inputId = 'benchmark_upload',
+                                            label = 'Select benchmark file',
+                                            width = '190px')
+              )
+            ),
+            div(style = "width: 20px;"),
+            div(style = "width:190px",
+              conditionalPanel(condition = "!input.use_generated_options",
+                               actionButton(inputId = 'options_upload',
+                                            label = 'Select options files',
+                                            width = '190px')
+              )
+            )
+          )
+        ),
+        fluidRow(
+          column(
+            12,
+            style = "display: inline-flex;",
+            div(style="width:190px",
+              conditionalPanel(condition = "!input.use_generated_benchmark",
+                               div(style='width:190px', verbatimTextOutput(outputId = 'benchmark_upload_file',placeholder = TRUE)),
+              )
+            ),
+            div(style = "width: 20px;"),
+            div(style = "width:190px",
+              conditionalPanel(condition = "!input.use_generated_options",
+                               div(style='width:190px', verbatimTextOutput(outputId = 'options_upload_file',placeholder = TRUE))
+              )
+            )
           )
         ),
         fluidRow(
@@ -864,6 +882,7 @@ css <- "
         #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
         #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -874,6 +893,7 @@ css <- "
         file <- tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
         #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         output$options_upload_file <- renderText(paste0(basename(file)))
+        print(file)
         return(file)
       }
     })
@@ -886,15 +906,6 @@ css <- "
     observe({g_file()})
     observe({benchmark_file()})
     observe({options_file()})
-    observe({
-              if(!is.null(benchmark_data())){
-                updateCheckboxInput(session, 'use_generated_benchmark', value = TRUE)
-                shinyjs::enable('use_generated_benchmark')
-              } else {
-                updateCheckboxInput(session, 'use_generated_benchmark', value = FALSE)
-                shinyjs::disable('use_generated_benchmark')
-              }
-           })
 
 
 
@@ -1053,15 +1064,24 @@ css <- "
     comparison <- observeEvent(input$start_compare, {
       tryCatch({
         #To-Do: Clear graphing Areas!!!!!
-        shinybusy::show_modal_spinner(spin='scaling-squares', text='Genretaing Comparison')
+        shinybusy::show_modal_spinner(spin='scaling-squares', text='Generating Comparison')
         #####################
         #Import csv files
         #####################
-        options_table <- import_options(options_file())
-        if (input$use_generated_benchmark == TRUE) {
-          b_table <- import_benchmark(isolate(benchmark_data())$PCal, options_table, from_csv = FALSE)
+        if(input$use_generated_options == TRUE){
+          options_path <- 'generate'
         } else {
-          b_table <- import_benchmark(benchmark_file(), options_table)
+          options_path <- options_file()
+        }
+        #options_table <- import_options(options_file())
+        if (input$use_generated_benchmark == TRUE) {
+          b_o_tables <- import_benchmark(isolate(benchmark_data())$PCal, options_path, from_csv = FALSE, input$algorithm_input)
+          b_table = b_o_tables$b_table
+          options_table <- b_o_tables$options_table
+        } else {
+          b_o_tables <- import_benchmark(benchmark_file(), options_path, from_csv = TRUE, input$algorithm_input)
+          b_table = b_o_tables$b_table
+          options_table <- b_o_tables$options_table
         }
         if(input$algorithm_input == '---'){
           stop('Please select an algorithm')
@@ -1082,7 +1102,7 @@ css <- "
       error=function(error_message){
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
-        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error')
+        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error', closeOnClickOutside = FALSE)
         print(error_message)
         return(NULL)
       })
