@@ -53,8 +53,6 @@ getROIsForEICs <-
 
     filter_table$dpl_mz <- duplicated(filter_table, by = c("user.rt", "mz"))
 
-    save_dpl <<- filter_table
-
     if(nrow(filter_table[dpl_mz == TRUE & isoabb == 100]) > 0) {
 
     warning(paste0("It seems like some of your target molecules are actually isotopologues of some of your other target molecules!
