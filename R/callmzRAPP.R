@@ -707,6 +707,12 @@ css <- "
           column(4,
                  plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1"))
 
+        ),
+
+        fluidRow(
+          column(3),
+          column(2, selectInput('mol_a', 'Molecule', c())),
+          column(1, selectInput('add_a', 'Adduct', c()))
         )
       )
 
@@ -1053,7 +1059,7 @@ css <- "
     comparison <- observeEvent(input$start_compare, {
       tryCatch({
         #To-Do: Clear graphing Areas!!!!!
-        shinybusy::show_modal_spinner(spin='scaling-squares', text='Genretaing Comparison')
+        shinybusy::show_modal_spinner(spin='scaling-squares', text='Please wait while we make things traceable for you.')
         #####################
         #Import csv files
         #####################
@@ -1093,7 +1099,7 @@ css <- "
     #Comparison Plot functions
     #####################
 
-    #Comparison peak overview plot
+    #EIC_plot
     observeEvent(comparison_data(),{
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
@@ -1109,7 +1115,6 @@ css <- "
         updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
       }
     })
-
     observeEvent({input$mol_c; input$add_c}, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
@@ -1118,8 +1123,6 @@ css <- "
         updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
       }
     })
-
-    #EIC_plot
     observeEvent({comparison_data(); input$mol_c; input$add_c; input$ia_c},{
       comparison_data <- isolate(comparison_data())
       if (!is.null(comparison_data)){
@@ -1166,6 +1169,40 @@ css <- "
 
       }
     })
+    #Alignment table
+    observeEvent(comparison_data(), {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$error_count <- renderTable(comparison_data$ali_error_table[errors > 0])
+
+      }
+    })
+
+    #Alignment error plot
+    observeEvent(comparison_data(),{
+      comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        comp.dt <-  rbindlist(list(comparison_data$c_table), fill = TRUE)
+        updateSelectInput(session, 'mol_a', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
+      }
+    })
+    observeEvent(input$mol_a, {
+      comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        print('add_a')
+        comp.dt <-  rbindlist(list(comparison_data$c_table), fill = TRUE)
+        updateSelectInput(session, 'add_a', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
+      }
+    })
+    observeEvent(comparison_data(), {
+      comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data)){
+        output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data, mol = input$mol_a, add = input$add_a))
+      }
+    })
+
+
+
   }
 
   shinyApp(ui, server)
