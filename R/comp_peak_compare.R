@@ -128,6 +128,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ug_table[, ':=' (sample_id_ug_temp = sample_id_ug,
                    rt_start_ug_temp = rt_start_ug,
                    rt_end_ug_temp = rt_end_ug,
+                   rt_ug_temp = rt_ug,
                    mz_ug_temp = mz_ug)]
 
 
@@ -147,7 +148,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                                     new_rt_start_b_temp >= rt_start_ug_temp,
                                     new_rt_end_b_temp <= rt_end_ug_temp,
                                     mz_start_b_temp <= mz_ug_temp,
-                                    mz_end_b_temp >= mz_ug_temp),
+                                    mz_end_b_temp >= mz_ug_temp,
+                                    new_rt_start_b_temp < rt_ug_temp,
+                                    new_rt_end_b_temp > rt_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
 
