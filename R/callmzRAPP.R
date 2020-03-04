@@ -1088,7 +1088,7 @@ css <- "
       error=function(error_message){
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
-        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error')
+        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error', closeOnClickOutside = FALSE)
         print(error_message)
         return(NULL)
       })
