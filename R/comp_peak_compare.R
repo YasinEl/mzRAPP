@@ -295,11 +295,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
 
   rs_table[, missing_peaks := find_r_s_error(
-    comp_id_b,
-    molecule_b,
-    adduct_b,
-    sample_id_b,
-    isoabb_b,
+    #comp_id_b,
+    #molecule_b,
+    #adduct_b,
+    #sample_id_b,
+    #isoabb_b,
     peak_area_b,
     peak_area_ug,
     peak_height_b
