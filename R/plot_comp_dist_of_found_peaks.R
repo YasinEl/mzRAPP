@@ -8,7 +8,6 @@
 #'
 #' @examples
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp){
-
   f_nf_plot <-
     rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
   f_nf_plot <-
