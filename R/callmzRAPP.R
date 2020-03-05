@@ -33,10 +33,10 @@ css <- "
   border-color: #aaa !important;
 }"
 
-  options(shiny.reactlog = TRUE)
+  options(shiny.reactlog = F)
   options(useFancyQuotes = FALSE)
-  options(shiny.trace = F)
-  options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
+  options(shiny.trace = T)
+  #options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
   options(spinner.type = 4)
 
   data('resolution_list')
@@ -66,110 +66,82 @@ css <- "
 
         #2nd Row
         fluidRow(
-          column(6,
-            style = "display: inline-flex;",
-
-            actionButton(inputId = 'mzML_upload',
-                         label = 'Select mzML files',
-                         width = '190px'),
-
-            div(style = "width: 20px;"),
-
-            actionButton(inputId = 'grps_upload',
-                         label = 'Select sample-group file',
-                         width = '190px'),
-
-            div(style = "width: 20px;"),
-
-            actionButton(inputId = 'coi_upload',
-                         label = 'Select target file',
-                         width = '190px'),
-            )
-          ),
-
+                 column(6,
+                        fluidRow(
+                                 column(4,
+                                        actionButton(inputId = 'mzML_upload',
+                                                     label = 'Select mzML files',
+                                                     width = '100%')
+                                        ),
+                                 column(4,
+                                        actionButton(inputId = 'grps_upload',
+                                                     label = 'Select sample-group file',
+                                                     width = '100%')
+                                         ),
+                                 column(4,
+                                         actionButton(inputId = 'coi_upload',
+                                                      label = 'Select target file',
+                                                      width = '100%')
+                                         )
+                                 ),
+                        fluidRow(
+                                 column(4,
+                                        verbatimTextOutput(outputId = 'mzML_upload_files',placeholder = TRUE)
+                                        ),
+                                 column(4,
+                                        verbatimTextOutput(outputId = 'grps_upload_file',placeholder = TRUE)
+                                        ),
+                                 column(4,
+                                        verbatimTextOutput(outputId = 'coi_upload_file',placeholder = TRUE)
+                                        )
+                                )
+                        )
+                ),
+        #Line Break for layout
+        fluidRow(column(6,br())),
         fluidRow(
-          column(4,
-                 br()
-          )
-        ),
-
+                 column(4,
+                          selectInput(
+                                      'resolution_drop',
+                                      'Select instrument & resolution',
+                                      names(resolution_list),
+                                      selected = 'OTFusion,QExactiveHF_120000@200',
+                                      width = "100%"
+                                     )
+                       )
+                ),
         fluidRow(
-          column(
-            5,
-            style = "display: inline-flex;",
-
-            #div(style = "width: 20px;"),
-            selectInput(
-              'resolution_drop',
-              'Select instrument & resolution',
-              names(resolution_list),
-              selected = 'OTFusion,QExactiveHF_120000@200',
-              width = "100%"
-            )
-          )
-
-        ),
+                 column(6,
+                        strong("2. Set parameters:", style = "font-size:30px"),
+                        br(),
+                        p("(Processing plan: multiprocess for parallel processing on
+                           Windows computers; sequential for serial processing; for other
+                           options see help of future::plan)")
+                       )
+                ),
         fluidRow(
-          column(6,
-                 strong(
-                   "2. Set parameters:", style = "font-size:30px"
-                 ),
-                 br(),
-                 p("(Processing plan: multiprocess for parallel processing on
-               Windows computers; sequential for serial processing; for other
-                 options see help of future::plan)")
-          )
-        ),
+                 column(2,numericInput('RelInt_Thresh_input', 'Lowest iso. to be considered [%]', 0.05, step = 0.01, max = 100)),
+                 column(2,numericInput('min_PpP_input', 'Min. # of scans per peak', 10, step = 1, min = 5))
+                ),
         fluidRow(
-          column(3,
-            style = "display: inline-flex;",
-            numericInput('RelInt_Thresh_input', 'Lowest iso. to be considered [%]', 0.05, step = 0.01, max = 100)
-          ),
-          column(3,
-            style = "display: inline-flex;",
-            numericInput('percision_mz_tol_input', 'mz precision [ppm]', 5, step = 0.1)
-          )
-        ),
+                 column(2,numericInput('percision_mz_tol_input', 'mz precision [ppm]', 5, step = 0.1)),
+                 column(2,numericInput('accurate_MZ_tol_input', 'mz accuracy [ppm]', 5, step = 0.1))
+                ),
         fluidRow(
-          column(3,
-            style = "display: inline-flex;",
-            numericInput('min_centroids_input', 'Min. # of consecutive scans per ROI', 6, step = 1, min = 3)
-          ),
-          column(3,
-            style = "display: inline-flex;",
-            numericInput('accurate_MZ_tol_input', 'mz accuracy [ppm]', 5, step = 0.1)
-          )
-        ),
+                 column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential', 'multicore', 'cluster', 'remote')))
+                ),
         fluidRow(
-          column(3,
-            style = "display: inline-flex;",
-            numericInput('min_PpP_input', 'Min. # of scans per peak', 10, step = 1, min = 5)
-          ),
-          column(3,
-            style = "display: inline-flex;",
-            selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential', 'multicore', 'cluster', 'remote'))
-          )
-        ),
+                 column(6,
+                        strong("3. Start benchmark generation:", style = "font-size:30px"),
+                        br(),
+                        p("(depending on the number of files and
+                          compounds this can take some time (minutes to hours))")
+                       )
+                ),
         fluidRow(
-          column(6,
-                 strong(
-                   "3. Start benchmark generation:", style = "font-size:30px"
-                 ),
-                 br(),
-                 p("(depending on the number of files and
-                 compounds this can take some time (minutes to hours))")
-          )
-        ),
-        fluidRow(
-          column(
-            6,
-            style = "display: inline-flex;",
-            actionButton('generate_benchmark', 'Generate benchmark', style = "background-color: #d2f8fa"),
-            div(style = "width: 20px;"),
-            textOutput('text')
-          )
-        ),
-        tableOutput('debug_table')
+                 column(2),
+                 column(2,actionButton('generate_benchmark', 'Generate benchmark', style = "background-color: #d2f8fa"))
+                ),
 
     ),
     tabPanel(
@@ -830,9 +802,12 @@ css <- "
     mzML_files <- reactive({
       if (input$mzML_upload == 0){return(NULL)}
       else {
-        #files <- rchoose.files(default = isolate(data_dir()), caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
         files <- tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
-        #if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
+        if (length(files) > 1){
+          output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
+        } else {
+          output$mzML_upload_files <- renderText(paste0(basename(files)))
+        }
         return(files)
       }
     })
@@ -840,9 +815,8 @@ css <- "
     grps_file <- reactive({
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
-        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
-        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        output$grps_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -850,9 +824,8 @@ css <- "
     coi_file <- reactive({
       if(input$coi_upload == 0){return(NULL)}
       else {
-        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select target file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
-        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
+        output$coi_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -862,12 +835,9 @@ css <- "
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
-        #files <- rchoose.files(default = isolate(data_dir()), caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
         files <- tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
-        #if(!is.na(dirname(files[1]))){data_dir(dirname(files[1]))}
-        #updateTextAreaInput(session = session, inputId = 'ug_upload_files', value = paste0(basename(files), sep="\n"))
         if (length(files) > 1){
-          output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))#renderText(paste0(basename(files), sep="\n"))
+          output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
           output$ug_upload_files <- renderText(paste0(basename(files)))
         }
@@ -877,9 +847,7 @@ css <- "
     g_file <- reactive({
       if (input$g_upload == 0){return(NULL)}
       else {
-        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
-        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -887,9 +855,7 @@ css <- "
     benchmark_file <- reactive({
       if (input$benchmark_upload == 0){return(NULL)}
       else {
-        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
-        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -897,11 +863,8 @@ css <- "
     options_file <- reactive({
       if (input$options_upload == 0){return(NULL)}
       else {
-        #file <- rchoose.files(default = isolate(data_dir()), caption = 'Select options file', multi = FALSE, filters = csv_filter)
         file <- tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
-        #if(!is.na(dirname(file[1]))){data_dir(dirname(file[1]))}
         output$options_upload_file <- renderText(paste0(basename(file)))
-        print(file)
         return(file)
       }
     })
@@ -1155,32 +1118,32 @@ css <- "
 
     #Scatter_plot
     observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y}, {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data, input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp))
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp))
       }
     })
 
     #R/S Heatmap Plot
     observeEvent(comparison_data(), {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data))
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data()))
       }
     })
 
     #Ditsribution of peaks plot
     observeEvent({comparison_data(); input$graph_select_input}, {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data, input$graph_select_input, choice_vector_comp))
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp))
       }
     })
     #Isotopologe prediction error
     observeEvent(comparison_data(), {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data))
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data()))
       }
     })
     #Results Text
@@ -1193,39 +1156,37 @@ css <- "
     })
     #Alignment table
     observeEvent(comparison_data(), {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$error_count <- renderTable(comparison_data$ali_error_table[errors > 0])
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$error_count <- renderTable(comparison_data()$ali_error_table[errors > 0])
       }
     })
 
     #Alignment error plot
     observeEvent(comparison_data(),{
-      comparison_data<-isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        error_molecules <- comparison_data$ali_error_table[errors > 0, Molecule]
-        print(typeof(error_molecules))
-        no_error_molecules <- comparison_data$ali_error_table[errors == 0, Molecule]
+      #comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        error_molecules <- comparison_data()$ali_error_table[errors > 0, Molecule]
+        no_error_molecules <- comparison_data()$ali_error_table[errors == 0, Molecule]
         choices <- list('Errors:' = as.character(error_molecules), 'No errors:' = as.character(no_error_molecules))
         print(choices)
         updateSelectInput(session, 'mol_a', choices = choices)
       }
     })
     observeEvent(input$mol_a, {
-      comparison_data<-isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        error_adducts <- comparison_data$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct]
-        print(typeof(error_adducts))
-        no_error_adducts <- comparison_data$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct]
+      #comparison_data<-isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        error_adducts <- comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct]
+        no_error_adducts <- comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct]
         choices <- list('Errors:' = as.character(error_adducts), 'No errors:' = as.character(no_error_adducts))
         print(choices)
         updateSelectInput(session, 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
-      comparison_data <- isolate(comparison_data())
-      if(!is.null(comparison_data)){
-        output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data, mol = input$mol_a, add = input$add_a))
+      #comparison_data <- isolate(comparison_data())
+      if(!is.null(comparison_data())){
+        output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })
 
