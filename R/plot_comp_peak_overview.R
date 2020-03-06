@@ -35,5 +35,5 @@ plot_comp_peak_overview <- function(comparison_data, mol_c, add_c, ia_c) {
     return(p)
   } else {
       return(NULL)
-    }
+  }
 }

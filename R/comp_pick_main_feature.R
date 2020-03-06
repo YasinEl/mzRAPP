@@ -129,7 +129,14 @@ best_feature_per_comparison <- function(dt){
                                                         }
                                     )
                               )
-  dt <- dt[,min_ratio_diff := ifelse(ratio_diff == min(ratio_diff, na.rm = TRUE), TRUE, FALSE)]
+
+
+  #Prevent warning in min()
+  if(all(is.na(dt$ratio_diff))){
+    dt <- dt[,min_ratio_diff := NA]
+  } else {
+    dt <- dt[,min_ratio_diff := ifelse(ratio_diff == min(ratio_diff, na.rm = TRUE), TRUE, FALSE)]
+  }
   return(list(dt$ratio_diff, dt$min_ratio_diff))
 }
 

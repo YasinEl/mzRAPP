@@ -8,7 +8,6 @@
 #' @examples
 plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) {
 
-
   if(post_alignment == FALSE){
     hm_dt <- comparison_data$rs_table
   } else if(post_alignment == TRUE){
@@ -61,12 +60,9 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
     ggtitle("Missing peaks") +
     labs(x = "benchmark features", y = "sample IDs") +
     theme(legend.title = element_blank())
-
   return(plotly::ggplotly(plot_r_s,tooltip = c("molecule", "adduct", "isoabb", "FileName")#, "mz")
 
   ))
-
-
 
 
 }
