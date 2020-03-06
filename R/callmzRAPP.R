@@ -722,7 +722,7 @@ css <- "
         fluidRow(
           column(3, tableOutput('error_count')),
 
-          column(4,
+          column(9,
                  plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1"))
 
         ),

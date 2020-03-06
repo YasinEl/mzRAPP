@@ -15,6 +15,9 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
     #dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
     dt_n <- melt_fftable(comparison_data)
+
+    dt_n <- dt_n[main_feature == TRUE]
+
     dt_n <- dt_n[!is.na(area_b)]
     hm_dt <-
       dt_n[, missing_peaks := find_r_s_error(
@@ -44,7 +47,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
     hm_dt,
     aes(
       x = reorder(as.factor(plot_group), nr),
-      y = sample_id_b,
+      y = as.factor(sample_id_b),
       fill = missing_peaks,
       molecule = molecule_b,
       #mz = mz_acc_b,
@@ -56,7 +59,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
     geom_tile() +
     scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
     ggtitle("Missing peaks") +
-    labs(x = "benchmark features", y = "sample IDs", fill = "b_peaks") +
+    labs(x = "benchmark features", y = "sample IDs") +
     theme(legend.title = element_blank())
 
   return(plotly::ggplotly(plot_r_s,tooltip = c("molecule", "adduct", "isoabb", "FileName")#, "mz")
