@@ -39,7 +39,67 @@ css <- "
   #options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
   options(spinner.type = 4)
 
-  data('resolution_list')
+
+  if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment())}
+
+  choice_vector_bench <- c(
+    'Retention time [sec]' = 'peaks.rt',
+    'Points per peak' = 'peaks.PpP',
+    'Sharpness' = 'peaks.sharpness',
+    'FW25M' = 'peaks.FW25M',
+    'FW50M'= 'peaks.FW50M',
+    'FW75M' = 'peaks.FW75M',
+    'Zigzag index' = 'peaks.zigZag_IDX',
+    'Height' = 'peaks.height',
+    'Area' = 'peaks.area',
+    'mz measured' = 'peaks.mz_accurate',
+    'mz accuracy abs' = 'peaks.mz_accuracy_abs',
+    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
+    'mz range (abs)' = 'peaks.mz_span_abs',
+    'mz range [ppm]' = 'peaks.mz_span_ppm',
+    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
+    'Molecule' = 'molecule',
+    'Filename' = 'FileName',
+    'Adduct' = 'adduct',
+    'Theoretic isotopic abundance' = 'isoabb',
+    'Introduced sample group' = 'Grp',
+    'Predicted area' = 'ExpectedArea',
+    'Error_predicted area [%]' = 'ErrorRel_A',
+    'Error_predicted area (abs)' = 'ErrorAbs_A',
+    'Predicted height' = 'ExpectedHeight',
+    'Error_predicted height [%]' = 'ErrorRel_H',
+    'Error_predicted height (abs)' = 'ErrorAbs_H'
+  )
+
+  choice_vector_comp <- c(
+    'Retention time [sec]' = 'rt_b',
+    'Points per peak' = 'peaks.PpP_b',
+    'Sharpness' = 'peaks.sharpness_b',
+    'FW25M' = 'peaks.FW25M_b',
+    'FW50M'= 'peaks.FW50M_b',
+    'FW75M' = 'peaks.FW75M_b',
+    'Zigzag index' = 'peaks.zigZag_IDX_b',
+    'Height' = 'peak_height_b',
+    'Area' = 'peak_area_b',
+    'mz measured' = 'peaks.mz_accurate_b',
+    'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
+    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
+    'mz range (abs)' = 'peaks.mz_span_abs_b',
+    'mz range [ppm]' = 'peaks.mz_span_ppm_b',
+    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
+    'Molecule' = 'molecule_b',
+    'Filename' = 'sample_name_b',
+    'Adduct' = 'adduct_b',
+    'Theoretic isotopic abundance' = 'isoabb_b',
+    'Introduced sample group' = 'Grp_b',
+    'Predicted area' = 'ExpectedArea_b',
+    'Error_predicted area [%]' = 'ErrorRel_A_b',
+    'Error_predicted area (abs)' = 'ErrorAbs_A_b',
+    'Predicted height' = 'ExpectedHeight_b',
+    'Error_predicted height [%]' = 'ErrorRel_H_b',
+    'Error_predicted height (abs)' = 'ErrorAbs_H_b'
+  )
+
 
   ui <- tagList(shinyjs::useShinyjs(),
                 shinyjs::extendShinyjs(text = jscode),
@@ -128,7 +188,7 @@ css <- "
                  column(2,numericInput('accurate_MZ_tol_input', 'mz accuracy [ppm]', 5, step = 0.1))
                 ),
         fluidRow(
-                 column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential', 'multicore', 'cluster', 'remote')))
+                 column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential', 'multicore')))
                 ),
         fluidRow(
                  column(6,
@@ -189,127 +249,19 @@ css <- "
         ),
         fluidRow(
           column(2, selectInput('bench_overview_input_x', 'x-axis',
-                                choices = c(
-                                  'Retention time [sec]' = 'peaks.rt',
-                                  'Points per peak' = 'peaks.PpP',
-                                  'Sharpness' = 'peaks.sharpness',
-                                  'FW25M' = 'peaks.FW25M',
-                                  'FW50M'= 'peaks.FW50M',
-                                  'FW75M' = 'peaks.FW75M',
-                                  'Zigzag index' = 'peaks.zigZag_IDX',
-                                  'Height' = 'peaks.height',
-                                  'Area' = 'peaks.area',
-                                  'mz measured' = 'peaks.mz_accurate',
-                                  'mz accuracy abs' = 'peaks.mz_accuracy_abs',
-                                  'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
-                                  'mz range (abs)' = 'peaks.mz_span_abs',
-                                  'mz range [ppm]' = 'peaks.mz_span_ppm',
-                                  'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
-                                  'Molecule' = 'molecule',
-                                  'Filename' = 'FileName',
-                                  'Adduct' = 'adduct',
-                                  'Theoretic isotopic abundance' = 'isoabb',
-                                  'Introduced sample group' = 'Grp',
-                                  'Predicted area' = 'ExpectedArea',
-                                  'Error_predicted area [%]' = 'ErrorRel_A',
-                                  'Error_predicted area (abs)' = 'ErrorAbs_A',
-                                  'Predicted height' = 'ExpectedHeight',
-                                  'Error_predicted height [%]' = 'ErrorRel_H',
-                                  'Error_predicted height (abs)' = 'ErrorAbs_H'
-                                ), selected = 'ExpectedArea'
+                                choices = choice_vector_bench, selected = 'ExpectedArea'
             )),
             column(2, selectInput('bench_overview_input_y', 'y-axis',
-                                  choices = c(
-                                    'Retention time [sec]' = 'peaks.rt',
-                                    'Points per peak' = 'peaks.PpP',
-                                    'Sharpness' = 'peaks.sharpness',
-                                    'FW25M' = 'peaks.FW25M',
-                                    'FW50M'= 'peaks.FW50M',
-                                    'FW75M' = 'peaks.FW75M',
-                                    'Zigzag index' = 'peaks.zigZag_IDX',
-                                    'Height' = 'peaks.height',
-                                    'Area' = 'peaks.area',
-                                    'mz measured' = 'peaks.mz_accurate',
-                                    'mz accuracy abs' = 'peaks.mz_accuracy_abs',
-                                    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
-                                    'mz range (abs)' = 'peaks.mz_span_abs',
-                                    'mz range [ppm]' = 'peaks.mz_span_ppm',
-                                    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
-                                    'Molecule' = 'molecule',
-                                    'Filename' = 'FileName',
-                                    'Adduct' = 'adduct',
-                                    'Theoretic isotopic abundance' = 'isoabb',
-                                    'Introduced sample group' = 'Grp',
-                                    'Predicted area' = 'ExpectedArea',
-                                    'Error_predicted area [%]' = 'ErrorRel_A',
-                                    'Error_predicted area (abs)' = 'ErrorAbs_A',
-                                    'Predicted height' = 'ExpectedHeight',
-                                    'Error_predicted height [%]' = 'ErrorRel_H',
-                                    'Error_predicted height (abs)' = 'ErrorAbs_H'
-                                  ), selected = 'peaks.area'
+                                  choices = choice_vector_bench, selected = 'peaks.area'
                                   )
                    ),
           column(2, selectInput('bench_overview_input_color', 'Color-by',
-                                choices = c(
-                                  'Retention time [sec]' = 'peaks.rt',
-                                  'Points per peak' = 'peaks.PpP',
-                                  'Sharpness' = 'peaks.sharpness',
-                                  'FW25M' = 'peaks.FW25M',
-                                  'FW50M'= 'peaks.FW50M',
-                                  'FW75M' = 'peaks.FW75M',
-                                  'Zigzag index' = 'peaks.zigZag_IDX',
-                                  'Height' = 'peaks.height',
-                                  'Area' = 'peaks.area',
-                                  'mz measured' = 'peaks.mz_accurate',
-                                  'mz accuracy abs' = 'peaks.mz_accuracy_abs',
-                                  'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
-                                  'mz range (abs)' = 'peaks.mz_span_abs',
-                                  'mz range [ppm]' = 'peaks.mz_span_ppm',
-                                  'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
-                                  'Molecule' = 'molecule',
-                                  'Filename' = 'FileName',
-                                  'Adduct' = 'adduct',
-                                  'Theoretic isotopic abundance' = 'isoabb',
-                                  'Introduced sample group' = 'Grp',
-                                  'Predicted area' = 'ExpectedArea',
-                                  'Error_predicted area [%]' = 'ErrorRel_A',
-                                  'Error_predicted area (abs)' = 'ErrorAbs_A',
-                                  'Predicted height' = 'ExpectedHeight',
-                                  'Error_predicted height [%]' = 'ErrorRel_H',
-                                  'Error_predicted height (abs)' = 'ErrorAbs_H'
-                                ), selected = 'molecule'
+                                choices = choice_vector_bench, selected = 'molecule'
           )
           ),
           column(2),
           column(2, selectInput('select_bench_histo', 'Peak variable',
-                                choices = c(
-                                  'Retention time [sec]' = 'peaks.rt',
-                                  'Points per peak' = 'peaks.PpP',
-                                  'Sharpness' = 'peaks.sharpness',
-                                  'FW25M' = 'peaks.FW25M',
-                                  'FW50M'= 'peaks.FW50M',
-                                  'FW75M' = 'peaks.FW75M',
-                                  'Zigzag index' = 'peaks.zigZag_IDX',
-                                  'Height' = 'peaks.height',
-                                  'Area' = 'peaks.area',
-                                  'mz measured' = 'peaks.mz_accurate',
-                                  'mz accuracy abs' = 'peaks.mz_accuracy_abs',
-                                  'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
-                                  'mz range (abs)' = 'peaks.mz_span_abs',
-                                  'mz range [ppm]' = 'peaks.mz_span_ppm',
-                                  'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
-                                  'Molecule' = 'molecule',
-                                  'Filename' = 'FileName',
-                                  'Adduct' = 'adduct',
-                                  'Theoretic isotopic abundance' = 'isoabb',
-                                  'Introduced sample group' = 'Grp',
-                                  'Predicted area' = 'ExpectedArea',
-                                  'Error_predicted area [%]' = 'ErrorRel_A',
-                                  'Error_predicted area (abs)' = 'ErrorAbs_A',
-                                  'Predicted height' = 'ExpectedHeight',
-                                  'Error_predicted height [%]' = 'ErrorRel_H',
-                                  'Error_predicted height (abs)' = 'ErrorAbs_H'
-                                ), selected = 'peaks.PpP'
+                                choices = choice_vector_bench, selected = 'peaks.PpP'
           )
 
 
@@ -498,8 +450,15 @@ css <- "
                    icon = icon('question-circle'),
                    size = 'sm'
                  ),
-                 plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          ),
+                 prettySwitch(inputId = 'PP_al_switch_ov',
+                              label = 'after PeakPicking | Alignment',
+                              value = FALSE,
+                              width = '190px'),
+                 div(style = "width: 20px;"),
+
+                 plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1")),
+
+
           column(
             4,
             dropdownButton(
@@ -519,68 +478,14 @@ css <- "
                  selectInput(
                    'overview_plot_input_x',
                    'x-axis',
-                   c(
-                     'Retention time [sec]' = 'rt_b',
-                     'Points per peak' = 'peaks.PpP_b',
-                     'Sharpness' = 'peaks.sharpness_b',
-                     'FW25M' = 'peaks.FW25M_b',
-                     'FW50M'= 'peaks.FW50M_b',
-                     'FW75M' = 'peaks.FW75M_b',
-                     'Zigzag index' = 'peaks.zigZag_IDX_b',
-                     'Height' = 'peak_height_b',
-                     'Area' = 'peak_area_b',
-                     'mz measured' = 'peaks.mz_accurate_b',
-                     'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
-                     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
-                     'mz range (abs)' = 'peaks.mz_span_abs_b',
-                     'mz range [ppm]' = 'peaks.mz_span_ppm_b',
-                     'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
-                     'Molecule' = 'molecule_b',
-                     'Filename' = 'sample_name_b',
-                     'Adduct' = 'adduct_b',
-                     'Theoretic isotopic abundance' = 'isoabb_b',
-                     'Introduced sample group' = 'Grp_b',
-                     'Predicted area' = 'ExpectedArea_b',
-                     'Error_predicted area [%]' = 'ErrorRel_A_b',
-                     'Error_predicted area (abs)' = 'ErrorAbs_A_b',
-                     'Predicted height' = 'ExpectedHeight_b',
-                     'Error_predicted height [%]' = 'ErrorRel_H_b',
-                     'Error_predicted height (abs)' = 'ErrorAbs_H_b'
-                     )
+                   choice_vector_comp
                  )
           ),
           column(3,
                  selectInput(
                    'overview_plot_input_y',
                    'y-axis',
-                   c(
-                     'Retention time [sec]' = 'rt_b',
-                     'Points per peak' = 'peaks.PpP_b',
-                     'Sharpness' = 'peaks.sharpness_b',
-                     'FW25M' = 'peaks.FW25M_b',
-                     'FW50M'= 'peaks.FW50M_b',
-                     'FW75M' = 'peaks.FW75M_b',
-                     'Zigzag index' = 'peaks.zigZag_IDX_b',
-                     'Height' = 'peak_height_b',
-                     'Area' = 'peak_area_b',
-                     'mz measured' = 'peaks.mz_accurate_b',
-                     'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
-                     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
-                     'mz range (abs)' = 'peaks.mz_span_abs_b',
-                     'mz range [ppm]' = 'peaks.mz_span_ppm_b',
-                     'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
-                     'Molecule' = 'molecule_b',
-                     'Filename' = 'sample_name_b',
-                     'Adduct' = 'adduct_b',
-                     'Theoretic isotopic abundance' = 'isoabb_b',
-                     'Introduced sample group' = 'Grp_b',
-                     'Predicted area' = 'ExpectedArea_b',
-                     'Error_predicted area [%]' = 'ErrorRel_A_b',
-                     'Error_predicted area (abs)' = 'ErrorAbs_A_b',
-                     'Predicted height' = 'ExpectedHeight_b',
-                     'Error_predicted height [%]' = 'ErrorRel_H_b',
-                     'Error_predicted height (abs)' = 'ErrorAbs_H_b'
-                     ),
+                   choice_vector_comp,
                    selected = 'peak_height_b'
                  )
           ),
@@ -589,34 +494,7 @@ css <- "
             4, selectInput(
               'graph_select_input',
               'Graph selection',
-              c(
-                'Retention time [sec]' = 'rt_b',
-                'Points per peak' = 'peaks.PpP_b',
-                'Sharpness' = 'peaks.sharpness_b',
-                'FW25M' = 'peaks.FW25M_b',
-                'FW50M'= 'peaks.FW50M_b',
-                'FW75M' = 'peaks.FW75M_b',
-                'Zigzag index' = 'peaks.zigZag_IDX_b',
-                'Height' = 'peak_height_b',
-                'Area' = 'peak_area_b',
-                'mz measured' = 'peaks.mz_accurate_b',
-                'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
-                'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
-                'mz range (abs)' = 'peaks.mz_span_abs_b',
-                'mz range [ppm]' = 'peaks.mz_span_ppm_b',
-                'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
-                'Molecule' = 'molecule_b',
-                'Filename' = 'sample_name_b',
-                'Adduct' = 'adduct_b',
-                'Theoretic isotopic abundance' = 'isoabb_b',
-                'Introduced sample group' = 'Grp_b',
-                'Predicted area' = 'ExpectedArea_b',
-                'Error_predicted area [%]' = 'ErrorRel_A_b',
-                'Error_predicted area (abs)' = 'ErrorAbs_A_b',
-                'Predicted height' = 'ExpectedHeight_b',
-                'Error_predicted height [%]' = 'ErrorRel_H_b',
-                'Error_predicted height (abs)' = 'ErrorAbs_H_b'
-                )
+              choice_vector_comp
             )
           )
         ),
@@ -641,6 +519,11 @@ css <- "
               icon = icon('question-circle'),
               size = 'sm'
             ),
+            prettySwitch(inputId = 'PP_al_switch_hm',
+                         label = 'after PeakPicking | Alignment',
+                         value = FALSE,
+                         width = '190px'),
+            div(style = "width: 20px;"),
             plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1")
           ),
 
@@ -656,6 +539,11 @@ css <- "
               icon = icon('question-circle'),
               size = 'sm'
             ),
+            prettySwitch(inputId = 'PP_al_switch_ITe',
+                         label = 'after PeakPicking | Alignment',
+                         value = FALSE,
+                         width = '190px'),
+            div(style = "width: 20px;"),
             plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1")
           ),
           column(
@@ -710,64 +598,9 @@ css <- "
 
   )))
 
-  choice_vector_comp <- c(
-    'Retention time [sec]' = 'rt_b',
-    'Points per peak' = 'peaks.PpP_b',
-    'Sharpness' = 'peaks.sharpness_b',
-    'FW25M' = 'peaks.FW25M_b',
-    'FW50M'= 'peaks.FW50M_b',
-    'FW75M' = 'peaks.FW75M_b',
-    'Zigzag index' = 'peaks.zigZag_IDX_b',
-    'Height' = 'peak_height_b',
-    'Area' = 'peak_area_b',
-    'mz measured' = 'peaks.mz_accurate_b',
-    'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
-    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
-    'mz range (abs)' = 'peaks.mz_span_abs_b',
-    'mz range [ppm]' = 'peaks.mz_span_ppm_b',
-    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
-    'Molecule' = 'molecule_b',
-    'Filename' = 'sample_name_b',
-    'Adduct' = 'adduct_b',
-    'Theoretic isotopic abundance' = 'isoabb_b',
-    'Introduced sample group' = 'Grp_b',
-    'Predicted area' = 'ExpectedArea_b',
-    'Error_predicted area [%]' = 'ErrorRel_A_b',
-    'Error_predicted area (abs)' = 'ErrorAbs_A_b',
-    'Predicted height' = 'ExpectedHeight_b',
-    'Error_predicted height [%]' = 'ErrorRel_H_b',
-    'Error_predicted height (abs)' = 'ErrorAbs_H_b'
-  )
 
-  choice_vector_bench <-
-  c(
-    'Retention time [sec]' = 'peaks.rt',
-    'Points per peak' = 'peaks.PpP',
-    'Sharpness' = 'peaks.sharpness',
-    'FW25M' = 'peaks.FW25M',
-    'FW50M'= 'peaks.FW50M',
-    'FW75M' = 'peaks.FW75M',
-    'Zigzag index' = 'peaks.zigZag_IDX',
-    'Height' = 'peaks.height',
-    'Area' = 'peaks.area',
-    'mz measured' = 'peaks.mz_accurate',
-    'mz accuracy abs' = 'peaks.mz_accuracy_abs',
-    'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
-    'mz range (abs)' = 'peaks.mz_span_abs',
-    'mz range [ppm]' = 'peaks.mz_span_ppm',
-    'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
-    'Molecule' = 'molecule',
-    'Filename' = 'FileName',
-    'Adduct' = 'adduct',
-    'Theoretic isotopic abundance' = 'isoabb',
-    'Introduced sample group' = 'Grp',
-    'Predicted area' = 'ExpectedArea',
-    'Error_predicted area [%]' = 'ErrorRel_A',
-    'Error_predicted area (abs)' = 'ErrorAbs_A',
-    'Predicted height' = 'ExpectedHeight',
-    'Error_predicted height [%]' = 'ErrorRel_H',
-    'Error_predicted height (abs)' = 'ErrorAbs_H'
-  )
+
+
 
   server <- function (input, output, session) {
 
@@ -879,6 +712,7 @@ css <- "
 
 
     observeEvent(input$generate_benchmark, {
+      tryCatch({
       #Get Files from reactives
       #mzML
       if(is.null(mzML_files()) || length(mzML_files()) == 0){
@@ -928,7 +762,7 @@ css <- "
                                           Target.table = MassTraces,
                                           PrecisionMZtol = input$percision_mz_tol_input,
                                           plan = input$plan_input,
-                                          minCentroids = input$min_centroids_input,
+                                          minCentroids = 4,#input$min_centroids_input,
                                           AccurateMZtol = input$accurate_MZ_tol_input
                                          )
 
@@ -956,6 +790,8 @@ css <- "
                    fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
                    print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
                    incProgress(15/15, detail = "Finished")
+
+
                 }) #End of With Progress
 
       SkyTranList <- SkylineTransitionList(PCal)
@@ -965,6 +801,24 @@ css <- "
       print(Sys.time() - starttime)
 
       benchmark_data(list(files = files, targets = targets, PCal = PCal))
+
+      sendSweetAlert(session,
+                     title = 'Benchmark generated',
+                     text = 'Benchmark geneneration has been finished. You can proceed to use it for relyability
+                                  assessment of non-targeted data pre-processing. A benchmark overview is provided in section
+                                  "Benchmark overview" (rendering can take a min)',
+                     type = 'success',
+                     closeOnClickOutside = FALSE,
+                     showCloseButton = TRUE)
+
+      },
+      error=function(error_message){
+        #shinybusy::remove_modal_spinner()
+        #Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
+        sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error', closeOnClickOutside = FALSE)
+        print(error_message)
+        return(NULL)
+      })
     })
 
     #Benchmark Plot Functions
@@ -1062,11 +916,19 @@ css <- "
 
 
         #####################
-        #perform comparison
+        #perform comparisons
         #####################
         comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input, input$main_feature_method_input)
         comparison_data(comparison_ug_g)
         shinybusy::remove_modal_spinner()
+        Sys.sleep(0.2)
+        shinyWidgets::sendSweetAlert(session,
+                       title = 'Comparison complete',
+                       text = 'Comparison has been finished. An overview is provided in panels "Assessment result (peaks)" and "Assessment (features)"!',
+                       type = 'success',
+                       closeOnClickOutside = FALSE,
+                       showCloseButton = TRUE)
+
       },
       error=function(error_message){
         shinybusy::remove_modal_spinner()
@@ -1123,10 +985,10 @@ css <- "
     })
 
     #R/S Heatmap Plot
-    observeEvent(comparison_data(), {
+    observeEvent({comparison_data(); input$PP_al_switch_hm}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data()))
+        output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm))
       }
     })
 
@@ -1138,10 +1000,10 @@ css <- "
       }
     })
     #Isotopologe prediction error
-    observeEvent(comparison_data(), {
+    observeEvent({comparison_data(); input$PP_al_switch_ITe}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data()))
+        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = input$PP_al_switch_ITe))
       }
     })
     #Results Text
@@ -1159,6 +1021,11 @@ css <- "
         output$error_count <- renderTable(comparison_data()$ali_error_table[errors > 0])
       }
     })
+
+
+
+
+
 
     #Alignment error plot
     observeEvent(comparison_data(),{
@@ -1187,6 +1054,12 @@ css <- "
         output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })
+    #observeEvent(comparison_data(), {
+    #  #comparison_data <- isolate(comparison_data())
+    #  if(!is.null(comparison_data())){
+    #    output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
+    #  }
+    #})
 
 
 

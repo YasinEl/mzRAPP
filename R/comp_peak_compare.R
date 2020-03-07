@@ -332,7 +332,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                     variable.name = "sample_id_b",
                     variable.factor = FALSE)
 
-  dt_melt_b$sample_id_b <-  substr(dt_melt_b$sample_id_b, 8, nchar(dt_melt_b$sample_id_b) - 2)
+  dt_melt_b$sample_id_b <-  as.factor(substr(dt_melt_b$sample_id_b, 8, nchar(dt_melt_b$sample_id_b) - 2))
 
   dt_melt_g <- melt(dt,
                     id.vars = id.cols,
@@ -341,7 +341,7 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                     variable.name = "sample_id_b",
                     variable.factor = FALSE)
 
-  dt_melt_g$sample_id_b <-  substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2)
+  dt_melt_g$sample_id_b <-  as.factor(substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2))
 
   dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
 
@@ -368,13 +368,16 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                                                             "isoabb_b",
                                                             "sample_id_b",
                                                             "area_b",
-                                                            "area_g")],
+                                                            "area_g",
+                                                            "sample_name_b")],
                                                      on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
 
+  iso_err_dt[is.na(peak_area_b)]$peak_area_b <- iso_err_dt[is.na(peak_area_b)]$area_b
+  iso_err_dt[is.na(sample_name_b)]$sample_name_b <- iso_err_dt[is.na(sample_name_b)]$i.sample_name_b
 
   iso_err_dt <- iso_err_dt[isoabb_b != 100][iso_err_dt[isoabb_b == 100,
-                                     c("sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug")],
-                                on=.(sample_name_b, molecule_b, adduct_b),
+                                     c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug")],
+                                on=.(sample_id_b, molecule_b, adduct_b),
                                 nomatch = NA, allow.cartesian=TRUE][,c("benchmark",
                                                                        "NPP_peak picking",
                                                                        "NPP_features") := .((peak_area_b / ((i.peak_area_b * isoabb_b) / 100) - 1) * 100,
