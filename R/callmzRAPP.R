@@ -703,7 +703,6 @@ css <- "
                      column(2, pickerInput('mol_a', 'Molecule', c())),
                      column(1, pickerInput('add_a', 'Adduct', c()))
                    )
-
         )
 
       )

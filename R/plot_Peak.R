@@ -216,7 +216,9 @@ plot_dt <- plot_dt[-1]
     geom_vline(data = plot_dt, aes(xintercept = start, colour = sample)) +
     geom_vline(data = plot_dt, aes(xintercept = end, colour = sample)) +
     theme(legend.position = "right") +
-    ggtitle(paste0(mol, " ", add, " ", ia))
+    ggtitle(paste0(mol, " ", add, " ", ia)) +
+    labs(x = "Retention time [sec]", y = "Intensity")
+
   if(UT_comp == TRUE){
     p <- p +
     geom_vline(data = plot_dt, aes(xintercept = start.ut, colour = sample), linetype='dashed') +
