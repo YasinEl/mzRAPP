@@ -896,9 +896,8 @@ css <- "
         } else {
           options_path <- options_file()
         }
-        #options_table <- import_options(options_file())
         if (input$use_generated_benchmark == TRUE) {
-          b_o_tables <- import_benchmark(isolate(benchmark_data())$PCal, options_path, from_csv = FALSE, input$algorithm_input)
+          b_o_tables <- import_benchmark(benchmark_data()$PCal, options_path, from_csv = FALSE, input$algorithm_input)
           b_table = b_o_tables$b_table
           options_table <- b_o_tables$options_table
         } else {

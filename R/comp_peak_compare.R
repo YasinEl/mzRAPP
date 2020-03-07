@@ -274,6 +274,9 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #Not found B Peaks
   nf_b_table <- b_table[!b_table$comp_id_b %in% unique(c_table$comp_id_b)]
 
+  fwrite(nf_b_table, 'nf_b_debug.csv')
+  fwrite(b_table, 'b_debug.csv')
+
   #Not found UG Peaks
   nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(c_table$comp_id_ug)]
 
