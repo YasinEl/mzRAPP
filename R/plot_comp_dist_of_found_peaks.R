@@ -33,7 +33,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
 
-    from_here <<- f_nf_plot
+    #from_here <<- f_nf_plot
 
 
   } else if(post_alignment == FALSE){
@@ -44,16 +44,47 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }
+#checkthat <<-  f_nf_plot
+
+  if(is.character(f_nf_plot[,..var])){#var %in% c("molecule_b", "adduct_b", "Grp_b", "sample_name_b")){
 
 
-  if(var %in% c("molecule_b", "adduct_b", "Grp_b", "sample_name_b")){
+    df_tmp <- f_nf_plot
+    df_tmp$dpl <- duplicated(df_tmp$var)
+
+    compl <- df_tmp$var[df_tmp$dpl]
+
+    uncompl <- df_tmp[!var %in% compl]
+    uncompl$var <- uncompl$var
+
+    subst <-
+      apply(uncompl, 1, function(x){
+
+        c(var = round(as.numeric(unname(x[1])),5), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
+
+      })
+    subst <- as.data.table(subst, keep.rownames = TRUE)
+
+    subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
+    subst$f_nf_col <- as.logical(subst$f_nf_col)
+
+
+    df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
+    df_bin$var <- round(as.numeric(df_bin$var), 5)
+    df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
+
+
+
+
+
 
     plot_dist <-
       ggplot(f_nf_plot,
-             aes_string(x = var, fill = 'f_nf_col')) + stat_count(position =
-                                                                                         'dodge') +
+             aes_string(x = var, fill = 'f_nf_col')) + stat_count(position ='dodge') +
       scale_color_manual(name = "peaks found") +
       ggtitle("Distribution of found/not found peaks") +
+      theme(legend.position = "none") +
+      scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
       theme(axis.text.x = element_blank())
 
 
@@ -76,20 +107,45 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     df_bin <- df_bin[MAXn>=10]
 
 
+    ###add zeros
+    df_tmp <- df_bin
+    df_tmp$dpl <- duplicated(df_tmp$var)
+
+    compl <- round(as.numeric(df_tmp$var[df_tmp$dpl]),5)
+
+    uncompl <- df_tmp[!var %in% compl]
+    uncompl$var <- round(as.numeric(uncompl$var),5)
+
+    subst <-
+      apply(uncompl, 1, function(x){
+
+        c(var = round(as.numeric(unname(x[1])),5), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
+
+      })
+    subst <- as.data.table(subst, keep.rownames = TRUE)
+
+    subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
+    subst$f_nf_col <- as.logical(subst$f_nf_col)
+
+
+    df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
+    df_bin$var <- round(as.numeric(df_bin$var), 5)
+    df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
+
+
     # Get "no" share within each bin
     df_sum <- df_bin %>%
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
 
-    sum_thing <<-  df_sum
-    bin_thing <<-  df_bin
+
 
     t <- plotly::ggplotly(
       ggplot2::ggplot() +
         geom_col(data = df_bin, aes(var, n, fill = f_nf_col),
                  position = position_dodge(preserve = "single")) +
         theme(legend.position = "none") +
-        scale_fill_manual(values  = c("red", "blue")) +
+        scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")
     )
 
