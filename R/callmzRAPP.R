@@ -35,7 +35,7 @@ css <- "
 
   options(shiny.reactlog = F)
   options(useFancyQuotes = FALSE)
-  options(shiny.trace = T)
+  options(shiny.trace = F)
   #options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
   options(spinner.type = 4)
 
@@ -470,6 +470,10 @@ css <- "
               icon = icon('question-circle'),
               size = 'sm'
             ),
+            prettySwitch(inputId = 'PP_al_switch_dist',
+                         label = 'after PeakPicking | Alignment',
+                         value = FALSE,
+                         width = '190px'),
             plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1")
           )
         ),
@@ -976,10 +980,10 @@ css <- "
 
 
     #Scatter_plot
-    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y}, {
+    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp))
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp, post_alignment = input$PP_al_switch_ov))
       }
     })
 
@@ -992,10 +996,10 @@ css <- "
     })
 
     #Ditsribution of peaks plot
-    observeEvent({comparison_data(); input$graph_select_input}, {
+    observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp))
+        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp, post_alignment = input$PP_al_switch_dist))
       }
     })
     #Isotopologe prediction error
@@ -1030,12 +1034,11 @@ css <- "
     observeEvent(comparison_data(),{
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
-        print(comparison_data()$ali_error_table)
-        error_molecules <- as.character(comparison_data()$ali_error_table[errors > 0, Molecule])
-        no_error_molecules <- as.character(comparison_data()$ali_error_table[errors == 0, Molecule])
+        error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors > 0, Molecule]))
+        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         print(choices)
-        updatePickerInput(session, 'mol_a', choices = choices)
+        updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
     observeEvent({comparison_data();input$mol_a}, {
@@ -1046,7 +1049,7 @@ css <- "
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         print(choices)
-        updatePickerInput(session, 'add_a', choices = choices)
+        updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
