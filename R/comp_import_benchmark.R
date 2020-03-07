@@ -25,7 +25,7 @@ import_benchmark <- function (file, options_path, from_csv = TRUE, algo) {
     if (!is.data.table(file)){
       stop('Generated benchmark is not a datatable')
     } else {
-      b_table <- file
+      b_table <- copy(file)
     }
   }
 

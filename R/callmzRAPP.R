@@ -997,10 +997,10 @@ css <- "
     })
 
     #Ditsribution of peaks plot
-    observeEvent({comparison_data(); input$graph_select_input}, {
+    observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp))
+        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp, post_alignment = input$PP_al_switch_dist))
       }
     })
     #Isotopologe prediction error

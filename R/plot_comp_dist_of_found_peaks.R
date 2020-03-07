@@ -7,12 +7,44 @@
 #' @export
 #'
 #' @examples
-plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp){
+plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
 
-  f_nf_plot <-
-    rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-  f_nf_plot <-
-    f_nf_plot[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
+
+  if(post_alignment == TRUE){
+    feat_t <- melt_fftable(comparison_data)
+
+    BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
+
+    BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
+
+    feat_t <- feat_t[main_feature == TRUE]
+
+    vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
+
+    f_nf_dt <- feat_t[!is.na(area_b) &
+                        main_feature == TRUE, c("molecule_b",
+                                                "adduct_b",
+                                                "isoabb_b",
+                                                "sample_id_b",
+                                                "area_g")][BM_bu[,..vct], on = .(molecule_b,
+                                                                                 adduct_b,
+                                                                                 isoabb_b,
+                                                                                 sample_id_b)]
+
+    f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
+
+    from_here <<- f_nf_plot
+
+
+  } else if(post_alignment == FALSE){
+
+
+    f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+
+    f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
+
+  }
+
 
   if(var %in% c("molecule_b", "adduct_b", "Grp_b", "sample_name_b")){
 
@@ -48,6 +80,9 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     df_sum <- df_bin %>%
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
+
+    sum_thing <<-  df_sum
+    bin_thing <<-  df_bin
 
     t <- plotly::ggplotly(
       ggplot2::ggplot() +
