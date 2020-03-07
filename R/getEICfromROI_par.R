@@ -41,6 +41,35 @@ getROIsForEICs <-
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
 
+  #if("user.rt" %in% colnames(Target.table)){
+
+   # filter_table <- Target.table
+
+  #  filter_table$mz <- round(filter_table$mz, 2)
+
+ #   filter_table$user.rt <- round(filter_table$user.rt, 0)
+
+  #  filter_table <- setorder(filter_table, "isoabb")
+
+  #  filter_table$dpl_mz <- duplicated(filter_table, by = c("user.rt", "mz"))
+
+ #   checkk <<- filter_table
+
+  #  if(nrow(filter_table[dpl_mz == TRUE & isoabb == 100]) > 0) {
+
+  #  warning(paste0("It seems like some of your target molecules are actually isotopologues of some of your other target molecules!
+  #                 In order to resolve this issue some target molecules(", length(unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule)),
+  #                 ")have been removed. Specificly: ",
+  #                 paste(unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule), collapse = ", ")))
+
+  #  Target.table <- Target.table[!(molecule %in% unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule))]
+
+  #  }
+#
+ # }
+
+
+
   if(!is.character(Target.table$molecule)) {Target.table$molecule <- as.character(Target.table$molecule)}
 
   ##################################
@@ -85,6 +114,7 @@ getROIsForEICs <-
                                      dev = PrecisionMZtol * 1E-6,
                                      minCentroids = minCentroids,
                                      scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
+                                     mzrange = c(Target.table.wk[molecule == molec]$mz[1] - 10, Target.table.wk[molecule == molec]$mz[1] + 10),
                                      prefilter = c(minCentroids,0),
                                      noise = 0)
         )})

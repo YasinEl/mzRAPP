@@ -108,6 +108,11 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
       iso_to_test <- isos_to_test[[2]][y] #iso checked in this round
 
+
+      #print("Iso to test:")
+      #print(iso_to_test)
+
+
       yDTsub <- unname(unlist(DTsub[, ..iso_to_test]))
       yDTall <- unname(unlist(DT[, ..iso_to_test]))
       #print(paste0("ydtsub: "))
@@ -116,27 +121,35 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
       #print(yDTall)
       best_UTgrp <- names(which.max(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
 
-
+      #print("Best table: ")
+      #print(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA, "")]))
+      #print(best_UTgrp)
 
       if(!is.null(best_UTgrp)){
 
         alignment_splits_vector.all <- !yDTall %in% best_UTgrp
         alignment_splits_vector.sub <- !yDTsub %in% best_UTgrp
 
+        #print(alignment_splits_vector.all)
+        #print(alignment_splits_vector.all)
 
-        if(length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "FALSE"]) > 1 &
+        if(length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "FALSE"]) > 0 &
            length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "TRUE"]) > 0){
 
           problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.PP", NA, "")]
 #print(paste0("problematic joins: "))
 #print(problematic_joins)
+
+#print("end of Iso to test succ:")
+#print(iso_to_test)
           return(length(problematic_joins))
 
 
         }
       }
 
-
+     # print("Iso to testto test unsuc:")
+    #  print(iso_to_test)
     })
 
     errors <- unlist(errors)
@@ -155,9 +168,21 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
     }
   })
 
+empty_isos <- apply(DT[, !"sample_id_b"], 2, function(x) {
+
+    if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
+      count.table <- data.table(table(x))
+      if("Lost_b.A" %in% count.table$x){return(count.table[x == "Lost_b.A"]$N)}
+    }
+  })
 
 
-  return(sum(unlist(error_list), unlist(empty_samples)))
+#print("l1")
+#print(error_list)
+#print("l2")
+#print(empty_samples)
+
+  return(sum(unlist(error_list), unlist(empty_samples), unlist(empty_isos)))
   }
 
 

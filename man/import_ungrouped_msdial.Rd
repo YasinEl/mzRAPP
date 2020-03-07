@@ -4,10 +4,10 @@
 \alias{import_ungrouped_msdial}
 \title{import_ungrouped_msdial}
 \usage{
-import_ungrouped_msdial(folder_path, options_table)
+import_ungrouped_msdial(file_list, options_dt)
 }
 \arguments{
-\item{options_table}{}
+\item{options_dt}{}
 }
 \description{
 import_ungrouped_msdial

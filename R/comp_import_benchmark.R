@@ -1,23 +1,39 @@
 #' import_benchmark
 #'
-#' @param file_path
-#' @param options_table
+#' @param file
+#' @param options_path
 #' @param from_csv
 #'
 #' @return
 #' @export
 #'
 #' @examples
-import_benchmark <- function (file_path, options_table, from_csv = TRUE) {
+import_benchmark <- function (file, options_path, from_csv = TRUE, algo) {
 
   if(from_csv){
-    #Make sure file_path points to a csv file
-    if(file_ext(file_path) != 'csv'){
+    if(is.null(file)){
+      stop('No benchmark file selected')
+    }
+    #Make sure file points to a csv file
+    if(file_ext(file) != 'csv'){
       stop('benchmark is not a valid csv file')
     }
+
     #Import csv file
-    b_table = fread(file_path)
-  }#######IMPLEMENT DIRECT USAGE OF GENERATED BENCHMARK!!!!!!!!!!!!!!!!!!!!
+    b_table <- fread(file)
+  } else {
+    if (!is.data.table(file)){
+      stop('Generated benchmark is not a datatable')
+    } else {
+      b_table <- file
+    }
+  }
+
+  if(options_path == 'generate'){
+    options_table <- generate_options(b_table, algo)
+  } else {
+    options_table <- import_options(options_path)
+  }
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){
@@ -37,23 +53,18 @@ import_benchmark <- function (file_path, options_table, from_csv = TRUE) {
   #Remove peaks where height and area are below 0
   b_table <- b_table[peak_area > 0 & peak_height > 0]
 
+  #Add a sample_id and grp_id column based on the sample_names in options_table
+  b_table <- b_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'b_samples')]
+
   #Check for duplicate peaks, should not be present so warning, removing them if there
-  if (any(duplicated(b_table, by=c('peak_area', 'mz', 'rt')))){
+  if (any(duplicated(b_table, by=c('peak_area')))){
+    fwrite(b_table[(duplicated(b_table, by=c('peak_area'))|duplicated(b_table, by=c('peak_area'), fromLast = TRUE))], 'dup_debug.csv')
     b_table <- b_table[!duplicated(b_table, by='peak_area')]
     warning('Duplicate peaks present in raw benchmark file')
   }
 
-  #Filter out samples not present in ug_samples
-  b_table <- filter_by_vector(b_table, 'sample_name', options_table[,b_samples])
-
-  #Add a sample_id column based on the sample_ids in options_table
-  b_table <- dt_map(b_table, options_table, 'sample_name', 'b_samples', 'sample_id', 'sample_id')
-  #Add a grp column based on the grp in options_table
-  b_table <- dt_map(b_table, options_table, 'sample_name', 'b_samples', 'grp_id', 'grp')
-
-
   #Generate feature ID to quickly detect features later
-  b_table <- assign_groupID_column(b_table, 'feature_id', c('molecule', 'adduct', 'isoabb'))
+  b_table <- b_table[, feature_id := .GRP, by = c('molecule', 'adduct', 'isoabb')]
 
   #Generate id for each peak
   b_table$comp_id <- seq.int(nrow(b_table))
@@ -61,11 +72,5 @@ import_benchmark <- function (file_path, options_table, from_csv = TRUE) {
   #Add "_b" as suffix to each column name
   colnames(b_table) <- paste(colnames(b_table), 'b', sep = '_')
 
-
-  ##############################
-  #b_table <- b_table[isoabb_b == 100]
-  #print(nrow(b_table))
-  ##############################
-
-  return(b_table)
+  return(list('b_table' = b_table, 'options_table' = options_table))
 }

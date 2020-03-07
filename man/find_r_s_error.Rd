@@ -4,11 +4,10 @@
 \alias{find_r_s_error}
 \title{find_r_s_error}
 \usage{
-find_r_s_error(comp_id_b, molecule_b, adduct_b, sample_id_b, isoabb_b,
-  peak_area_b, peak_area_ug, peak_height_b)
+find_r_s_error(peak_area_b, peak_area_ug, peak_height_b)
 }
 \arguments{
-\item{peak_area_ug}{}
+\item{peak_height_b}{}
 }
 \description{
 find_r_s_error

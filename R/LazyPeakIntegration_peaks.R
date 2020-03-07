@@ -31,7 +31,9 @@ findBenchPeaks <- function(files,
                            Min.cor.w.main_adduct = 0.8,
                            Min.cor.w.M0 = 0.75,
                            Min.iso.count = 2,
-                           return_unsuc_searches = FALSE)
+                           return_unsuc_searches = FALSE,
+                           max.rt.diff_sec = 20,
+                           max.mz.diff_ppm = 5)
 {
 
   if(!is.character(CompCol_all$molecule)) {CompCol_all$molecule <- as.character(CompCol_all$molecule)}
@@ -48,7 +50,7 @@ findBenchPeaks <- function(files,
   #prepare parallel processing
   ##################################
   doFuture::registerDoFuture()
-  future::plan(plan, workers = min(future::availableCores(), length(files)))
+  future::plan(plan)
   #future::plan(list("sequential", "multiprocess"))
   #future::plan(multiprocess(workers = 40))
   Output <- list()
@@ -173,12 +175,13 @@ findBenchPeaks <- function(files,
                         ##################################
                         #prepare list for collecting information on one peak
                         ##################################
-                        Drawer_fill <- as.list(rep(NA, 8))
+                        Drawer_fill <- as.list(rep(NA, 9))
                         names(Drawer_fill) <-
                           c(
                             "molecule",
                             "adduct",
                             "isoabb",
+                            "user.rt",
                             "FileName",
                             "Grp",
                             "peaks",
@@ -193,6 +196,7 @@ findBenchPeaks <- function(files,
                         Drawer_fill[["molecule"]] <- CompCol_xic[i]$molecule
                         Drawer_fill[["adduct"]] <-  CompCol_xic[i]$adduct
                         Drawer_fill[["isoabb"]] <- CompCol_xic[i]$isoabb
+                        Drawer_fill[["user.rt"]] <- CompCol_xic[i]$user.rt
                         Drawer_fill[["FileName"]] <- raw_data@phenoData@data[["sample_name"]]
                         Drawer_fill[["Grp"]] <- raw_data@phenoData@data[["sample_group"]]
                         Drawer_fill[["RT.v"]] <- paste(as.character(unname(ChromData[[i]]@rtime)), collapse = ",")
@@ -656,13 +660,17 @@ tryCatch(
                   if (iso.run == "MAiso") {
 
                     MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)) MA.Isos[peaks.PpP >= Min.PointsperPeak]
+                    if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)){
+                      MA.Isos <- clean_peak_assignments(MA.Isos[peaks.PpP >= Min.PointsperPeak & peaks.mz_accuracy_ppm < max.mz.diff_ppm])
+                    }
                     if (adduct.run == "screen_adducts"){
-                      if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct & peaks.PpP >= Min.PointsperPeak]
+                      if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct]
                     }
                   } else if (iso.run == "LAisos"){
                     LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.cor_w_M0"  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 & peaks.PpP >= Min.PointsperPeak]
+                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.cor_w_M0"  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
+                                                                                                                              peaks.PpP >= Min.PointsperPeak &
+                                                                                                                              peaks.mz_accuracy_ppm < max.mz.diff_ppm]
                     if (adduct.run == "main_adduct") {
 
                       ALL.Isos.perfile <-
@@ -686,10 +694,14 @@ tryCatch(
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
 
-  #still have to deal with double isotopologues per M0.grp
+  #get rid of double isos
+  Result <- unique(Result, by = c("molecule", "isoabb", "adduct", "peaks.M0.grp", "FileName"))
 
-  Result <- Result[!is.na(peaks.FW25M) | !is.na(peaks.unres.e) | !is.na(peaks.unres.s)]
-  Result <- Result[!is.na(peaks.FW75M)]
+  #get rid of double cross isos
+  Result <- clean_peak_assignments(Result)
+
+  Result <- Result[(!is.na(peaks.FW25M) | !is.na(peaks.unres.e) | !is.na(peaks.unres.s)) & !is.na(peaks.FW75M)]
+
   Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
 
   Result$IDX <- seq.int(nrow(Result))
@@ -714,17 +726,41 @@ tryCatch(
 
   Result <- Result[Iso_count >= Min.iso.count]
 
+
+
+
+
+
+  #get rid of double peaks
+  #Result <- clean_peak_assignments(Result)
+
+
+
   if(return_unsuc_searches == TRUE){
     Result <-
       Result[CompCol_all, on = .(molecule, adduct, isoabb, FileName), allow.cartesian = TRUE]
   } else {
     Result <-
-      CompCol_all[Result[!is.na(peaks.idx)], on = .(molecule, adduct, isoabb, FileName), nomatch = NULL]
+      CompCol_all[, !"user.rt"][Result[!is.na(peaks.idx)], on = .(molecule, adduct, isoabb, FileName), nomatch = NULL]
   }
+
+
+
+
+
+
+
+
 
   grp_tmp <- Grps[,.(samples_per_group = .N), by =.(sample_group)]
   colnames(grp_tmp)[1] <- "Grp"
   Result <- Result[grp_tmp, on = .(Grp)]
+
+
+
+
+
+
 
   Result$IDX <- seq.int(nrow(Result))
 

@@ -7,8 +7,18 @@
 #'
 #' @examples
 import_options <- function (file_path) {
-
+  print(file_path)
+  if(is.null(file_path)){
+    stop('No options file selected')
+  }
+  if(file_ext(file_path) != 'csv'){
+    stop('options file is not a valid csv file')
+  }
   options_table = fread(file_path, na.strings = c(""))
+
+  if (!is.data.table(options_table)){
+    stop('Options is not type DataTable')
+  }
   return(options_table)
 }
 
@@ -25,111 +35,36 @@ import_options <- function (file_path) {
 #' @export
 #'
 #' @examples
-rename_columns_from_options <- function(dt, options_table, old_columns, new_columns) {
+rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns) {
 
-  rename_table = na.omit(options_table[, c(old_columns, new_columns), with=FALSE], old_columns)
+  rename_table = na.omit(options_dt[, c(old_columns, new_columns), with=FALSE], old_columns)
   return(setnames(dt, rename_table[[old_columns]], rename_table[[new_columns]]))
 }
 
-#group columns by "by" and assign id to each group
-#' assign_groupID_column
+
+#' remove_identical_peaks
 #'
 #' @param dt
-#' @param column_name
-#' @param by
+#' @param incl_height
 #'
 #' @return
 #' @export
 #'
 #' @examples
-assign_groupID_column <- function(dt, column_name, by) {
-
-  return(dt[, (column_name):=.GRP, by = by])
+remove_identical_peaks <- function(dt, grouped = FALSE){
+  peaks_before <- nrow(dt)
+  if (grouped == FALSE){
+    dt <- dt[!duplicated(dt, by=c('peak_area', 'peak_height', 'mz', 'mz_start', 'mz_end', 'rt', 'rt_start', 'rt_end'))]
+  } else {
+    print( dt[duplicated(dt, by=c('peak_area', 'mz', 'rt')) | duplicated(dt, by=c('peak_area', 'mz', 'rt'), fromLast = TRUE)])
+    dt <- dt[!duplicated(dt, by=c('peak_area', 'mz', 'rt'))]
+  }
+  peaks_removed <- peaks_before-nrow(dt)
+  print(paste0('Removed ', peaks_removed,' identical peaks'))
+  return(dt)
 }
 
-#' filter_by_vector
-#'
-#' @param dt
-#' @param column_name
-#' @param vc
-#'
-#' @return
-#' @export
-#'
-#' @examples
-filter_by_vector <- function(dt, column_name, vc) {
-  #Do i need J()?
-  return(dt[J(vc), on=(column_name), nomatch=0])
-}
-
-
-#Create a new column, dt1_new_column, fill with values from
-#####MORE DISCRIPTION!!!!!
-#' dt_map
-#'
-#' @param dt1
-#' @param dt2
-#' @param dt1_keys
-#' @param dt2_keys
-#' @param dt2_values
-#' @param dt1_new_column
-#'
-#' @return
-#' @export
-#'
-#' @examples
-dt_map <- function (dt1, dt2, dt1_keys, dt2_keys, dt2_values, dt1_new_column) {
-
-  map_table <- dt2[, c(dt2_keys, dt2_values), with=FALSE]
-  dt1 <- dt1[map_table, (dt1_new_column) := mget(dt2_values),on = setNames(dt2_keys, dt1_keys)]
-  return(dt1)
-}
-
-
-
-
-
-
-#' import_grouped_centwave
-#'
-#' @param file_path
-#' @param options_table
-#'
-#' @return
-#' @export
-#'
-#' @examples
-import_grouped_centwave <- function (file_path, options_table) {
-
-  g_table <- fread(file_path)
-  g_table$feature_id <- seq.int(nrow(g_table))
-  id_vars <- append(na.omit(options_table[['g_columns']]), 'feature_id')
-  measure_vars = na.omit(options_table[, g_samples])
-  g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
-  g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
-  g_table <- g_table[peak_area > 0]
-
-
-  #needs to be investigated further, no duplicates should be present
-  #removing for now to make statistics work
-  print(nrow(g_table))
-  g_table <- g_table[!duplicated(g_table, by=c('peak_area', 'sample_name'))]
-  print(nrow(g_table))
-
-  g_table <- filter_by_vector(g_table, 'sample_name', options_table[,g_samples])
-  g_table <- dt_map(g_table, options_table, 'sample_name', 'g_samples', 'sample_id', 'sample_id')
-
-  #Add ID filed
-
-  g_table$comp_id <- seq.int(nrow(g_table))
-
-  colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
-
-  return(g_table)
-}
-
-
-
+##-----------------------
 
 #' find_main_feature
 #'
@@ -373,33 +308,6 @@ compare_peak_groups_new <- function(dt){
   compared_dt <- compared_dt[!duplicated(compared_dt, by=c('sample_id_b', 'sample_id_view'))]
   compared_dt <- dcast(compared_dt, sample_id_b ~ sample_id_view, value.var='overlap_iso')
   #fwrite(compared_dt, file='DEBUG.csv')
-}
-
-
-#' count_errors_max
-#'
-#' @param dt
-#'
-#' @return
-#' @export
-#'
-#' @examples
-count_errors_max <- function(dt){
-
-  dt <- dt[main_peak == "TRUE" | is.na(main_peak), c('sample_id_b', 'isoabb_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b', 'peak_area_g', 'peak_area_ug')]
-
-  dt <- dt[, peak_status := ifelse(is.na(peak_area_g) & is.na(peak_area_ug), "Lost_b.PP",
-                                   ifelse(is.na(peak_area_g) & !is.na(peak_area_ug), 'Lost_b.A',
-                                          ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, -3, feature_id_g)))]
-
-  if(nrow(dt) == 0){return(NA_integer_)}
-  #Reformat Table (CHECK FOR DUPLICATES)
-
-  dt <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
-
-  theReturn <- count_alignment_errors(dt, get_main_UT_groups(dt))
-
-  return(theReturn)
 }
 
 
