@@ -10,8 +10,8 @@ count_errors_max <- function(dt){
   theMolecule <- unique(dt$molecule_b)
   theAdduct  <- unique(dt$adduct_b)
   #dt <- dt[molecule_b == 'cis-Aconitate' & adduct_b == 'M-H']
-  dt <- dt[main_peak=='TRUE' | is.na(main_peak), c('sample_id_b', 'isoabb_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b', 'peak_area_g', 'peak_area_ug')]
 
+  dt <- dt[main_peak=='TRUE' | is.na(main_peak), c('sample_id_b', 'isoabb_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b', 'peak_area_g', 'peak_area_ug')]
 
   #Generate peak status Column
   ## -1 = Peak not found in g or ug (peakpicking error)

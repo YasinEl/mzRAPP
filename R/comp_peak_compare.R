@@ -198,7 +198,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
   print(paste('Before Main Peak Check: ', nrow(c_table)))
   c_table <- pick_main_peak_2(c_table)
-  #c_table[, main_peak := choose_main_peak(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b, rt_start_b, rt_end_b, rt_start_ug, rt_end_ug), by=.(molecule_b, adduct_b, sample_id_b)]
   print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
 
   fwrite(c_table, 'after_merge_debug.csv')
@@ -304,6 +303,10 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #Generate alignment error table
   ali_error_table <-
     rbindlist(list(c_table, nf_b_table), fill = TRUE)
+
+  if('peak_area_rounded_ug' %in% colnames(ali_error_table)){
+    ali_error_table <- ali_error_table[, 'peak_area_ug' := peak_area_rounded_ug]
+  }
 
   ali_error_table <- ali_error_table[, count_errors_max(.SD), .SDcols=c('molecule_b',
                                                     'adduct_b',

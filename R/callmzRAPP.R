@@ -1031,26 +1031,30 @@ css <- "
     observeEvent(comparison_data(),{
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
+        print(comparison_data()$ali_error_table)
         error_molecules <- as.character(comparison_data()$ali_error_table[errors > 0, Molecule])
         no_error_molecules <- as.character(comparison_data()$ali_error_table[errors == 0, Molecule])
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         print(choices)
-        updateSelectInput(session, 'mol_a', choices = choices)
+        updatePickerInput(session, 'mol_a', choices = choices)
       }
     })
-    observeEvent(input$mol_a, {
+    observeEvent({comparison_data();input$mol_a}, {
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
+        print(input$mol_a)
         error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct])
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         print(choices)
-        updateSelectInput(session, 'add_a', choices = choices)
+        updatePickerInput(session, 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
+        print(input$mol_a)
+        print(input$add_a)
         output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })
