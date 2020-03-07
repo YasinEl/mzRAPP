@@ -10,21 +10,36 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
   if(post_alignment == FALSE){
     hm_dt <- comparison_data$rs_table
+
+    works_dt <<- hm_dt
   } else if(post_alignment == TRUE){
 
     #dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
-    dt_n <- melt_fftable(comparison_data)
+    feat_t <- melt_fftable(comparison_data)
 
-    dt_n <- dt_n[main_feature == TRUE]
+    BM_bu <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
-    dt_n <- dt_n[!is.na(area_b)]
+    BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
+
+    feat_t <- feat_t[main_feature == TRUE]
+
+
+    feat_t <- feat_t[!is.na(area_b) &
+                          main_feature == TRUE][unique(na.omit(BM_bu[,c("molecule_b",
+                                                                    "isoabb_b",
+                                                                    "adduct_b",
+                                                                    "sample_id_b",
+                                                                    "peak_area_b")])), on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
+
+
+    #feat_t <- feat_t[!is.na(area_b)]
     hm_dt <-
-      dt_n[, missing_peaks := find_r_s_error(
-        area_b,
+      feat_t[, missing_peaks := find_r_s_error(
+        peak_area_b,
         area_g,
-        area_b
+        peak_area_b
       ), by = .(molecule_b, adduct_b, isoabb_b)]
-    hm_dt$sample_id_b <- as.factor(hm_dt$sample_id_b)
+    hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
     #tmp <- unique(data.table(sample_id_b = as.factor(ev_return_list[["c_table"]][["sample_id_b"]]),
     #                         sample_name_b = ev_return_list[["c_table"]][["sample_name_b"]]))
     #hm_dt <- hm_dt[tmp, on = .(sample_id_b)]
@@ -35,6 +50,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
 
   hm_dt <- hm_dt[, overgroup := paste0(molecule_b, adduct_b)]
+
   hm_dt <- hm_dt[, if (any(missing_peaks != 'F')) .SD, by = .(molecule_b, adduct_b, isoabb_b)]
   if(nrow(hm_dt) == 0) {return(plotly::ggplotly(ggplot() + ggtitle("No missing peaks present")))}
   hm_dt[, plot_group := .GRP, by = .(molecule_b, adduct_b, isoabb_b)]
@@ -42,11 +58,24 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
   hm_dt[is.na(nr)]$nr <- 0
 
 
+  hm_dt$ord <- as.integer(hm_dt$sample_id_b)
+  hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
+
+  hm_dt <- hm_dt[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "plot_group", "sample_id_b", "missing_peaks", "nr", "ord")]
+
+  if(post_alignment == TRUE){
+    notworks_dt <<- hm_dt
+
+  } else{
+    works_dt <<- hm_dt
+
+  }
+
   plot_r_s <- ggplot(
     hm_dt,
     aes(
       x = reorder(as.factor(plot_group), nr),
-      y = as.factor(sample_id_b),
+      y = reorder(as.factor(sample_id_b), ord),
       fill = missing_peaks,
       molecule = molecule_b,
       #mz = mz_acc_b,
@@ -56,7 +85,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
       )
     ) +
     geom_tile() +
-    scale_fill_manual(values=c("forestgreen", "firebrick", "royalblue4", "mediumpurple1")) +
+    scale_fill_manual(values=c(`F` = "forestgreen", `NF` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1")) +
     ggtitle("Missing peaks") +
     labs(x = "benchmark features", y = "sample IDs") +
     theme(legend.title = element_blank())

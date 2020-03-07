@@ -10,6 +10,30 @@
 #' @examples
 plot_comp_scatter_plot <- function(comparison_data, x, y, choice_vector_comp){
 
+
+  feat_t <- melt_fftable(comparison_data)
+
+  BM_bu <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+
+  BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
+
+  feat_t <- feat_t[main_feature == TRUE]
+
+
+  feat_t <- feat_t[!is.na(area_b) &
+                     main_feature == TRUE][unique(na.omit(BM_bu[,c("molecule_b",
+                                                                   "isoabb_b",
+                                                                   "adduct_b",
+                                                                   "sample_id_b",
+                                                                   "peak_area_b")])), on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
+
+
+  from_here <<- feat_t
+
+
+
+
+
   f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
   f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
