@@ -900,9 +900,8 @@ css <- "
         } else {
           options_path <- options_file()
         }
-        #options_table <- import_options(options_file())
         if (input$use_generated_benchmark == TRUE) {
-          b_o_tables <- import_benchmark(isolate(benchmark_data())$PCal, options_path, from_csv = FALSE, input$algorithm_input)
+          b_o_tables <- import_benchmark(benchmark_data()$PCal, options_path, from_csv = FALSE, input$algorithm_input)
           b_table = b_o_tables$b_table
           options_table <- b_o_tables$options_table
         } else {
@@ -1042,9 +1041,10 @@ css <- "
         updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
-    observeEvent(input$mol_a, {
+    observeEvent({comparison_data();input$mol_a}, {
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
+        print(input$mol_a)
         error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct])
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
@@ -1055,6 +1055,8 @@ css <- "
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
+        print(input$mol_a)
+        print(input$add_a)
         output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })

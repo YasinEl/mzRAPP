@@ -12,6 +12,10 @@ Alignment_error_plot <- function(comparison_data, mol, add){
 
   dt <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
+  if('peak_area_rounded_ug' %in% colnames(dt)){
+    dt <- dt[, 'peak_area_ug' := peak_area_rounded_ug]
+  }
+
 
   dt <- dt[(main_peak == "TRUE" | is.na(main_peak)) &
              molecule_b == mol &
@@ -30,6 +34,8 @@ Alignment_error_plot <- function(comparison_data, mol, add){
   dt <- dt[, peak_status := ifelse(is.na(peak_area_g) & is.na(peak_area_ug), "Lost_b.PP",
                                    ifelse(is.na(peak_area_g) & !is.na(peak_area_ug), 'Lost_b.A',
                                           ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, -3, feature_id_g)))]
+
+  fwrite(dt, 'align_debug.csv')
 
 
   if(nrow(dt) == 0){return(NA_integer_)}
