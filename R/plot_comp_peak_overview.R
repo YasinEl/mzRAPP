@@ -14,16 +14,6 @@ plot_comp_peak_overview <- function(comparison_data, mol_c, add_c, ia_c) {
   plot_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
   if(nrow(plot_dt[molecule_b == mol_c & adduct_b == add_c & round(isoabb_b, 2) == ia_c]) > 0){
-    print('Generating EIC')
-
-    #p <- suppressWarnings(
-    #  plot_Peak_per_mol(
-    #    plot_dt,
-    #    mol = mol_c,
-    #    add = add_c,
-    #    ia = ia_c
-    #  )
-    #)
 
     p <- plot_Peak_per_mol(
           plot_dt,

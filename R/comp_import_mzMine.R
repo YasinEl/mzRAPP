@@ -11,7 +11,6 @@
 #' @examples
 import_ungrouped_mzmine <- function(folder_path, options_table){
   print('start ungroupd mzmine import')
-  #print(folder_path)
 
   if(is.null(folder_path)){
     stop('No ungrouped files selected')
@@ -19,13 +18,11 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 
   for (i in 1:length(folder_path)){
     file_path <- folder_path[i]
-    print(file_path)
     #Check if ug_table exists, if not: create
     if(!exists("temp_dt")){
       ug_table <- fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
       sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
-      print(sample_name)
 
       ug_table <- ug_table[, 'sample_name' := sample_name]
 
@@ -40,7 +37,6 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
       ug_table <- fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
       sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
-      print(sample_name)
 
       ug_table <- ug_table[, 'sample_name' := sample_name]
 
@@ -51,7 +47,6 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
       new_names <- sapply(old_names, function(x) strsplit(x, paste0(sample_name, ' '))[[1]], USE.NAMES = FALSE)[2,]
       temp_data <- setnames(temp_data, old_names, new_names)
       temp_dt <- rbind(temp_dt, temp_data)
-      rm(temp_data)
     }
   }
   ug_table <- temp_dt

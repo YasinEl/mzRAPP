@@ -26,20 +26,12 @@ classify_false_negative <- function(dt) {
     group <- group[order(peak_area_b)]
     group <- group[, order_temp := .I]
 
-    #print(identical(pre_order, post_order))
-
     first_found_area <- min(which(!is.na(group$peak_area_g)))
 
     group <- group[, area_diff := abs(((peak_area_b-min(peak_area_b))*100)/min(peak_area_b))]
     group <- group[, false_negative_type := as.character(ifelse(order_temp < first_found_area & false_negative == 'TRUE', 'R',
                                                                 ifelse(order_temp > first_found_area&false_negative == 'TRUE'&area_diff >=20, 'S',
                                                                        ifelse(order_temp > first_found_area&false_negative == 'TRUE'&area_diff <20, 'R', NA))))]
-    if (group$feature_id_b[1]==406) {
-      print(first_found_area)
-      print(group$false_negative)
-      fwrite(group, file="group_debug.csv")
-      print('------')
-    }
     return(group)
   }
 

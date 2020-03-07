@@ -4,10 +4,13 @@
 \alias{Alignment_error_plot}
 \title{Alignment_error_plot}
 \usage{
-Alignment_error_plot(dt, mol, add)
+Alignment_error_plot(comparison_data, mol, add)
 }
 \arguments{
 \item{add}{}
+}
+\value{
+
 }
 \description{
 Alignment_error_plot

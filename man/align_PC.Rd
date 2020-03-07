@@ -4,11 +4,20 @@
 \alias{align_PC}
 \title{align_PC}
 \usage{
-align_PC(PC, ia = 100, add = "all", isocount = 2,
-  plan = "multiprocess", pick_best = "rt_match")
+align_PC(
+  PC,
+  ia = 100,
+  add = "all",
+  isocount = 2,
+  plan = "multiprocess",
+  pick_best = "rt_match"
+)
 }
 \arguments{
 \item{pick_best}{}
+}
+\value{
+
 }
 \description{
 align_PC

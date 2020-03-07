@@ -1,6 +1,4 @@
-
-
-#' compare_peaks_ug_g
+#' compare_peaks
 #'
 #' @param b_table
 #' @param ug_table
@@ -11,16 +9,9 @@
 #' @export
 #'
 #' @examples
-compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_method){
+compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   info_list <- list()
-
-  print('b table')
-  str(b_table)
-  print('ug table')
-  str(ug_table)
-  print('g table')
-  str(g_table)
 
   #If no g_table exists crate empty one
   if(is.null(g_table)){
@@ -88,25 +79,23 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                                       nr_of_g_features = length(unique(g_table$feature_id_g)),
                                       algorithm = algo))
 
-  print(info_list)
-
 
   ##############
   #Check for duplicate peaks
   ##############
 
-  if (any(duplicated(b_table, by = c('rt_b', 'mz_b', 'peak_height_b')))){
-    warning('Duplicate peaks present in benchmark. This can lead to further errors during analysis.')
-  }
-  if (any(duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug')))){
-    warning('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
+  #if (any(duplicated(b_table, by = c('rt_b', 'mz_b', 'peak_height_b')))){
+  #  print('Duplicate peaks present in benchmark. This can lead to further errors during analysis.')
+  #}
+  #if (any(duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug')))){
+  #  print('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
     total_ug_peaks <- nrow(ug_table)
     ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug'))]
-    warning(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate peaks to prevent errors'))
-  }
-  if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){
-    warning('Duplicate peaks present in grouped. This can lead to further errors during analysis.')
-  }
+    print(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate non-aligned peaks to prevent errors'))
+  #}
+  #if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){
+  #  print('Duplicate peaks present in grouped. This can lead to further errors during analysis.')
+  #}
 
   ##############
   #Start comparison!
@@ -154,10 +143,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
 
-  fwrite(c_table, 'firstJoinDebug.csv')
-
-
-
 
 
   ##############
@@ -197,10 +182,8 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
 
 
   print(paste('Before Main Peak Check: ', nrow(c_table)))
-  c_table <- pick_main_peak_2(c_table)
+  c_table <- pick_main_peak(c_table)
   print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
-
-  fwrite(c_table, 'after_merge_debug.csv')
 
 
 
@@ -245,9 +228,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
 
-  fwrite(g_table, 'msdail_full_g_debug.csv')
-  fwrite(c_table, 'grouping_check.csv')
-
 
   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
   split_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
@@ -265,7 +245,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   ###################################################################################################################
   print('Start FF Compare')
   ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
-  fwrite(ff_table_dt, 'ff_comp_dt.csv')
 
   ##############
   #Create benchmark, ungrouped and grouped tables for not found peaks
@@ -274,24 +253,11 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   #Not found B Peaks
   nf_b_table <- b_table[!b_table$comp_id_b %in% unique(c_table$comp_id_b)]
 
-  fwrite(nf_b_table, 'nf_b_debug.csv')
-  fwrite(b_table, 'b_debug.csv')
-
   #Not found UG Peaks
   nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(c_table$comp_id_ug)]
 
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
-
-  fwrite(c_table, 'msdial_dbug.csv')
-
-  print(paste0('Before Main Feature: ', nrow(c_table)))
-  if (main_feature_method != '---'){
-    c_table <- find_main_feature_1(c_table, main_feature_method, nf_g_table, nf_b_table)
-    c_table <- c_table[is_main_feature == TRUE]
-  }
-  print(paste0('After Main Feature: ', nrow(c_table)))
-  print(paste0('Only Main Peak: ', nrow(c_table[main_peak == TRUE])))
 
   #Generate Random and systematic error DT
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
@@ -415,9 +381,6 @@ compare_peaks_ug_g <- function(b_table, ug_table, g_table, algo, main_feature_me
   return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list,
                       'split_table' = split_table, 'ff_table' = ff_table_dt, 'rs_table'= rs_table, 'iso_err_dt' = iso_err_dt, 'ali_error_table' = ali_error_table,
                       'feature_table' = feature_table)
-  ev_return_list <<- return_list
-
-  saveRDS(return_list, "RObject.rds")
   print('Compare Succesfull')
 
 

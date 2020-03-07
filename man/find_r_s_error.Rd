@@ -9,6 +9,9 @@ find_r_s_error(peak_area_b, peak_area_ug, peak_height_b)
 \arguments{
 \item{peak_height_b}{}
 }
+\value{
+
+}
 \description{
 find_r_s_error
 }

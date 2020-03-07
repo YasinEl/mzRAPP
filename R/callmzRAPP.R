@@ -408,18 +408,7 @@ css <- "
         ),
         fluidRow(
           column(
-            12, strong('4. Select Main Feature Selection Method'), br(), br()
-          )
-        ),
-        fluidRow(
-          column(
-
-            12, selectInput('main_feature_method_input', 'main feature method used', c('---', 'correct', 'match_iso_pattern'), selected = '---')
-          )
-        ),
-        fluidRow(
-          column(
-            12, strong('5. Start!'), br(), br()
+            12, strong('4. Start!'), br(), br()
           )
         ),
         fluidRow(
@@ -440,142 +429,156 @@ css <- "
                         verbatimTextOutput('results_text')
         )),
         fluidRow(
-          column(8,
-                 dropdownButton(
-                   br("texttext"),
-                   tooltip = tooltipOptions(title = 'Click for description'),
-                   circle = TRUE,
-                   width = 600,
-                   status = 'info',
-                   icon = icon('question-circle'),
-                   size = 'sm'
-                 ),
-                 prettySwitch(inputId = 'PP_al_switch_ov',
-                              label = 'after PeakPicking | Alignment',
-                              value = FALSE,
-                              width = '190px'),
-                 div(style = "width: 20px;"),
+                 column(8,
+                          fluidRow(
+                                   column(1,
+                                            dropdownButton(br("texttext"),
+                                                           tooltip = tooltipOptions(title = 'Click for description'),
+                                                           circle = TRUE,
+                                                           width = 600,
+                                                           status = 'info',
+                                                           icon = icon('question-circle'),
+                                                           size = 'sm'
+                                                          )
+                                         ),
+                                   column(11,
+                                             prettySwitch(inputId = 'PP_al_switch_ov',
+                                                          label = 'after PeakPicking | Alignment',
+                                                          value = FALSE
+                                                         )
+                                         )
+                                  ),
+                          fluidRow(column(12, plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1"))),
+                          fluidRow(
+                                   column(3,
+                                            selectInput('overview_plot_input_x',
+                                                        'x-axis',
+                                                        choice_vector_comp
+                                                       )
+                                         ),
+                                   column(3,
+                                            selectInput('overview_plot_input_y',
+                                                        'y-axis',
+                                                        choice_vector_comp,
+                                                        selected = 'peak_height_b'
+                                                       )
+                                         )
 
-                 plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1")),
+                                  )
+                         ),
+                 column(4,
+                          fluidRow(
+                                   column(1,
+                                            dropdownButton(
+                                                           br('Graph 3 Text'),
+                                                           tooltip = tooltipOptions(title = 'Click for description'),
+                                                           circle = TRUE,
+                                                           width = 600,
+                                                           status = 'info',
+                                                           icon = icon('question-circle'),
+                                                           size = 'sm'
+                                                          )
+                                         ),
+                                   column(11,
+                                             prettySwitch(inputId = 'PP_al_switch_dist',
+                                                          label = 'after PeakPicking | Alignment',
+                                                          value = FALSE
+                                                         )
+                                         )
+                                  ),
+                          fluidRow(column(12,plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1"))),
+                          fluidRow(
+                                   column(4,
+                                            selectInput('graph_select_input',
+                                                        'Graph selection',
+                                                        choice_vector_comp
+                                                       )
+                                         )
+                                  )
+                       )
+                ),
 
-
-          column(
-            4,
-            dropdownButton(
-              br('Graph 3 Text'),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              width = 600,
-              status = 'info',
-              icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            prettySwitch(inputId = 'PP_al_switch_dist',
-                         label = 'after PeakPicking | Alignment',
-                         value = FALSE,
-                         width = '190px'),
-            plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          )
-        ),
         fluidRow(
-          column(3,
-                 selectInput(
-                   'overview_plot_input_x',
-                   'x-axis',
-                   choice_vector_comp
-                 )
-          ),
-          column(3,
-                 selectInput(
-                   'overview_plot_input_y',
-                   'y-axis',
-                   choice_vector_comp,
-                   selected = 'peak_height_b'
-                 )
-          ),
-          column(2),
-          column(
-            4, selectInput(
-              'graph_select_input',
-              'Graph selection',
-              choice_vector_comp
-            )
+                 column(4,
+                          fluidRow(
+                                   column(1,
+                                            dropdownButton("Each column represents a benchmark feature and missed by the UT algorithm
+                                                            are color coded into random and systematic missing values.
+                                                            For simplification only benchmark features containing at least one missing value are shown.",
+                                                           "Note: This is not considering the alignment of the untargeted algorithm
+                                                            at all but only the peak detection!",
+                                                           "(R) random",
+                                                           "(S) systematic",
+                                                           "(F) found \n",
+                                                           "(NF) not found",
+                                                           tooltip = tooltipOptions(title = 'Click for description'),
+                                                           circle = TRUE,
+                                                           status = 'info',
+                                                           icon = icon('question-circle'),
+                                                           size = 'sm',
+                                                           width = 600
+                                                          ),
+                                         ),
+                                   column(11,
+                                             prettySwitch(inputId = 'PP_al_switch_hm',
+                                                          label = 'after PeakPicking | Alignment',
+                                                          value = FALSE)
+                                         )
+                                  ),
+                          fluidRow(column(12,plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1")))
+                       ),
+
+                 column(4,
+                          fluidRow(
+                                   column(1,
+                                            dropdownButton("CV of benchmark peak areas as compared to the UT unaligned peaks.
+                                                            Each CV is calculated per molecule/adduct/isotopologue pair and over all
+                                                            replicates of a sample group.",
+                                                           "Only unaligned peak areas which were recovered in all replicates of a group were considered.
+                                                            Red represents CV increase by more than 10%p.",
+                                                           tooltip = tooltipOptions(title = 'Click for description'),
+                                                           circle = TRUE,
+                                                           status = 'info',
+                                                           icon = icon('question-circle'),
+                                                           size = 'sm',
+                                                           width = 600
+                                                          ),
+                                         ),
+                                   column(11,
+                                             prettySwitch(inputId = 'PP_al_switch_ITe',
+                                                          label = 'after PeakPicking | Alignment',
+                                                          value = FALSE)
+                                         )
+                                  ),
+                        fluidRow(column(12,plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1")))
+                       ),
+                 column(4,
+                          fluidRow(
+                                   column(1,
+                                            dropdownButton('Here peaks corresponding to a specific molecule, adduct, isotopic abundance combination
+                                                            can be plotted over all samples. Solid lines correspond to peak borders in
+                                                            the benchmark and dashed lines to peak borders set by the UT algorithm.',
+                                                           tooltip = tooltipOptions(title = 'Click for description'),
+                                                           circle = TRUE,
+                                                           status = 'info',
+                                                           icon = icon('question-circle'),
+                                                           size = 'sm',
+                                                           width = 600
+                                                          ),
+                                         )
+                                  ),
+                          fluidRow(column(12,plotlyOutput('graph_area_4') %>% shinycssloaders::withSpinner(color="#0dc5c1"))),
+                          fluidRow(##Open Dropdowns upwards
+                                   tags$style(HTML("#mol_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                                   tags$style(HTML("#add_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                                   tags$style(HTML("#ia_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                                   column(6, selectInput('mol_c', 'Molecule', c())),
+                                   column(3, selectInput('add_c', 'Adduct', c())),
+                                   column(3, selectInput('ia_c', 'Iso. Ab.', c()))
+                                  )
+                       )
+                )
           )
-        ),
-
-        fluidRow(
-          column(
-            4,
-            dropdownButton(
-              br(
-                "Each column represents a benchmark feature and missed by the UT algorithm are color coded into random and systematic missing values.
-              For simplification only benchmark features containing at least one missing value are shown.
-                Note: This is not considering the alignment of the untargeted algorithm at all but only the peak detection!
-                (R) random
-                (S) systematic
-                (F) found
-                (NF) not found
-                "
-              ),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              status = 'info',
-              icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            prettySwitch(inputId = 'PP_al_switch_hm',
-                         label = 'after PeakPicking | Alignment',
-                         value = FALSE,
-                         width = '190px'),
-            div(style = "width: 20px;"),
-            plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          ),
-
-          column(
-            4,
-            dropdownButton(
-              br('CV of benchmark peak areas as compared to the UT unaligned peaks. Each CV is calculated per molecule/adduct/isotopologue pair and over all
-               replicates of a sample group. Only unaligned peak areas which were recovered in all replicates of a group were considered. Red represents
-               CV increase by more than 10%p.'),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              status = 'info',
-              icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            prettySwitch(inputId = 'PP_al_switch_ITe',
-                         label = 'after PeakPicking | Alignment',
-                         value = FALSE,
-                         width = '190px'),
-            div(style = "width: 20px;"),
-            plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          ),
-          column(
-            4,
-            dropdownButton(
-              br('Here peaks corresponding to a specific molecule, adduct, isotopic abundance combination can be plotted over all samples. Solid lines correspond to
-               to peak borders in the benchmark and dashed lines to peak borders set by the UT algorithm.'),
-              tooltip = tooltipOptions(title = 'Click for description'),
-              circle = TRUE,
-              status = 'info',
-              icon = icon('question-circle'),
-              size = 'sm'
-            ),
-            plotlyOutput('graph_area_4') %>% shinycssloaders::withSpinner(color="#0dc5c1")
-          )
-        ),
-
-        fluidRow(column(8),
-                 ##Open Dropdowns upwards
-                 tags$style(HTML("#mol_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                 tags$style(HTML("#add_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                 tags$style(HTML("#ia_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                 ##
-                 column(2, selectInput('mol_c', 'Molecule', c())),
-                 column(1, selectInput('add_c', 'Adduct', c())),
-                 column(1, selectInput('ia_c', 'Iso. Ab.', c()))
-        )
-      )
     ),
     tabPanel(
       'Assessment results (features)',
@@ -802,8 +805,6 @@ css <- "
 
       SkyPeakBo <- SkylinePeakBoundaries(PCal)
 
-      print(Sys.time() - starttime)
-
       benchmark_data(list(files = files, targets = targets, PCal = PCal))
 
       sendSweetAlert(session,
@@ -921,7 +922,7 @@ css <- "
         #####################
         #perform comparisons
         #####################
-        comparison_ug_g <- compare_peaks_ug_g(b_table, ug_table, g_table, input$algorithm_input, input$main_feature_method_input)
+        comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2)
@@ -958,7 +959,6 @@ css <- "
     observeEvent(input$mol_c, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        print('add_c')
         comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
         updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
       }
@@ -966,7 +966,6 @@ css <- "
     observeEvent({input$mol_c; input$add_c}, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        print('ia_c')
         comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
         updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
       }
@@ -1037,26 +1036,21 @@ css <- "
         error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors > 0, Molecule]))
         no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
-        print(choices)
         updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
     observeEvent({comparison_data();input$mol_a}, {
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
-        print(input$mol_a)
         error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors > 0), Adduct])
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
-        print(choices)
         updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        print(input$mol_a)
-        print(input$add_a)
         output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })

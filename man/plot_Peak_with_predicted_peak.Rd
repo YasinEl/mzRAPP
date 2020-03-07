@@ -9,6 +9,9 @@ plot_Peak_with_predicted_peak(PC_object, IndexNumber)
 \arguments{
 \item{file}{}
 }
+\value{
+
+}
 \description{
 plot_Peak_with_predicted_peak
 }

@@ -4,10 +4,19 @@
 \alias{plot_comp_scatter_plot}
 \title{plot_comp_scatter_plot}
 \usage{
-plot_comp_scatter_plot(comparison_data, x, y, choice_vector_comp)
+plot_comp_scatter_plot(
+  comparison_data,
+  x,
+  y,
+  choice_vector_comp,
+  post_alignment = FALSE
+)
 }
 \arguments{
 \item{plot_input_y}{}
+}
+\value{
+
 }
 \description{
 plot_comp_scatter_plot
