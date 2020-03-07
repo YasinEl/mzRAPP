@@ -1039,7 +1039,6 @@ css <- "
         no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         print(choices)
-        tcma <<- choices
         updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
@@ -1050,7 +1049,6 @@ css <- "
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         print(choices)
-        tcaa <<- choices
         updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }
     })
