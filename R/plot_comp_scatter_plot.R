@@ -8,35 +8,44 @@
 #' @export
 #'
 #' @examples
-plot_comp_scatter_plot <- function(comparison_data, x, y, choice_vector_comp){
+plot_comp_scatter_plot <- function(comparison_data, x, y, choice_vector_comp, post_alignment = FALSE){
 
 
+  if(post_alignment == TRUE){
   feat_t <- melt_fftable(comparison_data)
 
-  BM_bu <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+  BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
 
   BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
 
   feat_t <- feat_t[main_feature == TRUE]
 
+  vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
 
-  feat_t <- feat_t[!is.na(area_b) &
-                     main_feature == TRUE][unique(na.omit(BM_bu[,c("molecule_b",
-                                                                   "isoabb_b",
-                                                                   "adduct_b",
-                                                                   "sample_id_b",
-                                                                   "peak_area_b")])), on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
+  f_nf_dt <- feat_t[!is.na(area_b) &
+                     main_feature == TRUE, c("molecule_b",
+                                             "adduct_b",
+                                             "isoabb_b",
+                                             "sample_id_b",
+                                             "area_g")][BM_bu[,..vct], on = .(molecule_b,
+                                                                              adduct_b,
+                                                                              isoabb_b,
+                                                                              sample_id_b)]
+
+  f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
+
+  from_here <<- f_nf_dt
 
 
-  from_here <<- feat_t
-
-
-
+} else if(post_alignment == FALSE){
 
 
   f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
   f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
+
+}
+
 
   f_nf_dt <- suppressWarnings(f_nf_dt[order(as.numeric(f_nf_dt$f_nf_col), decreasing = TRUE),])
 

@@ -35,7 +35,7 @@ css <- "
 
   options(shiny.reactlog = F)
   options(useFancyQuotes = FALSE)
-  options(shiny.trace = T)
+  options(shiny.trace = F)
   #options(shiny.maxRequestSize = 100000 * 1024 ^ 2)
   options(spinner.type = 4)
 
@@ -977,10 +977,10 @@ css <- "
 
 
     #Scatter_plot
-    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y}, {
+    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp))
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp, post_alignment = input$PP_al_switch_ov))
       }
     })
 
@@ -1031,11 +1031,12 @@ css <- "
     observeEvent(comparison_data(),{
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
-        error_molecules <- as.character(comparison_data()$ali_error_table[errors > 0, Molecule])
-        no_error_molecules <- as.character(comparison_data()$ali_error_table[errors == 0, Molecule])
+        error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors > 0, Molecule]))
+        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         print(choices)
-        updateSelectInput(session, 'mol_a', choices = choices)
+        tcma <<- choices
+        updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
     observeEvent(input$mol_a, {
@@ -1045,7 +1046,8 @@ css <- "
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         print(choices)
-        updateSelectInput(session, 'add_a', choices = choices)
+        tcaa <<- choices
+        updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }
     })
     observeEvent(comparison_data(), {
