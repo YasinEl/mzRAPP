@@ -470,6 +470,10 @@ css <- "
               icon = icon('question-circle'),
               size = 'sm'
             ),
+            prettySwitch(inputId = 'PP_al_switch_dist',
+                         label = 'after PeakPicking | Alignment',
+                         value = FALSE,
+                         width = '190px'),
             plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1")
           )
         ),
