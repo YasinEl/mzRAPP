@@ -4,8 +4,13 @@
 \alias{Filter_Background}
 \title{Filter_Background}
 \usage{
-Filter_Background(PeakCandidates, IonSpeciesIdentifier, SampleIdentifier,
-  Blank_label, Factor = 5)
+Filter_Background(
+  PeakCandidates,
+  IonSpeciesIdentifier,
+  SampleIdentifier,
+  Blank_label,
+  Factor = 5
+)
 }
 \arguments{
 \item{PeakCandidates}{x}

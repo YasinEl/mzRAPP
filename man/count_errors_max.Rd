@@ -9,6 +9,9 @@ count_errors_max(dt)
 \arguments{
 \item{dt}{}
 }
+\value{
+
+}
 \description{
 count_errors_max
 }

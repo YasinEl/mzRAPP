@@ -10,17 +10,14 @@
 feature_compare <- function(b_table, g_table){
 
   #Find smallest and largest mz and rt and area per feature
-  print(colnames(b_table))
   b_table <- b_table[, ':=' (min_mz_start = min(mz_start_b),
                              max_mz_end = max(mz_end_b),
                              min_rt_start = min(new_rt_start_b),
                              max_rt_end = max(new_rt_end_b),
                              total_area_b = sum(peak_area_b),
-                             #feature_core_length = max_rt_end - min_rt_start, #Why not working?? max_rt missing?
                              present_samples_b = paste(.SD$sample_id_b, collapse = ','),
                              sample_id_b_suf = paste0('sample_',sample_id_b, '_b')), by=c('molecule_b', 'isoabb_b', 'adduct_b')]
 
-  #b_table <- b_table[, present_samples_b := paste(.SD$sample_id_b, collapse = ','), by=c('molecule_b', 'isoabb_b', 'adduct_b')]
 
   #Bring b_table into wide format
   b_table <- dcast(b_table, feature_id_b + molecule_b + isoabb_b + adduct_b + total_area_b + min_mz_start + max_mz_end + min_rt_start + max_rt_end + present_samples_b ~ sample_id_b_suf, value.var=c('peak_area_b'))
@@ -40,12 +37,9 @@ feature_compare <- function(b_table, g_table){
                                     min_rt_start < rt_g,
                                     max_rt_end > rt_g), allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
-  fwrite(cf_table, "debug_cf_table.csv")
 
 
 
   cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
-  fwrite(cf_table, 'cf_debug.csv')
-  print('Done feature compare')
   return(cf_table)
 }

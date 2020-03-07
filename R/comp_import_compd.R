@@ -62,8 +62,6 @@ import_ungrouped_cd <- function(file_path, options_table){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  View(ug_table)
-
   return(ug_table)
 }
 

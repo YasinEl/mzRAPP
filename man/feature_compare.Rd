@@ -9,6 +9,9 @@ feature_compare(b_table, g_table)
 \arguments{
 \item{g_table}{}
 }
+\value{
+
+}
 \description{
 feature_compare
 }

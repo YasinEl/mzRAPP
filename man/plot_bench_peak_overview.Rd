@@ -9,6 +9,9 @@ plot_bench_peak_overview(benchmark_data, molecule, adduct, ia)
 \arguments{
 \item{ia}{}
 }
+\value{
+
+}
 \description{
 plot_bench_peak_overview
 }

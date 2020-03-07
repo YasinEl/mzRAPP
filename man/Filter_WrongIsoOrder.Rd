@@ -4,8 +4,13 @@
 \alias{Filter_WrongIsoOrder}
 \title{Filter_WrongIsoOrder}
 \usage{
-Filter_WrongIsoOrder(PeakCandidates, SampleIdentifier, MoleculeIdentifier,
-  AdductIdentifier, IsotoplogeIdentifier)
+Filter_WrongIsoOrder(
+  PeakCandidates,
+  SampleIdentifier,
+  MoleculeIdentifier,
+  AdductIdentifier,
+  IsotoplogeIdentifier
+)
 }
 \arguments{
 \item{PeakCandidates}{x}

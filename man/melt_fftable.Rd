@@ -9,6 +9,9 @@ melt_fftable(comparison_data)
 \arguments{
 \item{fftable}{}
 }
+\value{
+
+}
 \description{
 melt_fftable
 }

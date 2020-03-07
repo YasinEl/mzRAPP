@@ -65,8 +65,6 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
   print(paste0('Successful msdial ug import. No. of peaks imported: ', nrow(ug_table)))
 
-  fwrite(ug_table, 'msdial_ug_debug.csv')
-
   return(ug_table)
 }
 
@@ -139,8 +137,6 @@ import_grouped_msdial <- function(file_path, options_dt){
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
   print(paste0('Successful msdial g import. No. of peaks imported: ', nrow(g_table)))
-
-  fwrite(g_table, 'msdial_g_debug.csv')
 
   return(g_table)
 }
