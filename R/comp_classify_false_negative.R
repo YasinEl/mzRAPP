@@ -15,7 +15,7 @@ classify_false_negative <- function(dt) {
 
 
   dt <- dt[, feature_id_b_temp := feature_id_b]
-  fwrite(dt, file="debug.csv")
+  #fwrite(dt, file="debug.csv")
   temp_groups <- dt[, if(any(false_negative == 'TRUE')) .SD, by=.(feature_id_b_temp)]
   temp_groups <- temp_groups[, if(!all(false_negative == 'TRUE')) .SD, by=.(feature_id_b_temp)]
 

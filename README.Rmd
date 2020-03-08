@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of mzRAPP is to ...
+The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files.  
 
 ## Installation
 

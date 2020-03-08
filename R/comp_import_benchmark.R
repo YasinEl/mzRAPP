@@ -58,7 +58,7 @@ import_benchmark <- function (file, options_path, from_csv = TRUE, algo) {
 
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(b_table, by=c('peak_area')))){
-    fwrite(b_table[(duplicated(b_table, by=c('peak_area'))|duplicated(b_table, by=c('peak_area'), fromLast = TRUE))], 'dup_debug.csv')
+    #fwrite(b_table[(duplicated(b_table, by=c('peak_area'))|duplicated(b_table, by=c('peak_area'), fromLast = TRUE))], 'dup_debug.csv')
     b_table <- b_table[!duplicated(b_table, by='peak_area')]
     warning('Duplicate peaks present in raw benchmark file')
   }

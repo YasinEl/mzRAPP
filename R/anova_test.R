@@ -11,7 +11,7 @@ vulcano_plot <- function (comparison, no_of_samples){
   print(nrow(anova_dt))
   #Genertate Tuckey for each Molecule_adduct_Iso combination if 2 or more groups with atleast one valid datapoint are present
   anova_dt <- anova_dt[, anova_group := paste(molecule_b, adduct_b, isoabb_b, sep='_')]
-  fwrite(anova_dt, 'anova_dbug.csv')
+  #fwrite(anova_dt, 'anova_dbug.csv')
 
   #result_dt<-TukeyHSD(aov(peak_area_b ~ as.factor(grp_b), data=anova_dt))
 
@@ -69,7 +69,7 @@ vulcano_plot <- function (comparison, no_of_samples){
 
 
 
-  fwrite(result_dt, 'tukey_result.csv')
+  #fwrite(result_dt, 'tukey_result.csv')
 
   result_dt <- result_dt[, ':='('plot_p' = -log10(p_adj),
                                 'plot_fold' = log2(fold_change))]
