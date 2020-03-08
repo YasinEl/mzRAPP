@@ -110,9 +110,6 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
 
 #} else {stop("Argument post_alignment must be TRUE or FALSE!")}
 
-  sv <<- iso_err_dt
-
-
   p <- ggplot(iso_err_dt[isoabb_b < 100]) +
     suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,
                                                       y = Pred_error,

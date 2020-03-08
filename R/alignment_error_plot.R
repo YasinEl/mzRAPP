@@ -42,8 +42,6 @@ Alignment_error_plot <- function(comparison_data, mol, add){
 
   dt_for_error_count <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
-  warumDAS <<- dt_for_error_count
-
   error_count <- count_alignment_errors(dt_for_error_count, get_main_UT_groups(dt_for_error_count))
 
 

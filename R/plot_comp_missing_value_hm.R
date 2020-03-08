@@ -11,7 +11,6 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
   if(post_alignment == FALSE){
     hm_dt <- comparison_data$rs_table
 
-    works_dt <<- hm_dt
   } else if(post_alignment == TRUE){
 
     #dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
@@ -64,10 +63,8 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
   hm_dt <- hm_dt[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "plot_group", "sample_id_b", "missing_peaks", "nr", "ord")]
 
   if(post_alignment == TRUE){
-    notworks_dt <<- hm_dt
 
   } else{
-    works_dt <<- hm_dt
 
   }
 

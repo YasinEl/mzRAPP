@@ -34,8 +34,6 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, choice_vector_comp, po
 
   f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
 
-  from_here <<- f_nf_dt
-
 
 } else if(post_alignment == FALSE){
 

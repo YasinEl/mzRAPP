@@ -121,8 +121,6 @@ getROIsForEICs <-
 
       ROI.dt <- rbindlist(ROI.list)
 
-      if(molec == "Xanthine") ROI.dt_check <<- ROI.dt
-
       ROI.dt <- ROI.dt[,.(rtmin = xr@scantime[scmin],
                           rtmax = xr@scantime[scmax],
                           mzlowerBD = mz,
@@ -161,9 +159,6 @@ getROIsForEICs <-
         ##################################
         #find the rt region where most isotopologues overlap with the most abundant isotopologue to estimate(!) the rt of the compound
         ##################################
-        test_xr <<- xr
-        mat_sum <<- matches_summary
-
         matches_summary <- matches_summary[matches_summary[,.(roi_overlaps_max = xr@scantime[which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))],
                                                               roi_overlaps_max_sc = which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))),
                                                            by=.(molecule, adduct, fileIdx)],

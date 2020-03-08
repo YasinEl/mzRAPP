@@ -11,16 +11,12 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
 
   if(post_alignment == TRUE){
+
     feat_t <- melt_fftable(comparison_data)
-
     BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
-
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
-
     feat_t <- feat_t[main_feature == TRUE]
-
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
-
     f_nf_dt <- feat_t[!is.na(area_b) &
                         main_feature == TRUE, c("molecule_b",
                                                 "adduct_b",
@@ -33,59 +29,41 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
 
-    #from_here <<- f_nf_plot
 
 
   } else if(post_alignment == FALSE){
 
-
     f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }
-#checkthat <<-  f_nf_plot
 
-  if(is.character(f_nf_plot[,..var])){#var %in% c("molecule_b", "adduct_b", "Grp_b", "sample_name_b")){
+  if(is.character(unlist(f_nf_plot[,..var]))){
 
-
+    f_nf_plot <- cbind(f_nf_plot[, "f_nf_col"], f_nf_plot[, ..var])
     df_tmp <- f_nf_plot
-    df_tmp$dpl <- duplicated(df_tmp$var)
-
-    compl <- df_tmp$var[df_tmp$dpl]
-
-    uncompl <- df_tmp[!var %in% compl]
-    uncompl$var <- uncompl$var
-
-    subst <-
-      apply(uncompl, 1, function(x){
-
-        c(var = round(as.numeric(unname(x[1])),5), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
-
-      })
-    subst <- as.data.table(subst, keep.rownames = TRUE)
-
-    subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
-    subst$f_nf_col <- as.logical(subst$f_nf_col)
-
-
-    df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
-    df_bin$var <- round(as.numeric(df_bin$var), 5)
-    df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
-
-
-
-
+    colnames(df_tmp)[2] <- "var_r"
+    df_tmp <- df_tmp[, .N, by = .(var_r, f_nf_col)]
+    df_sum <- df_tmp
+    df_tmp$dpl <- duplicated(df_tmp$var_r)
+    compl <- df_tmp$var_r[df_tmp$dpl]
+    uncompl <- df_tmp[!var_r %in% compl]
+    dt <- data.table(var_r = uncompl$var_r,
+                     f_nf_col = !as.logical(df_tmp[!var_r %in% compl]$f_nf_col),
+                     N = rep(0, length(uncompl$var_r)))
+    f_nf_plot <- rbind(df_sum, dt)
+    colnames(f_nf_plot)[colnames(f_nf_plot) == "var_r"] <- var
 
 
     plot_dist <-
-      ggplot(f_nf_plot,
-             aes_string(x = var, fill = 'f_nf_col')) + stat_count(position ='dodge') +
-      scale_color_manual(name = "peaks found") +
-      ggtitle("Distribution of found/not found peaks") +
-      theme(legend.position = "none") +
-      scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
-      theme(axis.text.x = element_blank())
+        ggplot2::ggplot() +
+          geom_col(data = f_nf_plot, aes(get(var), N, fill = f_nf_col),
+                   position = position_dodge(preserve = "single")) +
+          theme(legend.position = "none") +
+          scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
+          ggtitle("Distribution of found/not found peaks") +
+      xlab(var) + ylab("peak count")
+
 
 
   } else{

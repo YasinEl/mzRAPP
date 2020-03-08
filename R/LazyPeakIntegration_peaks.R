@@ -389,7 +389,6 @@ tryCatch(
                       print(paste0("first: " ,Drawer_fill[["molecule"]]) )
                       print(raw_data@phenoData@data[["sample_name"]])
                       assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
-                      table_f_t <<- EIC.dt
                       print(l.peaks)})
 
                               suppressWarnings(
@@ -630,7 +629,6 @@ tryCatch(
 
                               ), by = .(idx)], on = .(idx)]
                               ), error = function(e) {assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
-                                table_f_t <<- EIC.dt
                                 print(l.peaks)
                                 print(paste0(Drawer_fill[["molecule"]]) )
                               })#}
@@ -712,8 +710,6 @@ tryCatch(
                         "isoabb",
                         flag_extremes = TRUE
   )
-
-  saveforcheck <<- Result
 
   Result <- Result[isoabb_ol == FALSE]
 
