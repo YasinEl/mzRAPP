@@ -19,139 +19,103 @@ same mzML files.
 
 ## Installation
 
-You can install the released version of mzRAPP from
-[CRAN](https://CRAN.R-project.org) with:
+You can install mzRAPP from [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("mzRAPP")
-```
-
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
+require("devtools")
 devtools::install_github("YasinEl/mzRAPP")
 ```
 
-## Example
+## Usage
 
-This is a basic example which shows you how to solve a common problem:
+Open mzRAPP as shiny app using:
 
 ``` r
 library(mzRAPP)
-#> Loading required package: data.table
-#> Loading required package: enviPat
+callmzRAPP()
+```
+
+Following that you will be in the ‘Generate Benchmark’ panel of mzRAPP:
+
+<img src="D:/Yasin/mzRAPP_shiny frontpage_first.png" width="100%" style="background-color: #9ecff7; padding:10px; display: inline-block;" />
+<br> In order to generate a benchmark you need to provide your
+centroided mzML files as well as two additional csv files. The
+<u><b>sample-group file</b></u> should contain two columns:
+
+<b>sample\_name:</b> names of all mzML files <br> <b>sample\_group:</b>
+group labels of the respective samples (e.g. treated, untreated,..) <br>
+
+The <u><b>target file</b></u> should contain information on the target
+molecules:
+
+<b>molecule:</b> names of target molecules (should be unique
+identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
+(e.g. M+H or M-Cl). If more than one adduct is to be investigated
+another line with the same molecule name should be added. All adducts
+enabled in the enviPat package are allowed:
+
+``` r
+library(enviPat)
 #> 
 #>  
 #>  Welcome to enviPat version 2.4 
 #>  Check www.envipat.eawag.ch for an interactive online version
-#> Loading required package: ggplot2
-#> Loading required package: shiny
-#> Loading required package: shinyWidgets
-#> Loading required package: DT
-#> 
-#> Attaching package: 'DT'
-#> The following objects are masked from 'package:shiny':
-#> 
-#>     dataTableOutput, renderDataTable
-#> Loading required package: tools
-#> Loading required package: plotly
-#> 
-#> Attaching package: 'plotly'
-#> The following object is masked from 'package:ggplot2':
-#> 
-#>     last_plot
-#> The following object is masked from 'package:stats':
-#> 
-#>     filter
-#> The following object is masked from 'package:graphics':
-#> 
-#>     layout
-#> Loading required package: dplyr
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:data.table':
-#> 
-#>     between, first, last
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-#> Loading required package: tcltk
-#> Loading required package: bit64
-#> Loading required package: bit
-#> Attaching package bit
-#> package:bit (c) 2008-2012 Jens Oehlschlaegel (GPL-2)
-#> creators: bit bitwhich
-#> coercion: as.logical as.integer as.bit as.bitwhich which
-#> operator: ! & | xor != ==
-#> querying: print length any all min max range sum summary
-#> bit access: length<- [ [<- [[ [[<-
-#> for more help type ?bit
-#> 
-#> Attaching package: 'bit'
-#> The following object is masked from 'package:data.table':
-#> 
-#>     setattr
-#> The following object is masked from 'package:base':
-#> 
-#>     xor
-#> Attaching package bit64
-#> package:bit64 (c) 2011-2012 Jens Oehlschlaegel
-#> creators: integer64 seq :
-#> coercion: as.integer64 as.vector as.logical as.integer as.double as.character as.bin
-#> logical operator: ! & | xor != == < <= >= >
-#> arithmetic operator: + - * / %/% %% ^
-#> math: sign abs sqrt log log2 log10
-#> math: floor ceiling trunc round
-#> querying: is.integer64 is.vector [is.atomic} [length] format print str
-#> values: is.na is.nan is.finite is.infinite
-#> aggregation: any all min max range sum prod
-#> cumulation: diff cummin cummax cumsum cumprod
-#> access: length<- [ [<- [[ [[<-
-#> combine: c rep cbind rbind as.data.frame
-#> WARNING don't use as subscripts
-#> WARNING semantics differ from integer
-#> for more help type ?bit64
-#> 
-#> Attaching package: 'bit64'
-#> The following object is masked from 'package:bit':
-#> 
-#>     still.identical
-#> The following objects are masked from 'package:base':
-#> 
-#>     %in%, :, is.double, match, order, rank
-#> Loading required package: hutils
-#> 
-#> Attaching package: 'hutils'
-#> The following objects are masked from 'package:dplyr':
-#> 
-#>     coalesce, if_else
-#> Warning: replacing previous import 'shiny::runExample' by 'shinyjs::runExample'
-#> when loading 'mzRAPP'
-## basic example code
+data(adducts)
+adducts$Name
+#>  [1] "M+H"            "M+NH4"          "M+Na"           "M+K"           
+#>  [5] "M+"             "M-H"            "M-2H"           "M-3H"          
+#>  [9] "M+FA-H"         "M+Hac-H"        "M-"             "M+3H"          
+#> [13] "M+2H+Na"        "M+H+2Na"        "M+3Na"          "M+2H"          
+#> [17] "M+H+NH4"        "M+H+Na"         "M+H+K"          "M+ACN+2H"      
+#> [21] "M+2Na"          "M+2ACN+2H"      "M+3ACN+2H"      "M+CH3OH+H"     
+#> [25] "M+ACN+H"        "M+2Na-H"        "M+IsoProp+H"    "M+ACN+Na"      
+#> [29] "M+2K-H"         "M+DMSO+H"       "M+2ACN+H"       "M+IsoProp+Na+H"
+#> [33] "2M+H"           "2M+NH4"         "2M+Na"          "2M+3H2O+2H"    
+#> [37] "2M+K"           "2M+ACN+H"       "2M+ACN+Na"      "M-H2O-H"       
+#> [41] "M+Na-2H"        "M+Cl"           "M+K-2H"         "M+Br"          
+#> [45] "M+TFA-H"        "2M-H"           "2M+FA-H"        "2M+Hac-H"      
+#> [49] "3M-H"
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+<b>main\_adduct:</b> One main adduct has to be defined for each
+molecule. <br> <b>SumForm\_c:</b> molecular composition of the neutral
+molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b> Starting time
+for chromatograms extracted for this molecule (seconds). <br>
+<b>EndTime.EIC:</b> End time for chromatograms extracted for this
+molecule (seconds). <br> <b>user.rtmin:</b> (optional) Lower end of time
+window in which points should be considered for chromatographic peak
+detection (seconds). Defaults to StartTime.EIC. <br> <b>user.rtmin:</b>
+(optional) Higher end of time window in which points should be
+considered for chromatographic peak detection (seconds). Defaults to
+EndTime.EIC. <br> <b>user.rt:</b> Retention time expected for this
+molecule. If multiple peaks are detected the peak closest to this time
+is chosen (seconds). <br>
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+Afterwards the used instrument and resolution has to be selected. All
+instruments enabled via the enviPat package are enabled.
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+In a next step a view paramters have to be set:
 
-You can also embed plots, for example:
+<img src="D:/Yasin/mzRAPP_shiny frontpage_second.png" width="100%" style="background-color: #9ecff7; padding:10px; display: inline-block;" />
+
+<b>Lowest iso. to be considered \[%\]:</b> Lowest relative isotopologue
+abundance to be considered for each molecule. <br> <b>Min. \# of scans
+per peak:</b> Minimum number of points for a chromatographic peak to be
+considered as such. <br> <b>mz precision \[ppm\]:</b> Maximum spread of
+mass peaks in the mz dimension to be still considered part of the same
+chromatogram. <br> <b>mz accuracy \[ppm\]:</b> Maximum difference
+between the accurate mz of two ion traces to be considered to be
+originating from the same ion. <br> <b>Processing plan:</b> How should
+the benchmark generation be done? <u>sequential</u> (only using one
+core; often slow but does not use much RAM), <u>multiprocess</u> (using
+multiple cores; faster but needs more RAM; works on Windows machines) or
+<u>multicore</u> (using multiple cores; faster but needs more RAM; does
+not work on Windows machines) <br>
+
+Afterwards benchmark generation can be started using the blue Start
+button. The necessary time for the generation depends on the number of
+mzML files, the number of target compounds and of course computational
+recources.
 
 <img src="man/figures/README-pressure-1.png" width="100%" />
 

@@ -18,40 +18,73 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files.  
+The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files. 
 
 ## Installation
 
-You can install the released version of mzRAPP from [CRAN](https://CRAN.R-project.org) with:
+You can install mzRAPP from [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("mzRAPP")
-```
-
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
+require("devtools")
 devtools::install_github("YasinEl/mzRAPP")
 ```
-## Example
+## Usage
 
-This is a basic example which shows you how to solve a common problem:
+Open mzRAPP as shiny app using:
 
-```{r example}
+```{r eval=FALSE} 
 library(mzRAPP)
-## basic example code
+callmzRAPP()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Following that you will be in the 'Generate Benchmark' panel of mzRAPP:
 
-```{r cars}
-summary(cars)
+```{r bench_csvs, echo=FALSE, fig.cap="", out.width = '100%', out.extra='style="background-color: #9ecff7; padding:10px; display: inline-block;"'}
+knitr::include_graphics("D:/Yasin/mzRAPP_shiny frontpage_first.png")
+```
+<br>
+In order to generate a benchmark you need to provide your centroided mzML files as well as two additional csv files. The <u><b>sample-group file</b></u> should contain two columns: 
+
+<b>sample_name:</b> names of all mzML files <br>
+<b>sample_group:</b> group labels of the respective samples (e.g. treated, untreated,..) <br>
+
+
+
+The <u><b>target file</b></u> should contain information on the target molecules:
+
+<b>molecule:</b> names of target molecules (should be unique identifiers) <br>
+<b>adduct_c:</b> adducts that should be evaluated (e.g. M+H or M-Cl). If more than one adduct is to be investigated another line with the same molecule name should be added. All adducts enabled in the enviPat package are allowed:
+```{r enviPat}
+library(enviPat)
+data(adducts)
+adducts$Name
+```
+<b>main_adduct:</b> One main adduct has to be defined for each molecule. <br>
+<b>SumForm_c:</b> molecular composition of the neutral molecule (e.g. C10H15N5O10P2). <br>
+<b>StartTime.EIC:</b> Starting time for chromatograms extracted for this molecule (seconds). <br>
+<b>EndTime.EIC:</b> End time for chromatograms extracted for this molecule (seconds). <br>
+<b>user.rtmin:</b> (optional) Lower end of time window in which points should be considered for chromatographic peak detection (seconds). Defaults to StartTime.EIC. <br>
+<b>user.rtmin:</b> (optional) Higher end of time window in which points should be considered for chromatographic peak detection (seconds). Defaults to EndTime.EIC. <br>
+<b>user.rt:</b> Retention time expected for this molecule. If multiple peaks are detected the peak closest to this time is chosen (seconds). <br>
+
+Afterwards the used instrument and resolution has to be selected. All instruments enabled via the enviPat package are enabled.
+
+In a next step a view paramters have to be set:
+
+```{r bench_param, echo=FALSE, fig.cap="", out.width = '100%', out.extra='style="background-color: #9ecff7; padding:10px; display: inline-block;"'}
+knitr::include_graphics("D:/Yasin/mzRAPP_shiny frontpage_second.png")
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+<b>Lowest iso. to be considered [%]:</b> Lowest relative isotopologue abundance to be considered for each molecule. <br>
+<b>Min. # of scans per peak:</b> Minimum number of points for a chromatographic peak to be considered as such. <br>
+<b>mz precision [ppm]:</b> Maximum spread of mass peaks in the mz dimension to be still considered part of the same chromatogram. <br>
+<b>mz accuracy [ppm]:</b> Maximum difference between the accurate mz of two ion traces to be considered to be originating from the same ion. <br>
+<b>Processing plan:</b> How should the benchmark generation be done? <u>sequential</u> (only using one core; often slow but does not use much RAM), <u>multiprocess</u> (using multiple cores; faster but needs more RAM; works on Windows machines) or <u>multicore</u> (using multiple cores; faster but needs more RAM; does not work on Windows machines) <br>
 
-You can also embed plots, for example:
+
+Afterwards benchmark generation can be started using the blue Start button. The necessary time for the generation depends on the number of mzML files, the number of target compounds and of course computational recources.
+
+
 
 ```{r pressure, echo = FALSE}
 plot(pressure)

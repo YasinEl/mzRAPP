@@ -173,10 +173,7 @@ css <- "
         fluidRow(
                  column(6,
                         strong("2. Set parameters:", style = "font-size:30px"),
-                        br(),
-                        p("(Processing plan: multiprocess for parallel processing on
-                           Windows computers; sequential for serial processing; for other
-                           options see help of future::plan)")
+                        br()
                        )
                 ),
         fluidRow(
