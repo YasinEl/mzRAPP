@@ -158,8 +158,6 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
   })
 
 
-
-
   empty_samples <- apply(DT[, !"sample_id_b"], 1, function(x) {
 
     if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
@@ -168,6 +166,23 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
     }
   })
 
+
+
+  DT <-
+    transform(DT, lost = apply(DT, 1, function(x) {
+      if(length(x[-1][x[-1] != "" & x[-1] != "Lost_b.A" & x[-1] != "Lost_b.PP"]) == 0){
+        return(TRUE)
+      }
+      return(FALSE)
+    }))
+
+
+  DT[DT == "Lost_b.A" & lost == TRUE] <- ""
+
+  DT <- DT[, !"lost"]
+
+
+
 empty_isos <- apply(DT[, !"sample_id_b"], 2, function(x) {
 
     if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
@@ -175,12 +190,6 @@ empty_isos <- apply(DT[, !"sample_id_b"], 2, function(x) {
       if("Lost_b.A" %in% count.table$x){return(count.table[x == "Lost_b.A"]$N)}
     }
   })
-
-
-#print("l1")
-#print(error_list)
-#print("l2")
-#print(empty_samples)
 
   return(sum(unlist(error_list), unlist(empty_samples), unlist(empty_isos)))
   }

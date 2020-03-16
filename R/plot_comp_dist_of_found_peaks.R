@@ -54,6 +54,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     f_nf_plot <- rbind(df_sum, dt)
     colnames(f_nf_plot)[colnames(f_nf_plot) == "var_r"] <- var
 
+    f_nf_plot2 <<- f_nf_plot
 
     plot_dist <-
         ggplot2::ggplot() +
@@ -82,17 +83,17 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     df_bin <- as.data.table(df_bin)
     df_bin <- df_bin[df_bin[, .(MAXn = max(n)), by = var], on = .(var)]
-    df_bin <- df_bin[MAXn>=10]
+    #df_bin <- df_bin[MAXn>=10]
 
 
     ###add zeros
     df_tmp <- df_bin
     df_tmp$dpl <- duplicated(df_tmp$var)
 
-    compl <- round(as.numeric(df_tmp$var[df_tmp$dpl]),5)
+    compl <- round(as.numeric(df_tmp$var[df_tmp$dpl]),3)
 
     uncompl <- df_tmp[!var %in% compl]
-    uncompl$var <- round(as.numeric(uncompl$var),5)
+    uncompl$var <- round(as.numeric(uncompl$var),3)
 
     subst <-
       apply(uncompl, 1, function(x){
@@ -107,9 +108,10 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
 
     df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
-    df_bin$var <- round(as.numeric(df_bin$var), 5)
+    df_bin$var <- round(as.numeric(df_bin$var), 3)
     df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
 
+    df_bin$var <- round(df_bin$var, 3)
 
     # Get "no" share within each bin
     df_sum <- df_bin %>%

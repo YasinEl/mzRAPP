@@ -314,7 +314,7 @@ css <- "
         fluidRow(
           column(
 
-            12, selectInput('algorithm_input', 'UT algorithm used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine'), selected = '---')
+            12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine'), selected = '---')
           )
         ),
         fluidRow(
@@ -429,7 +429,11 @@ css <- "
                  column(8,
                           fluidRow(
                                    column(1,
-                                            dropdownButton(br("texttext"),
+                                            dropdownButton(br("Scatter plot allowing to plot found (blue) and not found (red) peaks using different variables.
+                                                              The switch above the plot allows to check for detected peaks after the peak picking as well as after
+                                                              the alignment and feature processing (e.g. filling of gaps) step.", "For that second option only peaks
+                                                              present in the main feature (feature most representative for the corresponding benchmark molecules predicted
+                                                              isotopic pattern) are considered."),
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
                                                            width = 600,
@@ -467,7 +471,12 @@ css <- "
                           fluidRow(
                                    column(1,
                                             dropdownButton(
-                                                           br('Graph 3 Text'),
+                                                           br('Distribution plot allowing to plot found (blue) and not found (red) peaks using different variables. The
+                                                           black line gives the percantage of found peaks and corresponds to the secondary y-axis.
+                                                            The switch above the plot allows to check for detected peaks after the peak picking as well as after
+                                                            the alignment and feature processing (e.g. filling of gaps) step.', 'For that second option only peaks
+                                                            present in the main feature (feature most representative for the corresponding benchmark molecules predicted
+                                                            isotopic pattern) are considered.'),
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
                                                            width = 600,
@@ -499,15 +508,14 @@ css <- "
                  column(4,
                           fluidRow(
                                    column(1,
-                                            dropdownButton("Each column represents a benchmark feature and missed by the UT algorithm
-                                                            are color coded into random and systematic missing values.
-                                                            For simplification only benchmark features containing at least one missing value are shown.",
-                                                           "Note: This is not considering the alignment of the untargeted algorithm
-                                                            at all but only the peak detection!",
-                                                           "(R) random",
-                                                           "(S) systematic",
-                                                           "(F) found \n",
-                                                           "(NF) not found",
+                                            dropdownButton('Each column represents a benchmark feature with at least one peak missed by non-targeted data pre-processing (NPP).
+                                                            Missed peaks are classified as random (R), systematic (S) or lost (L). This classification is
+                                                            depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 20%
+                                                            higher than the lowest NPP-detected peak it is classified as R if it is < than 20% as S. If no peak
+                                                            is detected in the benchmark it is classified as L.', 'The switch above the plot allows to check for detected peaks
+                                                            after the peak picking as well as after the alignment and feature processing (e.g. filling of gaps) step.',
+                                                            'For that second option only peaks present in the main feature (feature most representative for the corresponding
+                                                            benchmark molecules predicted isotopic pattern) are considered.',
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
                                                            status = 'info',
@@ -528,18 +536,19 @@ css <- "
                  column(4,
                           fluidRow(
                                    column(1,
-                                            dropdownButton("CV of benchmark peak areas as compared to the UT unaligned peaks.
-                                                            Each CV is calculated per molecule/adduct/isotopologue pair and over all
-                                                            replicates of a sample group.",
-                                                           "Only unaligned peak areas which were recovered in all replicates of a group were considered.
-                                                            Red represents CV increase by more than 10%p.",
+                                            dropdownButton('Isotopologue areas are predicted from the most abundant isotopologue of each compound. The relative error of
+                                                            this prediction is plotted for benchmark as well as NPP-areas. If the error of NPP increases by
+                                                            more than 20 %p relative to the benchmark-error it is colored red.', 'The switch above the plot allows to check for detected peaks
+                                                            after the peak picking as well as after the alignment and feature processing (e.g. filling of gaps) step.',
+                                                           'For that second option only peaks present in the main feature (feature most representative for the corresponding
+                                                            benchmark molecules predicted isotopic pattern) are considered.',
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
                                                            status = 'info',
                                                            icon = icon('question-circle'),
                                                            size = 'sm',
                                                            width = 600
-                                                          ),
+                                                          )
                                          ),
                                    column(11,
                                              prettySwitch(inputId = 'PP_al_switch_ITe',
@@ -554,14 +563,14 @@ css <- "
                                    column(1,
                                             dropdownButton('Here peaks corresponding to a specific molecule, adduct, isotopic abundance combination
                                                             can be plotted over all samples. Solid lines correspond to peak borders in
-                                                            the benchmark and dashed lines to peak borders set by the UT algorithm.',
+                                                            the benchmark and dashed lines to peak borders set by the peak detection step of the NT algorithm.',
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
                                                            status = 'info',
                                                            icon = icon('question-circle'),
                                                            size = 'sm',
                                                            width = 600
-                                                          ),
+                                                          )
                                          )
                                   ),
                           fluidRow(column(12,plotlyOutput('graph_area_4') %>% shinycssloaders::withSpinner(color="#0dc5c1"))),
@@ -578,10 +587,25 @@ css <- "
           )
     ),
     tabPanel(
-      'Assessment results (features)',
+      'Assessment results (alignment)',
       value = 'results_tab_features',
       mainPanel(
         width = '100%',
+        fluidRow(
+          column(3),
+          column(1, dropdownButton('Feature assignments performed by the non-targeted (NT) algorithm can be plotted for each molecule. Colors are corresponding to the
+                                   respective feature IDs. Peaks which have not been detected by the NT algorithm are labeled "Lost_b.PP" and are not counted as
+                                   errors. Peaks labeled "Lost_b.A" have been detected in the peak detection step of the NT-algorithm but where not present in
+                                   the aligned file anymore. Those are counted as errors. Other rules of error-counting are explained in the original mzRAPP publication.',
+                                   tooltip = tooltipOptions(title = 'Click for description'),
+                                   circle = TRUE,
+                                   status = 'info',
+                                   icon = icon('question-circle'),
+                                   size = 'sm',
+                                   width = 600
+          ))
+
+        ),
         fluidRow(
           column(3, tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
 
@@ -630,7 +654,7 @@ css <- "
 
     ##File Filters for choice cialogues
     mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
-    csv_filter <- matrix(c('Text files (*.csv, *.txt)', '*.csv;*.txt'), nrow = 1, ncol = 2)
+    csv_filter <- matrix(c('Files (*.csv, *.txt, *.Rda)', '*.csv;*.txt;*.Rda'), nrow = 1, ncol = 2)
 
     #File input reactives
     #Benchmark
@@ -745,7 +769,7 @@ css <- "
       resolution_df <- resolution_list[[res_input]]
 
       withProgress(message = 'Calculation in progress',
-                   detail = "calculating isotopologue MZs...", value = 0, {
+                   detail = "calculating isotopologues...", value = 0, {
                    starttime <- Sys.time()
 
                    ###################################################
@@ -921,6 +945,9 @@ css <- "
         #####################
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
+
+        comp_data <<- comparison_ug_g
+        comp_data2 <<- comparison_data
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2)
         shinyWidgets::sendSweetAlert(session,

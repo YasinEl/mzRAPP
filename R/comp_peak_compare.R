@@ -372,6 +372,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   iso_err_dt[diffH20PP_ft == "TRUE"]$diffH20PP_ft <- "Inc. > 20%p"
   iso_err_dt[diffH20PP_ft == "FALSE"]$diffH20PP_ft <- "Inc. < 20%p"
 
+  iso_err_dt <- iso_err_dt[!is.na(area_b)]
 
 
   ##############

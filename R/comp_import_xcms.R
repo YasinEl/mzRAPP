@@ -16,12 +16,20 @@ import_ungrouped_xcms <- function(file, options_dt){
   }
 
   #Check if filetype is csv
-  if(file_ext(file) != 'csv'){
-    stop('ungrouped dataset is not a valid csv file')
+  if(file_ext(file) != 'csv' & file_ext(file) != "Rda"){
+    stop('ungrouped dataset is not a valid csv (/Rda) file')
   }
 
-  #Import csv file
-  ug_table <- fread(file)
+  if(file_ext(file) == "Rda"){
+    rda_file_v <- load(file = file, envir = environment())
+    rda_file <- get(rda_file_v[1])
+    ug_table <- as.data.table(xcms::peaks(rda_file))
+  } else {
+    #Import csv file
+    ug_table <- fread(file)
+  }
+
+
 
   #Check if all columns defined in optionsframe are present
   ug_req_cols <- na.omit(options_dt$ug_columns)
@@ -69,12 +77,18 @@ import_grouped_xcms <- function (file, options_dt) {
   }
 
   #Check if filetype is csv
-  if(file_ext(file) != 'csv'){
-    stop('ungrouped dataset is not a valid csv file')
+  if(file_ext(file) != 'csv' & file_ext(file) != "Rda"){
+    stop('ungrouped dataset is not a valid csv (/Rda) file')
+  }
+  if(file_ext(file) == "Rda"){
+    rda_file_v <- load(file = file, envir = environment())
+    rda_file <- get(rda_file_v[1])
+    g_table <- as.data.table(xcms::peakTable(rda_file))
+  } else {
+    #Import csv file
+    g_table <- fread(file)
   }
 
-  #Import csv file
-  g_table <- fread(file)
 
   #Check if all columns defined in optionsframe are present
   g_req_cols <- na.omit(options_dt$g_columns)

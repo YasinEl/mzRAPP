@@ -95,7 +95,7 @@ import_grouped_msdial <- function(file_path, options_dt){
 
   #options(datatable.verbose = TRU)
 
-  g_table <- fread(file_path, skip=4, integer64 = "double", verbose = TRUE)
+  g_table <- fread(file_path, skip=4, integer64 = "double", verbose = FALSE)
 
 
   #Check if all columns defined in optionsframe are present

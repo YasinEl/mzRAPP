@@ -3,7 +3,7 @@ generate_options <- function(raw_b_table, algo){
   columns_dt <- data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name','molecule', 'adduct', 'isoabb',
                                                   'rt_start', 'rt_end', 'rt', 'mz', 'comp_id', 'peak_group', 'mz_start', 'mz_end'),
                            'b_columns' = c('peaks.height', 'peaks.area', 'FileName', 'molecule', 'adduct', 'isoabb',
-                                           'peaks.StartTime', 'peaks.EndTime', 'peaks.rt', 'mz', 'IDX', 'peaks.M0.grp', 'eic_mzmin', 'eic_mzmax')
+                                           'peaks.StartTime', 'peaks.EndTime', 'peaks.rt', 'mz', 'IDX', 'peaks.M0.grp', 'peaks.mz_min', 'peaks.mz_max')
                            )
   #Get sample names from benchmark
   samples_dt <- data.table('sample_id' = seq(unique(raw_b_table$FileName)),

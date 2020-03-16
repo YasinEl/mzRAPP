@@ -472,6 +472,28 @@ tryCatch(
                                   1e6*(max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))) / mean(unlist(xcms::mz(raw_data_lim1)))
                                 },
 
+
+                                mz_min = {
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
+                                  )
+
+                                  min(unlist(xcms::mz(raw_data_lim1)), na.rm = TRUE)
+                                },
+
+
+                                mz_max = {
+                                  suppressWarnings(
+                                    raw_data_lim1 <- raw_data_lim %>%
+                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
+                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
+                                  )
+
+                                  max(unlist(xcms::mz(raw_data_lim1)), na.rm = TRUE)
+                                },
+
                                 #mz_interference = {
 
                                  # #mz_min_t <- CompCol_xic[i]$mz_acc - (CompCol_xic[i]$mz_acc - CompCol_xic[i]$eic_mzmin) * 3

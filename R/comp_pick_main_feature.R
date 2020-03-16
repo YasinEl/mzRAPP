@@ -29,6 +29,7 @@ pick_main_feature <- function(dt){
 #' @examples
 pick_main_feature_sd <- function(dt){
   dt <- copy(dt)
+
   #Get list of all avaiable iso_abbs
   all_iso_abs <- sort(unique(dt[,isoabb_b]), decreasing = TRUE)
 
@@ -67,16 +68,19 @@ pick_main_feature_sd <- function(dt){
       main_features_dt$no_of_samples <- apply(main_features_dt,1, function(x){length(unlist(x['samples_to_compare']))})
       main_features_dt[, 'main_feature' := ifelse(no_of_samples == max(no_of_samples), TRUE, FALSE), by=c('feature_id_b')]
     }
+
     return(main_features_dt[main_feature == TRUE, c('feature_id_b', 'feature_id_g', 'main_feature')])
   }
 }
 
 best_feature_per_comparison <- function(dt){
   dt <- copy(dt)
+  #checkT <<- dt
   dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
                                                           if(length(compare_samples) < 1){
                                                             return(as.numeric(NULL))
                                                           }
+
                                                           compare_samples <- paste0('sample_', compare_samples, '_g')
                                                           ratio_errors <- list()
                                                           for (i in compare_samples){
@@ -86,10 +90,8 @@ best_feature_per_comparison <- function(dt){
                                                             }
                                                             ratio_errors <- append(ratio_errors, (x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]])/x[['compare_ratio']])
                                                           }
-                                                          if(length(Reduce('median',ratio_errors))<1){
-                                                            stop("ratio_error")
-                                                          }
-                                                          return(Reduce('median',ratio_errors))
+                                                          #return(Reduce('median',ratio_errors))
+                                                          return(mean(unlist(ratio_errors)))
                                                         }
                                     )
                               )
