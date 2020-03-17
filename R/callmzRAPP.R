@@ -112,8 +112,8 @@ css <- "
 
     tabPanel(
       title = 'Readme',
-      value = "readme.panel"#,
-      #includeMarkdown(system.file("md", "README.md", package = "mzRAPP"))
+      value = "readme.panel",
+      includeMarkdown(system.file("md", "README.md", package = "mzRAPP"))
     ),
 
 
