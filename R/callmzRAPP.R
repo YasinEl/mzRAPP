@@ -113,7 +113,8 @@ css <- "
     tabPanel(
       title = 'Readme',
       value = "readme.panel",
-      includeMarkdown("README.md")
+      includeMarkdown(system.file("md", "README.md", package = "mzRAPP"))
+
     ),
 
     #First Tab: Gnerate Benchmark
