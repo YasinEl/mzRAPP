@@ -40,8 +40,8 @@ Imports:
     intervals,
     doFuture,
     S4Vectors,
-    V8
-Suggests: 
+    V8,
     knitr,
     rmarkdown
+
 VignetteBuilder: knitr
