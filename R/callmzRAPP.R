@@ -100,7 +100,6 @@ css <- "
     'Error_predicted height (abs)' = 'ErrorAbs_H_b'
   )
 
-
   ui <- tagList(shinyjs::useShinyjs(),
                 shinyjs::extendShinyjs(text = jscode),
                 shinyjs::inlineCSS(css),
