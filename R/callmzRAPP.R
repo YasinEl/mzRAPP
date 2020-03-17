@@ -111,6 +111,12 @@ css <- "
     #ID for entire Page
     id = 'main_panel',
 
+    tabPanel(
+      title = 'Readme',
+      value = "readme.panel",
+      includeMarkdown("README.md")
+    ),
+
     #First Tab: Gnerate Benchmark
     tabPanel(
       title = 'Generate benchmark',
@@ -429,7 +435,7 @@ css <- "
                  column(8,
                           fluidRow(
                                    column(1,
-                                            dropdownButton(br("Scatter plot allowing to plot found (blue) and not found (red) peaks using different variables.
+                                            dropdownButton(br("Scatter plot allowing to plot found (blue) and not found (red) peaks using different benchmark peak variables.
                                                               The switch above the plot allows to check for detected peaks after the peak picking as well as after
                                                               the alignment and feature processing (e.g. filling of gaps) step.", "For that second option only peaks
                                                               present in the main feature (feature most representative for the corresponding benchmark molecules predicted
@@ -471,7 +477,7 @@ css <- "
                           fluidRow(
                                    column(1,
                                             dropdownButton(
-                                                           br('Distribution plot allowing to plot found (blue) and not found (red) peaks using different variables. The
+                                                           br('Distribution plot allowing to plot found (blue) and not found (red) peaks using different benchmark peak variables. The
                                                            black line gives the percantage of found peaks and corresponds to the secondary y-axis.
                                                             The switch above the plot allows to check for detected peaks after the peak picking as well as after
                                                             the alignment and feature processing (e.g. filling of gaps) step.', 'For that second option only peaks
@@ -947,7 +953,7 @@ css <- "
         comparison_data(comparison_ug_g)
 
         comp_data <<- comparison_ug_g
-        comp_data2 <<- comparison_data
+
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2)
         shinyWidgets::sendSweetAlert(session,

@@ -54,8 +54,6 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     f_nf_plot <- rbind(df_sum, dt)
     colnames(f_nf_plot)[colnames(f_nf_plot) == "var_r"] <- var
 
-    f_nf_plot2 <<- f_nf_plot
-
     plot_dist <-
         ggplot2::ggplot() +
           geom_col(data = f_nf_plot, aes(get(var), N, fill = f_nf_col),

@@ -22,7 +22,7 @@ same mzML files.
 You can install mzRAPP from [GitHub](https://github.com/) with:
 
 ``` r
-require("devtools")
+if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
 devtools::install_github("YasinEl/mzRAPP")
 ```
 
@@ -35,9 +35,7 @@ library(mzRAPP)
 callmzRAPP()
 ```
 
-Following that you will be in the ‘Generate Benchmark’ panel of mzRAPP:
-
-<img src="D:/Yasin/mzRAPP_shiny frontpage_first.png" width="100%" style="background-color: #9ecff7; padding:10px; display: inline-block;" />
+Following that you can go to the ‘Generate Benchmark’ panel of mzRAPP:
 
 <h3>
 
@@ -106,8 +104,6 @@ is chosen (seconds). <br>
 
 Afterwards the used instrument and resolution has to be selected. All
 instruments enabled via the enviPat package are enabled.
-
-<img src="D:/Yasin/mzRAPP_shiny frontpage_second.png" width="100%" style="background-color: #9ecff7; padding:10px; display: inline-block;" />
 
 <h4>
 
@@ -236,4 +232,22 @@ it is \< than 20% as S. <br> <br> <u>Pred. error increase \>20%p:</u>
 isotopologue of each compound. If the relative error of this prediction
 is more than 20 %p higher for NT-peak areas (compared to
 benchmark-areas) it is refelcted in this variable. Here only peak areas
-from the peak picking step are considered. <br>
+from the peak picking step are considered. <br> <br> <u>Min. \# of
+alignment errors:</u> <br> Gives the minimum number of alignment errors
+done by the non-targeted algorithm. For the exact way of how this count
+is esatblished please check the original mzRAPP publication. <br> <br>
+<u>Found peaks (features):</u> <br> The number of benchmark peaks for
+which a match was found among the NT peaks after the alignment step.
+Here only one feature per benchmark feature is allowed. If multiple
+features are found for one benchmark feature the one which fits the
+predicted isotopic pattern best is chosen. <br> <br> <u>Found features
+(features):</u> <br> The number of benchmark features for which at least
+one benchmark peak was detected via the non-targeted algorithm. <br>
+<br> <u>Pred. error increase \>20%p (features):</u> <br> Isotopologue
+areas are predicted from the most abundant isotopologue of each
+compound. If the relative error of this prediction is more than 20 %p
+higher for NT-peak areas (compared to benchmark-areas) it is refelcted
+in this variable. Here only peak areas after the alignment step are
+considered. <br> <br> <b>Overview plots:</b><br> <br> For explanations
+of the overview plots please click the blue question marks above the
+individual plots.
