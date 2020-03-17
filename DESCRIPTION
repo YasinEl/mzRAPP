@@ -42,8 +42,6 @@ Imports:
     S4Vectors,
     V8,
     knitr
-    
 Suggests:    
     rmarkdown
-
 VignetteBuilder: knitr

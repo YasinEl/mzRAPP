@@ -116,7 +116,6 @@ css <- "
       includeMarkdown(system.file("md", "README.md", package = "mzRAPP"))
     ),
 
-
     #First Tab: Gnerate Benchmark
     tabPanel(
       title = 'Generate benchmark',
@@ -191,7 +190,7 @@ css <- "
                  column(2,numericInput('accurate_MZ_tol_input', 'mz accuracy [ppm]', 5, step = 0.1))
                 ),
         fluidRow(
-                 column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential', 'multicore')))
+                 column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential')))
                 ),
         fluidRow(
                  column(6,
