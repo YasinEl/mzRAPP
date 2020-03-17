@@ -41,7 +41,9 @@ Imports:
     doFuture,
     S4Vectors,
     V8,
-    knitr,
+    knitr
+    
+Suggests:    
     rmarkdown
 
 VignetteBuilder: knitr
