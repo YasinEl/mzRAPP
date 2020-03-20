@@ -37,7 +37,6 @@ Alignment_error_plot <- function(comparison_data, mol, add){
 
   #fwrite(dt, 'align_debug.csv')
 
-
   if(nrow(dt) == 0){return(NA_integer_)}
 
   dt_for_error_count <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))

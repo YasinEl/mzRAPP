@@ -65,7 +65,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, choice_vector_comp, po
                                                           col = "NF",
                                                           molecule = molecule_b,
                                                           adduct = adduct_b,
-                                                          isoabb = isoabb_b,
+                                                          isoabb = round(isoabb_b, 2),
                                                           sample_name = sample_name_b),
                  color = "red") +
 

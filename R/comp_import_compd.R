@@ -9,13 +9,13 @@
 #' @examples
 import_ungrouped_cd <- function(file_path, options_table){
 
-  print('Start import ungrouped compund discoverer')
+  print('Start import ungrouped compound discoverer')
 
   if(is.null(file_path)){
     stop('No ungrouped file selected')
   }
   #Check if filetype is csv
-  if(file_ext(file_path) != 'csv'){impo
+  if(file_ext(file_path) != 'csv'){#impo
     stop('ungrouped dataset is not a valid csv file')
   }
 
@@ -37,30 +37,22 @@ import_ungrouped_cd <- function(file_path, options_table){
   #rename all columns for internal use according to optiosn frame
   ug_table <- rename_columns_from_options(ug_table, options_table, 'ug_columns', 'internal_columns')
 
+	#Add a sample_id column based on the sample_names in options_dt
+  ug_table <- ug_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
+
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
 
-  #Check for duplicate peaks, should not be present so warning, removing them if there
-  if (any(duplicated(ug_table, by=c('peak_area', 'mz', 'rt')))){
-    ug_table <- ug_table[!duplicated(ug_table, by='peak_area')]
-    warning('Duplicate peaks present in raw benchmark file')
-  }
-
-  #Filter out samples not present in ug_samples
-  ug_table <- filter_by_vector(ug_table, 'sample_name', options_table[,ug_samples])
-
-  #Add a sample_id column based on the sample_ids in options_table
-  ug_table <- dt_map(ug_table, options_table, 'sample_name', 'ug_samples', 'sample_id', 'sample_id')
-
-  #Generate id for each peak
+	#Generate comp_id for each peak
   ug_table$comp_id <- seq.int(nrow(ug_table))
 
-  ug_table <- ug_table[, rt_start := rt_start*60]
-  ug_table <- ug_table[, rt_end := rt_end*60]
-  ug_table <- ug_table[, rt := rt*60]
+	#Multiply rt by 60 to convert min to seconds ##MAKE OPTIONAL LATER
+  ug_table[, ':=' (rt = rt*60, rt_start = rt_start*60, rt_end = rt_end*60)]
 
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
+
+	print(paste0('Successful compound discoverer ug import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }

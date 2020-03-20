@@ -620,8 +620,8 @@ css <- "
                           plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1")
                          )),
                    fluidRow(
-                     column(2, pickerInput('mol_a', 'Molecule', c())),
-                     column(1, pickerInput('add_a', 'Adduct', c()))
+                     column(2, pickerInput('mol_a', 'Molecule', c(), options = list(`live-search`=TRUE))),
+                     column(1, pickerInput('add_a', 'Adduct', c(), options = list(`live-search`=TRUE)))
                    )
         )
 
@@ -954,10 +954,10 @@ css <- "
         comp_data <<- comparison_ug_g
 
         shinybusy::remove_modal_spinner()
-        Sys.sleep(0.2)
+        Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
         shinyWidgets::sendSweetAlert(session,
                        title = 'Comparison complete',
-                       text = 'Comparison has been finished. An overview is provided in panels "Assessment result (peaks)" and "Assessment (features)"!',
+                       text = 'Comparison has been finished. An overview is provided in panels "Assessment result (peaks)" and "Assessment (alignment)"!',
                        type = 'success',
                        closeOnClickOutside = FALSE,
                        showCloseButton = TRUE)

@@ -186,7 +186,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
 
 
-
+  c_table <- c_table[main_peak == TRUE]
 
   ##############
   #Joining peaks from groupd file onto found areas of ungrouped
@@ -217,6 +217,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
 
+  c_table[, N_fid := .N, by = .(molecule_b, adduct_b, isoabb_b, feature_id_g)]
+  c_table <-  c_table[order(-rank(N_fid))]
+  c_table <- unique(c_table, by = c("molecule_b", "adduct_b", "isoabb_b", "sample_id_b"))
+
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
   #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
 
@@ -240,11 +244,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
     stop('Duplicate Peaks still present after analysis')
   }
 
-  ###################################################################################################################
-  #feature_feature comparison
-  ###################################################################################################################
-  print('Start FF Compare')
-  ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
 
   ##############
   #Create benchmark, ungrouped and grouped tables for not found peaks
@@ -269,6 +268,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ), by = .(molecule_b, adduct_b, isoabb_b)]
 
 
+  ###################################################################################################################
+  #feature_feature comparison
+  ###################################################################################################################
+
   #Generate alignment error table
   ali_error_table <-
     rbindlist(list(c_table, nf_b_table), fill = TRUE)
@@ -289,6 +292,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                  by=.(molecule_b, adduct_b)]
   ali_error_table <- setnames(ali_error_table, c('V1', 'molecule_b', 'adduct_b'), c('errors', 'Molecule', 'Adduct'))
 
+  print('Start FF Compare')
+  print(nrow(g_table))
+  #if(nrow(g_table) > 0){
+    ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
 
   #Generate feature table
   dt <- ff_table_dt[main_feature == TRUE]
@@ -313,7 +320,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                     variable.name = "sample_id_b",
                     variable.factor = FALSE)
 
-  dt_melt_g$sample_id_b <-  as.factor(substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2))
+  dt_melt_g$sample_id_b <- as.factor(substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2))
 
   dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
 

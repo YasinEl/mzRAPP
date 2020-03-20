@@ -127,6 +127,6 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
     labs(x = "", y = "IT pred error [%]") +
     theme(legend.title = element_blank())
 
-  return(ggplotly(p, tooltip = c("molecule", "adduct", "isoabb", "sample", "Pred_error")))
+  return(ggplotly(p, tooltip = c("molecule", "adduct", "isoabb", "sample", "Pred_error"), dynamicTicks = "y"))
 
 }

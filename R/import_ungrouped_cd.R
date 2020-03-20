@@ -1,4 +1,4 @@
-#' import_ungrouped_cd
+#' import_ungrouped_cd_depr
 #'
 #' @param file_path
 #' @param options_table
@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-import_ungrouped_cd <- function(file_path, options_table){
+import_ungrouped_cd_depr <- function(file_path, options_table){
 
   print('Start import ungrouped compund discoverer')
   #Check if filetype is csv
