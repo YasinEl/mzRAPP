@@ -121,10 +121,8 @@ the mz dimension to be still considered part of the same chromatogram.
 mz of two ion traces to be considered to be originating from the same
 ion. <br> <b>Processing plan:</b> How should the benchmark generation be
 done? <u>sequential</u> (only using one core; often slow but does not
-use much RAM), <u>multiprocess</u> (using multiple cores; faster but
-needs more RAM; works on Windows machines) or <u>multicore</u> (using
-multiple cores; faster but needs more RAM; does not work on Windows
-machines) <br>
+use much RAM) or <u>multiprocess</u> (using multiple cores; faster but
+needs more RAM; works on Windows machines) <br>
 
 <h4>
 
