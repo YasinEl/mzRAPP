@@ -9,6 +9,9 @@
 #' @examples
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
 
+  if(missing(choice_vector_comp)){
+    choice_vector_comp <- NULL
+  }
 
   if(post_alignment == TRUE){
 
@@ -72,49 +75,43 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     }
 
 
-    binwidth <- (max(as.numeric(unlist(f_nf_plot[, ..var])), na.rm = TRUE) - min(as.numeric(unlist(f_nf_plot[, ..var])), na.rm = TRUE)) / 20
+    binwidth <- (max(as.double(unlist(f_nf_plot[, ..var])), na.rm = TRUE) - min(as.double(unlist(f_nf_plot[, ..var])), na.rm = TRUE)) / 20
 
 
     # Count how many of each lab1 within each bin of var1
     df_bin <- f_nf_plot %>%
       count(var = floor(!! sym(var)/binwidth)*binwidth, f_nf_col)
-
+    df_bin_vct <- sort(df_bin$var)
     df_bin <- as.data.table(df_bin)
     df_bin <- df_bin[df_bin[, .(MAXn = max(n)), by = var], on = .(var)]
     #df_bin <- df_bin[MAXn>=10]
-
-
     ###add zeros
     df_tmp <- df_bin
     df_tmp$dpl <- duplicated(df_tmp$var)
-
-    compl <- round(as.numeric(df_tmp$var[df_tmp$dpl]),3)
-
+    compl <- as.double(df_tmp$var[df_tmp$dpl])
     uncompl <- df_tmp[!var %in% compl]
-    uncompl$var <- round(as.numeric(uncompl$var),3)
+    uncompl$var <- as.double(uncompl$var)
 
     subst <-
       apply(uncompl, 1, function(x){
 
-        c(var = round(as.numeric(unname(x[1])),5), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
+        c(var = as.double(unname(x[1])), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
 
       })
     subst <- as.data.table(subst, keep.rownames = TRUE)
-
     subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
     subst$f_nf_col <- as.logical(subst$f_nf_col)
-
-
     df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
-    df_bin$var <- round(as.numeric(df_bin$var), 3)
+    df_bin$var <- as.double(df_bin$var)
     df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
-
-    df_bin$var <- round(df_bin$var, 3)
+    df_bin <- df_bin[order(rank(var))]
+    df_bin$var <- round(unlist(lapply(unique(df_bin_vct), function(x){return(c(round(x,5),round(x,5)))})),5)
 
     # Get "no" share within each bin
     df_sum <- df_bin %>%
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
+
 
 
 
@@ -126,7 +123,6 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
         scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")
     )
-
 
     plot_dist <- t %>% add_trace(x=~var,
                                  y =~no_pct,
@@ -149,7 +145,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
       yaxis = list(title = "peak count",
                    titlefont=list(size=14.6)
       ),
-      xaxis = list(title = names(choice_vector_comp)[choice_vector_comp == var],
+      xaxis = list(title = if(is.null(choice_vector_comp)){ as.character(var)} else {names(choice_vector_comp)[choice_vector_comp == var]}, #names(choice_vector_comp)[choice_vector_comp == var],
                    titlefont=list(size=14.6)
       ),
       margin = list(r = 100),
