@@ -8,7 +8,6 @@
 #'
 #' @examples
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
-
   if(missing(choice_vector_comp)){
     choice_vector_comp <- NULL
   }
@@ -17,6 +16,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     feat_t <- melt_fftable(comparison_data)
     BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
+    #BM_bu <- na.omit(BM_nu, by = var)
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
     feat_t <- feat_t[main_feature == TRUE]
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
@@ -37,6 +37,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
   } else if(post_alignment == FALSE){
 
     f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+    #f_nf_dt <- na.omit(f_nf_dt, by = var)
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }
@@ -48,6 +49,9 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     colnames(df_tmp)[2] <- "var_r"
     df_tmp <- df_tmp[, .N, by = .(var_r, f_nf_col)]
     df_sum <- df_tmp
+
+
+
     df_tmp$dpl <- duplicated(df_tmp$var_r)
     compl <- df_tmp$var_r[df_tmp$dpl]
     uncompl <- df_tmp[!var_r %in% compl]
@@ -77,43 +81,43 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     binwidth <- (max(as.double(unlist(f_nf_plot[, ..var])), na.rm = TRUE) - min(as.double(unlist(f_nf_plot[, ..var])), na.rm = TRUE)) / 20
 
-
     # Count how many of each lab1 within each bin of var1
     df_bin <- f_nf_plot %>%
       count(var = floor(!! sym(var)/binwidth)*binwidth, f_nf_col)
     df_bin_vct <- sort(df_bin$var)
     df_bin <- as.data.table(df_bin)
+    df_bin <- na.omit(df_bin)
     df_bin <- df_bin[df_bin[, .(MAXn = max(n)), by = var], on = .(var)]
     #df_bin <- df_bin[MAXn>=10]
     ###add zeros
     df_tmp <- df_bin
+
     df_tmp$dpl <- duplicated(df_tmp$var)
     compl <- as.double(df_tmp$var[df_tmp$dpl])
     uncompl <- df_tmp[!var %in% compl]
     uncompl$var <- as.double(uncompl$var)
 
-    subst <-
-      apply(uncompl, 1, function(x){
+    if(nrow(uncompl) > 0) {
+      subst <-
+        apply(uncompl, 1, function(x){
 
-        c(var = as.double(unname(x[1])), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
+          c(var = as.double(unname(x[1])), f_nf_col = as.logical(unname(x[2]) == FALSE), n = 0L, MAXn = as.integer(unname(x[4])))
 
-      })
-    subst <- as.data.table(subst, keep.rownames = TRUE)
-    subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
-    subst$f_nf_col <- as.logical(subst$f_nf_col)
-    df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
-    df_bin$var <- as.double(df_bin$var)
-    df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
-    df_bin <- df_bin[order(rank(var))]
-    df_bin$var <- round(unlist(lapply(unique(df_bin_vct), function(x){return(c(round(x,5),round(x,5)))})),5)
+        })
+      subst <- as.data.table(subst, keep.rownames = TRUE)
+      subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
+      subst$f_nf_col <- as.logical(subst$f_nf_col)
+      df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
+    }
 
+      df_bin$var <- as.double(df_bin$var)
+      df_bin$f_nf_col <- as.logical(df_bin$f_nf_col)
+      df_bin <- df_bin[order(rank(var))]
+      df_bin$var <- round(unlist(lapply(unique(df_bin_vct), function(x){return(c(round(x,5),round(x,5)))})),5)
     # Get "no" share within each bin
     df_sum <- df_bin %>%
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
-
-
-
 
     t <- plotly::ggplotly(
       ggplot2::ggplot() +
@@ -123,7 +127,6 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
         scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")
     )
-
     plot_dist <- t %>% add_trace(x=~var,
                                  y =~no_pct,
                                  line = list(color = 'rgb(0, 0, 0)'),
