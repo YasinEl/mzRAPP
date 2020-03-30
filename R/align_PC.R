@@ -16,7 +16,7 @@
 #' @examples
 align_PC <- function(PC,
                      ia = 100,
-                     add = "all",
+                     add = "main_adduct",
                      isocount = 2,
                      plan = "multiprocess",
                      pick_best = "rt_match"){

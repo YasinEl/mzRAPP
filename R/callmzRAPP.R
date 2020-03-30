@@ -3,7 +3,6 @@
 #' @return
 #' @export
 #'
-#' @import enviPat shiny shinyjs data.table
 #'
 #' @examples
 callmzRAPP <- function(){
@@ -164,17 +163,55 @@ css <- "
                 ),
         #Line Break for layout
         fluidRow(column(6,br())),
-        fluidRow(
-                 column(4,
-                          selectInput(
-                                      'resolution_drop',
-                                      'Select instrument & resolution',
-                                      names(resolution_list),
-                                      selected = 'OTFusion,QExactiveHF_120000@200',
-                                      width = "100%"
-                                     )
-                       )
-                ),
+      ###
+
+      fluidRow(
+        column(
+          12,
+          style = "display: inline-flex;",
+          prettySwitch(inputId = 'use_envipat_res_list',
+                       label = 'Envipat resolution list | Custom resolution list',
+                       value = FALSE,
+                       width = '190px')
+        )
+      ),
+      fluidRow(
+              conditionalPanel(condition = "!input.use_envipat_res_list",
+                               column(4,
+                               selectInput(
+                                 'resolution_drop',
+                                 'Select instrument & resolution',
+                                 names(resolution_list),
+                                 selected = 'OTFusion,QExactiveHF_120000@200',
+                                 width = "100%"
+                               ))
+              ),
+          conditionalPanel(condition = "input.use_envipat_res_list",
+                           column(2, actionButton(inputId = 'custom_res_mz',
+                                        label = 'Select Res vs mz table',
+                                        width = '100%'))
+        )
+      ),
+
+      fluidRow(
+        conditionalPanel(condition = "input.use_envipat_res_list",
+                         column(2, verbatimTextOutput(outputId = 'custom_res_mz',placeholder = TRUE)
+                         )
+        )
+      ),
+
+      ###
+        #fluidRow(
+        #         column(4,
+        #                  selectInput(
+        #                              'resolution_drop',
+        #                              'Select instrument & resolution',
+        #                              names(resolution_list),
+        #                              selected = 'OTFusion,QExactiveHF_120000@200',
+        #                              width = "100%"
+        #                             )
+        #               )
+        #        ),
         fluidRow(
                  column(6,
                         strong("2. Set parameters:", style = "font-size:30px"),
@@ -468,7 +505,14 @@ css <- "
                                                         choice_vector_comp,
                                                         selected = 'peak_height_b'
                                                        )
-                                         )
+                                         ),
+                                   column(3,
+                                          selectInput('overview_plot_input_col',
+                                                      'color-by',
+                                                      c(choice_vector_comp, "F/NF"),
+                                                      selected = 'F/NF'
+                                          )
+                                   )
 
                                   )
                          ),
@@ -694,7 +738,14 @@ css <- "
       }
     })
 
-
+    res_file <- reactive({
+      if(input$custom_res_mz == 0){return(NULL)}
+      else {
+        file <- tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter)
+        output$custom_res_mz <- renderText(paste0(basename(file)))
+        return(file)
+      }
+    })
     #Comparison
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
@@ -737,12 +788,11 @@ css <- "
     observe({mzML_files()})
     observe({grps_file()})
     observe({coi_file()})
+    observe({res_file()})
     observe({ug_files()})
     observe({g_file()})
     observe({benchmark_file()})
     observe({options_file()})
-
-
 
     observeEvent(input$generate_benchmark, {
       tryCatch({
@@ -770,8 +820,18 @@ css <- "
       }
 
       #Resolution
-      res_input <- input$resolution_drop
-      resolution_df <- resolution_list[[res_input]]
+        if(input$use_envipat_res_list == FALSE){
+          res_input <- input$resolution_drop
+          resolution_df <- resolution_list[[res_input]]
+        } else {
+          if(is.null(res_file()) || length(res_file()) == 0){
+            stop('No Resolution/mz file selected')
+          }
+          resolution_df <- fread(res_file())
+          if(!all(c("m/z", "R") %in% c(colnames(resolution_df)))){stop('Columns in Res/mz file missing')}
+          resolution_df <- na.omit(resolution_df[, c("m/z", "R")])
+          if(nrow(resolution_df) < 3){stop('Not enough values in Res/mz file')}
+        }
 
       withProgress(message = 'Calculation in progress',
                    detail = "calculating isotopologues...", value = 0, {
@@ -1008,10 +1068,10 @@ css <- "
 
 
     #Scatter_plot
-    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$PP_al_switch_ov}, {
+    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, choice_vector_comp, post_alignment = input$PP_al_switch_ov))
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, input$overview_plot_input_col, choice_vector_comp, post_alignment = input$PP_al_switch_ov))
       }
     })
 

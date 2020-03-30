@@ -27,7 +27,7 @@ find_r_s_error <- function(peak_area_b, peak_area_ug, peak_height_b){
     temp_dt[, r_s_error := 'NF']
   }
 
-  #UG Peaks where found
+  #UG Peaks were found
   else {
     #20% of first found area
     temp_dt[, first_found_area_temp := first_found_ug_area*2]

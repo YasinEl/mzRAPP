@@ -28,6 +28,16 @@ devtools::install_github("YasinEl/mzRAPP")
 
 ## Usage
 
+mzRAPP can be used via a shiny interface or via a set of functions. <br>
+
+<h3>
+
+Benchmark dataset generation
+
+</h3>
+
+<b>Via user interface:</b> <br>
+
 Open mzRAPP as shiny app using:
 
 ``` r
@@ -36,12 +46,6 @@ callmzRAPP()
 ```
 
 Following that you can go to the ‘Generate Benchmark’ panel of mzRAPP:
-
-<h3>
-
-Benchmark dataset generation
-
-</h3>
 
 <h4>
 
@@ -61,7 +65,7 @@ molecules:
 
 <b>molecule:</b> names of target molecules (should be unique
 identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
-(e.g. M+H or M-Cl). If more than one adduct is to be investigated
+(e.g. M+H or M+Cl). If more than one adduct is to be investigated
 another line with the same molecule name should be added. All adducts
 enabled in the enviPat package are allowed:
 
@@ -89,10 +93,11 @@ adducts$Name
 ```
 
 <b>main\_adduct:</b> One main adduct has to be defined for each molecule
-(e.g. M+H). <br> <b>SumForm\_c:</b> molecular composition of the neutral
-molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b> Starting time
-for chromatograms extracted for this molecule (seconds). <br>
-<b>EndTime.EIC:</b> End time for chromatograms extracted for this
+(e.g. M+H). If the main\_adduct is not detected also other adducts wont
+be accepted. <br> <b>SumForm\_c:</b> Molecular composition of the
+neutral molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b>
+Starting time for chromatograms extracted for this molecule (seconds).
+<br> <b>EndTime.EIC:</b> End time for chromatograms extracted for this
 molecule (seconds). <br> <b>user.rtmin:</b> (optional) Lower end of time
 window in which points should be considered for chromatographic peak
 detection (seconds). Defaults to StartTime.EIC. <br> <b>user.rtmin:</b>
@@ -102,8 +107,15 @@ EndTime.EIC. <br> <b>user.rt:</b> Retention time expected for this
 molecule. If multiple peaks are detected the peak closest to this time
 is chosen (seconds). <br>
 
-Afterwards the used instrument and resolution has to be selected. All
-instruments enabled via the enviPat package are enabled.
+Afterwards the used <u><b>instrument and resolution</u></b> has to be
+selected. This is necessary in order to apply the correct mass
+resolution for any given m/z value. All instruments enabled via the
+enviPat package can be selected from the envipat resolution list. For
+other instruments a custom resolution list has to be uploaded as .csv
+file. This .csv file has to have two columns: <br> <b>R: </b> Resolution
+value at half height of a mass peak <br> <b>m/z: </b> m/z value for the
+correspondig resolution <br> Resolution values for at least 10 equally
+distributed m/z value sis recommended.
 
 <h4>
 
@@ -121,10 +133,8 @@ the mz dimension to be still considered part of the same chromatogram.
 mz of two ion traces to be considered to be originating from the same
 ion. <br> <b>Processing plan:</b> How should the benchmark generation be
 done? <u>sequential</u> (only using one core; often slow but does not
-use much RAM), <u>multiprocess</u> (using multiple cores; faster but
-needs more RAM; works on Windows machines) or <u>multicore</u> (using
-multiple cores; faster but needs more RAM; does not work on Windows
-machines) <br>
+use much RAM) or <u>multiprocess</u> (using multiple cores; faster but
+needs more RAM; works on Windows machines) <br>
 
 <h4>
 
@@ -152,7 +162,46 @@ This could be because no additional isotopologue (fullfilling strict
 criteria in abundance and peak shape correlation) coule be detected. The
 plot in the lower right corner can be used to plot peaks corresponding
 to individual target molecules. For additional information on the
-individual plot click the blue question mark-icon above the plots.
+individual plot click the blue question mark-icon above the plots.<br>
+<br> <b>Via R-functions:</b><br>
+
+``` r
+library(mzRAPP)
+
+#load necessary files into environment
+targets <- fread("PATH_TO_TARGET_MOLECULE_FILE/TARGETS.csv")
+grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
+files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
+
+#load resolution list from envipat package
+data("resolution_list")
+mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
+
+#generate table with mass traces
+MassTraces <- getMZtable(
+  targets,
+  instrumentRes = mz_res_dependence_df,
+)
+
+#genereate table with regions of interest
+rois <- getROIsForEICs(
+  files = files,
+  Target.table = MassTraces,
+  PrecisionMZtol = 8,
+  AccurateMZtol = 5
+)
+
+#generate table with peaks
+PCbp <- findBenchPeaks(
+  files = files,
+  Grps = grps,
+  CompCol = rois,
+  Min.PointsperPeak = 7
+)
+
+#reducing number of peaks to a maximum of 1 per mass trace and generating final benchmark dataset
+PCal <- align_PC(PCbp)
+```
 
 <h3>
 
@@ -183,6 +232,10 @@ zipped folder. <br> unaligned file: select the xcms3xset.Rda file <br>
 aligned file: select the same xcms3xset.Rda file <br> <br>
 <u>MS-DIAL:</u> <br> unaligned files: Export -\> Peak list result -\>
 \[Add all files\] -\> \[set Export format to txt\] <br> aligned file:
+When performing the alignment make sure to activate the isotope tracking
+option in the alignment step (for most cases selecting 13C and 15N as
+labeling elements will be adequat). Afterwards export via:<br>
+
 Export -\> Alignment result -\> \[check Raw data matrix Area\] -\> \[set
 Export format to txt\] <br> <br> <u>mzMine:</u> <br> unaligned files:
 \[select all files generated in the chromatogram deconvolution step\]

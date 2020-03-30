@@ -8,6 +8,7 @@ plot_comp_scatter_plot(
   comparison_data,
   x,
   y,
+  col,
   choice_vector_comp,
   post_alignment = FALSE
 )
