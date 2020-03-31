@@ -65,7 +65,7 @@ molecules:
 
 <b>molecule:</b> names of target molecules (should be unique
 identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
-(e.g. M+H or M+Cl). If more than one adduct is to be investigated
+(e.g. M+H or M+Na). If more than one adduct is to be investigated
 another line with the same molecule name should be added. All adducts
 enabled in the enviPat package are allowed:
 
@@ -173,7 +173,7 @@ targets <- fread("PATH_TO_TARGET_MOLECULE_FILE/TARGETS.csv")
 grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
 files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
 
-#load resolution list from envipat package
+#load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
 data("resolution_list")
 mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
 
@@ -210,13 +210,17 @@ Reliability assessment of non-targeted data pre-processing
 </h3>
 
 The generated benchmark can now be used to assess the reliability of
-non-targeted data pre-processing. Such an assessment can be set up in
-the panel “Assess NT data pre-processing”. First the tool to be
-evaluated has to be set. Afterwards the unaligned files (One for XCMS
-(csv) and Compound Discoverer (txt), multiple for mzMine (csv) and
-MS-DIAL (txt)) and one aligned file have to be selected. <br> <br>
-<b>How to export unaligned and aligned files from the different
-tools:</b><br> <br> <u>XCMS (R-version):</u>
+non-targeted data pre-processing. <br>
+
+<b>Via user interface:</b> <br>
+
+Such an assessment can be set up in the panel “Assess NT data
+pre-processing”. First the tool to be evaluated has to be set.
+Afterwards the unaligned files (One for XCMS (csv) and Compound
+Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one
+aligned file have to be selected. <br> <br> <b>How to export unaligned
+and aligned files from the different tools:</b><br> <br> <u>XCMS
+(R-version):</u>
 
 ``` r
 #unaligned file:
@@ -265,6 +269,33 @@ described at the bottom of this readme. <br> <br> After performing those
 steps the assessment can be started via the blue “Start assessment
 button”.
 
+<b>Via R-functions:</b><br>
+
+``` r
+library(mzRAPP)
+
+#set used algorith. Can be "XCMS", "msDial", "mzMine" or "CompoundDiscoverer"
+algo = "XCMS"
+
+#import generated benchmark dataset
+benchmark_list <- import_benchmark(file = "PATH_TO_BENCHMARK/Benchmark.csv", 
+                                   algo = algo
+                                   )
+#import genereated outputs from non-targeted tools 
+NToutputs <- pick_algorithm(ug_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_BEFORE_ALIGNMENT/UNALIGNED_OUTPUT.csv", 
+                            g_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_AFTER_ALIGNMENT/ALIGNED_OUTPUT.csv", 
+                            options_table = benchmark_list$options_table, 
+                            algo = algo
+                            )
+
+#perform comparison
+comparison <- compare_peaks(b_table = NToutputs$b_table, 
+                            ug_table = NToutputs$ug_table, 
+                            g_table = NToutputs$g_table,
+                            algo = algo
+                            )
+```
+
 ## Interpretation of assessment results
 
 Reliability assessment results are distributed over the panels
@@ -282,7 +313,7 @@ benchmark area detected via NPP. If a missing peak has a benchmark area
 \> 20% higher than the lowest NPP-detected peak it is classified as R if
 it is \< than 20% as S. <br> <br> <u>Pred. error increase \>20%p:</u>
 <br> Isotopologue areas are predicted from the most abundant
-isotopologue of each compound. If the relative error of this prediction
+isotopologue of each molecule. If the relative error of this prediction
 is more than 20 %p higher for NT-peak areas (compared to
 benchmark-areas) it is refelcted in this variable. Here only peak areas
 from the peak picking step are considered. <br> <br> <u>Min. \# of

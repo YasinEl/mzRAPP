@@ -65,7 +65,7 @@ molecules:
 
 <b>molecule:</b> names of target molecules (should be unique
 identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
-(e.g. M+H or M+Cl). If more than one adduct is to be investigated
+(e.g. M+H or M+Na). If more than one adduct is to be investigated
 another line with the same molecule name should be added. All adducts
 enabled in the enviPat package are allowed:
 
@@ -173,7 +173,7 @@ targets <- fread("PATH_TO_TARGET_MOLECULE_FILE/TARGETS.csv")
 grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
 files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
 
-#load resolution list from envipat package
+#load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
 data("resolution_list")
 mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
 
@@ -210,13 +210,17 @@ Reliability assessment of non-targeted data pre-processing
 </h3>
 
 The generated benchmark can now be used to assess the reliability of
-non-targeted data pre-processing. Such an assessment can be set up in
-the panel “Assess NT data pre-processing”. First the tool to be
-evaluated has to be set. Afterwards the unaligned files (One for XCMS
-(csv) and Compound Discoverer (txt), multiple for mzMine (csv) and
-MS-DIAL (txt)) and one aligned file have to be selected. <br> <br>
-<b>How to export unaligned and aligned files from the different
-tools:</b><br> <br> <u>XCMS (R-version):</u>
+non-targeted data pre-processing. <br>
+
+<b>Via user interface:</b> <br>
+
+Such an assessment can be set up in the panel “Assess NT data
+pre-processing”. First the tool to be evaluated has to be set.
+Afterwards the unaligned files (One for XCMS (csv) and Compound
+Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one
+aligned file have to be selected. <br> <br> <b>How to export unaligned
+and aligned files from the different tools:</b><br> <br> <u>XCMS
+(R-version):</u>
 
 ``` r
 #unaligned file:
@@ -263,17 +267,45 @@ mentioned above this can be done by clicking the “Use generated options”
 switch button. The way those option files can be generated manually is
 described at the bottom of this readme. <br> <br> After performing those
 steps the assessment can be started via the blue “Start assessment
-button”.
+button”. <br>
+
+<b>Via R-functions:</b><br>
+
+``` r
+library(mzRAPP)
+
+#set used algorith. Can be "XCMS", "msDial", "mzMine" or "CompoundDiscoverer"
+algo = "XCMS"
+
+#import generated benchmark dataset
+benchmark_list <- import_benchmark(file = "PATH_TO_BENCHMARK/Benchmark.csv", 
+                                   algo = algo
+                                   )
+#import genereated outputs from non-targeted tools 
+NToutputs <- pick_algorithm(ug_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_BEFORE_ALIGNMENT/UNALIGNED_OUTPUT.csv", 
+                            g_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_AFTER_ALIGNMENT/ALIGNED_OUTPUT.csv", 
+                            options_table = benchmark_list$options_table, 
+                            algo = algo
+                            )
+
+#perform comparison
+comparison <- compare_peaks(b_table = NToutputs$b_table, 
+                            ug_table = NToutputs$ug_table, 
+                            g_table = NToutputs$g_table,
+                            algo = algo
+                            )
+```
 
 ## Interpretation of assessment results
 
 Reliability assessment results are distributed over the panels
-“Assessment results (peaks)” and “Assessment results (alignment)”. In
-the first panel a number of performance metrics is given on the top:
-<br> <br> <u>Found peaks:</u> <br> The number of benchmark peaks for
-which a match was found among the NT peaks in the peak picking step.
-<br> <br> <u>Peak fragments:</u> <br> The number of peak fragments which
-have been found that have been found over the whole dataset. For a
+“Assessment results (peaks)” and “Assessment results (alignment)” or
+can be generated using R-functions (shown below). Using the shiny user
+interface the following performance metrics are given at the top of the
+first panel: <br> <br> <u>Found peaks:</u> <br> The number of benchmark
+peaks for which a match was found among the NT peaks in the peak picking
+step. <br> <br> <u>Peak fragments:</u> <br> The number of peak fragments
+which have been found that have been found over the whole dataset. For a
 graphical explanation of a split peak please look at the mzRAPP
 publication. <br> <br> <u>Missing Value (S|R):</u> <br> Number of
 systematic (s) and random (R) missing values after the peak picking
@@ -282,7 +314,7 @@ benchmark area detected via NPP. If a missing peak has a benchmark area
 \> 20% higher than the lowest NPP-detected peak it is classified as R if
 it is \< than 20% as S. <br> <br> <u>Pred. error increase \>20%p:</u>
 <br> Isotopologue areas are predicted from the most abundant
-isotopologue of each compound. If the relative error of this prediction
+isotopologue of each molecule. If the relative error of this prediction
 is more than 20 %p higher for NT-peak areas (compared to
 benchmark-areas) it is refelcted in this variable. Here only peak areas
 from the peak picking step are considered. <br> <br> <u>Min. \# of
@@ -303,4 +335,10 @@ higher for NT-peak areas (compared to benchmark-areas) it is refelcted
 in this variable. Here only peak areas after the alignment step are
 considered. <br> <br> <b>Overview plots:</b><br> <br> For explanations
 of the overview plots please click the blue question marks above the
-individual plots.
+individual plots. <br>
+
+<b>Via R-functions:</b><br>
+
+``` r
+library(mzRAPP)
+```

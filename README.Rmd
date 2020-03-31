@@ -58,7 +58,7 @@ In order to generate a benchmark you need to provide your centroided mzML files 
 The <u><b>target file</b></u> should contain information on the target molecules:
 
 <b>molecule:</b> names of target molecules (should be unique identifiers) <br>
-<b>adduct_c:</b> adducts that should be evaluated (e.g. M+H or M+Cl). If more than one adduct is to be investigated another line with the same molecule name should be added. All adducts enabled in the enviPat package are allowed:
+<b>adduct_c:</b> adducts that should be evaluated (e.g. M+H or M+Na). If more than one adduct is to be investigated another line with the same molecule name should be added. All adducts enabled in the enviPat package are allowed:
 ```{r enviPat}
 library(enviPat)
 data(adducts)
@@ -100,7 +100,7 @@ targets <- fread("PATH_TO_TARGET_MOLECULE_FILE/TARGETS.csv")
 grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
 files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
 
-#load resolution list from envipat package
+#load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
 data("resolution_list")
 mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
 
@@ -137,7 +137,11 @@ PCal <- align_PC(PCbp)
 
 <h3>Reliability assessment of non-targeted data pre-processing</h3>
 
-The generated benchmark can now be used to assess the reliability of non-targeted data pre-processing. Such an assessment can be set up in the panel "Assess NT data pre-processing". First the tool to be evaluated has to be set. Afterwards the unaligned files (One for XCMS (csv) and Compound Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one aligned file have to be selected. <br>
+The generated benchmark can now be used to assess the reliability of non-targeted data pre-processing. <br>
+
+<b>Via user interface:</b> <br>
+
+Such an assessment can be set up in the panel "Assess NT data pre-processing". First the tool to be evaluated has to be set. Afterwards the unaligned files (One for XCMS (csv) and Compound Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one aligned file have to be selected. <br>
 <br>
 <b>How to export unaligned and aligned files from the different tools:</b><br>
 <br>
@@ -149,6 +153,7 @@ data.table::fwrite(xcms::peaks(xcmsSet_object), "blabla_unaligned_file.csv")
 #aligned file:
 data.table::fwrite(xcms::peakTable(xcmsSet_object), "blabla_aligned_file.csv")
 ```
+
 <br>
 <u>XCMS online:</u> <br>
 Download all results from XCMS online via the button "Download Results". Afterwards extract all Results from the zipped folder. <br>
@@ -172,16 +177,40 @@ unaligned file: [go to panel "Features"] -> [click in any row] -> [click "Show r
 <br>
 Next the benchmark file has to be selected. If a benchmark has been created during this shiny session (the benchmark is still visible in the panel benchmark overview) the switch button "Use generated benchmark" can be clicked as an alternative. If you want to adapt mzRAPP to a tool/non-targeted output format other than those mentioned above this can be done by clicking the "Use generated options" switch button. The way those option files can be generated manually is described at the bottom of this readme. <br>
 <br>
-After performing those steps the assessment can be started via the blue "Start assessment button".
+After performing those steps the assessment can be started via the blue "Start assessment button". <br>
 
-```{r pressure, echo = FALSE}
-#shiny::runApp("callmzRAPP", display.mode = "showcase")
+<b>Via R-functions:</b><br>
+```{r eval=FALSE}
+library(mzRAPP)
+
+#set used algorith. Can be "XCMS", "msDial", "mzMine" or "CompoundDiscoverer"
+algo = "XCMS"
+
+#import generated benchmark dataset
+benchmark_list <- import_benchmark(file = "PATH_TO_BENCHMARK/Benchmark.csv", 
+                                   algo = algo
+                                   )
+#import genereated outputs from non-targeted tools 
+NToutputs <- pick_algorithm(ug_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_BEFORE_ALIGNMENT/UNALIGNED_OUTPUT.csv", 
+                            g_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_AFTER_ALIGNMENT/ALIGNED_OUTPUT.csv", 
+                            options_table = benchmark_list$options_table, 
+                            algo = algo
+                            )
+
+#perform comparison
+comparison <- compare_peaks(b_table = NToutputs$b_table, 
+                            ug_table = NToutputs$ug_table, 
+                            g_table = NToutputs$g_table,
+                            algo = algo
+                            )
+
 ```
+
 
 
 ## Interpretation of assessment results
 
-Reliability assessment results are distributed over the panels "Assessment results (peaks)" and "Assessment results (alignment)". In the first panel a number of performance metrics is given on the top: <br>
+Reliability assessment results are distributed over the panels "Assessment results (peaks)" and "Assessment results (alignment)" or can be generated using R-functions (shown below). Using the shiny user interface the following performance metrics are given at the top of the first panel: <br>
 <br>
 <u>Found peaks:</u> <br>
 The number of benchmark peaks for which a match was found among the NT peaks in the peak picking step. <br>
@@ -193,7 +222,7 @@ The number of peak fragments which have been found that have been found over the
 Number of systematic (s) and random (R) missing values after the peak picking step. This classification is depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 20% higher than the lowest NPP-detected peak it is classified as R if it is < than 20% as S. <br>
 <br>
 <u>Pred. error increase >20%p:</u> <br>
-Isotopologue areas are predicted from the most abundant isotopologue of each compound. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas from the peak picking step are considered. <br>
+Isotopologue areas are predicted from the most abundant isotopologue of each molecule. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas from the peak picking step are considered. <br>
 <br>
 <u>Min. # of alignment errors:</u> <br>
 Gives the minimum number of alignment errors done by the non-targeted algorithm. For the exact way of how this count is esatblished please check the original mzRAPP publication. <br>
@@ -209,7 +238,47 @@ Isotopologue areas are predicted from the most abundant isotopologue of each com
 <br>
 <b>Overview plots:</b><br>
 <br>
-For explanations of the overview plots please click the blue question marks above the individual plots.
+For explanations of the overview plots please click the blue question marks above the individual plots. <br>
+
+<b>Via R-functions:</b><br>
+
+```{r eval=FALSE}
+library(mzRAPP)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

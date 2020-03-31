@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-import_benchmark <- function (file, options_path, from_csv = TRUE, algo) {
+import_benchmark <- function (file, options_path = "generate", from_csv = TRUE, algo) {
 
   if(from_csv){
     if(is.null(file)){
