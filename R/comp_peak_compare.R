@@ -261,11 +261,30 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #Generate Random and systematic error DT
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
 
-  rs_table[, missing_peaks := find_r_s_error(
-    peak_area_b,
-    peak_area_ug,
-    peak_height_b
-  ), by = .(molecule_b, adduct_b, isoabb_b)]
+
+
+  rs_table <-
+    rs_table[, Connected := File_con_test(
+      sample_name_b,
+      feature_id_g),
+      by = .(molecule_b, adduct_b)]
+
+
+  rs_table <-
+    rs_table[, missing_peaks := find_r_s_error(
+      peak_area_b,
+      peak_area_ug,
+      peak_height_b,
+      Connected
+    ), by = .(molecule_b, adduct_b, isoabb_b)]
+
+
+
+  #rs_table[, missing_peaks := find_r_s_error(
+  #  peak_area_b,
+  #  peak_area_ug,
+  #  peak_height_b
+  #), by = .(molecule_b, adduct_b, isoabb_b)]
 
 
   ###################################################################################################################

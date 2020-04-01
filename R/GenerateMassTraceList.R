@@ -38,8 +38,8 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   ##################################
   #load necessary data
   ##################################
-  if(missing(adducts)){data("adducts", envir = environment())}
-  if(missing(isotopes)){data("isotopes", envir = environment())}
+  if(missing(adducts)){data("adducts", envir = environment(), package = "enviPat")}
+  if(missing(isotopes)){data("isotopes", envir = environment(), package = "enviPat")}
 
 
 
@@ -50,7 +50,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   #check sum formulas and create working-table
   ##################################
   DTreg <- DT
-  SF <- check_chemform(isotopes,DT$SumForm_c)
+  SF <- enviPat::check_chemform(isotopes,DT$SumForm_c)
   DT <- cbind(DT,SF)
   DT <- merge(DT, adducts, by.x="adduct_c", by.y="Name")
 
@@ -58,15 +58,15 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   #calculate new sum formulas from adducts
   ##################################
   DT$SumForm2_c <- mapply(multiform,DT$new_formula,DT$Mult)
-  DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") mergeform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_add)
-  DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") subform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_ded)
+  DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") enviPat::mergeform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_add)
+  DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") enviPat::subform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_ded)
   DT <- DT[SumForm2_c != "H from formula 2 not part of formula1"]
 
 
   ##################################
   #check new sum formulas
   ##################################
-  SF <- check_chemform(isotopes,DT$SumForm2_c)
+  SF <- enviPat::check_chemform(isotopes,DT$SumForm2_c)
 
 
 if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not correct, namely ", setDT(SF)[warning == TRUE]$new_formula))}
@@ -74,7 +74,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   ##################################
   #calculate theoretical isotope pattern
   ##################################
-  pattern <- isopattern(isotopes,
+  pattern <- enviPat::isopattern(isotopes,
                         chemforms = SF$new_formula,
                         plotit = FALSE,
                         threshold = RelInt_threshold,
@@ -108,13 +108,13 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   ##################################
   #calculate theoretical profile at given resolution
   ##################################
-  profile <- envelope(pattern = pattern,
+  profile <- enviPat::envelope(pattern = pattern,
                       frac = 0.1,
                       dmz = "get",
                       env = "Gaussian",
                       plotit = FALSE,
                       verbose = FALSE,
-                      resolution = getR(checked = SF,
+                      resolution = enviPat::getR(checked = SF,
                                         resmass = instrumentRes,#getR(t, resmass = resolution_list$instrumentRes),
                                         nknots = 6,
                                         spar = 0.1,
@@ -124,7 +124,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   #calculate discrete m/z values and abundandences
   ##################################
   trash <- capture.output({
-  sticks <- vdetect(profiles = profile,
+  sticks <- enviPat::vdetect(profiles = profile,
                     detect = stick_method,
                     plotit = FALSE)
   })

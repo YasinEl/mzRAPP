@@ -11,7 +11,6 @@ LazyData: true
 RoxygenNote: 7.0.2
 Depends: 
     data.table,
-    enviPat,
     ggplot2,
     shinyjs,
     shiny,
@@ -27,6 +26,7 @@ biocViews:
 Imports:
     retistruct,
     xcms,
+    enviPat,
     plotly,
     stats,
     parallel,

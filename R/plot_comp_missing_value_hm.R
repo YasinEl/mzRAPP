@@ -31,12 +31,21 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
                                                                     "peak_area_b")])), on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
 
 
+
+    feat_t <-
+      feat_t[, Connected := File_con_test(
+        sample_name_b,
+        feature_id_g),
+        by = .(molecule_b, adduct_b)]
+
+
     #feat_t <- feat_t[!is.na(area_b)]
     hm_dt <-
       feat_t[, missing_peaks := find_r_s_error(
         peak_area_b,
         area_g,
-        peak_area_b
+        peak_area_b,
+        Connected
       ), by = .(molecule_b, adduct_b, isoabb_b)]
     hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
     #tmp <- unique(data.table(sample_id_b = as.factor(ev_return_list[["c_table"]][["sample_id_b"]]),
@@ -48,7 +57,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
 
 
-  hm_dt <- hm_dt[, overgroup := paste0(molecule_b, adduct_b)]
+  #hm_dt <- hm_dt[, overgroup := paste0(molecule_b, adduct_b)]
 
   hm_dt <- hm_dt[, if (any(missing_peaks != 'F')) .SD, by = .(molecule_b, adduct_b, isoabb_b)]
   if(nrow(hm_dt) == 0) {return(plotly::ggplotly(ggplot() + ggtitle("No missing peaks present")))}
@@ -59,7 +68,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
   hm_dt$ord <- as.integer(hm_dt$sample_id_b)
   hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
-
+hm_dt_test <<- hm_dt
   hm_dt <- hm_dt[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "plot_group", "sample_id_b", "missing_peaks", "nr", "ord")]
 
   if(post_alignment == TRUE){
@@ -82,7 +91,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
       )
     ) +
     geom_tile() +
-    scale_fill_manual(values=c(`F` = "forestgreen", `NF` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1")) +
+    scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
     ggtitle("Missing peaks") +
     labs(x = "benchmark features", y = "sample IDs") +
     theme(legend.title = element_blank())

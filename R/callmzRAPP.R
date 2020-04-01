@@ -39,7 +39,7 @@ css <- "
   options(spinner.type = 4)
 
 
-  if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment())}
+  if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment(), package = "enviPat")}
 
   choice_vector_bench <- c(
     'Retention time [sec]' = 'peaks.rt',
@@ -509,7 +509,7 @@ css <- "
                                    column(3,
                                           selectInput('overview_plot_input_col',
                                                       'color-by',
-                                                      c(choice_vector_comp, "F/NF"),
+                                                      c("F/NF", choice_vector_comp),
                                                       selected = 'F/NF'
                                           )
                                    )
@@ -558,11 +558,14 @@ css <- "
                           fluidRow(
                                    column(1,
                                             dropdownButton('Each column represents a benchmark feature with at least one peak missed by non-targeted data pre-processing (NPP).
-                                                            Missed peaks are classified as random (R), systematic (S) or lost (L). This classification is
-                                                            depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 20%
-                                                            higher than the lowest NPP-detected peak it is classified as R if it is < than 20% as S. If no peak
-                                                            is detected in the benchmark it is classified as L.', 'The switch above the plot allows to check for detected peaks
-                                                            after the peak picking as well as after the alignment and feature processing (e.g. filling of gaps) step.',
+                                                            Benchmark peaks whose affiliation to a benchmark feature could not be confirmed via NPP-alignment (considering all
+                                                            isotopologues of a given molecule) are labeled as not confirmable (NC) and are not considered for missing value
+                                                            calssification. Missed peaks are classified as random (R), systematic (S) or lost (L). This classification is
+                                                            depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 50%
+                                                            higher than the lowest NPP-detected peak it is classified as R if it is < 50% or even lower as S. If no peak is
+                                                            detected in the benchmark it is classified as L.',
+                                                            'The switch above the plot allows to check for detected peaks after the peak picking as well as after the alignment
+                                                            and feature processing (e.g. filling of gaps) step.',
                                                             'For that second option only peaks present in the main feature (feature most representative for the corresponding
                                                             benchmark molecules predicted isotopic pattern) are considered.',
                                                            tooltip = tooltipOptions(title = 'Click for description'),

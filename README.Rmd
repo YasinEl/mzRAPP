@@ -75,7 +75,7 @@ adducts$Name
 Afterwards the used <u><b>instrument and resolution</u></b> has to be selected. This is necessary in order to apply the correct mass resolution for any given m/z value. All instruments enabled via the enviPat package can be selected from the envipat resolution list. For other instruments a custom resolution list has to be uploaded as .csv file. This .csv file has to have two columns: <br>
 <b>R: </b> Resolution value at half height of a mass peak <br>
 <b>m/z: </b> m/z value for the correspondig resolution <br>
-Resolution values for at least 10 equally distributed m/z value sis recommended.
+Resolution values for at least 10 equally distributed m/z values are recommended.
 
 <h4>Second:</h4>
 In a next step a view paramters have to be set: <br>
@@ -101,7 +101,7 @@ grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
 files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
 
 #load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
-data("resolution_list")
+data("resolution_list", package = "enviPat")
 mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
 
 #generate table with mass traces
@@ -143,7 +143,7 @@ The generated benchmark can now be used to assess the reliability of non-targete
 
 Such an assessment can be set up in the panel "Assess NT data pre-processing". First the tool to be evaluated has to be set. Afterwards the unaligned files (One for XCMS (csv) and Compound Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one aligned file have to be selected. <br>
 <br>
-<b>How to export unaligned and aligned files from the different tools:</b><br>
+<b>How to export unaligned and aligned files from different tools:</b><br>
 <br>
 <u>XCMS (R-version):</u>
 ```{r eval=FALSE} 
@@ -162,9 +162,7 @@ aligned file: select the same xcms3xset.Rda file <br>
 <br>
 <u>MS-DIAL:</u> <br>
 unaligned files: Export -> Peak list result -> [Add all files] -> [set Export format to txt] <br>
-aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequat). Afterwards export via:<br>
-
-Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
+aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequat). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
 <br>
 <u>mzMine:</u> <br>
 unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export/Import -> Export to CSV file -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Peak height", "Peak area", "Peak RT start", "Peak RT end", "Peak RT", "Peak m/z", "Peak m/z min" and "Peak m/z max"] -> [set Filter rows to ALL] <br>
@@ -219,7 +217,7 @@ The number of benchmark peaks for which a match was found among the NT peaks in 
 The number of peak fragments which have been found that have been found over the whole dataset. For a graphical explanation of a split peak please look at the mzRAPP publication. <br>
 <br>
 <u>Missing Value (S|R):</u> <br>
-Number of systematic (s) and random (R) missing values after the peak picking step. This classification is depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 20% higher than the lowest NPP-detected peak it is classified as R if it is < than 20% as S. <br>
+Number of systematic (S) and random (R) missing values after the peak picking step. This classification is depending on the peak with the lowest benchmark area detected via NPP. If a peak missed by NPP has a benchmark area > 20% higher than the lowest NPP-detected peak it is classified as R if it is < 20% higher or even lower as S. <br>
 <br>
 <u>Pred. error increase >20%p:</u> <br>
 Isotopologue areas are predicted from the most abundant isotopologue of each molecule. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas from the peak picking step are considered. <br>

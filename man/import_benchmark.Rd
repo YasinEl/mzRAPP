@@ -4,7 +4,7 @@
 \alias{import_benchmark}
 \title{import_benchmark}
 \usage{
-import_benchmark(file, options_path, from_csv = TRUE, algo)
+import_benchmark(file, options_path = "generate", from_csv = TRUE, algo)
 }
 \arguments{
 \item{from_csv}{}
