@@ -63,7 +63,6 @@ File_con_test <- function(FileName, feature_id){
 
   sub_tab <- data.table(FileName, feature_id)
 
-  strange_stuff <<- sub_tab
   tt <- na.omit(sub_tab)
 
   if(length(unique(tt$FileName)) <= 1 |

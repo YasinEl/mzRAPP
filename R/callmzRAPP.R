@@ -550,11 +550,11 @@ css <- "
                                                             isotopologues of a given molecule) are labeled as not confirmable (NC) and are not considered for missing value
                                                             calssification. Missed peaks are classified as random (R), systematic (S) or lost (L). This classification is
                                                             depending on the peak with the lowest benchmark area detected via NPP. If a missing peak has a benchmark area > 50%
-                                                            higher than the lowest NPP-detected peak it is classified as R if it is < 50% or even lower as S. If no peak is
-                                                            detected in the benchmark it is classified as L.',
+                                                            higher than the lowest NPP-detected peak it is classified as R if it is < 50% higher or even lower as S. If no peak
+                                                            of the benchmark feature is detected they are all classified as L.',
                                                             'The switch above the plot allows to check for detected peaks after the peak picking as well as after the alignment
                                                             and feature processing (e.g. filling of gaps) step.',
-                                                            'For that second option only peaks present in the main feature (feature most representative for the corresponding
+                                                            'For the second option only peaks present in the main feature (feature most representative for the corresponding
                                                             benchmark molecules predicted isotopic pattern) are considered.',
                                                            tooltip = tooltipOptions(title = 'Click for description'),
                                                            circle = TRUE,
