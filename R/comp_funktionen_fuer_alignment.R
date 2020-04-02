@@ -157,10 +157,10 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   })
 
-  lba <- as.data.table(table(unlist(test_dt22)))
+  lba <- as.data.table(table(unlist(DT)))
   if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
-    lba_e <- lba[V1 == "Lost_b.A"]$N
-  } else { lba_e <- 0}
+    lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
+  } else {lba_e <- 0L}
 
   return(sum(unlist(error_list), lba_e))
   }
