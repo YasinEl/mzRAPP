@@ -31,10 +31,10 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
                                                                     "peak_area_b")])), on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
 
 
-
+    #test_feat <<- feat_t
     feat_t <-
       feat_t[, Connected := File_con_test(
-        sample_name_b,
+        sample_id_b,
         feature_id_g),
         by = .(molecule_b, adduct_b)]
 
@@ -68,7 +68,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
 
   hm_dt$ord <- as.integer(hm_dt$sample_id_b)
   hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
-hm_dt_test <<- hm_dt
+#hm_dt_test <<- hm_dt
   hm_dt <- hm_dt[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "plot_group", "sample_id_b", "missing_peaks", "nr", "ord")]
 
   if(post_alignment == TRUE){

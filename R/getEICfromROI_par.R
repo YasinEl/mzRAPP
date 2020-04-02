@@ -41,6 +41,8 @@ getROIsForEICs <-
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
 
+  if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
+
   #if("user.rt" %in% colnames(Target.table)){
 
    # filter_table <- Target.table

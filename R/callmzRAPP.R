@@ -181,8 +181,8 @@ css <- "
                                selectInput(
                                  'resolution_drop',
                                  'Select instrument & resolution',
-                                 names(resolution_list),
-                                 selected = 'OTFusion,QExactiveHF_120000@200',
+                                 c('------' ,names(resolution_list)),
+                                 selected = '------',
                                  width = "100%"
                                ))
               ),
@@ -200,18 +200,6 @@ css <- "
         )
       ),
 
-      ###
-        #fluidRow(
-        #         column(4,
-        #                  selectInput(
-        #                              'resolution_drop',
-        #                              'Select instrument & resolution',
-        #                              names(resolution_list),
-        #                              selected = 'OTFusion,QExactiveHF_120000@200',
-        #                              width = "100%"
-        #                             )
-        #               )
-        #        ),
         fluidRow(
                  column(6,
                         strong("2. Set parameters:", style = "font-size:30px"),
@@ -824,6 +812,7 @@ css <- "
 
       #Resolution
         if(input$use_envipat_res_list == FALSE){
+          if(input$resolution_drop == '------') {stop('Please select used Resolution')}
           res_input <- input$resolution_drop
           resolution_df <- resolution_list[[res_input]]
         } else {
@@ -898,7 +887,7 @@ css <- "
 
       sendSweetAlert(session,
                      title = 'Benchmark generated',
-                     text = 'Benchmark geneneration has been finished. You can proceed to use it for relyability
+                     text = 'Benchmark geneneration has been finished. You can proceed to use it for reliability
                                   assessment of non-targeted data pre-processing. A benchmark overview is provided in section
                                   "Benchmark overview" (rendering can take a min)',
                      type = 'success',

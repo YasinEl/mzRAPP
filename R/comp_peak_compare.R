@@ -261,7 +261,9 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #Generate Random and systematic error DT
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
 
-
+  rs_table <- rs_table[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "peak_area_b", "peak_height_b",
+                           "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
+  )]
 
   rs_table <-
     rs_table[, Connected := File_con_test(

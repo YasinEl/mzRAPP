@@ -36,6 +36,7 @@ findBenchPeaks <- function(files,
                            max.mz.diff_ppm = 5)
 {
 
+  if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
   if(!is.character(CompCol_all$molecule)) {CompCol_all$molecule <- as.character(CompCol_all$molecule)}
 
   CompCol <-
