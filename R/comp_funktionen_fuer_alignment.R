@@ -136,7 +136,7 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
         if(length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "FALSE"]) > 0 &
            length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "TRUE"]) > 0){
 
-          problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.PP", NA, "")]
+          problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.A", "Lost_b.PP", NA, "")]
 #print(paste0("problematic joins: "))
 #print(problematic_joins)
 
@@ -157,41 +157,12 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   })
 
+  lba <- as.data.table(table(unlist(test_dt22)))
+  if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
+    lba_e <- lba[V1 == "Lost_b.A"]$N
+  } else { lba_e <- 0}
 
-  empty_samples <- apply(DT[, !"sample_id_b"], 1, function(x) {
-
-    if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
-      count.table <- data.table(table(x))
-      if("Lost_b.A" %in% count.table$x){return(count.table[x == "Lost_b.A"]$N)}
-    }
-  })
-
-
-
-  DT <-
-    transform(DT, lost = apply(DT, 1, function(x) {
-      if(length(x[-1][x[-1] != "" & x[-1] != "Lost_b.A" & x[-1] != "Lost_b.PP"]) == 0){
-        return(TRUE)
-      }
-      return(FALSE)
-    }))
-
-
-  DT[DT == "Lost_b.A" & lost == TRUE] <- ""
-
-  DT <- DT[, !"lost"]
-
-
-
-empty_isos <- apply(DT[, !"sample_id_b"], 2, function(x) {
-
-    if(length(x[x != "" & x != "Lost_b.A" & x != "Lost_b.PP"]) == 0){
-      count.table <- data.table(table(x))
-      if("Lost_b.A" %in% count.table$x){return(count.table[x == "Lost_b.A"]$N)}
-    }
-  })
-
-  return(sum(unlist(error_list), unlist(empty_samples), unlist(empty_isos)))
+  return(sum(unlist(error_list), lba_e))
   }
 
 
