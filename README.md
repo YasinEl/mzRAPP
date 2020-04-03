@@ -340,3 +340,36 @@ individual plots. <br>
 ``` r
 library(mzRAPP)
 ```
+
+## Background
+
+<h3>
+
+Comparison of benchmark with non-targeted output
+
+</h3>
+
+<b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
+Each benchmark peak (BP) is reported the smallest and highest mz value
+contributing to the chromatographic peak. In order to be considered as
+possible match for a BP a NT peak (NP) has to come with an mz value
+between those to values. Matching rules considering retention time (RT)
+are depicted in Figure 1. A NP has to cover the whole core of a BP while
+having a RT within the borders of the BP. If only a part of the core is
+covered by a NP with its RT in the borders of the BP, the NP it is
+counted as a split peak. NPs which are not overlapping with the core of
+a BP are not considered.
+
+<div class="figure">
+
+<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figs}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" />
+
+<p class="caption">
+
+<b>Figure 1 | </b> Matching rules of BP with NP
+
+</p>
+
+</div>
+
+öööööööö

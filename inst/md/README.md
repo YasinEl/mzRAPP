@@ -115,7 +115,7 @@ other instruments a custom resolution list has to be uploaded as .csv
 file. This .csv file has to have two columns: <br> <b>R: </b> Resolution
 value at half height of a mass peak <br> <b>m/z: </b> m/z value for the
 correspondig resolution <br> Resolution values for at least 10 equally
-distributed m/z value sis recommended.
+distributed m/z values are recommended.
 
 <h4>
 
@@ -174,7 +174,7 @@ grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
 files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
 
 #load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
-data("resolution_list")
+data("resolution_list", package = "enviPat")
 mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
 
 #generate table with mass traces
@@ -219,7 +219,7 @@ pre-processing”. First the tool to be evaluated has to be set.
 Afterwards the unaligned files (One for XCMS (csv) and Compound
 Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one
 aligned file have to be selected. <br> <br> <b>How to export unaligned
-and aligned files from the different tools:</b><br> <br> <u>XCMS
+and aligned files from different tools:</b><br> <br> <u>XCMS
 (R-version):</u>
 
 ``` r
@@ -238,36 +238,34 @@ aligned file: select the same xcms3xset.Rda file <br> <br>
 \[Add all files\] -\> \[set Export format to txt\] <br> aligned file:
 When performing the alignment make sure to activate the isotope tracking
 option in the alignment step (for most cases selecting 13C and 15N as
-labeling elements will be adequat). Afterwards export via:<br>
-
-Export -\> Alignment result -\> \[check Raw data matrix Area\] -\> \[set
-Export format to txt\] <br> <br> <u>mzMine:</u> <br> unaligned files:
-\[select all files generated in the chromatogram deconvolution step\]
--\> Feature list methods -\> Export/Import -\> Export to CSV file -\>
-\[set Filename including pattern/curly brackets
-(e.g. blabla\_{}\_blabla.csv)\] -\> \[check “Peak height”, “Peak area”,
-“Peak RT start”, “Peak RT end”, “Peak RT”, “Peak m/z”, “Peak m/z min”
-and “Peak m/z max”\] -\> \[set Filter rows to ALL\] <br> aligned file:
-\[select file after alignment step\] -\> Feature list methods -\>
-Export/Import -\> Export to CSV file -\> \[additional to checks set for
-unaligned files check “Export row retention time” and “Export row
-m/z”\]<br> <br> <u>Compound Discoverer:</u> <br> unaligned file: \[go
-to panel “Features”\] -\> \[click in any row\] -\> \[click “Show related
-Tables” on the bottom of the screen\] -\> \[go to panel “Chromatogram
-Peaks”\] -\> \[make sure the columns “Apex Intensity”, “Area”, “Study
-File ID”, “Left RT \[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and
-“Apex m/z” are visible\] -\> \[right click any row\] -\> Export -\> As
-plain text… <br> <br> <b>Selecting a benchmark dataset and starting
-assessment:</b><br> <br> Next the benchmark file has to be selected. If
-a benchmark has been created during this shiny session (the benchmark is
-still visible in the panel benchmark overview) the switch button “Use
-generated benchmark” can be clicked as an alternative. If you want to
-adapt mzRAPP to a tool/non-targeted output format other than those
-mentioned above this can be done by clicking the “Use generated options”
-switch button. The way those option files can be generated manually is
-described at the bottom of this readme. <br> <br> After performing those
-steps the assessment can be started via the blue “Start assessment
-button”.
+labeling elements will be adequat). Afterwards export via: Export -\>
+Alignment result -\> \[check Raw data matrix Area\] -\> \[set Export
+format to txt\] <br> <br> <u>mzMine:</u> <br> unaligned files: \[select
+all files generated in the chromatogram deconvolution step\] -\> Feature
+list methods -\> Export/Import -\> Export to CSV file -\> \[set Filename
+including pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -\>
+\[check “Peak height”, “Peak area”, “Peak RT start”, “Peak RT end”,
+“Peak RT”, “Peak m/z”, “Peak m/z min” and “Peak m/z max”\] -\> \[set
+Filter rows to ALL\] <br> aligned file: \[select file after alignment
+step\] -\> Feature list methods -\> Export/Import -\> Export to CSV file
+-\> \[additional to checks set for unaligned files check “Export row
+retention time” and “Export row m/z”\]<br> <br> <u>Compound
+Discoverer:</u> <br> unaligned file: \[go to panel “Features”\] -\>
+\[click in any row\] -\> \[click “Show related Tables” on the bottom of
+the screen\] -\> \[go to panel “Chromatogram Peaks”\] -\> \[make sure
+the columns “Apex Intensity”, “Area”, “Study File ID”, “Left RT
+\[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and “Apex m/z” are
+visible\] -\> \[right click any row\] -\> Export -\> As plain text… <br>
+<br> <b>Selecting a benchmark dataset and starting assessment:</b><br>
+<br> Next the benchmark file has to be selected. If a benchmark has been
+created during this shiny session (the benchmark is still visible in the
+panel benchmark overview) the switch button “Use generated benchmark”
+can be clicked as an alternative. If you want to adapt mzRAPP to a
+tool/non-targeted output format other than those mentioned above this
+can be done by clicking the “Use generated options” switch button. The
+way those option files can be generated manually is described at the
+bottom of this readme. <br> <br> After performing those steps the
+assessment can be started via the blue “Start assessment button”. <br>
 
 <b>Via R-functions:</b><br>
 
@@ -299,22 +297,23 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 ## Interpretation of assessment results
 
 Reliability assessment results are distributed over the panels
-“Assessment results (peaks)” and “Assessment results (alignment)”. In
-the first panel a number of performance metrics is given on the top:
-<br> <br> <u>Found peaks:</u> <br> The number of benchmark peaks for
-which a match was found among the NT peaks in the peak picking step.
-<br> <br> <u>Peak fragments:</u> <br> The number of peak fragments which
-have been found that have been found over the whole dataset. For a
+“Assessment results (peaks)” and “Assessment results (alignment)” or
+can be generated using R-functions (shown below). Using the shiny user
+interface the following performance metrics are given at the top of the
+first panel: <br> <br> <u>Found peaks:</u> <br> The number of benchmark
+peaks for which a match was found among the NT peaks in the peak picking
+step. <br> <br> <u>Peak fragments:</u> <br> The number of peak fragments
+which have been found that have been found over the whole dataset. For a
 graphical explanation of a split peak please look at the mzRAPP
 publication. <br> <br> <u>Missing Value (S|R):</u> <br> Number of
-systematic (s) and random (R) missing values after the peak picking
+systematic (S) and random (R) missing values after the peak picking
 step. This classification is depending on the peak with the lowest
-benchmark area detected via NPP. If a missing peak has a benchmark area
-\> 20% higher than the lowest NPP-detected peak it is classified as R if
-it is \< than 20% as S. <br> <br> <u>Pred. error increase \>20%p:</u>
-<br> Isotopologue areas are predicted from the most abundant
-isotopologue of each molecule. If the relative error of this prediction
-is more than 20 %p higher for NT-peak areas (compared to
+benchmark area detected via NPP. If a peak missed by NPP has a benchmark
+area \> 20% higher than the lowest NPP-detected peak it is classified as
+R if it is \< 20% higher or even lower as S. <br> <br> <u>Pred. error
+increase \>20%p:</u> <br> Isotopologue areas are predicted from the most
+abundant isotopologue of each molecule. If the relative error of this
+prediction is more than 20 %p higher for NT-peak areas (compared to
 benchmark-areas) it is refelcted in this variable. Here only peak areas
 from the peak picking step are considered. <br> <br> <u>Min. \# of
 alignment errors:</u> <br> Gives the minimum number of alignment errors
@@ -334,4 +333,43 @@ higher for NT-peak areas (compared to benchmark-areas) it is refelcted
 in this variable. Here only peak areas after the alignment step are
 considered. <br> <br> <b>Overview plots:</b><br> <br> For explanations
 of the overview plots please click the blue question marks above the
-individual plots.
+individual plots. <br>
+
+<b>Via R-functions:</b><br>
+
+``` r
+library(mzRAPP)
+```
+
+## Background
+
+<h3>
+
+Comparison of benchmark with non-targeted output
+
+</h3>
+
+<b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
+Each benchmark peak (BP) is reported the smallest and highest mz value
+contributing to the chromatographic peak. In order to be considered as
+possible match for a BP a NT peak (NP) has to come with an mz value
+between those to values. Matching rules considering retention time (RT)
+are depicted in Figure 1. A NP has to cover the whole core of a BP while
+having a RT within the borders of the BP. If only a part of the core is
+covered by a NP with its RT in the borders of the BP, the NP it is
+counted as a split peak. NPs which are not overlapping with the core of
+a BP are not considered.
+
+<div class="figure">
+
+<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figs}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" />
+
+<p class="caption">
+
+<b>Figure 1 | </b> Matching rules of BP with NP
+
+</p>
+
+</div>
+
+öööööööö
