@@ -355,14 +355,17 @@ contributing to the chromatographic peak. In order to be considered as
 possible match for a BP a NT peak (NP) has to come with an mz value
 between those to values. Matching rules considering retention time (RT)
 are depicted in Figure 1. A NP has to cover the whole core of a BP while
-having a RT within the borders of the BP. If only a part of the core is
-covered by a NP with its RT in the borders of the BP, the NP it is
-counted as a split peak. NPs which are not overlapping with the core of
-a BP are not considered.
+having a RT within the borders (RTmin, RTmax) of the BP. If only a part
+of the core is covered by a NP with its RT in the borders of the BP, the
+NP it is counted as a split peak. NPs which are not overlapping with the
+core of a BP are not considered. If there is more than one NP matching
+to a single BP, BPs corresponding to the same molecule but other
+isotopologues (IT) are considered to choose the NP leading to the
+smalles IT ratio error as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figs}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" />
+<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" />
 
 <p class="caption">
 
@@ -372,4 +375,37 @@ a BP are not considered.
 
 </div>
 
-öööööööö
+<br> <b>Matching of benchmark features with non-targeted features:</b>
+<br> For NT feature (NF) to be considered as match to a benchmark
+feature (BF) its reported mz-value has to be between the lowest
+benchmark RTmin and the highest benchmark RTmax of BPs in the BF. In
+case of multiple NF matching to the same BF the NF leading to smallest
+mean IT-error over all NPs is selected (only NPs in samples which are
+also populated by a BP are considered).
+
+<b>Counting alignment errors:</b><br>
+
+Benchmark-critical counting counts the minimum number of alignment
+errors without relying on correct alignment of the benchmark dataset
+itself. Figure 2 shows three isotopologues (IT) of the same benchmark
+compound detected in 5 samples. The color coding indicates the feature
+the peak has been assigned to by the NPP aligorthm. Whenever there is an
+asymmetry in the assignment of the different IT the minimum number of
+errors necessary to come to that asymmetry is counted. (c)
+Benchmark-trustful feature matching is a different way of counting
+alignment errors, that assumes correct alignment of the benchmark
+dataset. Here simply the number of deviations between BM and NPP
+alignments is counted as errors. This kind of counting should only be
+done after visual inspection of the benchmark dataset.
+
+<div class="figure">
+
+<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Counting alignment errors" width="100%" />
+
+<p class="caption">
+
+<b>Figure 2 | </b> Counting alignment errors
+
+</p>
+
+</div>

@@ -52,6 +52,7 @@ Alignment_error_plot <- function(comparison_data, mol, add){
     coord_equal() +
     ggtitle(paste0("Alignment of ", mol, " ", add, " | Min. errors: ",ifelse(is.na(error_count), 0, error_count))) +
     labs(x = "Samples", y = "Isotopologues") +
+    #scale_fill_manual(values=c(`Lost_b.A` = "firebrick", `Lost_b.A` = "orange")) +
     theme(legend.title = element_blank()) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
