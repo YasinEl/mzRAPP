@@ -365,7 +365,7 @@ smalles IT ratio error as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" height="50%" />
+<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="100%" />
 
 <p class="caption">
 
