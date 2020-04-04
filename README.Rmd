@@ -84,7 +84,7 @@ In a next step a view paramters have to be set: <br>
 <b>Min. # of scans per peak:</b> Minimum number of points for a chromatographic peak to be considered as such. <br>
 <b>mz precision [ppm]:</b> Maximum spread of mass peaks in the mz dimension to be still considered part of the same chromatogram. <br>
 <b>mz accuracy [ppm]:</b> Maximum difference between the accurate mz of two ion traces to be considered to be originating from the same ion. <br>
-<b>Processing plan:</b> How should the benchmark generation be done? <u>sequential</u> (only using one core; often slow but does not use much RAM) or <u>multiprocess</u> (using multiple cores; faster but needs more RAM; works on Windows machines) <br>
+<b>Processing plan:</b> How should the benchmark generation be done? <u>sequential</u> (only using one core; often slow but does not use much RAM) or <u>multiprocess</u> (using multiple cores; faster but needs more RAM) <br>
 
 <h4>Third:</h4>
 Benchmark generation can be started using the blue Start button. The necessary time for the generation depends on the number of mzML files, the number of target compounds and of course computational recources.
@@ -265,8 +265,7 @@ knitr::include_graphics("inst/md/Peak matching graphic.png")
 For NT feature (NF) to be considered as match to a benchmark feature (BF) its reported mz-value has to be between the lowest benchmark RTmin and the highest benchmark RTmax of BPs in the BF. In case of multiple NF matching to the same BF the NF leading to smallest mean IT-error over all NPs is selected (only NPs in samples which are also populated by a BP are considered). 
 
 <b>Counting alignment errors:</b><br>
-
-Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 2 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of errors necessary to come to that asymmetry is counted. (c) Benchmark-trustful feature matching is a different way of counting alignment errors, that assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset.
+Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 2 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry is counted as errors. Benchmark-trustful counting is a different way of counting alignment errors, which assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset.
 
 ```{r figure2, out.width="100%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Counting alignment errors"}
 knitr::include_graphics("inst/md/Alignment error graphic.png")

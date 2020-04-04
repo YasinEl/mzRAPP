@@ -134,7 +134,7 @@ mz of two ion traces to be considered to be originating from the same
 ion. <br> <b>Processing plan:</b> How should the benchmark generation be
 done? <u>sequential</u> (only using one core; often slow but does not
 use much RAM) or <u>multiprocess</u> (using multiple cores; faster but
-needs more RAM; works on Windows machines) <br>
+needs more RAM) <br>
 
 <h4>
 
@@ -383,20 +383,18 @@ case of multiple NF matching to the same BF the NF leading to smallest
 mean IT-error over all NPs is selected (only NPs in samples which are
 also populated by a BP are considered).
 
-<b>Counting alignment errors:</b><br>
-
-Benchmark-critical counting counts the minimum number of alignment
-errors without relying on correct alignment of the benchmark dataset
-itself. Figure 2 shows three isotopologues (IT) of the same benchmark
-compound detected in 5 samples. The color coding indicates the feature
-the peak has been assigned to by the NPP aligorthm. Whenever there is an
-asymmetry in the assignment of the different IT the minimum number of
-errors necessary to come to that asymmetry is counted. (c)
-Benchmark-trustful feature matching is a different way of counting
-alignment errors, that assumes correct alignment of the benchmark
-dataset. Here simply the number of deviations between BM and NPP
-alignments is counted as errors. This kind of counting should only be
-done after visual inspection of the benchmark dataset.
+<b>Counting alignment errors:</b><br> Benchmark-critical counting counts
+the minimum number of alignment errors without relying on correct
+alignment of the benchmark dataset itself. Figure 2 shows three
+isotopologues (IT) of the same benchmark compound detected in 5 samples.
+The color coding indicates the feature the peak has been assigned to by
+the NPP aligorthm. Whenever there is an asymmetry in the assignment of
+the different IT the minimum number of steps to reverse that asymmetry
+is counted as errors. Benchmark-trustful counting is a different way of
+counting alignment errors, which assumes correct alignment of the
+benchmark dataset. Here simply the number of deviations between BM and
+NPP alignments is counted as errors. This kind of counting should only
+be done after visual inspection of the benchmark dataset.
 
 <div class="figure">
 
