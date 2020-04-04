@@ -258,7 +258,7 @@ library(mzRAPP)
 Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles IT ratio error as compared to the predicted IT-ratio.
 
 ```{r figure1, out.width="50%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
-knitr::include_graphics("inst/md/Peak matching graphic.png")
+knitr::include_graphics("Peak matching graphic.png")
 ```
 <br>
 <b>Matching of benchmark features with non-targeted features:</b> <br>
@@ -268,7 +268,7 @@ For NT feature (NF) to be considered as match to a benchmark feature (BF) its re
 Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 2 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry is counted as errors. Benchmark-trustful counting is a different way of counting alignment errors, which assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset.
 
 ```{r figure2, out.width="100%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Counting alignment errors"}
-knitr::include_graphics("inst/md/Alignment error graphic.png")
+knitr::include_graphics("Alignment error graphic.png")
 ```
 
 

@@ -365,7 +365,7 @@ smalles IT ratio error as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" height="50%" />
+<img src="Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="50%" height="50%" />
 
 <p class="caption">
 
@@ -398,7 +398,7 @@ be done after visual inspection of the benchmark dataset.
 
 <div class="figure">
 
-<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Counting alignment errors" width="100%" height="50%" />
+<img src="Alignment error graphic.png" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Counting alignment errors" width="100%" height="50%" />
 
 <p class="caption">
 
