@@ -17,7 +17,7 @@ Depends:
     shinyWidgets,
     plotly,
     dplyr,
-    bit64,
+    bit64
 biocViews:
 Imports:
     tcltk,
