@@ -327,8 +327,8 @@ predicted isotopic pattern best is chosen. <br> <br> <u>Found features
 (features):</u> <br> The number of benchmark features for which at least
 one benchmark peak was detected via the non-targeted algorithm. <br>
 <br> <u>Pred. error increase \>20%p (features):</u> <br> Isotopologue
-areas are predicted from the most abundant isotopologue of each
-compound. If the relative error of this prediction is more than 20 %p
+areas are predicted from the most abundant isotopologue of all
+compounds. If the relative error of this prediction is more than 20 %p
 higher for NT-peak areas (compared to benchmark-areas) it is refelcted
 in this variable. Here only peak areas after the alignment step are
 considered. <br> <br> <b>Overview plots:</b><br> <br> For explanations

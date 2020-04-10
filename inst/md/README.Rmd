@@ -233,7 +233,7 @@ The number of benchmark peaks for which a match was found among the NT peaks aft
 The number of benchmark features for which at least one benchmark peak was detected via the non-targeted algorithm. <br>
 <br>
 <u>Pred. error increase >20%p (features):</u> <br>
-Isotopologue areas are predicted from the most abundant isotopologue of each compound. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas after the alignment step are considered. <br>
+Isotopologue areas are predicted from the most abundant isotopologue of all compounds. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas after the alignment step are considered. <br>
 <br>
 <b>Overview plots:</b><br>
 <br>
@@ -255,9 +255,9 @@ library(mzRAPP)
 <h3>Comparison of benchmark with non-targeted output</h3>
 
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
-Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles IT ratio error as compared to the predicted IT-ratio.
+Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles IT ratio error as compared to the predicted IT-ratio. 
 
-```{r figure1, fig.width=5, echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
+```{r figure1, fig.width=2, echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
 knitr::include_graphics("Peak matching graphic.png")
 ```
 <br>
