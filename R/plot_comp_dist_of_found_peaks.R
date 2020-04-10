@@ -119,10 +119,14 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
 
+    ttt <<- df_sum
+    ttt1 <<- df_bin
+
     t <- plotly::ggplotly(
       ggplot2::ggplot() +
         geom_col(data = df_bin, aes(var, n, fill = f_nf_col),
-                 position = position_dodge(preserve = "single")) +
+                 position = position_dodge(preserve = "single"),
+                 orientation = "x") +
         theme(legend.position = "none") +
         scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")

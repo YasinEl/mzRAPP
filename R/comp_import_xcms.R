@@ -16,11 +16,11 @@ import_ungrouped_xcms <- function(file, options_dt){
   }
 
   #Check if filetype is csv
-  if(file_ext(file) != 'csv' & file_ext(file) != "Rda"){
+  if(tools::file_ext(file) != 'csv' & tools::file_ext(file) != "Rda"){
     stop('ungrouped dataset is not a valid csv (/Rda) file')
   }
 
-  if(file_ext(file) == "Rda"){
+  if(tools::file_ext(file) == "Rda"){
     rda_file_v <- load(file = file, envir = environment())
     rda_file <- get(rda_file_v[1])
     ug_table <- as.data.table(xcms::peaks(rda_file))
@@ -77,10 +77,10 @@ import_grouped_xcms <- function (file, options_dt) {
   }
 
   #Check if filetype is csv
-  if(file_ext(file) != 'csv' & file_ext(file) != "Rda"){
+  if(tools::file_ext(file) != 'csv' & tools::file_ext(file) != "Rda"){
     stop('ungrouped dataset is not a valid csv (/Rda) file')
   }
-  if(file_ext(file) == "Rda"){
+  if(tools::file_ext(file) == "Rda"){
     rda_file_v <- load(file = file, envir = environment())
     rda_file <- get(rda_file_v[1])
     g_table <- as.data.table(xcms::peakTable(rda_file))

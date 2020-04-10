@@ -11,7 +11,7 @@ import_ungrouped_cd_depr <- function(file_path, options_table){
 
   print('Start import ungrouped compund discoverer')
   #Check if filetype is csv
-  if(file_ext(file_path) != 'csv'){
+  if(tools::file_ext(file_path) != 'csv'){
     stop('ungrouped dataset is not a valid csv file')
   }
 

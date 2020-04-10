@@ -15,15 +15,15 @@ Depends:
     shinyjs,
     shiny,
     shinyWidgets,
-    DT,
-    tools,
     plotly,
     dplyr,
-    tcltk,
     bit64,
-    hutils
 biocViews:
 Imports:
+    tcltk,
+    hutils,
+    DT,
+    tools,
     retistruct,
     xcms,
     enviPat,

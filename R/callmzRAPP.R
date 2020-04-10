@@ -103,7 +103,7 @@ css <- "
                 shinyjs::extendShinyjs(text = jscode),
                 shinyjs::inlineCSS(css),
                 navbarPage(
-
+                #fillPage(
     #App Title
     'mzRAPP',
     #ID for entire Page
@@ -701,7 +701,7 @@ css <- "
     mzML_files <- reactive({
       if (input$mzML_upload == 0){return(NULL)}
       else {
-        files <- tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
+        files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
         if (length(files) > 1){
           output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
@@ -714,7 +714,7 @@ css <- "
     grps_file <- reactive({
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
         output$grps_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -723,7 +723,7 @@ css <- "
     coi_file <- reactive({
       if(input$coi_upload == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
         output$coi_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -732,7 +732,7 @@ css <- "
     res_file <- reactive({
       if(input$custom_res_mz == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter)
         output$custom_res_mz <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -741,7 +741,7 @@ css <- "
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
-        files <- tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        files <- tcltk::tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
         if (length(files) > 1){
           output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
@@ -753,7 +753,7 @@ css <- "
     g_file <- reactive({
       if (input$g_upload == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
         output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -761,7 +761,7 @@ css <- "
     benchmark_file <- reactive({
       if (input$benchmark_upload == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
         output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -769,7 +769,7 @@ css <- "
     options_file <- reactive({
       if (input$options_upload == 0){return(NULL)}
       else {
-        file <- tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
         output$options_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }

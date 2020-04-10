@@ -86,7 +86,7 @@ import_grouped_msdial <- function(file_path, options_dt){
   }
 
   #Check if filetype is text
-  if(file_ext(file_path) != 'txt'){
+  if(tools::file_ext(file_path) != 'txt'){
     stop('grouped dataset is not a valid txt file')
   }
 

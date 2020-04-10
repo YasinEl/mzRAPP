@@ -15,7 +15,7 @@ import_benchmark <- function (file, options_path = "generate", from_csv = TRUE, 
       stop('No benchmark file selected')
     }
     #Make sure file points to a csv file
-    if(file_ext(file) != 'csv'){
+    if(tools::file_ext(file) != 'csv'){
       stop('benchmark is not a valid csv file')
     }
 

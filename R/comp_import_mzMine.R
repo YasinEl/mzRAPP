@@ -106,7 +106,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   }
 
   #Check if filetype is csv
-  if(file_ext(file_path) != 'csv'){
+  if(tools::file_ext(file_path) != 'csv'){
     stop('grouped dataset is not a valid csv file')
   }
 
