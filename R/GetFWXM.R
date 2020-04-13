@@ -21,7 +21,8 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
 
 
-  tl <- rle(Int_vect > (baseL + (max(Int_vect) - baseL) * X))
+  gw <- baseL + (max(Int_vect) - baseL) * X
+  tl <- rle(Int_vect > gw)
   l <- tl[["lengths"]]
   v <- tl[["values"]]
   dt <- data.table(idx = seq(1:length(l)),
@@ -95,10 +96,10 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
     #IntSec2[1] - IntSec1[1]
 
-    if(return_diff == FALSE) { return(c(IntSec1[1], IntSec2[1])) } else {
+    if(return_diff == FALSE) { return(as.double(c(IntSec1[1], IntSec2[1]))) } else {
 
-      if(is.na(IntSec2[1]) | is.na(IntSec1[1])) return(NA)
-      return(IntSec2[1] - IntSec1[1])
+      if(is.na(IntSec2[1]) | is.na(IntSec1[1])) return(NA_real_)
+      return(as.double(IntSec2[1] - IntSec1[1]))
 
     }
 

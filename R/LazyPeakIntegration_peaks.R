@@ -36,6 +36,8 @@ findBenchPeaks <- function(files,
                            max.mz.diff_ppm = 5)
 {
 
+
+
   if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
   if(!is.character(CompCol_all$molecule)) {CompCol_all$molecule <- as.character(CompCol_all$molecule)}
 
@@ -313,84 +315,121 @@ findBenchPeaks <- function(files,
                           if (!is.null(l.peaks)) {
                             if (nrow(l.peaks) > 0 & length(l.peaks) > 1) {
 
-tryCatch(
+#tryCatch(
                               ##################################
                               #get start and end time for detected peaks at height of integration baseline and add them to the table
                               ##################################
-                              l.peaks <- l.peaks[l.peaks[, .(StartTime = as.double(ifelse(
-                                !is.na(
-                                  GetFWXM(
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$int_smooth,
-                                    min(EIC.dt[rt >= rtmin &
-                                                 rt <= rtmax &
-                                                 !is.na(int_wo_spikes)]$int_smooth),
-                                    ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
-                                    peak_borders = TRUE
-                                  )[1]
-                                ),
 
 
-                                GetFWXM(
-                                  EIC.dt[rt >= rtmin &
-                                           rt <= rtmax &
-                                           !is.na(int_wo_spikes)]$rt,
-                                  EIC.dt[rt >= rtmin &
-                                           rt <= rtmax &
-                                           !is.na(int_wo_spikes)]$int_smooth,
-                                  min(EIC.dt[rt >= rtmin &
-                                               rt <= rtmax &
-                                               !is.na(int_wo_spikes)]$int_smooth),
-                                  ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
-                                  peak_borders = TRUE
-                                )[1],
-                                as.double(rtmin)
-                              )) ,
 
-                              EndTime = as.double(ifelse(
-                                !is.na(
-                                  GetFWXM(
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= rtmin &
-                                             rt <= rtmax &
-                                             !is.na(int_wo_spikes)]$int_smooth,
-                                    min(EIC.dt[rt >= rtmin &
-                                                 rt <= rtmax &
-                                                 !is.na(int_wo_spikes)]$int_smooth),
-                                    ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
-                                    peak_borders = TRUE
-                                  )[2]
-                                ),
+                               l.peaks <- l.peaks[l.peaks[, .(StartTime = GetFWXM(
+                                     EIC.dt[rt >= rtmin &
+                                              rt <= rtmax &
+                                              !is.na(int_wo_spikes)]$rt,
+                                     EIC.dt[rt >= rtmin &
+                                              rt <= rtmax &
+                                              !is.na(int_wo_spikes)]$int_smooth,
+                                     min(EIC.dt[rt >= rtmin &
+                                                  rt <= rtmax &
+                                                  !is.na(int_wo_spikes)]$int_smooth),
+                                     ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                                     peak_borders = TRUE
+                                   )[1],
+                                 EndTime = GetFWXM(
+                                   EIC.dt[rt >= rtmin &
+                                            rt <= rtmax &
+                                            !is.na(int_wo_spikes)]$rt,
+                                   EIC.dt[rt >= rtmin &
+                                            rt <= rtmax &
+                                            !is.na(int_wo_spikes)]$int_smooth,
+                                   min(EIC.dt[rt >= rtmin &
+                                                rt <= rtmax &
+                                                !is.na(int_wo_spikes)]$int_smooth),
+                                   ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                                   peak_borders = TRUE
+                                 )[2]), by = .(idx)], on = .(idx)]
 
-                                GetFWXM(
-                                  EIC.dt[rt >= rtmin &
-                                           rt <= rtmax &
-                                           !is.na(int_wo_spikes)]$rt,
-                                  EIC.dt[rt >= rtmin &
-                                           rt <= rtmax &
-                                           !is.na(int_wo_spikes)]$int_smooth,
-                                  min(EIC.dt[rt >= rtmin &
-                                               rt <= rtmax &
-                                               !is.na(int_wo_spikes)]$int_smooth),
-                                  ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
-                                  peak_borders = TRUE
-                                )[2],
-                                as.double(rtmax)
-                              ))), by = .(idx)], on = .(idx)]
 
-                    , error = function(e){
-                      message(e)
-                      print(l.peaks)
-                      print(paste0("first: " ,Drawer_fill[["molecule"]]) )
-                      print(raw_data@phenoData@data[["sample_name"]])
-                      assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
-                      print(l.peaks)})
+                              l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
+                              l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
+
+
+
+
+                             # l.peaks <- l.peaks[l.peaks[, .(StartTime = as.double(ifelse(
+                             #   !is.na(
+                             #     GetFWXM(
+                             #       EIC.dt[rt >= rtmin &
+                             #                rt <= rtmax &
+                             #                !is.na(int_wo_spikes)]$rt,
+                             #       EIC.dt[rt >= rtmin &
+                             #                rt <= rtmax &
+                             #                !is.na(int_wo_spikes)]$int_smooth,
+                             #       min(EIC.dt[rt >= rtmin &
+                             #                    rt <= rtmax &
+                             #                    !is.na(int_wo_spikes)]$int_smooth),
+                             #       ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                             #       peak_borders = TRUE
+                             #     )[1]
+                             #   ),
+
+
+                              #  GetFWXM(
+                              #    EIC.dt[rt >= rtmin &
+                              #             rt <= rtmax &
+                              ##             !is.na(int_wo_spikes)]$rt,
+                               #   EIC.dt[rt >= rtmin &
+                               #            rt <= rtmax &
+                               #            !is.na(int_wo_spikes)]$int_smooth,
+                            #      min(EIC.dt[rt >= rtmin &
+                            #                   rt <= rtmax &
+                            #                   !is.na(int_wo_spikes)]$int_smooth),
+                            #      ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                            #      peak_borders = TRUE
+                            #    )[1],
+                            #    as.double(rtmin)
+                            #  )) ,
+
+                            #  EndTime = as.double(ifelse(
+                            #    !is.na(
+                            #      GetFWXM(
+                            ##        EIC.dt[rt >= rtmin &
+                             #                rt <= rtmax &
+                             #                !is.na(int_wo_spikes)]$rt,
+                          #          EIC.dt[rt >= rtmin &
+                          #                   rt <= rtmax &
+                          #                   !is.na(int_wo_spikes)]$int_smooth,
+                          #          min(EIC.dt[rt >= rtmin &
+                          #                       rt <= rtmax &
+                          #                       !is.na(int_wo_spikes)]$int_smooth),
+                          ##          ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                           #         peak_borders = TRUE
+                           #       )[2]
+                           #     ),
+
+                          #      GetFWXM(
+                          #        EIC.dt[rt >= rtmin &
+                          #                 rt <= rtmax &
+                          #                 !is.na(int_wo_spikes)]$rt,
+                          #        EIC.dt[rt >= rtmin &
+                          #                 rt <= rtmax &
+                          #                 !is.na(int_wo_spikes)]$int_smooth,
+                          #        min(EIC.dt[rt >= rtmin &
+                          #                     rt <= rtmax &
+                          #                     !is.na(int_wo_spikes)]$int_smooth),
+                          #        ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                          #        peak_borders = TRUE
+                          #      )[2],
+                          #      as.double(rtmax)
+                          #    ))), by = .(idx)], on = .(idx)]
+
+ #                   , error = function(e){
+ #                     message(e)
+ #                     print(l.peaks)
+ #                     print(paste0("first: " ,Drawer_fill[["molecule"]]) )
+ #                     print(raw_data@phenoData@data[["sample_name"]])
+ #                     assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
+ #                     print(l.peaks)})
 
                               suppressWarnings(
                                 raw_data_lim <- raw_data %>%
@@ -411,6 +450,56 @@ tryCatch(
                               #  filterRt(rt = c(min(l.peaks$StartTime), max(l.peaks$EndTime))) %>%
                               #  filterMz(mz = c(mz_min_t, mz_max_t))
 
+                              l.peaks.mz_list <- list()
+                              length(l.peaks.mz_list) <- nrow(l.peaks)
+                              nc <- 1
+
+                              while(nc <= nrow(l.peaks)){
+
+                                suppressWarnings(
+                                  raw_data_lim1 <- raw_data_lim %>%
+                                    xcms::filterRt(rt = unlist(unname(l.peaks[nc, c("StartTime", "EndTime")]))) #%>%
+                                  #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
+                                )
+
+                                suppressWarnings(
+                                l.peaks.mz_list[[nc]] <- list(mz = xcms::mz(raw_data_lim1),
+                                                              int = xcms::intensity(raw_data_lim1))
+
+                                )
+
+                                if(length(l.peaks.mz_list[[nc]][["mz"]]) > 1){
+                                  highstInt_idx <-
+                                    mapply(which.max,
+                                           l.peaks.mz_list[[1]][["int"]],
+                                           SIMPLIFY = FALSE
+                                    )
+
+
+                                  l.peaks.mz_list[[nc]][["int"]] <-
+                                    lapply(1:length(highstInt_idx),
+                                           function(x,
+                                                    li = l.peaks.mz_list[[1]][["int"]],
+                                                    idx = highstInt_idx){
+                                             return(li[[x]][idx[[x]]])
+                                           })
+                                  l.peaks.mz_list[[nc]][["mz"]] <-
+                                    lapply(1:length(highstInt_idx),
+                                           function(x,
+                                                    li = l.peaks.mz_list[[1]][["mz"]],
+                                                    idx = highstInt_idx){
+                                             return(li[[x]][idx[[x]]])
+                                           })
+                                }
+
+
+
+
+                                nc <- nc + 1
+                              }
+
+                             #assign("list_for_testing", l.peaks.mz_list, envir = .GlobalEnv)
+
                               tryCatch(
 
                               ##################################
@@ -422,78 +511,19 @@ tryCatch(
                                                    rt >= StartTime &
                                                    rt <= EndTime]$int > 0),
 
-                                mz_accurate = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                      #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                mz_accurate = weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])),
 
-                                  weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1)))
-                                },
+                                mz_accuracy_abs = abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic[i]$mz),
 
-                                mz_accuracy_abs = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                mz_accuracy_ppm = 1e6*abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz,
 
-                                  abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz)
-                                },
+                                mz_span_abs = max(unlist(l.peaks.mz_list[[idx]][["mz"]])) - min(unlist(l.peaks.mz_list[[idx]][["mz"]])),
 
-                                mz_accuracy_ppm = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
+                                mz_span_ppm = 1e6*(max(unlist(l.peaks.mz_list[[idx]][["mz"]])) - min(unlist(l.peaks.mz_list[[idx]][["mz"]]))) / mean(unlist(l.peaks.mz_list[[idx]][["mz"]])),
 
-                                  1e6*abs(weighted.mean(unlist(xcms::mz(raw_data_lim1)), unlist(xcms::intensity(raw_data_lim1))) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz
+                                mz_min = min(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
 
-                                },
-
-                                mz_span_abs = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
-
-                                  max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))
-                                },
-
-                                mz_span_ppm = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
-
-                                  1e6*(max(unlist(xcms::mz(raw_data_lim1))) - min(unlist(xcms::mz(raw_data_lim1)))) / mean(unlist(xcms::mz(raw_data_lim1)))
-                                },
-
-
-                                mz_min = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
-
-                                  min(unlist(xcms::mz(raw_data_lim1)), na.rm = TRUE)
-                                },
-
-
-                                mz_max = {
-                                  suppressWarnings(
-                                    raw_data_lim1 <- raw_data_lim %>%
-                                      xcms::filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                  )
-
-                                  max(unlist(xcms::mz(raw_data_lim1)), na.rm = TRUE)
-                                },
+                                mz_max = max(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
 
                                 #mz_interference = {
 
