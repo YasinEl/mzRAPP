@@ -18,6 +18,7 @@ Depends:
     shinyWidgets,
     plotly,
     dplyr,
+    doFuture,
     bit64
 biocViews:
 Imports:
@@ -39,7 +40,6 @@ Imports:
     DescTools,
     signal,
     intervals,
-    doFuture,
     future.apply,
     S4Vectors,
     V8,
