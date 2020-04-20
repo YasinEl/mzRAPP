@@ -13,6 +13,7 @@ Depends:
     data.table,
     ggplot2,
     shinyjs,
+    shinydashboard,
     shiny,
     shinyWidgets,
     plotly,
@@ -42,6 +43,7 @@ Imports:
     future.apply,
     S4Vectors,
     V8,
+    shinythemes,
     knitr
 Suggests: 
     rmarkdown

@@ -69,7 +69,12 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   if(method == "self-critical"){
 
-    if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(0L)}
+    lba <- as.data.table(table(unlist(DT)))
+    if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
+      lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
+    } else {lba_e <- 0L}
+
+    if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(c(errors = 0L, Lost_b.A = lba_e))}
 
     #going through isotopologues which are necessary to cover all samples!
   error_list <- lapply(main_UTgroups[[1]], function(x) {
@@ -157,12 +162,12 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
 
   })
 
-  lba <- as.data.table(table(unlist(DT)))
-  if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
-    lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
-  } else {lba_e <- 0L}
-
-  return(sum(unlist(error_list), lba_e))
+ # lba <- as.data.table(table(unlist(DT)))
+ # if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
+ #   lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
+#  } else {lba_e <- 0L}
+#
+  return(c(errors = sum(unlist(error_list)), Lost_b.A = sum(lba_e)))
   }
 
 
@@ -175,13 +180,13 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
           best_UTgrp <- names(which.max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
       } else best_UTgrp <- NULL
 
-      errors <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA, "")])
+      errors <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA, "", "Lost_b.A")])
       return(errors)
 
 
     } )
 
-    return(sum(unlist(error_list)))
+    return(c(errors = sum(unlist(error_list)), Lost_b.A = sum(lba_e)))
 
   }
 }

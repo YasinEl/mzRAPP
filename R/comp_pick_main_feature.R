@@ -40,7 +40,7 @@ pick_main_feature_sd <- function(dt){
   } else if (length(all_iso_abs) == 1){
     #If only one is abb is present no comparison can be done! Choose featurte with higher compareable mean area
     dt$average_area <- apply(dt, 1, function(x){compare_samples <- paste0('sample_', unlist(x['samples_to_compare']), '_g')
-    return(mean(unlist(x[compare_samples])))
+    return(mean(unlist(x[compare_samples]), na.rm = TRUE))
     })
     dt <- dt[, 'main_feature' := ifelse(average_area == min(average_area), TRUE, FALSE)]
     return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])

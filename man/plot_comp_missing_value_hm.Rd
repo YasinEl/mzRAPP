@@ -4,10 +4,14 @@
 \alias{plot_comp_missing_value_hm}
 \title{plot_comp_missing_value_hm}
 \usage{
-plot_comp_missing_value_hm(comparison_data, post_alignment = FALSE)
+plot_comp_missing_value_hm(
+  comparison_data,
+  post_alignment = FALSE,
+  disable_plot = FALSE
+)
 }
 \arguments{
-\item{comparison_data}{}
+\item{disable_plot}{}
 }
 \value{
 

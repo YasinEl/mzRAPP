@@ -1,8 +1,8 @@
 #' Alignment_error_plot
 #'
-#' @param dt
 #' @param mol
 #' @param add
+#' @param comparison_data
 #'
 #' @return
 #' @export
@@ -10,13 +10,20 @@
 #' @examples
 Alignment_error_plot <- function(comparison_data, mol, add){
 
+  if(missing(mol) | missing(add) | missing (comparison_data)) return(plotly::ggplotly(ggplot() +
+                                                            ggtitle("Missing arguments")))
+
   dt <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
 
   if('peak_area_rounded_ug' %in% colnames(dt)){
     dt <- dt[, 'peak_area_ug' := peak_area_rounded_ug]
   }
 
-
+  if(nrow(dt[(main_peak == "TRUE" | is.na(main_peak)) &
+                                       molecule_b == mol &
+                                       adduct_b == add]) == 0) return(plotly::ggplotly(ggplot() +
+                                                                                         ggtitle("No peaks")))
+suppressWarnings(
   dt <- dt[(main_peak == "TRUE" | is.na(main_peak)) &
              molecule_b == mol &
              adduct_b == add, c('sample_id_b',
@@ -30,20 +37,15 @@ Alignment_error_plot <- function(comparison_data, mol, add){
                                 'peak_area_ug',
                                 'sample_name_b')]
 
+)
 
   dt <- dt[, peak_status := ifelse(is.na(peak_area_g) & is.na(peak_area_ug), "Lost_b.PP",
                                    ifelse(is.na(peak_area_g) & !is.na(peak_area_ug), 'Lost_b.A',
                                           ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, -3, feature_id_g)))]
 
-  #fwrite(dt, 'align_debug.csv')
-
-  if(nrow(dt) == 0){return(NA_integer_)}
-
   dt_for_error_count <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
-  error_count <- count_alignment_errors(dt_for_error_count, get_main_UT_groups(dt_for_error_count))
-
-
+  error_count <- count_alignment_errors(dt_for_error_count, get_main_UT_groups(dt_for_error_count))[1]
 
   p <- ggplot(dt, aes(x = as.character(sample_name_b),
                       y = as.factor(round(isoabb_b, 2)),

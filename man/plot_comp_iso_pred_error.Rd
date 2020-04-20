@@ -4,7 +4,11 @@
 \alias{plot_comp_iso_pred_error}
 \title{plot_comp_iso_pred_error}
 \usage{
-plot_comp_iso_pred_error(comparison_data, post_alignment = FALSE)
+plot_comp_iso_pred_error(
+  comparison_data,
+  post_alignment = FALSE,
+  BMvsPPvsAl = TRUE
+)
 }
 \arguments{
 \item{comparison_data}{}

@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
+plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BMvsPPvsAl = TRUE) {
 
 #if(post_alignment == TRUE){
 
@@ -69,7 +69,7 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
   #iso_err_dt[diffH20PP_pp == "FALSE" , diffH20PP := "Inc. < 20%p"]
   #iso_err_dt[diffH20PP_pp == "TRUE"]$diffH20PP <- "Inc. > 20%p"
   #iso_err_dt[diffH20PP_pp == "FALSE"]$diffH20PP <- "Inc. < 20%p"
-
+  if(BMvsPPvsAl == FALSE){
 
   if(post_alignment == FALSE){
     iso_err_dt$diffH20PP <- iso_err_dt$diffH20PP_pp
@@ -99,14 +99,31 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
 
   } else {stop("Argument post_alignment must be TRUE or FALSE!")}
 
- #
+  }else if(BMvsPPvsAl == TRUE){
+
+    iso_err_dt$diffH20PP <- iso_err_dt$diffH20PP_ft
+    iso_err_dt[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
+    #iso_err_dt[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
 
 
-  iso_err_dt[, grp_col := paste0(molecule_b, adduct_b, Grp_b, isoabb_b, sample_name_b)]
+    iso_err_dt <-
+      melt(
+        iso_err_dt,
+        id.vars = c('molecule_b', 'adduct_b', 'isoabb_b', 'sample_name_b', 'diffH20PP'),
+        measure.vars = c("benchmark", "NPP_peak picking", "NPP_features"),
+        variable.name = 'data_type',
+        value.name = 'Pred_error'
+      )
 
 
 
-  iso_err_dt <- na.omit(iso_err_dt, cols = "diffH20PP")
+  }
+
+  iso_err_dt[, grp_col := paste0(molecule_b, adduct_b, isoabb_b, sample_name_b)]
+
+
+
+  iso_err_dt <- na.omit(iso_err_dt, cols = "Pred_error")
 
 #} else {stop("Argument post_alignment must be TRUE or FALSE!")}
 
@@ -122,8 +139,9 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE) {
                                                       #grp = grp_b,
                                                       diffH20PP = diffH20PP
     )), alpha = 0.3)) +
-    scale_color_manual(name = "+ > 20%p", values=c("blue", "red")) +
-    ggtitle("Quality of peak abundances") +
+    #scale_color_manual(name = "+ > 20%p", values=c("blue", "red")) +
+    scale_color_manual(name = "+ > 20%p", values=c(`Inc. < 20%p` = "blue", `Inc. > 20%p` = "red", `Feature Inc. > 20%p` = "goldenrod2")) +
+    ggtitle("IT ratio prediction errors") +
     labs(x = "", y = "IT pred error [%]") +
     theme(legend.title = element_blank())
 

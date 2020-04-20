@@ -37,7 +37,7 @@ align_PC <- function(PC,
 
   #for(mai.c in seq(nrow(checkl))){
 
-  PC <- PC[, c("molecule", "adduct", "isoabb", "peaks.M0.grp", "FileName", "peaks.StartTime", "peaks.EndTime", "peaks.rt")]
+  PC <- PC[, c("molecule", "adduct", "isoabb", "peaks.M0.grp", "FileName", "peaks.StartTime", "peaks.EndTime", "peaks.rt_raw")]
 
 
   Bureau <- list()
@@ -78,10 +78,10 @@ align_PC <- function(PC,
 
             ol <- (100 * (res$V2 - res$V1) / min( i[[2]] - i[[1]], idt_p[[2]] - idt_p[[1]]  ))
 
-            if(ol > 5){# & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt) ){
+            if(ol > 5){# & abs(res$V2 - res$V1) >= abs(df[id == n]$peaks.rt_raw - df[id == ii]$peaks.rt_raw) ){
 
-              #ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt - df[id == ii]$peaks.rt)
-              ol_matrix[ii, n] <- TRUE#if(df[id == n]$peaks.rt > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
+              #ol_matrix[ii, n] <- abs(df[id == n]$peaks.rt_raw - df[id == ii]$peaks.rt_raw)
+              ol_matrix[ii, n] <- TRUE#if(df[id == n]$peaks.rt_raw > df[id == ii]$peaks.StartTime & df[id == n]$peaks.rt_raw < df[id == ii]$peaks.EndTime) {TRUE} else {NA}
             }
 
           }
@@ -155,7 +155,7 @@ align_PC <- function(PC,
 
   #decide for best aligned.grp
   if(pick_best == "rt_match"){
-    tmp <- outputT[isoabb == 100, .(rt.diff = abs(mean(peaks.rt) - mean(user.rt))), by = .(molecule, aligned.grp) ]
+    tmp <- outputT[isoabb == 100, .(rt.diff = abs(mean(peaks.rt_raw) - mean(user.rt))), by = .(molecule, aligned.grp) ]
     tmp <- tmp[, .(aligned.grp = aligned.grp, rt.diff = rt.diff, MINrt.diff = min(rt.diff)), by = .(molecule) ]
     tmp <- tmp[rt.diff == MINrt.diff]
     outputT <- outputT[tmp, on = .(molecule, aligned.grp), nomatch = NULL, allow.cartesian = TRUE][, !c("MINrt.diff", "rt.diff")]

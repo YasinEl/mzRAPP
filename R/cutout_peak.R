@@ -96,8 +96,8 @@ cutout_peaks <-
       l.peaks[l.peaks[, .(
         res.s = as.double(ifelse(unres.s == TRUE, 100 * int[s] / max(int[s:e]), NA)),
         res.e = as.double(ifelse(unres.e == TRUE, 100 * int[e] / max(int[s:e]), NA)),
-        rt = rt[s + which.max(int[s:e]) - 1],
-        rt.w = weighted.mean(rt[s:e], int[s:e]),
+        #rt = rt[s + which.max(int[s:e]) - 1],
+        #rt.w = weighted.mean(rt[s:e], int[s:e]),
         rtmin = rt[s],
         rtmax = rt[e],
         baseL = min(int[s:e]) + (max(int[s:e]) - min(int[s:e])) * Integration_baseL_factor.
@@ -119,7 +119,7 @@ cutout_peaks <-
     } else
       l.peaks[, main_adduct.grp := idx][]
 
-    ifelse(nrow(l.peaks) > 0, return(l.peaks),return(NULL))
+    ifelse(nrow(l.peaks) > 0, return(l.peaks[, !c("s", "e", "main_adduct.grp", "baseL", "res.s", "res.e", "unres.s", "unres.e", "peak.grp")]),return(NULL))
   }
 
 

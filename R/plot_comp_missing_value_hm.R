@@ -1,12 +1,16 @@
 #' plot_comp_missing_value_hm
 #'
 #' @param comparison_data
+#' @param post_alignment
+#' @param disable_plot
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) {
+plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, disable_plot = FALSE) {
+
+  if(missing (comparison_data) | disable_plot == TRUE) return(plotly::ggplotly(ggplot() + ggtitle("Disabeled")))
 
   if(post_alignment == FALSE){
     hm_dt <- comparison_data$rs_table
@@ -91,11 +95,12 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE) 
       )
     ) +
     geom_tile() +
-    scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
-    ggtitle("Missing peaks") +
+    #scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
+    scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
+    ggtitle("Missing values") +
     labs(x = "benchmark features", y = "sample IDs") +
     theme(legend.title = element_blank())
-  return(plotly::ggplotly(plot_r_s,tooltip = c("molecule", "adduct", "isoabb", "FileName")#, "mz")
+    return(plotly::ggplotly(plot_r_s,tooltip = c("molecule", "adduct", "isoabb", "FileName")#, "mz")
 
   ))
 

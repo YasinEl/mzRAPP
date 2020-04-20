@@ -7,7 +7,7 @@
 Alignment_error_plot(comparison_data, mol, add)
 }
 \arguments{
-\item{add}{}
+\item{comparison_data}{}
 }
 \value{
 

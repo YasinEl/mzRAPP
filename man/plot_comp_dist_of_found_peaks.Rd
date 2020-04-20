@@ -12,7 +12,7 @@ plot_comp_dist_of_found_peaks(
 )
 }
 \arguments{
-\item{var}{}
+\item{post_alignment}{}
 }
 \value{
 

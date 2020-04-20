@@ -14,7 +14,7 @@ plot_comp_scatter_plot(
 )
 }
 \arguments{
-\item{plot_input_y}{}
+\item{comparison_data}{}
 }
 \value{
 

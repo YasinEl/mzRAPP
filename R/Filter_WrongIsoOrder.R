@@ -28,7 +28,7 @@ Filter_WrongIsoOrder <- function(PeakCandidates, SampleIdentifier, MoleculeIdent
                                                                           peaks.area/i.peaks.area == Inf |
                                                                           (is.na(i.peaks.area) & !is.na(peaks.area)) |
                                                                           #(Feature==TRUE & i.Feature==FALSE | Feature == TRUE & is.na(Feature) == TRUE) |
-                                                                          (peaks.rt < i.peaks.rtmin | peaks.rt > i.peaks.rtmax))]# |
+                                                                          (peaks.rt_raw < i.peaks.rtmin | peaks.rt_raw > i.peaks.rtmax))]# |
                                                                           #StartTime/i.StartTime < 1 |
                                                                           #EndTime/ i.EndTime > 1)]
 

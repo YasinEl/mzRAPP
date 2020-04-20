@@ -103,6 +103,9 @@ getROIsForEICs <-
                                                        by=.(molecule)],
                                        on = .(molecule)]
 
+
+    Target_table_check <<- .Target.table.wk
+
     matches_perfile_list <-
     lapply(unique(.Target.table.wk$molecule), function(molec, xr = .xr, Target.table.wk = .Target.table.wk){
 
@@ -116,18 +119,20 @@ getROIsForEICs <-
                                      dev = PrecisionMZtol * 1E-6,
                                      minCentroids = minCentroids,
                                      scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
-                                     mzrange = c(Target.table.wk[molecule == molec]$mz[1] - 10, Target.table.wk[molecule == molec]$mz[1] + 10),
+                                     #mzrange = c(Target.table.wk[molecule == molec]$mz[1] - 10, Target.table.wk[molecule == molec]$mz[1] + 10),
                                      prefilter = c(minCentroids,0),
                                      noise = 0)
         )})
 
       ROI.dt <- rbindlist(ROI.list)
-
-      ROI.dt <- ROI.dt[,.(rtmin = xr@scantime[scmin],
+      #if(molec == "Glutathione, reduced"){
+#roit <<- ROI.dt
+      #}
+      ROI.dt[, roi_id := 1:nrow(ROI.dt)]
+      ROI.dt <- ROI.dt[, `:=` (rtmin = xr@scantime[scmin],
                           rtmax = xr@scantime[scmax],
                           mzlowerBD = mz,
-                          mzupperBD = mz),
-                       by=.(mz, mzmin, mzmax, scmin, scmax, length, intensity)]
+                          mzupperBD = mz)]
 
       Target.table.wk.molec <- Target.table.wk[molecule == molec]
       Target.table.wk.molec[, `:=` (mzlowerBD = mz - mz * AccurateMZtol * 1e-6,
@@ -144,6 +149,10 @@ getROIsForEICs <-
 
       if(nrow(mz.overlap) != 0){
 
+        #mol_tab <<- mz.overlap
+        #if(any(duplicated(mz.overlap, by = c("adduct", "roi_id")))){stop(paste("Some ROIs are matching to more than one of your mass traces. ",
+        #                                                                       "Please lower your mz accuracy/precision and/or check if you set the correct instrument resolution when generating your Target.table."))}
+
 
         ##################################
         #combine isolated ROIs if they were falling within the same the boundaries of the same expected EIC
@@ -155,7 +164,8 @@ getROIsForEICs <-
                                          roi_rtmax = max(rtmax),
                                          roi_scmin = min(scmin),
                                          roi_scmax = max(scmax),
-                                         ROI_count = .N),
+                                         roi_int = sum(abs(intensity)),
+                                         roi_count = .N),
                                       by=.(molecule, adduct, isoabb, fileIdx)]
 
         ##################################

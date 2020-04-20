@@ -1,8 +1,11 @@
 #' plot_comp_scatter_plot
 #'
+#' @param x
+#' @param y
+#' @param col
+#' @param choice_vector_comp
+#' @param post_alignment
 #' @param comparison_data
-#' @param plot_input_x
-#' @param plot_input_y
 #'
 #' @return
 #' @export
@@ -10,90 +13,106 @@
 #' @examples
 plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_comp, post_alignment = FALSE){
 
+  if(missing(x) | missing(y) | missing (comparison_data)) return(plotly::ggplotly(ggplot() +
+                                                                                    ggtitle("Missing arguments")))
 
   if(post_alignment == TRUE){
-  feat_t <- melt_fftable(comparison_data)
+    feat_t <- melt_fftable(comparison_data)
 
-  BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
+    BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
 
-  BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
+    BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
 
-  feat_t <- feat_t[main_feature == TRUE]
+    feat_t <- feat_t[main_feature == TRUE]
 
-  vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
+    vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
 
-  f_nf_dt <- feat_t[!is.na(area_b) &
-                     main_feature == TRUE, c("molecule_b",
-                                             "adduct_b",
-                                             "isoabb_b",
-                                             "sample_id_b",
-                                             "area_g")][BM_bu[,..vct], on = .(molecule_b,
-                                                                              adduct_b,
-                                                                              isoabb_b,
-                                                                              sample_id_b)]
+    f_nf_dt <- feat_t[!is.na(area_b) &
+                        main_feature == TRUE, c("molecule_b",
+                                                "adduct_b",
+                                                "isoabb_b",
+                                                "sample_id_b",
+                                                "area_g")][BM_bu[,..vct], on = .(molecule_b,
+                                                                                 adduct_b,
+                                                                                 isoabb_b,
+                                                                                 sample_id_b)]
 
-  f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]
-
-
-} else if(post_alignment == FALSE){
+    f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(area_g), 'Found', 'Not Found')]
 
 
-  f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-
-  f_nf_dt <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
-
-}
+  } else if(post_alignment == FALSE){
 
 
-  f_nf_dt <- suppressWarnings(f_nf_dt[order(as.numeric(f_nf_dt$f_nf_col), decreasing = TRUE),])
+    f_nf_dt <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$nf_b_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE]), fill = TRUE)
+
+    f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
+
+  }
+
+
+  f_nf_dt <- suppressWarnings(f_nf_dt[order(as.numeric(f_nf_dt$NPP_status), decreasing = FALSE),])
 
 
 
 
-    p <- ggplot()
+  p <- ggplot()
 
-    if(col == "F/NF"){
+  if(col == "F/NF"){
 
-      suppressWarnings(
+    suppressWarnings(
       p <- p +
-      geom_point(data = f_nf_dt[f_nf_col == TRUE], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
-                                                         y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
-                                                         col = "F",
-                                                         molecule = molecule_b,
-                                                         adduct = adduct_b,
-                                                         isoabb = round(isoabb_b, 2),
-                                                         sample_name = sample_name_b),
-                 color = "blue") +
+        geom_point(data = f_nf_dt[NPP_status == 'Found'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
+                                                            y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
+                                                            col = "F",
+                                                            NPP_status = NPP_status,
+                                                            molecule = molecule_b,
+                                                            adduct = adduct_b,
+                                                            isoabb = round(isoabb_b, 2),
+                                                            sample_name = sample_name_b),
+                   color = "blue", show.legend = T) +
 
-      geom_point(data = f_nf_dt[f_nf_col == FALSE], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
-                                                          y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
-                                                          col = "NF",
-                                                          molecule = molecule_b,
-                                                          adduct = adduct_b,
-                                                          isoabb = round(isoabb_b, 2),
-                                                          sample_name = sample_name_b),
-                 color = "red")
-      )
-    } else {
-      suppressWarnings(
+        geom_point(data = f_nf_dt[NPP_status == 'Not Found'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
+                                                                y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
+                                                                col = "NF",
+                                                                NPP_status = NPP_status,
+                                                                molecule = molecule_b,
+                                                                adduct = adduct_b,
+                                                                isoabb = round(isoabb_b, 2),
+                                                                sample_name = sample_name_b),
+                   color = "red", show.legend = T) +
+
+        geom_point(data = f_nf_dt[NPP_status == 'Split'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
+                                                            y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
+                                                            col = "S",
+                                                            NPP_status = NPP_status,
+                                                            molecule = molecule_b,
+                                                            adduct = adduct_b,
+                                                            isoabb = round(isoabb_b, 2),
+                                                            sample_name = sample_name_b),
+                   color = "goldenrod2", show.legend = T)
+    )
+  } else {
+    suppressWarnings(
       p <- p +
         geom_point(data = f_nf_dt, aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
-                                                         y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
-                                                         col = get(col),
-                                                         molecule = molecule_b,
-                                                         adduct = adduct_b,
-                                                         isoabb = round(isoabb_b, 2),
-                                                         sample_name = sample_name_b)
-                   )
-      )
+                                       y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},
+                                       col = get(col),
+                                       NPP_status = NPP_status,
+                                       molecule = molecule_b,
+                                       adduct = adduct_b,
+                                       isoabb = round(isoabb_b, 2),
+                                       sample_name = sample_name_b)
+        )+labs(col=if(col != "peak_height_b" & x != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == col]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == col], ")")})
+    )
 
-    }
+  }
 
-    p <- p +
-      labs(x = if(x != "peak_height_b" & x != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == x]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == x], ")")},
-           y = if(y != "peak_height_b" & y != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == y]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == y], ")")}) +
-      ggtitle("Overview of found/not found peaks and their variables")
+  p <- p +
+    labs(x = if(x != "peak_height_b" & x != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == x]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == x], ")")},
+         y = if(y != "peak_height_b" & y != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == y]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == y], ")")}) +
+    ggtitle("Overview of found/not found peaks against benchmark variables")
 
-  p <- plotly::ggplotly(p, tooltip = c(molecule = "molecule", "adduct", "isoabb", "sample_name"), dynamicTicks = TRUE)
+  p <- plotly::ggplotly(p, tooltip = c("NPP_status", "molecule", "adduct", "isoabb", "sample_name"), dynamicTicks = TRUE)
   return(p)
 }
+

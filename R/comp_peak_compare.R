@@ -301,7 +301,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
     ali_error_table <- ali_error_table[, 'peak_area_ug' := peak_area_rounded_ug]
   }
 
-  ali_error_table <- ali_error_table[, count_errors_max(.SD), .SDcols=c('molecule_b',
+  ali_error_table <- ali_error_table[, as.list(count_errors_max(.SD)), .SDcols=c('molecule_b',
                                                     'adduct_b',
                                                     'main_peak',
                                                     'sample_id_b',
@@ -311,7 +311,8 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                     'peak_area_g',
                                                     'peak_area_ug'),
                  by=.(molecule_b, adduct_b)]
-  ali_error_table <- setnames(ali_error_table, c('V1', 'molecule_b', 'adduct_b'), c('errors', 'Molecule', 'Adduct'))
+
+  ali_error_table <- setnames(ali_error_table, c('errors', 'Lost_b.A', 'molecule_b', 'adduct_b'), c('errors', 'Lost_b.A', 'Molecule', 'Adduct'))
 
   print('Start FF Compare')
   print(nrow(g_table))
