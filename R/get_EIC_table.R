@@ -29,9 +29,12 @@ get_EIC_table <- function(rt, int, Min.PpP) {
       rep(x, x)
     }))
 
-  EIC.dt[val == FALSE & len < 3]$int_wo_spikes <- NA
+  EIC.dt <- EIC.dt[val == FALSE & len < 3, int_wo_spikes := NA]
 
-
+  if(sum(EIC.dt$int_wo_spikes, na.rm =  TRUE) == 0 | length(EIC.dt[int_wo_spikes > 0]$int_wo_spikes) < 5) {
+    EIC.dt <- EIC.dt[, int_smooth := int_wo_spikes][]
+    return(EIC.dt)
+  }
 
   EIC.dt_tmp <-
     EIC.dt[!is.na(int_wo_spikes)][, "rt"][, int_smooth := sapply(signal::sgolayfilt(

@@ -48,7 +48,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
 
 
   wrong_adducts <- setdiff(unique(DT$adduct_c), adducts$Name)
-  if(length(wrong_adducts) > 0){stop(paste0("Some of your adducts are not valid: ", wrong_adducts, " Please only use adducts enabled in the envipat package. namely: ", adducts$Name))}
+  if(length(wrong_adducts) > 0){stop(paste0("Some of your adducts are not valid: ", paste(wrong_adducts, collapse = ", "), " Please only use adducts enabled in the envipat package. namely: ", adducts$Name))}
 
 
 
@@ -61,7 +61,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   DTreg <- DT
   SF <- enviPat::check_chemform(isotopes,DT$SumForm_c)
 
-  if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", setDT(SF)[warning == TRUE]$new_formula))}
+  if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste(setDT(SF)[warning == TRUE]$new_formula, collapse = ", ")))}
 
 
   DT <- cbind(DT,SF)
@@ -82,7 +82,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   SF <- enviPat::check_chemform(isotopes,DT$SumForm2_c)
 
 
-if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", setDT(SF)[warning == TRUE]$new_formula))}
+if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste(setDT(SF)[warning == TRUE]$new_formula, collapse = ", ")))}
 
   ##################################
   #calculate theoretical isotope pattern

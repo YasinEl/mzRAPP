@@ -47,10 +47,10 @@ findBenchPeaks <- function(files,
   if(!isTRUE(is.data.frame(Grps))){stop(paste0("Grps has to be a data frame and/or data table!"))}
   if(!isTRUE(is.data.table(Grps))){Grps <- as.data.table(CompCol_all)}
   missing_cols <- setdiff(c("sample_name", "sample_group"), colnames(Grps))
-  if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", missing_cols))}
+  if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", paste(missing_cols, collapse = ", ")))}
   Grps <- Grps[, sample_name := tools::file_path_sans_ext(basename(sample_name))]
 
-  if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
+  if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", paste(files[!file.exists(files)], collapse = ", ")))
 
 
 
