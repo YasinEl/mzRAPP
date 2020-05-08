@@ -52,7 +52,10 @@ findBenchPeaks <- function(files,
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", paste(files[!file.exists(files)], collapse = ", ")))
 
-
+  if(all(c("user.rtmin", "user.rtmax") %in% colnames(CompCol_all))){
+    colnames(CompCol_all)[which(names(CompCol_all) == "user.rtmin")] <- "rtmin"
+    colnames(CompCol_all)[which(names(CompCol_all) == "user.rtmax")] <- "rtmax"
+  }
 
 
 
@@ -607,7 +610,7 @@ findBenchPeaks <- function(files,
                                     EIC.dt[rt >= StartTime &
                                              rt <= EndTime]$M0_int,
                                     method = "pearson",
-                                    use = "complete.obs",
+                                    use = "complete.obs"
                                   )
                                 ), NA),
 
@@ -616,6 +619,8 @@ findBenchPeaks <- function(files,
 
                               ), by = .(idx)], on = .(idx)]
                               ), error = function(e) {assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
+                                print(e)
+                                print("some error")
                                 print(l.peaks)
                                 print(paste0(Drawer_fill[["molecule"]]) )
                               })#}

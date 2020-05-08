@@ -32,7 +32,7 @@ plot_bench_overview <- function(benchmark_data, x, y, colb, choice_vector_bench)
                                       "adduct",
                                       "isoabb",
                                       "sample_name"),
-                          dynamicTicks = TRUE,
-                          width = 1000)
+                          dynamicTicks = TRUE)#,
+                          #width = 1000)
   return(p)
 }

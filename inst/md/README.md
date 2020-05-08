@@ -95,17 +95,15 @@ adducts$Name
 <b>main\_adduct:</b> One main adduct has to be defined for each molecule
 (e.g. M+H). If the main\_adduct is not detected also other adducts wont
 be accepted. <br> <b>SumForm\_c:</b> Molecular composition of the
-neutral molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b>
-Starting time for chromatograms extracted for this molecule (seconds).
-<br> <b>EndTime.EIC:</b> End time for chromatograms extracted for this
-molecule (seconds). <br> <b>user.rtmin:</b> (optional) Lower end of time
-window in which points should be considered for chromatographic peak
-detection (seconds). Defaults to StartTime.EIC. <br> <b>user.rtmin:</b>
-(optional) Higher end of time window in which points should be
-considered for chromatographic peak detection (seconds). Defaults to
-EndTime.EIC. <br> <b>user.rt:</b> Retention time expected for this
-molecule. If multiple peaks are detected the peak closest to this time
-is chosen (seconds). <br>
+neutral molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b> Start
+time for chromatograms extracted for this molecule (seconds). <br>
+<b>EndTime.EIC:</b> End time for chromatograms extracted for this
+molecule (seconds). <br> <b>user.rtmin:</b> (optional) Start time of
+peak. This substitutes peak detection done by mzRAPP (seconds). <br>
+<b>user.rtmax:</b> (optional) End time of peak. This substitutes peak
+detection done by mzRAPP (seconds). <br> <b>user.rt:</b> Retention time
+expected for this molecule. If multiple peaks are detected the peak
+closest to this time is chosen (seconds). <br>
 
 Afterwards the used <u><b>instrument and resolution</u></b> has to be
 selected. This is necessary in order to apply the correct mass
