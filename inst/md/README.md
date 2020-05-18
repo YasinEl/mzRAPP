@@ -363,7 +363,7 @@ alignment” above.<br>
 
 <div class="figure">
 
-<img src="Peak_subsets.png" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
+<img src="Peak_subsets.PNG" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
 
 <p class="caption">
 
@@ -392,7 +392,7 @@ to benchmark-areas) it is reflected in this variable.
 
 <div class="figure">
 
-<img src="IR_tolerance.png" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
+<img src="IR_tolerance.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
 
 <p class="caption">
 

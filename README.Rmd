@@ -236,7 +236,7 @@ Reliability assessment results can be inspected in the panel "View NPP assessmen
 The number of benchmark peaks for which a match was found among the unaligned/aligned NPP results vs all peaks present in benchmark (as shown in figure 2). For explanations on how the matching of benchmark peaks with non-targeted peaks is performed please read the section "Matching of benchmark peaks with NT peaks before alignment" above.<br>
 
 ```{r figure2, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Overview of different peak populations"}
-knitr::include_graphics("inst/md/Peak_subsets.png")
+knitr::include_graphics("inst/md/Peak_subsets.PNG")
 ```
 
 <br>
@@ -251,7 +251,7 @@ The number of split peaks which have been found for all benchmark peaks. For a g
 Isotopologue areas are predicted from the most abundant isotopologue of each molecule. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is reflected in this variable. 
 
 ```{r figure3, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure3}<b>Figure 3 | </b> Overview of different peak populations"}
-knitr::include_graphics("inst/md/IR_tolerance.png")
+knitr::include_graphics("inst/md/IR_tolerance.PNG")
 ```
 
 <br>
