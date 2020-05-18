@@ -70,6 +70,9 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   #rename all columns for internal use according to optiosn frame
   ug_table <- rename_columns_from_options(ug_table, options_table, 'ug_columns', 'internal_columns')
 
+  #Rm file ext
+  ug_table <- ug_table[, sample_name := tools::file_path_sans_ext(basename(sample_name))]
+
   #Add a sample_id column based on the sample_names in options_dt
   ug_table <- ug_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
 
@@ -135,12 +138,25 @@ import_grouped_mzmine <- function(file_path, options_table){
 
 
   #Add feature_id for each row
-  g_table$feature_id <- seq.int(nrow(g_table))
+  #g_table$feature_id <- seq.int(nrow(g_table))
+  g_table[, feature_id := seq.int(nrow(g_table))]
 
 
-  #Transforming table from wide to long format, creating 1 peak-per-row format
+  #Removing file extensions from column names and transforming table from wide to long format, creating 1 peak-per-row format
   id_vars <- append(na.omit(options_table[['g_columns']]), 'feature_id')
   measure_vars <- paste0(na.omit(options_table[, g_samples]), ' Peak area')
+
+  colnames(g_table) <-
+    sapply(colnames(g_table), function(x){
+
+      if(length(unlist(strsplit(x, " "))) > 1){
+        unname(paste(tools::file_path_sans_ext(unlist(strsplit(x, " "))[1]),
+                     paste(unlist(strsplit(x, " "))[2:length(unlist(strsplit(x, " ")))],
+                           collapse = " ")))
+      } else x
+    },
+    USE.NAMES = FALSE)
+
   g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
   g_table <- g_table[, sample_name := tstrsplit(sample_name, ' Peak area')]
 

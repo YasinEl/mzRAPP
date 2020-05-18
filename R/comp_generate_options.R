@@ -71,9 +71,9 @@ generate_options <- function(raw_b_table, algo){
                           all.x = TRUE, by=c('internal_columns'))
 
       #Add ug samples
-      samples_dt <- samples_dt[, 'ug_samples' := paste0(b_samples, '.mzML')]
+      samples_dt <- samples_dt[, 'ug_samples' := b_samples]
       #Add g samples
-      samples_dt <- samples_dt[, 'g_samples' := paste0(b_samples, '.mzML')]
+      samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
     {return(NULL)})
 

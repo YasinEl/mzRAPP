@@ -249,13 +249,18 @@ RT end”, “Peak RT”, “Peak m/z”, “Peak m/z min” and “Peak m/z max
 alignment step\] -\> Feature list methods -\> Export/Import -\> Export
 to CSV file -\> \[additional to checks set for unaligned files check
 “Export row retention time” and “Export row m/z”\]<br> <br>
-<u>Compound Discoverer:</u> <br> unaligned file: \[go to panel
-“Features”\] -\> \[click in any row\] -\> \[click “Show related
-Tables” on the bottom of the screen\] -\> \[go to panel “Chromatogram
-Peaks”\] -\> \[make sure the columns “Apex Intensity”, “Area”, “Study
-File ID”, “Left RT \[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and
-“Apex m/z” are visible\] -\> \[right click any row\] -\> Export -\> As
-plain text… <br> <br> <b>Selecting a benchmark dataset and starting
+<u>El-MAVEN:</u> <br> unaligned file: \[click the “Export csv” button in
+the “Peak Table”-panel\] -\> Export all groups -\> \[select “Peaks
+Detailed Format Comma Delimited (.csv)”\] <br> aligned file: \[click the
+“Export csv” button in the “Peak Table”-panel\] -\> Export all groups
+-\> \[select “Groups Summary Matrix Format Comma Delimited (.csv)”\]
+<br> <br> <u>Compound Discoverer:</u> <br> unaligned file: \[go to panel
+“Features”\] -\> \[click in any row\] -\> \[click “Show related Tables”
+on the bottom of the screen\] -\> \[go to panel “Chromatogram Peaks”\]
+-\> \[make sure the columns “Apex Intensity”, “Area”, “Study File ID”,
+“Left RT \[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and “Apex m/z”
+are visible\] -\> \[right click any row\] -\> Export -\> As plain text…
+<br> <br> <b>Selecting a benchmark dataset and starting
 assessment:</b><br> <br> Next the benchmark file has to be selected. If
 a benchmark has been created during this shiny session (the benchmark is
 still visible in the panel benchmark overview) the switch button “Use
