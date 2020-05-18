@@ -11,7 +11,7 @@
 #' @param adducts data frame with adducts (see \code{\link{adducts}})
 #' @param isotopes data frame of isotopes (see \code{\link{isotopes}})
 #'
-#' @details Make sure that molecular formulars in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
+#' @details Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
 #' @details never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoabb", "formula", "charge" and "mz" are reserved.
 #'
 #'
@@ -32,6 +32,17 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
 
   conflicting_cols <- intersect(c("adduct", "isoabb", "formula", "charge", "mz"), colnames(DT))
   if(length(conflicting_cols > 0)) stop(paste0("DT includes reserved column names! Specificly:", conflicting_cols))
+
+  FileInfo = FALSE
+  if(!is.na(match("FileName", colnames(DT)))){
+
+    FileInfo = TRUE
+    DT_fileInfo <- copy(DT[, !"SumForm_c"])
+    DT <- unique(DT[, c("molecule", "SumForm_c", "adduct_c")], by = c("molecule", "adduct_c"))
+
+
+  }
+
 
   if(!isTRUE(is.data.frame(instrumentRes))){stop(paste0("instrumentRes has to be a data frame!"))}
   if(!isTRUE(is.data.table(instrumentRes))){instrumentRes <- as.data.table(instrumentRes)}
@@ -113,7 +124,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DT <- DT[filter.vct$value]
     SF <- SF[filter.vct$value]
     warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package. ",
-                   "Those formulas are excldued. If you need to avoid that please provide an instrumentRes table for your instrument as explained in the mzRAPP readme.
+                   "Those formulas are excldued. If you need to avoid that please provide additional R values to the instrumentRes table.
                    The following molecular formulas have been excluded: ",
                    paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")), noBreaks. = TRUE)
   }
@@ -171,6 +182,9 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   Output <- na.omit(Output, col = "mz")
 
 
+  if(FileInfo == TRUE){
+    Output <- Output[DT_fileInfo, on = .(molecule, adduct), allow.cartesian = TRUE]
+  }
 
   return(Output)
 }

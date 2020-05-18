@@ -43,11 +43,14 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
   } else if(post_alignment == FALSE){
 
 
-    f_nf_dt <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$nf_b_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE]), fill = TRUE)
+    f_nf_dt <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
 
     f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
 
+    f_nf_dt <- unique(f_nf_dt, by = c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b"))
+
   }
+
 
 
   f_nf_dt <- suppressWarnings(f_nf_dt[order(as.numeric(f_nf_dt$NPP_status), decreasing = FALSE),])

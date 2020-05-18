@@ -124,8 +124,8 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   b_table[, ':=' (sample_id_b_temp = sample_id_b,
                   new_rt_start_b_temp = new_rt_start_b,
                   new_rt_end_b_temp = new_rt_end_b,
-                  mz_start_b_temp = mz_start_b,
-                  mz_end_b_temp = mz_end_b)]
+                  mz_start_b_temp = mz_start_b - 0.0002,
+                  mz_end_b_temp = mz_end_b + 0.0002)]
 
 
   ##############

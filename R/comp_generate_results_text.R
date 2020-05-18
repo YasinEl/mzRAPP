@@ -172,17 +172,9 @@ generate_results_text <- function(comparison_data){
 }
 
 
-#' count_split_features
-#'
-#' @param feature_id_ug
-#'
-#' @return
-#' @export
-#'
-#' @examples
-count_split_features <- function(feature_id_ug){
-  if(length(unique(feature_id_ug))>1){return (TRUE)}
-  else {return (FALSE)}
-}
+#count_split_features <- function(feature_id_ug){
+#  if(length(unique(feature_id_ug))>1){return (TRUE)}
+#  else {return (FALSE)}
+#}
 
 #generate_results_text(comparison_ug_g)

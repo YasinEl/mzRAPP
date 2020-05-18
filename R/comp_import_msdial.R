@@ -15,6 +15,10 @@ import_ungrouped_msdial <- function(file_list, options_dt){
     stop('No ungrouped files selected')
   }
 
+  if(length(file_list) < 2){
+    stop('There should be multiple files for the unaligned MS-DIAL output!')
+  }
+
   #Add files to ut dt if name is in options ug_samples
   for (i in 1:length(file_list)){
     file_path <- file_list[i]
@@ -23,6 +27,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
     #Check if ug_table exists, if not: create
     if(!exists("ug_table")){
       ug_table <- fread(file_path, integer64 = "numeric")
+      if(!("Area" %in% names(ug_table))) {stop(paste("There are MS-DIAL specific columns missing in " , file_path))}
       ug_table <- ug_table[, sample_name := file_name]
     } else if (exists("ug_table")){
       temp_data <- fread(file_path, integer64 = "numeric")
@@ -88,6 +93,10 @@ import_grouped_msdial <- function(file_path, options_dt){
   #Check if filetype is text
   if(tools::file_ext(file_path) != 'txt'){
     stop('grouped dataset is not a valid txt file')
+  }
+
+  if(length(file) != 1){
+    stop('There should only be only one file for the aligned MS-DIAL output!')
   }
 
   #Import text file

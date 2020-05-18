@@ -1,6 +1,9 @@
 ---
-output: github_document
-fig_caption: yes
+title: "mzRAPP"
+output:
+  github_document:
+    toc: true
+
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -14,12 +17,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mzRAPP
-
 <!-- badges: start -->
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files. 
+
+
 
 ## Installation
 
@@ -32,8 +35,6 @@ devtools::install_github("YasinEl/mzRAPP")
 ## Usage
 
 mzRAPP can be used via a shiny interface or via a set of functions. <br>
-
-
 
 <h3>Benchmark dataset generation</h3>
 
@@ -90,7 +91,7 @@ In a next step a view paramters have to be set: <br>
 Benchmark generation can be started using the blue Start button. The necessary time for the generation depends on the number of mzML files, the number of target compounds and of course computational recources.
 
 <h4>Fourth:</h4>
-Afterwards the generated benchmark dataset can be inspected in the "Benchmark overview" panel. The plots in the first row can be used to inspect different qualities of the dataset. The heatmap gives an overview on which molecules were added to the benchmark (validated via at least 1 additional isotopologue). A molecule not being added does no mean that it was not there, but that mzRAPP was not able to validate it. This could be because no additional isotopologue (fullfilling strict criteria in abundance and peak shape correlation) coule be detected. The plot in the lower right corner can be used to plot peaks corresponding to individual target molecules. For additional information on the individual plot click the blue question mark-icon above the plots.<br>
+Afterwards the generated benchmark dataset can be inspected in the "View Benchmark" panel. The plots in the first row can be used to inspect different qualities of the dataset. A molecule not being added does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could be because no additional isotopologue (full-filling strict criteria in abundance and peak shape correlation) coule be detected. In order to have a closer look on benchmark peaks please use the exported Skyline transition list and peak boundaries.<br>
 <br>
 <b>Via R-functions:</b><br>
 ```{r eval=FALSE}
@@ -166,7 +167,7 @@ unaligned files: Export -> Peak list result -> [Add all files] -> [set Export fo
 aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequat). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
 <br>
 <u>mzMine:</u> <br>
-unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export/Import -> Export to CSV file -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Peak height", "Peak area", "Peak RT start", "Peak RT end", "Peak RT", "Peak m/z", "Peak m/z min" and "Peak m/z max"] -> [set Filter rows to ALL] <br>
+unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export/Import -> Export to CSV file -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Peak name", "Peak height", "Peak area", "Peak RT start", "Peak RT end", "Peak RT", "Peak m/z", "Peak m/z min" and "Peak m/z max"] -> [set Filter rows to ALL] <br>
 aligned file: [select file after alignment step] -> Feature list methods -> Export/Import -> Export to CSV file -> [additional to checks set for unaligned files check "Export row retention time" and "Export row m/z"]<br>
 <br>
 <u>Compound Discoverer:</u> <br>
@@ -207,24 +208,57 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 
 
 
-## Interpretation of assessment results
+## Interpretation of results
 
-Reliability assessment results are distributed over the panels "Assessment results (peaks)" and "Assessment results (alignment)" or can be generated using R-functions (shown below). Using the shiny user interface the following performance metrics are given at the top of the first panel: <br>
+<h3>Comparison of benchmark with non-targeted output</h3>
+
+<b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
+Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles IT ratio error as compared to the predicted IT-ratio.
+
+```{r figure1, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
+knitr::include_graphics("Peak matching graphic.png")
+```
 <br>
+<b>Matching of benchmark features with non-targeted features:</b> <br>
+For a NT feature (NF) to be considered as match for a benchmark feature (BF) its reported mz and RT value have to lie between the lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the considered benchmark feature, respectively. In case of multiple NF matching to the same BF the NF leading to smallest mean isotopologue ratio-error (as compared to the predicted ratio; see figure 3) over all NPs is selected (only NPs in samples which are also populated by a BP are considered). 
+
+<h3>Interpretation of NPP performance metrics</h3>
+
+Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface the following performance metrics are given at the top of the panel: <br>
+<br>
+
+
 <u>Found peaks:</u> <br>
-The number of benchmark peaks for which a match was found among the NT peaks in the peak picking step. <br>
+The number of benchmark peaks for which a match was found among the unaligned/aligned NPP results vs all peaks present in benchmark (as shown in figure 2). For explanations on how the matching of benchmark peaks with non-targeted peaks is performed please read the section "Matching of benchmark peaks with NT peaks before alignment" above.<br>
+
+```{r figure2, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Overview of different peak populations"}
+knitr::include_graphics("Peak_subsets.png")
+```
+
 <br>
-<u>Peak fragments:</u> <br>
-The number of peak fragments which have been found that have been found over the whole dataset. For a graphical explanation of a split peak please look at the mzRAPP publication. <br>
+<u>Missing peaks (high/low):</u> <br>
+The classification of not found peaks (as defined in figure 1) into high and low is done for each benchmark feature individually. It is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest found peak are considered as high. Otherwise they are considered as low. 
+
+<u>Split peaks:</u> <br>
+The number of split peaks which have been found for all benchmark peaks. For a graphical explanation of a split peak please check figure 1. <br>
+
 <br>
-<u>Missing Value (S|R):</u> <br>
-Number of systematic (S) and random (R) missing values after the peak picking step. This classification is depending on the peak with the lowest benchmark area detected via NPP. If a peak missed by NPP has a benchmark area > 20% higher than the lowest NPP-detected peak it is classified as R if it is < 20% higher or even lower as S. <br>
+<u>Degenerated IR:</u> <br>
+Isotopologue areas are predicted from the most abundant isotopologue of each molecule. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is reflected in this variable. 
+
+```{r figure3, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure3}<b>Figure 3 | </b> Overview of different peak populations"}
+knitr::include_graphics("IR_tolerance.png")
+```
+
 <br>
-<u>Pred. error increase >20%p:</u> <br>
-Isotopologue areas are predicted from the most abundant isotopologue of each molecule. If the relative error of this prediction is more than 20 %p higher for NT-peak areas (compared to benchmark-areas) it is refelcted in this variable. Here only peak areas from the peak picking step are considered. <br>
-<br>
-<u>Min. # of alignment errors:</u> <br>
-Gives the minimum number of alignment errors done by the non-targeted algorithm. For the exact way of how this count is esatblished please check the original mzRAPP publication. <br>
+
+<u>Alignment errors:</u><br>
+Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 4 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry is counted as errors. Benchmark-trustful counting is a different way of counting alignment errors, which assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset. Per default benchmark-critical counting is applied. 
+
+```{r figure4, out.width="50%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure4}<b>Figure 4 | </b> Counting alignment errors"}
+knitr::include_graphics("Alignment error graphic.png")
+```
+
 <br>
 <u>Found peaks (features):</u> <br>
 The number of benchmark peaks for which a match was found among the NT peaks after the alignment step. Here only one feature per benchmark feature is allowed. If multiple features are found for one benchmark feature the one which fits the predicted isotopic pattern best is chosen. <br>
@@ -250,26 +284,6 @@ library(mzRAPP)
 
 
 
-## Background
-
-<h3>Comparison of benchmark with non-targeted output</h3>
-
-<b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
-Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles IT ratio error as compared to the predicted IT-ratio. 
-
-```{r figure1, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
-knitr::include_graphics("Peak matching graphic.png")
-```
-<br>
-<b>Matching of benchmark features with non-targeted features:</b> <br>
-For NT feature (NF) to be considered as match to a benchmark feature (BF) its reported mz-value has to be between the lowest benchmark RTmin and the highest benchmark RTmax of BPs in the BF. In case of multiple NF matching to the same BF the NF leading to smallest mean IT-error over all NPs is selected (only NPs in samples which are also populated by a BP are considered). 
-
-<b>Counting alignment errors:</b><br>
-Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 2 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry is counted as errors. Benchmark-trustful counting is a different way of counting alignment errors, which assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset.
-
-```{r figure2, out.width="100%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Counting alignment errors"}
-knitr::include_graphics("Alignment error graphic.png")
-```
 
 
 

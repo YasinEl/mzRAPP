@@ -16,12 +16,21 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
     stop('No ungrouped files selected')
   }
 
+  if(length(folder_path) < 2){
+    stop('There should be multiple files for the unaligned mzMine output!')
+  }
+
   for (i in 1:length(folder_path)){
     file_path <- folder_path[i]
     #Check if ug_table exists, if not: create
     if(!exists("temp_dt")){
       ug_table <- fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
+
+      if(length(names(ug_table)[grep(' Peak name$', names(ug_table))]) < 1){
+        stop(paste("It seems mzMine specific columns are missing in file ", file_path))
+      }
+
       sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
 
       ug_table <- ug_table[, 'sample_name' := sample_name]
@@ -108,6 +117,10 @@ import_grouped_mzmine <- function(file_path, options_table){
   #Check if filetype is csv
   if(tools::file_ext(file_path) != 'csv'){
     stop('grouped dataset is not a valid csv file')
+  }
+
+  if(length(file_path) != 1){
+    stop('There should only be one file for the aligned MS-DIAL output!')
   }
 
   #Import csv file

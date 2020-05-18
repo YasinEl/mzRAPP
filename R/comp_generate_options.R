@@ -15,14 +15,35 @@ generate_options <- function(raw_b_table, algo){
                                                  'ug_columns' = c('maxo', 'into', 'sample', 'rtmin', 'rtmax', 'rt', 'mz', 'mzmin', 'mzmax')),
                           all.x = TRUE, by=c('internal_columns'))
       #Add g columns
-      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt_start', 'rt_end', 'rt', 'mz'),
-                                                 'g_columns' = c('rtmin', 'rtmax', 'rt', 'mz')),
-                          all.x = TRUE, by=c('internal_columns'))
+#      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt_start', 'rt_end', 'rt', 'mz'),
+#                                                 'g_columns' = c('rtmin', 'rtmax', 'rt', 'mz')),
+#                          all.x = TRUE, by=c('internal_columns'))
+            columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                                       'g_columns' = c('rt', 'mz')),
+                                all.x = TRUE, by=c('internal_columns'))
 
       #Add ug samples
       samples_dt <- samples_dt[, 'ug_samples' := sample_id]
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := ifelse(grepl('^[0-9]', b_samples), paste0('X', b_samples), b_samples)]
+    },
+    'El-MAVEN' = {
+      #Add ug columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
+                                                 'ug_columns' = c('peakIntensity', 'peakAreaTopCorrected', 'sample', 'rtmin', 'rtmax', 'rt', 'peakMz', 'mzmin', 'mzmax')),
+                          all.x = TRUE, by=c('internal_columns'))
+
+      #Add g columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                                 'g_columns' = c('medRt', 'medMz')),
+                          all.x = TRUE, by=c('internal_columns'))
+
+      #Add ug samples
+      samples_dt <- samples_dt[, 'ug_samples' := b_samples]
+      #Add g samples
+      samples_dt <- samples_dt[, 'g_samples' := b_samples]
+
+
     },
     'msDial' = {
       #Add ug columns

@@ -15,6 +15,10 @@ pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
       ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
       g_table <- import_grouped_xcms(g_table_path, options_table)
     },
+    'El-MAVEN' = {
+      ug_table <- import_ungrouped_elmaven(ug_table_path, options_table)
+      g_table <- import_grouped_elmaven(g_table_path, options_table)
+    },
     'msDial' = {
       ug_table <- import_ungrouped_msdial(ug_table_path, options_table)
       g_table <- import_grouped_msdial(g_table_path, options_table)

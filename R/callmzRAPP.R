@@ -207,16 +207,13 @@ callmzRAPP <- function(){
         tabItem(tabName = "vBM_p",
                 h2("Generated benchmark:"),
                 h4(paste("In the following key data and overview graphics for the generated benchmark are provided. Please note that the benchmark dataset contains only peaks which were confirmable",
-                         "via a number of different criteria. Peaks which can not be confirmed are removed. This is behavior is intended and missed peaks do not cause problems for subsequent",
+                         "via associated isotopologues. Peaks which can not be confirmed are removed. This is behavior is intended and missed peaks do not cause problems for subsequent",
                          "non-targeted data pre-processing evaluations.")),
                 br(),
                 fluidRow(
                   # A static infoBox
                   #infoBox("New Orders", 10 * 2, icon = icon("credit-card")),
                   # Dynamic infoBoxes
-                  #infoBox("PP_info"),
-                  #infoBox("A_info"),
-                  #infoBox("F_info"),
                   infoBoxOutput("size_info"),
                   infoBoxOutput("chrom_info"),
                   infoBoxOutput("mz_info")
@@ -226,7 +223,7 @@ callmzRAPP <- function(){
 
                 column(9, offset = 1,
                        h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks please ",
-                                "use the exported skyline files. If you wish to adapt peak boundaries please add a 'user.rtmin'/'user.rtmax' variable in your target file and regenerate the benchmark ",
+                                "use the exported Skyline-files. If you wish to adapt peak boundaries please add a 'user.rtmin'/'user.rtmax' column in your target csv file and regenerate the benchmark ",
                                 "in the 'Generate Benchmark' node as described in the readme. It is also possible to delete peaks from the benchmark by deleting rows from the exported 'Peak_list'."))
                 ),
 
@@ -305,19 +302,6 @@ callmzRAPP <- function(){
                 br()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         ),
         tabItem(tabName = "sNPP_p",
                 fluidRow(
@@ -328,7 +312,7 @@ callmzRAPP <- function(){
                 fluidRow(
                   column(
 
-                    12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine'), selected = '---')
+                    12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine', 'El-MAVEN'), selected = '---')
                   )
                 ),
                 fluidRow(
@@ -576,9 +560,6 @@ callmzRAPP <- function(){
                   # A static infoBox
                   #infoBox("New Orders", 10 * 2, icon = icon("credit-card")),
                   # Dynamic infoBoxes
-                  #infoBox("PP_info"),
-                  #infoBox("A_info"),
-                  #infoBox("F_info"),
                   infoBoxOutput("PP_info"),
                   infoBoxOutput("A_info"),
                   infoBoxOutput("F_info")
@@ -604,6 +585,7 @@ callmzRAPP <- function(){
                            column(11,
                                   prettySwitch(inputId = 'PP_al_switch_ov',
                                                label = 'after PeakPicking | Alignment',
+                                               slim = TRUE,
                                                value = FALSE
                                   )
                            )
@@ -649,6 +631,7 @@ callmzRAPP <- function(){
                            column(11,
                                   prettySwitch(inputId = 'PP_al_switch_dist',
                                                label = 'after PeakPicking | Alignment',
+                                               slim = TRUE,
                                                value = FALSE
                                   )
                            )
@@ -729,6 +712,7 @@ callmzRAPP <- function(){
                            column(2,
                                   prettySwitch(inputId = 'PP_al_switch_hm',
                                                label = 'after PeakPicking | Alignment',
+                                               slim = TRUE,
                                                value = FALSE)
                            ),
                            column(2, offset = 3,
@@ -985,7 +969,8 @@ callmzRAPP <- function(){
                                               Grps = grps,
                                               plan = input$plan_input,
                                               CompCol_all = rois,
-                                              Min.PointsperPeak = input$min_PpP_input
+                                              Min.PointsperPeak = input$min_PpP_input,
+                                              max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
                        #####################################################
@@ -1023,7 +1008,7 @@ callmzRAPP <- function(){
                        title = 'Benchmark generated',
                        text = paste0('Benchmark geneneration has been finished in ', round(proc.time, 0), ' min. You can proceed to use it for reliability
                                   assessment of non-targeted data pre-processing. A benchmark overview is provided in section
-                                  "Benchmark overview" (rendering can take a min)'),
+                                  "View Benchmark"'),
                        type = 'success',
                        closeOnClickOutside = FALSE,
                        showCloseButton = TRUE)
@@ -1155,11 +1140,13 @@ callmzRAPP <- function(){
 
     comparison <- observeEvent(input$start_compare, {
       tryCatch({
-        #To-Do: Clear graphing Areas!!!!!
         shinybusy::show_modal_spinner(spin='scaling-squares', text='Please wait while we make things traceable for you.')
         #####################
         #Import csv files
         #####################
+        if(input$algorithm_input == '---'){
+          stop('Please select non-targeted tool used!')
+        }
         if(input$use_generated_options == TRUE){
           options_path <- 'generate'
         } else {
@@ -1174,9 +1161,7 @@ callmzRAPP <- function(){
           b_table = b_o_tables$b_table
           options_table <- b_o_tables$options_table
         }
-        if(input$algorithm_input == '---'){
-          stop('Please select an algorithm')
-        }
+
         import_results <- pick_algorithm(ug_files(), g_file(), options_table, input$algorithm_input)
         ug_table <- import_results$ug_table
         g_table <- import_results$g_table
@@ -1195,7 +1180,7 @@ callmzRAPP <- function(){
         Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
         shinyWidgets::sendSweetAlert(session,
                                      title = 'Comparison complete',
-                                     text = 'Comparison has been finished. An overview is provided in panels "Assessment result (peaks)" and "Assessment (alignment)"!',
+                                     text = 'Comparison has been finished. An overview is provided in panel "View NPP assessment"!',
                                      type = 'success',
                                      closeOnClickOutside = FALSE,
                                      showCloseButton = TRUE)
@@ -1299,7 +1284,7 @@ callmzRAPP <- function(){
                                             #" (", round(result_list[["Before_alignment"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
                                             "%)",
                                             br(),
-                                            "Missing peaks (rand.): ",
+                                            "Missing peaks (high): ",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
                                             "/",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Systematic"]] + result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
@@ -1307,7 +1292,7 @@ callmzRAPP <- function(){
                                             round(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
                                             "%)",
                                             br(),
-                                            "Split peaks: ",
+                                            "Splited peaks: ",
                                             result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
