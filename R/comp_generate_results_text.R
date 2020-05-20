@@ -27,7 +27,7 @@ generate_results_text <- function(comparison_data){
 
 
 
-
+print("x")
 
   results_text <- list(Assessed_tool = comparison_data$info_list$algorithm,
                        Benchmark = list(
@@ -145,7 +145,7 @@ generate_results_text <- function(comparison_data){
                        )
   )
 
-
+print("x2")
 
   #results_text <- paste0("Assessed tool: ", comparison_data$info_list$algorithm, "     NT-peaks: ", UT_peaks,     "     ", "Found peaks: ",  found_ug_peaks, "/",
   #                       comparison_data$info_list$nr_of_b_peaks, " (", round((found_ug_peaks/comparison_data$info_list$nr_of_b_peaks)*100, 1), "%)     Peak fragments: ",  length(unique(comparison_data$split_table$comp_id_b)),

@@ -156,24 +156,24 @@ getROIsForEICs <-
             ##################################
             #combine isolated ROIs if they were falling within the same the boundaries of the same expected EIC
             ##################################
-            matches_summary <- mz.overlap[,.(eic_mzmin = min(mzmin),
-                                             eic_mzmax = max(mzmax),
-                                             mz_acc = mean(i.mz),
-                                             roi_rtmin = min(rtmin),
-                                             roi_rtmax = max(rtmax),
-                                             roi_scmin = min(scmin),
-                                             roi_scmax = max(scmax),
-                                             roi_int = sum(abs(intensity)),
+            matches_summary <- mz.overlap[,.(eic_mzmin = as.double(min(mzmin)),
+                                             eic_mzmax = as.double(max(mzmax)),
+                                             mz_acc = as.double(mean(i.mz)),
+                                             roi_rtmin = as.numeric(min(rtmin)),
+                                             roi_rtmax = as.numeric(max(rtmax)),
+                                             #roi_scmin = min(scmin),
+                                             #roi_scmax = max(scmax),
+                                             #roi_int = sum(abs(intensity)),
                                              roi_count = .N),
                                           by=.(molecule, adduct, isoabb, FileName)]
 
             ##################################
             #find the rt region where most isotopologues overlap with the most abundant isotopologue to estimate(!) the rt of the compound
             ##################################
-            matches_summary <- matches_summary[matches_summary[,.(roi_overlaps_max = xr@scantime[which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))],
-                                                                  roi_overlaps_max_sc = which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))),
-                                                               by=.(molecule, adduct, FileName)],
-                                               on=.(molecule, adduct, FileName)]
+            #matches_summary <- matches_summary[matches_summary[,.(roi_overlaps_max = xr@scantime[which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))],
+            #                                                      roi_overlaps_max_sc = which.min(abs(round(mzRAPP:::getOverlapWithLine1(roi_scmin, roi_scmax)) - xr@acquisitionNum))),
+            #                                                   by=.(molecule, adduct, FileName)],
+            #                                   on=.(molecule, adduct, FileName)]
             return(matches_summary)
 
           } else return(NULL)

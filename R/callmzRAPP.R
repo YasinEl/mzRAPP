@@ -312,7 +312,7 @@ callmzRAPP <- function(){
                 fluidRow(
                   column(
 
-                    12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine', 'El-MAVEN'), selected = '---')
+                    12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine', 'El-MAVEN', 'OpenMS'), selected = '---')
                   )
                 ),
                 fluidRow(

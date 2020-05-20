@@ -61,7 +61,7 @@ pick_main_feature_sd <- function(dt){
     y_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.y', 'feature_id_g.y', 'ratio_diff')], c('feature_id_b.y', 'feature_id_g.y'), c('feature_id_b', 'feature_id_g'))
     main_features_dt <- rbindlist(list(x_dt, y_dt), use.names = TRUE)
     main_features_dt <- main_features_dt[!duplicated(main_features_dt, by=c('feature_id_b', 'feature_id_g'))]
-    main_features_dt <- main_features_dt[, 'main_feature' := ifelse(ratio_diff == min(ratio_diff), TRUE, FALSE), by=c('feature_id_b')]
+    main_features_dt <- main_features_dt[, 'main_feature' := ifelse(ratio_diff == suppressWarnings(min(ratio_diff)), TRUE, FALSE), by=c('feature_id_b')]
     if(any(duplicated(main_features_dt[main_feature == TRUE]$feature_id_b))){
       #Handle if still more than one main feature per benchmark feature, in case of "draw" use feature with most compareable samples
       main_features_dt <- merge(main_features_dt, dt[, c('feature_id_b', 'feature_id_g', 'samples_to_compare')], on=c('feature_id_b', 'feature_id_g'))

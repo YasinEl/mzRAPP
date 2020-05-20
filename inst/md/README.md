@@ -373,8 +373,8 @@ alignment” above.<br>
 
 </div>
 
-<br> <u>Missing peaks (high/low):</u> <br> The classification of not
-found peaks (as defined in figure 1) into high and low is done for each
+<br> <u>Missing peaks (h/l):</u> <br> The classification of not found
+peaks (as defined in figure 1) into high and low is done for each
 benchmark feature individually. It is based on the lowest benchmark peak
 present in the respective feature which has been found by the
 non-targeted algorithm. All benchmark peaks in this feature which have a
@@ -385,10 +385,10 @@ peak are considered as high. Otherwise they are considered as low.
 for all benchmark peaks. For a graphical explanation of a split peak
 please check figure 1. <br>
 
-<br> <u>Degenerated IR:</u> <br> Isotopologue areas are predicted from
-the most abundant isotopologue of each molecule. If the relative error
-of this prediction is more than 20 %p higher for NT-peak areas (compared
-to benchmark-areas) it is reflected in this variable.
+<br> <u>Degenerated IR:</u> <br> Isotopologue abundance rations (IR) are
+calculated relative to the highest isotopologue of each compound. If the
+relative bias of an IR calculated using NPP-abundances is exceeding the
+tolerance (outlined in figure 3) it is reflected in this variable.
 
 <div class="figure">
 
@@ -430,21 +430,8 @@ benchmark-critical counting is applied.
 
 </div>
 
-<br> <u>Found peaks (features):</u> <br> The number of benchmark peaks
-for which a match was found among the NT peaks after the alignment step.
-Here only one feature per benchmark feature is allowed. If multiple
-features are found for one benchmark feature the one which fits the
-predicted isotopic pattern best is chosen. <br> <br> <u>Found features
-(features):</u> <br> The number of benchmark features for which at least
-one benchmark peak was detected via the non-targeted algorithm. <br>
-<br> <u>Pred. error increase \>20%p (features):</u> <br> Isotopologue
-areas are predicted from the most abundant isotopologue of all
-compounds. If the relative error of this prediction is more than 20 %p
-higher for NT-peak areas (compared to benchmark-areas) it is refelcted
-in this variable. Here only peak areas after the alignment step are
-considered. <br> <br> <b>Overview plots:</b><br> <br> For explanations
-of the overview plots please click the blue question marks above the
-individual plots. <br>
+<b>Overview plots:</b><br> <br> For explanations of the overview plots
+please click the blue question marks above the individual plots. <br>
 
 <b>Via R-functions:</b><br>
 

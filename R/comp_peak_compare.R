@@ -50,7 +50,8 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   }
 
   #UG table check
-  ug_req_cols <- c('comp_id_ug', 'sample_id_ug', 'rt_start_ug', 'rt_end_ug', 'rt_ug', 'mz_ug', 'sample_name_ug', 'peak_area_ug', 'peak_height_ug')
+  #ug_req_cols <- c('comp_id_ug', 'sample_id_ug', 'rt_start_ug', 'rt_end_ug', 'rt_ug', 'mz_ug', 'sample_name_ug', 'peak_area_ug', 'peak_height_ug')
+  ug_req_cols <- c('comp_id_ug', 'sample_id_ug', 'rt_start_ug', 'rt_end_ug', 'rt_ug', 'mz_ug', 'sample_name_ug', 'peak_area_ug')
 
 
   if(!all(ug_req_cols %in% colnames(ug_table))){
@@ -90,7 +91,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #if (any(duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug')))){
   #  print('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
     total_ug_peaks <- nrow(ug_table)
-    ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_height_ug'))]
+    ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_area_ug'))]
     print(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate non-aligned peaks to prevent errors'))
   #}
   #if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){

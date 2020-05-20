@@ -60,6 +60,21 @@ generate_options <- function(raw_b_table, algo){
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
+    'OpenMS' = {
+      #Add ug columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_area', 'rt_start', 'rt_end', 'rt', 'mz'),
+                                                 'ug_columns' = c('intensity', 'rt_start', 'rt_end', 'rt', 'mz')),
+                          all.x = TRUE, by=c('internal_columns'))
+      #Add g columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                                 'g_columns' = c('rt_cf', 'mz_cf')),
+                          all.x = TRUE, by=c('internal_columns'))
+
+      #Add ug samples
+      samples_dt <- samples_dt[, 'ug_samples' := b_samples]
+      #Add g samples
+      samples_dt <- samples_dt[, 'g_samples' := b_samples]
+    },
     'mzMine' = {
       #Add ug columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
