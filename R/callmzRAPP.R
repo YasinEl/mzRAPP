@@ -94,7 +94,7 @@ callmzRAPP <- function(){
       #}'))),
       tabItems(
         tabItem(tabName = "Readme",
-                includeMarkdown(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
+                includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
                 ),
         tabItem(tabName = "gBM_p",
                 fluidRow(
