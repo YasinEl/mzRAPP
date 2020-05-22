@@ -63,12 +63,12 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_g', 'mz_g',
                   'sample_name_g', 'peak_area_g', 'feature_id_g')
 
-
+print("x1")
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns not present in g dataset: ', paste0(cols_not_found, sep = " - "))
   }
-
+print("x1")
 
   ##############
   #Write relevant information to info list
@@ -212,7 +212,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
     g_table[, sample_id_g_temp := sample_id_g]
   }
 
-
+  print("x2")
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
@@ -228,7 +228,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
-
+  print("x2")
   #Remove _temp Columns
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
@@ -255,10 +255,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   #Not found UG Peaks
   nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(c_table$comp_id_ug)]
-
+print("x3")
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
-
+print("x3")
   #Generate Random and systematic error DT
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
 
@@ -313,7 +313,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                     'peak_area_ug'),
                  by=.(molecule_b, adduct_b)]
 
-  ali_error_table <- setnames(ali_error_table, c('errors', 'Lost_b.A', 'molecule_b', 'adduct_b'), c('errors', 'Lost_b.A', 'Molecule', 'Adduct'))
+  ali_error_table <- setnames(ali_error_table, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
 
   print('Start FF Compare')
   print(nrow(g_table))

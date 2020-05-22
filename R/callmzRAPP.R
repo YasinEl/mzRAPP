@@ -94,7 +94,7 @@ callmzRAPP <- function(){
       #}'))),
       tabItems(
         tabItem(tabName = "Readme",
-                includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
+                includeMarkdown(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
                 ),
         tabItem(tabName = "gBM_p",
                 fluidRow(
@@ -1144,6 +1144,8 @@ callmzRAPP <- function(){
         #####################
         #Import csv files
         #####################
+        starttime <- Sys.time()
+
         if(input$algorithm_input == '---'){
           stop('Please select non-targeted tool used!')
         }
@@ -1176,11 +1178,16 @@ callmzRAPP <- function(){
 
         comp_data <<- comparison_ug_g
 
+        endtime <- Sys.time()
+        proc.time <- diff(c(starttime, endtime))
+        units(proc.time) <- "secs"
+
+
         shinybusy::remove_modal_spinner()
         Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
         shinyWidgets::sendSweetAlert(session,
-                                     title = 'Comparison complete',
-                                     text = 'Comparison has been finished. An overview is provided in panel "View NPP assessment"!',
+                                     title = 'Assessment complete',
+                                     text = paste0('Assessment has been finished in ', round(proc.time, 0), ' seconds. An overview is provided in panel "View NPP assessment"!'),
                                      type = 'success',
                                      closeOnClickOutside = FALSE,
                                      showCloseButton = TRUE)
@@ -1292,7 +1299,7 @@ callmzRAPP <- function(){
                                             round(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
                                             "%)",
                                             br(),
-                                            "Splited peaks: ",
+                                            "Split peaks: ",
                                             result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
@@ -1316,14 +1323,17 @@ callmzRAPP <- function(){
         output$A_info <- renderInfoBox({
           infoBox(tags$p(style = "font-weight: bold; font-size: 110%","Alignment step"),
                   value = tags$p(style = "font-weight: normal; font-size: 100%;",
-                                 HTML(paste("Errors: ", result_list[["Alignmnet"]][["Errors"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["Errors"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Errors"]][["CI"]][5],1), "%)",
+                                 HTML(paste("Min. errors: ", result_list[["Alignmnet"]][["Min.Errors"]][["count"]],
+                                            " (", round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)",
+                                            br(),
+                                            "BM divergences: ", result_list[["Alignmnet"]][["BM_divergences"]][["count"]],
+                                            " (", round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)",
                                             br(),
                                             "Lost peaks: ", result_list[["Alignmnet"]][["Lost_b.A"]][["count"]],
                                             " (", round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)",
-                                            br(), " ."
+                                            round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"
                                  ))), color = "blue", fill = TRUE)
         })
 
@@ -1364,7 +1374,7 @@ callmzRAPP <- function(){
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$error_count <- renderTable(comparison_data()$ali_error_table[errors > 0 | Lost_b.A > 0])
+        output$error_count <- renderTable(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
       }
     })
 
@@ -1377,8 +1387,8 @@ callmzRAPP <- function(){
     observeEvent(comparison_data(),{
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
-        error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors > 0 | Lost_b.A > 0, Molecule]))
-        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[errors == 0 & Lost_b.A == 0, Molecule]))
+        error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0, Molecule]))
+        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors == 0 & Lost_b.A == 0 | BM.div == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
@@ -1386,8 +1396,8 @@ callmzRAPP <- function(){
     observeEvent({comparison_data();input$mol_a}, {
       #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
-        error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors > 0 | Lost_b.A > 0), Adduct])
-        no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (errors == 0 & Lost_b.A == 0), Adduct])
+        error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors > 0 | Lost_b.A > 0 | BM.div > 0), Adduct])
+        no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 | BM.div == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }

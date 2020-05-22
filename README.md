@@ -2,8 +2,20 @@ mzRAPP
 ================
 
   - [Installation](#installation)
-  - [Usage](#usage)
-  - [Interpretation of results](#interpretation-of-results)
+  - [Benchmark dataset generation](#benchmark-dataset-generation)
+  - [Reliability assessment of non-targeted data
+    pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
+      - [Exporting NPP outputs from different
+        tools](#exporting-npp-outputs-from-different-tools)
+  - [Matching between BM and NPP output
+    (background)](#matching-between-bm-and-npp-output-background)
+  - [Generation and interpretation of NPP performance
+    metrics](#generation-and-interpretation-of-npp-performance-metrics)
+      - [Found peaks](#found-peaks)
+      - [Missing peaks (h/l)](#missing-peaks-hl)
+      - [Split peaks](#split-peaks)
+      - [Degenerated IR](#degenerated-ir)
+      - [Alignment errors](#alignment-errors)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -30,15 +42,9 @@ if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("d
 devtools::install_github("YasinEl/mzRAPP")
 ```
 
-## Usage
+## Benchmark dataset generation
 
 mzRAPP can be used via a shiny interface or via a set of functions. <br>
-
-<h3>
-
-Benchmark dataset generation
-
-</h3>
 
 <b>Via user interface:</b> <br>
 
@@ -107,7 +113,9 @@ peak. This substitutes peak detection done by mzRAPP (seconds). <br>
 <b>user.rtmax:</b> (optional) End time of peak. This substitutes peak
 detection done by mzRAPP (seconds). <br> <b>user.rt:</b> Retention time
 expected for this molecule. If multiple peaks are detected the peak
-closest to this time is chosen (seconds). <br>
+closest to this time is chosen (seconds). <br> <b>FileName:</b>
+(optional) Name of sample file with or without extension. Using this
+different user.rt/rtmin/rtmax values can be used for each sample. <br>
 
 Afterwards the used <u><b>instrument and resolution</u></b> has to be
 selected. This is necessary in order to apply the correct mass
@@ -202,24 +210,22 @@ PCbp <- findBenchPeaks(
 PCal <- align_PC(PCbp)
 ```
 
-<h3>
+The generated benchmark can then be used to assess the reliability of
+non-targeted data pre-processing.
 
-Reliability assessment of non-targeted data pre-processing
-
-</h3>
-
-The generated benchmark can now be used to assess the reliability of
-non-targeted data pre-processing. <br>
+## Reliability assessment of non-targeted data pre-processing
 
 <b>Via user interface:</b> <br>
 
-Such an assessment can be set up in the panel “Assess NT data
-pre-processing”. First the tool to be evaluated has to be set.
-Afterwards the unaligned files (One for XCMS (csv) and Compound
-Discoverer (txt), multiple for mzMine (csv) and MS-DIAL (txt)) and one
-aligned file have to be selected. <br> <br> <b>How to export unaligned
-and aligned files from different tools:</b><br> <br> <u>XCMS
-(R-version):</u>
+Reliabiliy assessment of NPP can be set up in the panel “Setup NPP
+assessment”. First the tool to be evaluated has to be set. Afterwards
+the unaligned and aligned output files of the tools to be assessed have
+to be selected. The way those files can be exported from different tools
+are linde out in the following. <br>
+
+### Exporting NPP outputs from different tools
+
+<br> <u>XCMS (R-version):</u>
 
 ``` r
 #unaligned file:
@@ -299,7 +305,11 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
                             )
 ```
 
-## Interpretation of results
+## Matching between BM and NPP output (background)
+
+Before any NPP-performance metrics can be generated mzRAPP is matching
+the NPP output files against the BM. The ways in which this is done are
+explained in the following.
 
 <h3>
 
@@ -319,7 +329,8 @@ NP it is counted as a split peak. NPs which are not overlapping with the
 core of a BP are not considered. If there is more than one NP matching
 to a single BP, BPs corresponding to the same molecule but other
 isotopologues (IT) are considered to choose the NP leading to the
-smalles IT ratio error as compared to the predicted IT-ratio.
+smalles relative IT ratio bias (as compared to the predicted ratio; see
+figure 3) as compared to the predicted IT-ratio.
 
 <div class="figure">
 
@@ -338,28 +349,26 @@ smalles IT ratio error as compared to the predicted IT-ratio.
 feature (BF) its reported mz and RT value have to lie between the
 lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the
 considered benchmark feature, respectively. In case of multiple NF
-matching to the same BF the NF leading to smallest mean isotopologue
-ratio-error (as compared to the predicted ratio; see figure 3) over all
-NPs is selected (only NPs in samples which are also populated by a BP
-are considered).
+matching to the same BF the NF leading to smallest relative mean
+isotopologue ratio bias (as compared to the predicted ratio; see figure
+3) over all NPs is selected (only NPs in samples which are also
+populated by a BP are considered).
 
-<h3>
-
-Interpretation of NPP performance metrics
-
-</h3>
+## Generation and interpretation of NPP performance metrics
 
 Reliability assessment results can be inspected in the panel “View NPP
 assessment” or can be generated using R-functions (shown below). Using
 the shiny user interface the following performance metrics are given at
 the top of the panel: <br> <br>
 
-<u>Found peaks:</u> <br> The number of benchmark peaks for which a match
-was found among the unaligned/aligned NPP results vs all peaks present
-in benchmark (as shown in figure 2). For explanations on how the
-matching of benchmark peaks with non-targeted peaks is performed please
-read the section “Matching of benchmark peaks with NT peaks before
-alignment” above.<br>
+### Found peaks
+
+The number of benchmark peaks for which a match was found among the
+unaligned/aligned NPP results vs all peaks present in benchmark (as
+shown in figure 2). For explanations on how the matching of benchmark
+peaks with non-targeted peaks is performed please read the section
+“Matching of benchmark peaks with NT peaks before alignment”
+above.<br>
 
 <div class="figure">
 
@@ -373,22 +382,27 @@ alignment” above.<br>
 
 </div>
 
-<br> <u>Missing peaks (h/l):</u> <br> The classification of not found
-peaks (as defined in figure 1) into high and low is done for each
-benchmark feature individually. It is based on the lowest benchmark peak
-present in the respective feature which has been found by the
-non-targeted algorithm. All benchmark peaks in this feature which have a
-benchmark area which is more than 1.5 times higher than the lowest found
-peak are considered as high. Otherwise they are considered as low.
+### Missing peaks (h/l)
 
-<u>Split peaks:</u> <br> The number of split peaks which have been found
-for all benchmark peaks. For a graphical explanation of a split peak
-please check figure 1. <br>
+The classification of not found peaks (as defined in figure 1) into high
+and low is done for each benchmark feature individually. It is based on
+the lowest benchmark peak present in the respective feature which has
+been found by the non-targeted algorithm. All benchmark peaks in this
+feature which have a benchmark area which is more than 1.5 times higher
+than the lowest found peak are considered as high. Otherwise they are
+considered as low.
 
-<br> <u>Degenerated IR:</u> <br> Isotopologue abundance rations (IR) are
-calculated relative to the highest isotopologue of each compound. If the
-relative bias of an IR calculated using NPP-abundances is exceeding the
-tolerance (outlined in figure 3) it is reflected in this variable.
+### Split peaks
+
+The number of split peaks which have been found for all benchmark peaks.
+For a graphical explanation of a split peak please check figure 1. <br>
+
+### Degenerated IR
+
+Isotopologue abundance rations (IR) are calculated relative to the
+highest isotopologue of each compound. If the relative bias of an IR
+calculated using NPP-abundances is exceeding the tolerance (outlined in
+figure 3) it is reflected in this variable.
 
 <div class="figure">
 
@@ -402,25 +416,24 @@ tolerance (outlined in figure 3) it is reflected in this variable.
 
 </div>
 
-<br>
+### Alignment errors
 
-<u>Alignment errors:</u><br> Benchmark-critical counting counts the
-minimum number of alignment errors without relying on correct alignment
-of the benchmark dataset itself. Figure 4 shows three isotopologues (IT)
-of the same benchmark compound detected in 5 samples. The color coding
-indicates the feature the peak has been assigned to by the NPP
-aligorthm. Whenever there is an asymmetry in the assignment of the
-different IT the minimum number of steps to reverse that asymmetry is
-counted as errors. Benchmark-trustful counting is a different way of
-counting alignment errors, which assumes correct alignment of the
-benchmark dataset. Here simply the number of deviations between BM and
-NPP alignments is counted as errors. This kind of counting should only
-be done after visual inspection of the benchmark dataset. Per default
-benchmark-critical counting is applied.
+Benchmark-critical counting counts the minimum number of alignment
+errors without relying on correct alignment of the benchmark dataset
+itself. Figure 4 shows three isotopologues (IT) of the same benchmark
+compound detected in 5 samples. The color coding indicates the feature
+the peak has been assigned to by the NPP aligorthm. Whenever there is an
+asymmetry in the assignment of the different IT the minimum number of
+steps to reverse that asymmetry is counted as errors. Benchmark-trustful
+counting is a different way of counting alignment errors, which assumes
+correct alignment of the benchmark dataset. Here simply the number of
+deviations between BM and NPP alignments is counted as errors. This kind
+of counting should only be done after visual inspection of the benchmark
+dataset. Per default benchmark-critical counting is applied.
 
 <div class="figure">
 
-<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure4}&lt;b&gt;Figure 4 | &lt;/b&gt; Counting alignment errors" width="50%" height="50%" />
+<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure4}&lt;b&gt;Figure 4 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
 
 <p class="caption">
 

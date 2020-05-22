@@ -25,10 +25,6 @@ generate_results_text <- function(comparison_data){
 
   }
 
-
-
-print("x")
-
   results_text <- list(Assessed_tool = comparison_data$info_list$algorithm,
                        Benchmark = list(
                          BM_peaks = comparison_data$info_list$nr_of_b_peaks,
@@ -88,10 +84,10 @@ print("x")
                          )
                        ),
                        Alignmnet = list(
-                         #Errors = sum(comparison_data$ali_error_table$errors, na.rm = TRUE)
-                         Errors = list(count = sum(comparison_data$ali_error_table$errors, na.rm = TRUE),
-                                       CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$errors, na.rm = TRUE)),
-                                                                                        rep(FALSE, found_ug_peaks))),#var = comparison_data$ali_error_table$errors),
+                         #Errors = sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE)
+                         Min.Errors = list(count = sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE),
+                                       CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE)),
+                                                                                        rep(FALSE, found_ug_peaks))),#var = comparison_data$ali_error_table$Min.errors),
 
 
                                                                      function(data, indices){
@@ -101,6 +97,16 @@ print("x")
                                                                      R = 1000),
                                                           index=1,
                                                           type='basic')$basic),
+                         BM_divergences = list(count = sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE),
+                                         CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE)),
+                                                                                          rep(FALSE, found_ug_peaks))),
+                                                                       function(data, indices){
+                                                                         dt<-data[indices,]
+                                                                         round(length(which(dt))/length(dt)*100,1)
+                                                                       },
+                                                                       R = 1000),
+                                                            index=1,
+                                                            type='basic')$basic),
                          Lost_b.A = list(count = sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE),
                                          CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE)),
                                                                                           rep(FALSE, found_ug_peaks))),
@@ -145,7 +151,6 @@ print("x")
                        )
   )
 
-print("x2")
 
   #results_text <- paste0("Assessed tool: ", comparison_data$info_list$algorithm, "     NT-peaks: ", UT_peaks,     "     ", "Found peaks: ",  found_ug_peaks, "/",
   #                       comparison_data$info_list$nr_of_b_peaks, " (", round((found_ug_peaks/comparison_data$info_list$nr_of_b_peaks)*100, 1), "%)     Peak fragments: ",  length(unique(comparison_data$split_table$comp_id_b)),

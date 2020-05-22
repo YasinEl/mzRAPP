@@ -81,12 +81,19 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
 
   }
 
+  hm_dt[missing_peaks == "F", NPP_status := "Found"]
+  hm_dt[missing_peaks == "R", NPP_status := "High NA"]
+  hm_dt[missing_peaks == "S", NPP_status := "Low NA"]
+  hm_dt[missing_peaks == "L", NPP_status := "feature missing"]
+  hm_dt[missing_peaks == "NC", NPP_status := "not confirmable"]
+
+
   plot_r_s <- ggplot(
     hm_dt,
     aes(
       x = reorder(as.factor(plot_group), nr),
       y = reorder(as.factor(sample_id_b), ord),
-      fill = missing_peaks,
+      fill = NPP_status,
       molecule = molecule_b,
       #mz = mz_acc_b,
       isoabb = round(isoabb_b, 2),
@@ -96,11 +103,18 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
     ) +
     geom_tile() +
     #scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
-    scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
+    #scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
+    #scale_fill_discrete(labels=c(`F` = "Found", `R` = "High NA", `S` ="Low NA", `L` = "feature missing", `NC` = "not confirmable")) +
+    #scale_color_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
+    scale_fill_manual(values=c(`Found` = "blue", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
     ggtitle("Missing values") +
-    labs(x = "benchmark features", y = "sample IDs") +
-    theme(legend.title = element_blank())
-    return(plotly::ggplotly(plot_r_s,tooltip = c("molecule", "adduct", "isoabb", "FileName")#, "mz")
+    labs(x = "benchmark features", y = "samples") +
+    theme(legend.title = element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())
+    return(plotly::ggplotly(plot_r_s,tooltip = c("NPP_status", "molecule", "adduct", "isoabb", "FileName")#, "mz")
 
   ))
 

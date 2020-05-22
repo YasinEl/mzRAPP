@@ -62,19 +62,19 @@ get_main_UT_groups <- function(DT){
 #'
 #' @examples
 
-count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
+count_alignment_errors <- function(DT, main_UTgroups, method = "both"){
 
   DT[] <- lapply(DT, function(x) as.character(x))
 
 
-  if(method == "self-critical"){
+  if(method == "self-critical" | method == "both"){
 
     lba <- as.data.table(table(unlist(DT)))
     if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
       lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
     } else {lba_e <- 0L}
 
-    if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(c(errors = 0L, Lost_b.A = lba_e))}
+    if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(c(errors = 0L, Lost_b.A = lba_e, diff_BM = 0L))}
 
     #going through isotopologues which are necessary to cover all samples!
   error_list <- lapply(main_UTgroups[[1]], function(x) {
@@ -167,27 +167,32 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "self-critical"){
  #   lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
 #  } else {lba_e <- 0L}
 #
-  return(c(errors = sum(unlist(error_list)), Lost_b.A = sum(lba_e)))
+  if(method == "self-critical"){
+    return(c(errors = as.integer(sum(unlist(error_list))), Lost_b.A = as.integer(sum(lba_e)), diff_BM = as.integer(NA)))
+  }
   }
 
 
 
-  if(method == "trustfull"){
+  if(method == "trustfull" | method == "both"){
 
-    error_list <- apply(DT[, !c("sample_id_b")], 2, function(x) {
+    diff_BM_list <- apply(DT[, !c("sample_id_b")], 2, function(x) {
 
       if(length(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA)]) > 0) {
           best_UTgrp <- names(which.max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
       } else best_UTgrp <- NULL
 
-      errors <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA, "", "Lost_b.A")])
-      return(errors)
+      diff_BM_c <- length(x[!x %in% c(best_UTgrp, "Lost_b.PP", NA, "", "Lost_b.A")])
+      return(diff_BM_c)
 
 
     } )
 
-    return(c(errors = sum(unlist(error_list)), Lost_b.A = sum(lba_e)))
+    if(method == "trustfull"){
+      return(c(errors = as.integer(NA), Lost_b.A = as.integer(sum(lba_e)), diff_BM = as.integer(sum(unlist(diff_BM_list)))))
+    }
 
+    return(c(errors = as.integer(sum(unlist(error_list))), Lost_b.A = as.integer(sum(lba_e)), diff_BM = as.integer(sum(unlist(diff_BM_list)))))
   }
 }
 

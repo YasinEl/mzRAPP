@@ -82,6 +82,7 @@ getROIsForEICs <-
       files.dt[,fileIdx:= seq(nrow(files.dt))]
       Target.table$fileIdx <- rep(1, nrow(Target.table))
       Target.table <- Target.table[files.dt, on=.(fileIdx<=fileIdx), allow.cartesian = TRUE]
+      Target.table <- Target.table[, !"fileIdx"]
     } else {
       Target.table[, FileName := tools::file_path_sans_ext(basename(FileName))]
     }

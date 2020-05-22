@@ -141,8 +141,8 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
     )), alpha = 0.3)) +
     #scale_color_manual(name = "+ > 20%p", values=c("blue", "red")) +
     scale_color_manual(name = "+ > 20%p", values=c(`Inc. < 20%p` = "blue", `Inc. > 20%p` = "red", `Feature Inc. > 20%p` = "goldenrod2")) +
-    ggtitle("IT ratio prediction errors") +
-    labs(x = "", y = "IT pred error [%]") +
+    ggtitle("Relative IT ratio bias") +
+    labs(x = "", y = "IT ratio bias [%]") +
     theme(legend.title = element_blank())
 
   return(ggplotly(p, tooltip = c("molecule", "adduct", "isoabb", "sample", "Pred_error"), dynamicTicks = "y"))
