@@ -152,7 +152,7 @@
 #'   #######REWROK WHEN FUCTION IS REWORKED
 #'
 #'
-#'   c_table[, main_peak := eliminate_duplicates_no_for(comp_id_b, comp_id_ug, isoabb_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
+#'   c_table[, main_peak := eliminate_duplicates_no_for(comp_id_b, comp_id_ug, isoab_b, peak_area_ug, peak_height_ug, peak_height_b), by=.(molecule_b, adduct_b, sample_id_b)]
 #'   print('here')
 #'   c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
 #'

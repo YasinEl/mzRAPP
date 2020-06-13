@@ -63,12 +63,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   g_req_cols <- c('comp_id_g', 'sample_id_g', 'rt_g', 'mz_g',
                   'sample_name_g', 'peak_area_g', 'feature_id_g')
 
-print("x1")
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns not present in g dataset: ', paste0(cols_not_found, sep = " - "))
   }
-print("x1")
 
   ##############
   #Write relevant information to info list
@@ -111,7 +109,7 @@ print("x1")
   ##############
   b_table[, rt_add_temp := ifelse((rt_end_b - rt_b) < (rt_b - rt_start_b),
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
-  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.5,new_rt_end_b = rt_b + rt_add_temp*0.5)]
+  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
 
 
   #Creating temp columns to prevent over-writing by join
@@ -212,15 +210,14 @@ print("x1")
     g_table[, sample_id_g_temp := sample_id_g]
   }
 
-  print("x2")
   #Join
   c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
 
-  c_table[, N_fid := .N, by = .(molecule_b, adduct_b, isoabb_b, feature_id_g)]
+  c_table[, N_fid := .N, by = .(molecule_b, adduct_b, isoab_b, feature_id_g)]
   c_table <-  c_table[order(-rank(N_fid))]
-  c_table <- unique(c_table, by = c("molecule_b", "adduct_b", "isoabb_b", "sample_id_b"))
+  c_table <- unique(c_table, by = c("molecule_b", "adduct_b", "isoab_b", "sample_id_b"))
 
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
   #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
@@ -228,7 +225,6 @@ print("x1")
   split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
-  print("x2")
   #Remove _temp Columns
   c_table[,grep('_temp$', colnames(c_table)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
@@ -255,39 +251,10 @@ print("x1")
 
   #Not found UG Peaks
   nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(c_table$comp_id_ug)]
-print("x3")
+
   #Not found G Peaks
   nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
-print("x3")
-  #Generate Random and systematic error DT
-  rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
 
-  rs_table <- rs_table[, c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b", "peak_area_b", "peak_height_b",
-                           "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
-  )]
-
-  rs_table <-
-    rs_table[, Connected := File_con_test(
-      sample_name_b,
-      feature_id_g),
-      by = .(molecule_b, adduct_b)]
-
-
-  rs_table <-
-    rs_table[, missing_peaks := find_r_s_error(
-      peak_area_b,
-      peak_area_ug,
-      peak_height_b,
-      Connected
-    ), by = .(molecule_b, adduct_b, isoabb_b)]
-
-
-
-  #rs_table[, missing_peaks := find_r_s_error(
-  #  peak_area_b,
-  #  peak_area_ug,
-  #  peak_height_b
-  #), by = .(molecule_b, adduct_b, isoabb_b)]
 
 
   ###################################################################################################################
@@ -295,9 +262,12 @@ print("x3")
   ###################################################################################################################
 
   #Generate alignment error table
+  if(nrow(g_table) > 0){
+
+
   ali_error_table <-
     rbindlist(list(c_table, nf_b_table), fill = TRUE)
-
+print("alignmenttest start")
   if('peak_area_rounded_ug' %in% colnames(ali_error_table)){
     ali_error_table <- ali_error_table[, 'peak_area_ug' := peak_area_rounded_ug]
   }
@@ -306,24 +276,38 @@ print("x3")
                                                     'adduct_b',
                                                     'main_peak',
                                                     'sample_id_b',
-                                                    'isoabb_b',
+                                                    'isoab_b',
                                                     'feature_id_g',
-                                                    'peak_group_b',
                                                     'peak_area_g',
                                                     'peak_area_ug'),
                  by=.(molecule_b, adduct_b)]
 
   ali_error_table <- setnames(ali_error_table, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
 
+  } else {
+
+    ali_error_table <- setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
+
+  }
+  print("alignmenttest end")
   print('Start FF Compare')
   print(nrow(g_table))
   #if(nrow(g_table) > 0){
-    ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
+
+
+
 
   #Generate feature table
+    print("feature table start")
+
+    if(nrow(g_table) > 0){
+
+      ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
+
+
   dt <- ff_table_dt[main_feature == TRUE]
 
-  id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoabb_b", "adduct_b",
+  id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
                "max_rt_end", "main_feature")
 
@@ -352,12 +336,93 @@ print("x3")
   feature_table <- dt_n[tmp, on = .(sample_id_b)]
 
 
-  #Generate Isotopologe error dt
-  c_table_t <- c_table
+    } else {
+
+      feature_table <- setNames(data.table(matrix(nrow = 0, ncol = 15)), c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
+                                                                          "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
+                                                                          "max_rt_end", "main_feature", "sample_id_b", "area_g", "area_b",
+                                                                          "sample_name_b"))
+      ff_table_dt <- data.table(NULL)
+      }
+
+  #Generate Random and systematic error DT
+  rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
+
+  rs_table <- rs_table[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "peak_area_b", "peak_height_b",
+                           "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
+  )]
+
+  print(nrow(rs_table))
+
+  if(nrow(g_table) > 0){
+
+ # feat_t <- melt_fftable(ff_table_dt, c_table)
+#tt <<- feat_t
+  rs_table <- feature_table[main_feature == TRUE & !is.na(area_b), c("molecule_b",
+                                                                     "adduct_b",
+                                                                     "isoab_b",
+                                                                     "sample_name_b",
+                                                                     "area_g")][rs_table,
+                       on =.(molecule_b, adduct_b, isoab_b, sample_name_b)]
+
+#tt <<- rs_table
+
+
+
+  rs_table[, peak_area_g := area_g]
+
+
+
+  rs_table <- rs_table[!is.na(peak_area_b)]
+  rs_table <- rs_table[order(feature_id_g)]
+
+   rs_table <-
+    rs_table[, Connected := File_con_test(
+      sample_name_b,
+      feature_id_g),
+      by = .(molecule_b, adduct_b)]
+
+   colnames(rs_table) <- replace(colnames(rs_table), colnames(rs_table) == "area_g", "peak_area_g")
+
+  } else {
+
+    rs_table[, Connected := TRUE]
+  }
+
+  rs_table <-
+    rs_table[, c("missing_peaks_ug", "missing_peaks_g") := .(find_r_s_error(
+      peak_area_b,
+      peak_area_ug,
+      peak_height_b,
+      Connected),
+      find_r_s_error(
+        peak_area_b,
+        peak_area_g,
+        peak_height_b,
+        Connected)
+    ), by = .(molecule_b, adduct_b, isoab_b)]
+
+
+
+  rs_table <- rs_table[!is.na(peak_area_b)]
+
+
+
+  #rs_table[, missing_peaks := find_r_s_error(
+  #  peak_area_b,
+  #  peak_area_ug,
+  #  peak_height_b
+  #), by = .(molecule_b, adduct_b, isoab_b)]
+
+
+#Generate Isotopologe error dt
+c_table_t <- c_table
+if(nrow(g_table) > 0){
+
   c_table_t$sample_id_b <- as.factor(c_table_t$sample_id_b)
   iso_err_dt <- c_table_t[main_peak == TRUE,c("molecule_b",
                                    "adduct_b",
-                                   "isoabb_b",
+                                   "isoab_b",
                                    "sample_id_b",
                                    "peak_area_ug",
                                    "peak_area_b",
@@ -367,24 +432,34 @@ print("x3")
                                                             !is.na(area_g),
                                                           c("molecule_b",
                                                             "adduct_b",
-                                                            "isoabb_b",
+                                                            "isoab_b",
                                                             "sample_id_b",
                                                             "area_b",
                                                             "area_g",
                                                             "sample_name_b")],
-                                                     on = .(molecule_b, adduct_b, isoabb_b, sample_id_b)]
+                                                     on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
 
   iso_err_dt[is.na(peak_area_b)]$peak_area_b <- iso_err_dt[is.na(peak_area_b)]$area_b
   iso_err_dt[is.na(sample_name_b)]$sample_name_b <- iso_err_dt[is.na(sample_name_b)]$i.sample_name_b
 
-  iso_err_dt <- iso_err_dt[isoabb_b != 100][iso_err_dt[isoabb_b == 100,
+
+} else {
+  c_table_t$sample_id_b <- as.factor(c_table_t$sample_id_b)
+  c_table_t[, area_g := as.numeric(NA)]
+
+  iso_err_dt <- c_table_t
+
+
+}
+
+  iso_err_dt <- iso_err_dt[isoab_b != 100][iso_err_dt[isoab_b == 100,
                                      c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug")],
                                 on=.(sample_id_b, molecule_b, adduct_b),
                                 nomatch = NA, allow.cartesian=TRUE][,c("benchmark",
                                                                        "NPP_peak picking",
-                                                                       "NPP_features") := .((peak_area_b / ((i.peak_area_b * isoabb_b) / 100) - 1) * 100,
-                                                                                            (peak_area_ug / ((i.peak_area_ug * isoabb_b) / 100) - 1) * 100,
-                                                                                            (area_g / ((i.area_g * isoabb_b) / 100) - 1) * 100)]
+                                                                       "NPP_features") := .((peak_area_b / ((i.peak_area_b * isoab_b) / 100) - 1) * 100,
+                                                                                            (peak_area_ug / ((i.peak_area_ug * isoab_b) / 100) - 1) * 100,
+                                                                                            (area_g / ((i.area_g * isoab_b) / 100) - 1) * 100)]
 
 
   iso_err_dt[, diffH20PP_pp := as.character(abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
@@ -402,7 +477,7 @@ print("x3")
   iso_err_dt[diffH20PP_ft == "TRUE"]$diffH20PP_ft <- "Inc. > 20%p"
   iso_err_dt[diffH20PP_ft == "FALSE"]$diffH20PP_ft <- "Inc. < 20%p"
 
-  iso_err_dt <- iso_err_dt[!is.na(area_b)]
+  iso_err_dt <- iso_err_dt[!is.na(peak_area_b)]
 
 
   ##############

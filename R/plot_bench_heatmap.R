@@ -8,7 +8,7 @@
 #' @examples
 plot_bench_heatmap <- function(benchmark_data) {
   benchmark_all <- benchmark_data$PCal
-  benchmark <- unique(benchmark_all[!is.na(peaks.PpP) & isoabb == 100, c("molecule", "FileName", "isoabb")], by = c("molecule", "FileName"))
+  benchmark <- unique(benchmark_all[!is.na(peaks.PpP) & isoab == 100, c("molecule", "FileName", "isoab")], by = c("molecule", "FileName"))
   benchmark_files <- benchmark_data$files
   benchmark_targets <- benchmark_data$targets
   benchmark_targets <- unique(benchmark_targets[, "molecule"])
@@ -22,7 +22,7 @@ plot_bench_heatmap <- function(benchmark_data) {
 
   plot.dt <- benchmark[benchmark_targets, on = .(molecule, FileName), nomatch = NA]
 
-  plot.dt$Found <- !is.na(plot.dt$isoabb)
+  plot.dt$Found <- !is.na(plot.dt$isoab)
 
 
   plot.dt <- plot.dt[Found == TRUE, .(nr = .N), by = .(molecule, Found)][, !"Found"][plot.dt, on =.(molecule), nomatch = NA]

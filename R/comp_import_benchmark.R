@@ -64,7 +64,7 @@ import_benchmark <- function (file, options_path = "generate", from_csv = TRUE, 
   }
 
   #Generate feature ID to quickly detect features later
-  b_table <- b_table[, feature_id := .GRP, by = c('molecule', 'adduct', 'isoabb')]
+  b_table <- b_table[, feature_id := .GRP, by = c('molecule', 'adduct', 'isoab')]
 
   #Generate id for each peak
   b_table$comp_id <- seq.int(nrow(b_table))

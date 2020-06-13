@@ -10,7 +10,7 @@ pick_main_feature <- function(dt){
 
   all_g_samples <- colnames(dt)[grep('sample_\\d{1,}_g', colnames(dt))]
 
-  main_features_dt <- dt[, pick_main_feature_sd(.SD), by=c('molecule_b', 'adduct_b'), .SDcols = c('feature_id_b', 'feature_id_g', 'isoabb_b', 'total_area_b', 'total_area_g', 'samples_to_compare', all_g_samples)]
+  main_features_dt <- dt[, pick_main_feature_sd(.SD), by=c('molecule_b', 'adduct_b'), .SDcols = c('feature_id_b', 'feature_id_g', 'isoab_b', 'total_area_b', 'total_area_g', 'samples_to_compare', all_g_samples)]
 
   dt <- merge(dt, main_features_dt[,c('feature_id_b', 'feature_id_g', 'main_feature')], by=c('feature_id_b', 'feature_id_g'), all.x=TRUE)
   dt <- dt[, 'main_feature' := ifelse(main_feature == TRUE, TRUE, FALSE)]
@@ -31,7 +31,7 @@ pick_main_feature_sd <- function(dt){
   dt <- copy(dt)
 
   #Get list of all avaiable iso_abbs
-  all_iso_abs <- sort(unique(dt[,isoabb_b]), decreasing = TRUE)
+  all_iso_abs <- sort(unique(dt[,isoab_b]), decreasing = TRUE)
 
   if (nrow(dt)==length(all_iso_abs)){
     #If list of features is equal to number of unique iso abbs set all to main peak
@@ -55,10 +55,10 @@ pick_main_feature_sd <- function(dt){
 
     #Build compariosn DT
     comp_dt <- merge(dt, dt, by=c('merge_key'), allow.cartesian = TRUE)
-    comp_dt <- comp_dt[isoabb_b.x > isoabb_b.y]
-    comp_dt <- comp_dt[, 'compare_ratio' := isoabb_b.y/isoabb_b.x]
-    comp_dt[, 'group_temp_id' := .GRP, by=c('isoabb_b.x', 'isoabb_b.y')]
-    comp_dt[, c('ratio_diff', 'min_ratio_diff') := best_feature_per_comparison(.SD), by=c('isoabb_b.x', 'isoabb_b.y')]
+    comp_dt <- comp_dt[isoab_b.x > isoab_b.y]
+    comp_dt <- comp_dt[, 'compare_ratio' := isoab_b.y/isoab_b.x]
+    comp_dt[, 'group_temp_id' := .GRP, by=c('isoab_b.x', 'isoab_b.y')]
+    comp_dt[, c('ratio_diff', 'min_ratio_diff') := best_feature_per_comparison(.SD), by=c('isoab_b.x', 'isoab_b.y')]
     x_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.x', 'feature_id_g.x', 'ratio_diff')], c('feature_id_b.x', 'feature_id_g.x'), c('feature_id_b', 'feature_id_g'))
     y_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.y', 'feature_id_g.y', 'ratio_diff')], c('feature_id_b.y', 'feature_id_g.y'), c('feature_id_b', 'feature_id_g'))
     main_features_dt <- rbindlist(list(x_dt, y_dt), use.names = TRUE)

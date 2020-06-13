@@ -157,16 +157,16 @@ remove_identical_peaks <- function(dt, grouped = FALSE){
 #' compare_peak_groups <- function(dt) {
 #'
 #'   #order DT by Iso abb, 100 als erstes
-#'   dt <- dt[order(-isoabb_b)]
+#'   dt <- dt[order(-isoab_b)]
 #'
 #'   #Create Named column for Molecule_Adduct_File
 #'   dt <- dt[, iso_groups := paste(molecule_b, adduct_b, sample_id_b, sep="_")]
-#'   dt <- dt[, features_in_iso_group := paste(isoabb_b, '-', feature_id_g, collapse = "; "), by=.(iso_groups, peak_group_b)]
+#'   dt <- dt[, features_in_iso_group := paste(isoab_b, '-', feature_id_g, collapse = "; "), by=.(iso_groups, peak_group_b)]
 #'
 #'   #dt <- dt[!duplicated(dt, by=c('iso_groups', 'peak_group_b', 'features_in_iso_group'))]
-#'   #print(anyDuplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b', 'peak_group_b')))
+#'   #print(anyDuplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoab_b', 'peak_group_b')))
 #'
-#'   dt <- dt[!duplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoabb_b', 'peak_group_b'))]
+#'   dt <- dt[!duplicated(dt, by=c('molecule_b', 'adduct_b', 'sample_id_b', 'isoab_b', 'peak_group_b'))]
 #'
 #'   #fwrite(dt[molecule_b == 'Glutamate' & adduct_b == 'M-H'], file="peak_group_debug.csv")
 #'   ##Long to Wide Transormation, filtering represents each ne dt passed inside function later
@@ -174,7 +174,7 @@ remove_identical_peaks <- function(dt, grouped = FALSE){
 #'   ##Only one row per peak_group - file pair
 #'   #dt<- dt[!duplicated(dt, by=c('sample_name_b', 'peak_group_b'))]
 #'   #dt <- dcast(dt, peak_group_b ~ sample_name_b, value.var='features_in_iso_group')
-#'   ##dt <- dt[order(-isoabb_b)]
+#'   ##dt <- dt[order(-isoab_b)]
 #'   #fwrite(dt, file="wide_peak_group_debug.csv")
 #'
 #'   ##filtering represents each ne dt passed inside function later
@@ -275,13 +275,13 @@ remove_identical_peaks <- function(dt, grouped = FALSE){
 #' compare_peak_groups_new <- function(dt){
 #'   ##filtering represents each ne dt passed inside function later
 #'   dt <- dt[molecule_b == 'Glutamate' & adduct_b == 'M-H']
-#'   dt <- dt[, c('sample_id_b', 'isoabb_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b')]
+#'   dt <- dt[, c('sample_id_b', 'isoab_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b')]
 #'   #Only use Peakgroup 1, will be filterd in benchmark later
 #'   dt <- dt[peak_group_b == 2]
 #'
 #'   #Converting columns to single string, than splitting to list, there must be a easier way
 #'   #strsplit seperate to avoid grouping
-#'   dt <- dt[, features_in_iso_group := paste(isoabb_b, '-', feature_id_g, collapse = "; "), by=.(molecule_b, adduct_b, sample_id_b, peak_group_b)]
+#'   dt <- dt[, features_in_iso_group := paste(isoab_b, '-', feature_id_g, collapse = "; "), by=.(molecule_b, adduct_b, sample_id_b, peak_group_b)]
 #'   dt <- dt[, features_in_iso_group := strsplit(features_in_iso_group, '; ')]
 #'   dt <- dt[, file_group := paste(sample_id_b)]
 #'   #fwrite(dt, 'pre_loop_dt.csv')

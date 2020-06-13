@@ -63,8 +63,8 @@ findBenchPeaks <- function(files,
     na.omit(CompCol_all,
             cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
 
-
-
+#print(nrow(CompCol))
+#cc <<- CompCol
 
 
   ##################################
@@ -76,9 +76,9 @@ findBenchPeaks <- function(files,
   #future::plan(multiprocess(workers = 40))
   Output <- list()
   Output <-
-    foreach(file = 1:length(files),
+    foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
             .packages = c("mzRAPP", "data.table")) %dopar% {
-  #                        for(file in 1:length(files)){
+  #                        for(file in 1:nrow(unique(CompCol[, "FileName"]))){
 
 
               ##################################
@@ -95,74 +95,30 @@ findBenchPeaks <- function(files,
               )
               )
 
+              MA.Isos <- data.table(NULL)
               ##################################
               #setup order of EIC evaluation: 1. most abundant isotopologue (MAiso) of main adduct (main_adduct); 2. less abundant isotopologues (LAisos) of main adduct if peak has been found in "1.";
-              #3. most abundant isotopologue of other adducts (screen_adducts) if peak has been found in "1."; 4. less abundant isotopologues of main adduct if peak has been found in "3."
+              #3. most abundant isotopologue of other adducts (screen_adducts) if peak has been found in "1."; 4. less abundant isotopologues of screen adduct if peak has been found in "3."
               ##################################
               for (adduct.run in c("main_adduct", "screen_adducts")) {
                 for (iso.run in c("MAiso", "LAisos")) {
 
-
-
+#print(adduct.run)
+                  #print(iso.run)
+                  #print(head(MA.Isos))
                   Bureau <- NULL
-
-                  if (iso.run == "MAiso") {
-                    if (adduct.run == "main_adduct") {
-                      .CompCol_xic <- CompCol[isoabb == 100 &
-                                                FileName == sub(pattern = "(.*)\\..*$",
-                                                                replacement = "\\1",
-                                                                basename(files[file])) &
-                                                adduct == main_adduct]
-
-                    } else if (adduct.run == "screen_adducts") {
-                      if(nrow(ALL.Isos.perfile) > 0){
-                        .CompCol_xic <- CompCol[isoabb == 100 &
-                                                  FileName == sub(pattern = "(.*)\\..*$",
-                                                                  replacement = "\\1",
-                                                                  basename(files[file])) &
-                                                  adduct != main_adduct]
-
-                        .CompCol_xic <-
-                          na.omit(.CompCol_xic[unique(MA.Isos[peaks.PpP > Min.PointsperPeak &
-                                                                !is.na(peaks.PpP), c("molecule", "FileName")]),
-                                               on = .(molecule, FileName),
-                                               allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
-                      } else .CompCol_xic <- data.table(NULL)
-                    }
-
-                  } else if (iso.run == "LAisos") {
-                    if(nrow(MA.Isos) > 0){
-                      if (adduct.run == "main_adduct") {
-                        .CompCol_xic <- na.omit(CompCol[isoabb < 100 &
-                                                  FileName == sub(pattern = "(.*)\\..*$",
-                                                                  replacement = "\\1",
-                                                                  basename(files[file])) &
-                                                  adduct == main_adduct], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
-                        #tt <- .CompCol_xic
-                        #return(tt)
-                      } else {
-                        .CompCol_xic <- CompCol[isoabb < 100 &
-                                                  FileName == sub(pattern = "(.*)\\..*$",
-                                                                  replacement = "\\1",
-                                                                  basename(files[file])) &
-                                                  adduct != main_adduct]
-                      }
-
-                      .CompCol_xic <-
-                        na.omit(.CompCol_xic[unique(MA.Isos[peaks.PpP > Min.PointsperPeak &
-                                                              !is.na(peaks.PpP), c("molecule", "adduct", "FileName")]),
-                                             on = .(molecule, adduct, FileName),
-                                             allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
-                    } else .CompCol_xic <- data.table(NULL)
-                  }
+                  if(adduct.run == "main_adduct" & iso.run == "MAiso" | nrow(MA.Isos) > 0 & "peaks.PpP" %in% colnames(MA.Isos)){
+                    .CompCol_xic <- Limit_Target_list(CompCol, MA.Isos, iso.run, adduct.run, files[file], Min.PointsperPeak)
+                  } else .CompCol_xic <- data.table(NULL)
 
 
-
+#print(nrow(.CompCol_xic))
                   if(nrow(.CompCol_xic) > 0){
-
+                    #print("something")
                     ##################################
                     #extract EICs, add according file names and create empty list for storage of peak information
                     ##################################
+                    suppressWarnings(
                     .ChromData <- MSnbase::chromatogram(
                       .raw_data,
                       rt = as.matrix(unname(.CompCol_xic[, c("StartTime.EIC", "EndTime.EIC")])),
@@ -172,7 +128,8 @@ findBenchPeaks <- function(files,
                       msLevel = 1L,
                       aggregationFun = "max"#,
                       #BPPARAM = SnowParam(detectCores()-1)
-                    )
+                    ))
+
 
                     MSnbase::sampleNames(.ChromData) <-
                       basename(sub(
@@ -192,14 +149,14 @@ findBenchPeaks <- function(files,
                                                                ChromData = .ChromData) {
 
                         ##################################
-                        #prepare list for collecting information on one peak
+                        #prepare list for collecting information on peaks of one extracted ion chromatogram
                         ##################################
                         Drawer_fill <- as.list(rep(NA, 9))
                         names(Drawer_fill) <-
                           c(
                             "molecule",
                             "adduct",
-                            "isoabb",
+                            "isoab",
                             "user.rt",
                             "FileName",
                             "Grp",
@@ -214,7 +171,7 @@ findBenchPeaks <- function(files,
                         ##################################
                         Drawer_fill[["molecule"]] <- CompCol_xic[i]$molecule
                         Drawer_fill[["adduct"]] <-  CompCol_xic[i]$adduct
-                        Drawer_fill[["isoabb"]] <- CompCol_xic[i]$isoabb
+                        Drawer_fill[["isoab"]] <- CompCol_xic[i]$isoab
                         Drawer_fill[["user.rt"]] <- CompCol_xic[i]$user.rt
                         Drawer_fill[["FileName"]] <- raw_data@phenoData@data[["sample_name"]]
                         Drawer_fill[["Grp"]] <- raw_data@phenoData@data[["sample_group"]]
@@ -222,7 +179,7 @@ findBenchPeaks <- function(files,
                         Drawer_fill[["Intensities.v"]] <- paste(as.character(unname(ChromData[[i]]@intensity)), collapse = ",")
 
                         ##################################
-                        #prepare table with smoothed an spike depleted EICs
+                        #prepare table with smoothed and spike depleted EICs
                         ##################################
                         EIC.dt <- mzRAPP:::get_EIC_table(rt = unname(ChromData[[i]]@rtime),
                                                             int = unname(ChromData[[i]]@intensity),
@@ -241,7 +198,7 @@ findBenchPeaks <- function(files,
                                      as.numeric(unlist(strsplit(
                                        MA.Isos[molecule == CompCol_xic[i]$molecule &
                                                  adduct == ifelse(iso.run == "MAiso",
-                                                                  paste0(CompCol_xic[i]$main_adduct), #paste0(main_adduct),######################
+                                                                  paste0(CompCol_xic[i]$main_adduct),
                                                                   paste0(CompCol_xic[i]$adduct)) &
                                                  FileName == raw_data@phenoData@data[["sample_name"]]][1]$Intensities.v,
                                        split = ","
@@ -254,7 +211,7 @@ findBenchPeaks <- function(files,
                             ##################################
                             M0_peaks <- MA.Isos[molecule == CompCol_xic[i]$molecule &
                                                   adduct == ifelse(iso.run == "MAiso",
-                                                                   paste0(CompCol_xic[i]$main_adduct),#paste0(main_adduct),
+                                                                   paste0(CompCol_xic[i]$main_adduct),
                                                                    paste0(CompCol_xic[i]$adduct)) &
                                                   FileName == raw_data@phenoData@data[["sample_name"]]]
 
@@ -278,7 +235,8 @@ findBenchPeaks <- function(files,
                                 }
                               }
                             }
-
+#print("manual_bound")
+#print(manual_bound)
                             #automatic boundary imputation
                             if(manual_bound == FALSE){
                               l.peaks <- cutout_peaks(
@@ -342,13 +300,13 @@ findBenchPeaks <- function(files,
                             if (nrow(l.peaks) > 0 & length(l.peaks) > 1) {
 
                               ##################################
-                              #get start and end time for detected peaks at height of integration baseline and add them to the table
+                              #get start and end time for detected peaks and add them to the table
                               ##################################
 
                               if (iso.run == "MAiso" & adduct.run == "main_adduct" & manual_bound == TRUE){
-
-                                l.peaks <- l.peaks[, StartTime = rtmin]
-                                l.peaks <- l.peaks[, EndTime = rtmax]
+#print(l.peaks)
+                                l.peaks <- l.peaks[, StartTime := rtmin]
+                                l.peaks <- l.peaks[, EndTime := rtmax]
 
                               } else{
                                l.peaks <- l.peaks[l.peaks[, .(StartTime = GetFWXM(
@@ -382,250 +340,17 @@ findBenchPeaks <- function(files,
                               l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
                               l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
 
-
-                              suppressWarnings(
-                                raw_data_lim <- raw_data %>%
-                                  xcms::filterRt(rt = c(min(l.peaks$StartTime), max(l.peaks$EndTime))) %>%
-                                  xcms::filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                              )
-
-                              l.peaks.mz_list <- list()
-                              length(l.peaks.mz_list) <- nrow(l.peaks)
-                              nc <- 1
-
-                              while(nc <= nrow(l.peaks)){
-
-                                suppressWarnings(
-                                  raw_data_lim1 <- raw_data_lim %>%
-                                    xcms::filterRt(rt = unlist(unname(l.peaks[nc, c("StartTime", "EndTime")]))) #%>%
-                                  #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                                )
-
-                                suppressWarnings(
-                                l.peaks.mz_list[[nc]] <- list(mz = xcms::mz(raw_data_lim1),
-                                                              int = xcms::intensity(raw_data_lim1))
-
-                                )
-
-                                if(length(l.peaks.mz_list[[nc]][["mz"]]) > 1){
-                                  highstInt_idx <-
-                                    mapply(which.max,
-                                           l.peaks.mz_list[[1]][["int"]],
-                                           SIMPLIFY = FALSE
-                                    )
-
-
-                                  l.peaks.mz_list[[nc]][["int"]] <-
-                                    lapply(1:length(highstInt_idx),
-                                           function(x,
-                                                    li = l.peaks.mz_list[[1]][["int"]],
-                                                    idx = highstInt_idx){
-                                             return(li[[x]][idx[[x]]])
-                                           })
-                                  l.peaks.mz_list[[nc]][["mz"]] <-
-                                    lapply(1:length(highstInt_idx),
-                                           function(x,
-                                                    li = l.peaks.mz_list[[1]][["mz"]],
-                                                    idx = highstInt_idx){
-                                             return(li[[x]][idx[[x]]])
-                                           })
-                                }
-                                nc <- nc + 1
-                              }
-
-                             #assign("list_for_testing", l.peaks.mz_list, envir = .GlobalEnv)
-
-                              tryCatch(
+                              ##################################
+                              #get information on mz peaks for each chromatographic peak
+                              ##################################
+                              l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i])
 
                               ##################################
-                              #extract different variables from detected peaks and add them to the table
-                              suppressWarnings(
+                              #add additional variables for each chromatographic peak
                               ##################################
-                              l.peaks <- l.peaks[l.peaks[, .(
-                                PpP = sum(EIC.dt[!is.na(int_wo_spikes) &
-                                                   rt >= StartTime &
-                                                   rt <= EndTime]$int > 0),
-
-                                mz_accurate = weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])),
-
-                                mz_accuracy_abs = abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic[i]$mz),
-
-                                mz_accuracy_ppm = 1e6*abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic[i]$mz) / CompCol_xic[i]$mz,
-
-                                mz_span_abs = max(unlist(l.peaks.mz_list[[idx]][["mz"]])) - min(unlist(l.peaks.mz_list[[idx]][["mz"]])),
-
-                                mz_span_ppm = 1e6*(max(unlist(l.peaks.mz_list[[idx]][["mz"]])) - min(unlist(l.peaks.mz_list[[idx]][["mz"]]))) / mean(unlist(l.peaks.mz_list[[idx]][["mz"]])),
-
-                                mz_min = min(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
-
-                                mz_max = max(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
-
-                                #mz_interference = {
-
-                                 # #mz_min_t <- CompCol_xic[i]$mz_acc - (CompCol_xic[i]$mz_acc - CompCol_xic[i]$eic_mzmin) * 3
-                                #  #mz_max_t <- CompCol_xic[i]$mz_acc + abs(CompCol_xic[i]$mz_acc - CompCol_xic[i]$eic_mzmax) * 3
-
-                                 # rdl_extended1 <- rdl_extended %>%
-                                #    filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(mz_min_t, mz_max_t))
-
-
-                                 # suppressWarnings(
-                                #    raw_data_lim1 <- raw_data_lim %>%
-                                ##      filterRt(rt = c(StartTime, EndTime)) #%>%
-                                    #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
-                              #    )
-
-
-
-                                  #highest_mp <- sum(unlist(lapply(intensity(raw_data_lim), max)))
-                                  #summed_mp <- sum(unlist(lapply(intensity(rdl_extended), sum)))
-
-                                  #summed_mp > 2 * highest_mp
-
-
-                                #  suppressWarnings(
-                                #    EIC.spec_targets <- lapply(seq(length(raw_data_lim1)), function(x,
-                                #                                                                   mz_lim = mz(raw_data_lim1),
-                                #                                                                   int_lim = intensity(raw_data_lim1),
-                                #                                                                   mz_lim_ext = mz(rdl_extended1),
-                                #                                                                   int_lim_ext = intensity(rdl_extended1)){
-
-                                #      if(length(int_lim[[x]]) == 0){return(c(mz = 0, int = 0, mz_if = 0, int_if = 0))}
-
-                              #        wmi <- which.max(int_lim[[x]])
-                              #        mz_val <- mz_lim[[x]][wmi]
-                              #        int_val <- max(int_lim[[x]])#
-
-                                #      if(int_val >= max(int_lim_ext[[x]])){return(c(mz = mz_val,int = int_val, mz_if = 0, int_if = 0))}
-
-                                 #     wmi_ext <- which.max(int_lim_ext[[x]])
-                                #      mz_val_ext <- mz_lim_ext[[x]][wmi_ext]
-                                #      int_val_ext <- max(int_lim_ext[[x]])
-
-                                #      return(c(mz = mz_val, int = int_val, mz_if = mz_val_ext, int_if = int_val_ext))
-
-                                #    })
-                                #  )
-
-                              #    interference_table <- as.data.table(do.call(rbind, EIC.spec_targets))
-
-                               #   if(sum(interference_table$int) * 2 < sum(interference_table$int_if)){
-                              #      interference_table$delta_mz <- abs(interference_table$mz - interference_table$mz_if)
-                              #      as.double(min(interference_table$delta_mz, na.rm = TRUE))
-                              #    } else as.double(NA)
-
-                               # },
-
-                                FW25M = as.double(
-                                  GetFWXM(
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$int,
-                                    0,
-                                    0.25,
-                                    return_diff = TRUE
-                                  )
-                                ),
-
-                                FW50M = as.double(
-                                  GetFWXM(
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$int,
-                                    0,
-                                    0.50,
-                                    return_diff = TRUE
-                                  )
-                                ),
-
-                                FW75M = as.double(
-                                  GetFWXM(
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$rt,
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime &
-                                             !is.na(int_wo_spikes)]$int,
-                                    0,
-                                    0.75,
-                                    return_diff = TRUE
-                                  )
-                                ),
-
-                              data_rate = mean(diff(EIC.dt[rt >= StartTime &
-                                                   rt <= EndTime]$rt)),
-
-                              rt_raw = EIC.dt[rt >= StartTime &
-                                                   rt <= EndTime &
-                                                   int == max(EIC.dt[rt >= StartTime &
-                                                                       rt <= EndTime]$int)]$rt,
-
-                                zigZag_IDX = as.double(GetZigzagIDX(
-                                  EIC.dt[rt >= StartTime &
-                                           rt <= EndTime]$int,
-                                  max(EIC.dt[rt >= StartTime &
-                                               rt <= EndTime]$int)
-                                )),
-
-                                sharpness = as.double(GetSharpness(EIC.dt[rt >= StartTime &
-                                                                            rt <= EndTime]$int)),
-
-                                height = max(EIC.dt[rt >= StartTime &
-                                                      rt <= EndTime]$int),
-
-                                area = DescTools::AUC(
-                                  c(StartTime,
-                                    EIC.dt[rt > StartTime &
-                                             rt < EndTime]$rt,
-                                    EndTime),
-                                  c(0,
-                                    EIC.dt[rt > StartTime &
-                                             rt < EndTime]$int,
-                                    0),
-                                  method = "trapezoid"
-                                ),
-
-                                cor_w_M0 = ifelse(iso.run == "LAisos", suppressWarnings(
-                                  cor(
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime]$int,
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime]$M0_int,
-                                    method = "pearson",
-                                    use = "complete.obs"
-                                  )
-                                ), NA),
-
-                                cor_w_main_add = ifelse(iso.run == "MAiso" & adduct.run == "screen_adducts", suppressWarnings(
-                                  cor(
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime]$int,
-                                    EIC.dt[rt >= StartTime &
-                                             rt <= EndTime]$M0_int,
-                                    method = "pearson",
-                                    use = "complete.obs"
-                                  )
-                                ), NA),
-
-                              manual_int = manual_bound
-
-
-                              ), by = .(idx)], on = .(idx)]
-                              ), error = function(e) {assign("table_for_testing", EIC.dt, envir = .GlobalEnv)
-                                print(e)
-                                print("some error")
-                                print(l.peaks)
-                                print(paste0(Drawer_fill[["molecule"]]) )
-                              })#}
-
-
+                              l.peaks <- Get_peak_vars(l.peaks, EIC.dt, CompCol_xic[i], l.peaks.mz_list, iso.run, adduct.run, manual_bound)
+#print("l.peaks:")
+                              #print(l.peaks)
                             } else {
                               l.peaks <- NULL
                             }
@@ -635,30 +360,28 @@ findBenchPeaks <- function(files,
                           }
 
                           Drawer_fill[["peaks"]] <- l.peaks
-                        }
-                        Drawer_closed <-
-                          data.frame(Drawer_fill, stringsAsFactors = FALSE)
-                        return(Drawer_closed)#,
-                        #error = function(e) print(e))
-                        ##include error
-                      })
 
+                          #print(CompCol_xic[i]$molecule)
+                          #print(Drawer_fill)
+                        }
+                        Drawer_closed <- data.frame(Drawer_fill, stringsAsFactors = FALSE)
+                        return(Drawer_closed)
+                      })
                   }
                   ##################################
                   #first combine peaks from all compounds into one table then peaks from all adducts and isotopologues into one table
                   ##################################
                   if (iso.run == "MAiso") {
-
                     MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
                     if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)){
                       MA.Isos <- clean_peak_assignments(MA.Isos[peaks.PpP >= Min.PointsperPeak & peaks.mz_accuracy_ppm < max.mz.diff_ppm])
-                    }
+                      }
                     if (adduct.run == "screen_adducts"){
                       if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct]
                     }
                   } else if (iso.run == "LAisos"){
                     LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & "peaks.cor_w_M0"  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
+                    if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & c("peaks.cor_w_M0")  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
                                                                                                                               peaks.PpP >= Min.PointsperPeak &
                                                                                                                               peaks.mz_accuracy_ppm < max.mz.diff_ppm]
                     if (adduct.run == "main_adduct") {
@@ -683,9 +406,9 @@ findBenchPeaks <- function(files,
 
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
-
+#ttpp <<- Result
   #get rid of double isos
-  Result <- unique(Result, by = c("molecule", "isoabb", "adduct", "peaks.M0.grp", "FileName"))
+  Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
   #get rid of double cross isos
   Result <- clean_peak_assignments(Result)
@@ -699,16 +422,16 @@ findBenchPeaks <- function(files,
   Result <- predict_Iso(Result,
                         "FileName",
                         c("molecule", "adduct", "peaks.M0.grp"),
-                        "isoabb",
+                        "isoab",
                         flag_extremes = TRUE
   )
 
-  Result <- Result[isoabb_ol == FALSE]
+  Result <- Result[isoab_ol == FALSE]
 
   Result <-
     Result[Result[!is.na(peaks.idx) &
-                    (isoabb == 100 |
-                       (peaks.cor_w_M0 > Min.cor.w.M0 & isoabb_ol == FALSE)), .(Iso_count = length(unique(isoabb))),
+                    (isoab == 100 |
+                       (peaks.cor_w_M0 > Min.cor.w.M0 & isoab_ol == FALSE)), .(Iso_count = length(unique(isoab))),
                   by = .(molecule, adduct, FileName, peaks.M0.grp)],
            on = .(molecule, adduct, FileName, peaks.M0.grp)]
 
@@ -726,10 +449,10 @@ findBenchPeaks <- function(files,
 
   if(return_unsuc_searches == TRUE){
     Result <-
-      Result[CompCol_all, on = .(molecule, adduct, isoabb, FileName), allow.cartesian = TRUE]
+      Result[CompCol_all, on = .(molecule, adduct, isoab, FileName), allow.cartesian = TRUE]
   } else {
     Result <-
-      CompCol_all[, !"user.rt"][Result[!is.na(peaks.idx)], on = .(molecule, adduct, isoabb, FileName), nomatch = NULL]
+      CompCol_all[Result[!is.na(peaks.idx)], on = .(molecule, adduct, isoab, FileName), nomatch = NULL]
   }
 
 
@@ -748,9 +471,11 @@ findBenchPeaks <- function(files,
 
 
 
-
+  Result[, iso_id := paste(round(mz_ex, 4), round(isoab, 2), sep = "_")]
 
   Result$IDX <- seq.int(nrow(Result))
+
+  #print(colnames(Result))
 
   return(Result)
 

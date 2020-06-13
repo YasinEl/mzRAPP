@@ -1,9 +1,9 @@
 generate_options <- function(raw_b_table, algo){
   #Hardcoded internal columns
-  columns_dt <- data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name','molecule', 'adduct', 'isoabb',
-                                                  'rt_start', 'rt_end', 'rt', 'mz', 'comp_id', 'peak_group', 'mz_start', 'mz_end'),
-                           'b_columns' = c('peaks.height', 'peaks.area', 'FileName', 'molecule', 'adduct', 'isoabb',
-                                           'peaks.StartTime', 'peaks.EndTime', 'peaks.rt_raw', 'mz', 'IDX', 'peaks.M0.grp', 'peaks.mz_min', 'eic_mzmax')
+  columns_dt <- data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name','molecule', 'adduct', 'isoab', 'mz_exact',
+                                                  'rt_start', 'rt_end', 'rt', 'mz', 'comp_id', 'mz_start', 'mz_end'),
+                           'b_columns' = c('peaks.height', 'peaks.area', 'FileName', 'molecule', 'adduct', 'isoab', 'mz_ex',
+                                           'peaks.StartTime', 'peaks.EndTime', 'peaks.rt_raw', 'peaks.mz_accurate', 'IDX', 'peaks.mz_min', 'peaks.mz_max')
                            )
   #Get sample names from benchmark
   samples_dt <- data.table('sample_id' = seq(unique(raw_b_table$FileName)),
@@ -27,6 +27,24 @@ generate_options <- function(raw_b_table, algo){
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := ifelse(grepl('^[0-9]', b_samples), paste0('X', b_samples), b_samples)]
     },
+'CompoundDiscoverer' = {
+  #Add ug columns
+  columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name', 'rt_start', 'rt_end', 'rt', 'mz'),
+                                             'ug_columns' = c('Apex Intensity', 'Area', 'Study File ID', 'Left RT [min]', 'Right RT [min]', 'Apex RT [min]', 'Apex mz')),
+                      all.x = TRUE, by=c('internal_columns'))
+  #Add g columns
+  #      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt_start', 'rt_end', 'rt', 'mz'),
+  #                                                 'g_columns' = c('rtmin', 'rtmax', 'rt', 'mz')),
+  #                          all.x = TRUE, by=c('internal_columns'))
+  columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                             'g_columns' = c('rt', 'mz')),
+                      all.x = TRUE, by=c('internal_columns'))
+
+  #Add ug samples
+  samples_dt <- samples_dt[, 'ug_samples' := sample_id]
+  #Add g samples
+  samples_dt <- samples_dt[, 'g_samples' := ifelse(grepl('^[0-9]', b_samples), paste0('X', b_samples), b_samples)]
+},
     'El-MAVEN' = {
       #Add ug columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),

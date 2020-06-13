@@ -9,11 +9,11 @@
 #'
 #' @examples
 plot_vs_prediction <- function(PC, x = ExpectedArea, y, col_by = molecule){
-  pcp <- PC[isoabb < 100 & isoabb_ol == FALSE & Iso_count > 1]
+  pcp <- PC[isoab < 100 & isoab_ol == FALSE & Iso_count > 1]
 
 
   p <- ggplot2::ggplot(pcp,
-                       aes(x=!!enquo(x), y= !!enquo(y), molecule = molecule, isoabb = isoabb, adduct = adduct, FileName = FileName, IDX = IDX, ErrorRel_H = ErrorRel_H), se = TRUE) +
+                       aes(x=!!enquo(x), y= !!enquo(y), molecule = molecule, isoab = isoab, adduct = adduct, FileName = FileName, IDX = IDX, ErrorRel_H = ErrorRel_H), se = TRUE) +
     theme_bw() +
     geom_point(aes(col=!!enquo(col_by)), size=3) +
     ggtitle(paste0("# of Peaks: ", nrow(pcp))) +
@@ -26,6 +26,6 @@ plot_vs_prediction <- function(PC, x = ExpectedArea, y, col_by = molecule){
           panel.grid.minor = element_blank())
 
 
-  pp <- plotly::ggplotly(p, dynamicTicks = TRUE, tooltip = c("IDX", "molecule", "adduct", "isoabb", "FileName", "ErrorRel_H"))
+  pp <- plotly::ggplotly(p, dynamicTicks = TRUE, tooltip = c("IDX", "molecule", "adduct", "isoab", "FileName", "ErrorRel_H"))
   plotly::hide_legend(pp)
 }

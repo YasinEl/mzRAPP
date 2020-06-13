@@ -6,14 +6,14 @@
 #' @export
 #'
 #' @examples
-melt_fftable <- function(comparison_data){
+melt_fftable <- function(ff_table, c_table){
 
-  dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
+  dt <-  ff_table
   #dt <- fftable
 
   #dt <- dt[main_feature == TRUE]
 
-  id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoabb_b", "adduct_b",
+  id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
                "max_rt_end", "main_feature")
 
@@ -37,8 +37,8 @@ melt_fftable <- function(comparison_data){
 
   dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
 
-  tmp <- unique(data.table(sample_id_b = as.factor(comparison_data[["c_table"]][["sample_id_b"]]),
-                           sample_name_b = comparison_data[["c_table"]][["sample_name_b"]]))
+  tmp <- unique(data.table(sample_id_b = as.factor(c_table$sample_id_b),
+                           sample_name_b = c_table$sample_name_b))
   dt_n <- dt_n[tmp, on = .(sample_id_b)]
 
 

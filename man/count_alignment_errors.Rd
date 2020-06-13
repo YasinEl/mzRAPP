@@ -4,7 +4,7 @@
 \alias{count_alignment_errors}
 \title{count_alignment_errors}
 \usage{
-count_alignment_errors(DT, main_UTgroups, method = "self-critical")
+count_alignment_errors(DT, main_UTgroups, method = "both")
 }
 \arguments{
 \item{method}{}

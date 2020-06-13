@@ -20,8 +20,9 @@ plot_bench_overview <- function(benchmark_data, x, y, colb, choice_vector_bench)
                                                                         color = get(colb),
                                                                         molecule = molecule,
                                                                         adduct = adduct,
-                                                                        isoabb = isoabb,
-                                                                        sample_name = FileName)) +
+                                                                        isoab = isoab,
+                                                                        sample_name = FileName,
+                                                                        key = IDX)) +
       labs(x = names(choice_vector_bench)[choice_vector_bench == x],
            y = names(choice_vector_bench)[choice_vector_bench == y]) +
       labs(color=names(choice_vector_bench)[choice_vector_bench == colb]) +
@@ -30,9 +31,10 @@ plot_bench_overview <- function(benchmark_data, x, y, colb, choice_vector_bench)
     p <- plotly::ggplotly(p,
                           tooltip = c("molecule",
                                       "adduct",
-                                      "isoabb",
+                                      "isoab",
                                       "sample_name"),
-                          dynamicTicks = TRUE)#,
+                          dynamicTicks = TRUE,
+                          source = "bench_scatter")#,
                           #width = 1000)
   return(p)
 }

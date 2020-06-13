@@ -12,29 +12,30 @@
 #'
 #' @examples
 plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_comp, post_alignment = FALSE){
-
   if(missing(x) | missing(y) | missing (comparison_data)) return(plotly::ggplotly(ggplot() +
                                                                                     ggtitle("Missing arguments")))
 
   if(post_alignment == TRUE){
-    feat_t <- melt_fftable(comparison_data)
+
+    feat_t <- comparison_data[["feature_table"]]
+
+    feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
 
     BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
 
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
 
-    feat_t <- feat_t[main_feature == TRUE]
 
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
 
     f_nf_dt <- feat_t[!is.na(area_b) &
                         main_feature == TRUE, c("molecule_b",
                                                 "adduct_b",
-                                                "isoabb_b",
+                                                "isoab_b",
                                                 "sample_id_b",
                                                 "area_g")][BM_bu[,..vct], on = .(molecule_b,
                                                                                  adduct_b,
-                                                                                 isoabb_b,
+                                                                                 isoab_b,
                                                                                  sample_id_b)]
 
     f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(area_g), 'Found', 'Not Found')]
@@ -47,7 +48,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
 
     f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
 
-    f_nf_dt <- unique(f_nf_dt, by = c("molecule_b", "adduct_b", "isoabb_b", "sample_name_b"))
+    f_nf_dt <- unique(f_nf_dt, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
 
   }
 
@@ -70,8 +71,9 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                             NPP_status = NPP_status,
                                                             molecule = molecule_b,
                                                             adduct = adduct_b,
-                                                            isoabb = round(isoabb_b, 2),
-                                                            sample_name = sample_name_b),
+                                                            isoab = round(isoab_b, 2),
+                                                            sample_name = sample_name_b,
+                                                            key = comp_id_b),
                    color = "blue", show.legend = T) +
 
         geom_point(data = f_nf_dt[NPP_status == 'Not Found'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
@@ -80,8 +82,9 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                                 NPP_status = NPP_status,
                                                                 molecule = molecule_b,
                                                                 adduct = adduct_b,
-                                                                isoabb = round(isoabb_b, 2),
-                                                                sample_name = sample_name_b),
+                                                                isoab = round(isoab_b, 2),
+                                                                sample_name = sample_name_b,
+                                                                key = comp_id_b),
                    color = "red", show.legend = T) +
 
         geom_point(data = f_nf_dt[NPP_status == 'Split'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
@@ -90,8 +93,9 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                             NPP_status = NPP_status,
                                                             molecule = molecule_b,
                                                             adduct = adduct_b,
-                                                            isoabb = round(isoabb_b, 2),
-                                                            sample_name = sample_name_b),
+                                                            isoab = round(isoab_b, 2),
+                                                            sample_name = sample_name_b,
+                                                            key = comp_id_b),
                    color = "goldenrod2", show.legend = T)
     )
   } else {
@@ -103,8 +107,9 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                        NPP_status = NPP_status,
                                        molecule = molecule_b,
                                        adduct = adduct_b,
-                                       isoabb = round(isoabb_b, 2),
-                                       sample_name = sample_name_b)
+                                       isoab = round(isoab_b, 2),
+                                       sample_name = sample_name_b,
+                                       key = comp_id_b)
         )+labs(col=if(col != "peak_height_b" & x != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == col]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == col], ")")})
     )
 
@@ -115,7 +120,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
          y = if(y != "peak_height_b" & y != "peak_area_b") {names(choice_vector_comp)[choice_vector_comp == y]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == y], ")")}) +
     ggtitle("Overview of found/not found peaks against benchmark variables")
 
-  p <- plotly::ggplotly(p, tooltip = c("NPP_status", "molecule", "adduct", "isoabb", "sample_name"), dynamicTicks = TRUE)
+  p <- plotly::ggplotly(p, tooltip = c("NPP_status", "molecule", "adduct", "isoab", "sample_name"), dynamicTicks = TRUE, source = "scatter")
   return(p)
 }
 

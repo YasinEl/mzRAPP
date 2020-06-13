@@ -3,7 +3,7 @@
 #' @param DTT
 #' @param SampleIdentifier_col
 #' @param Molecule_Adduct_col
-#' @param IsoAbb_col
+#' @param isoab_col
 #'
 #' @return
 #' @export
@@ -14,8 +14,8 @@ Filter_WrongCompounds <- function(PeakCandidates, ErrorRel_H_Mp1_tol = 10)
 
   #PeakCandidates$Index <- seq.int(nrow(PeakCandidates))
 
-  DT_tmp <- setorder(PeakCandidates[isoabb < 100, .(fileIdx, molecule, adduct, isoabb, ErrorRel_H)],
-  -isoabb)
+  DT_tmp <- setorder(PeakCandidates[isoab < 100, .(fileIdx, molecule, adduct, isoab, ErrorRel_H)],
+  -isoab)
 
 
   Mp1 <- unique(DT_tmp,

@@ -14,13 +14,13 @@ SkylineTransitionList <-
 
     MassPrec <- round(max(BM$peaks.mz_span_ppm) / 2, 1)#round(1e6 * max((BM$eic_mzmax - BM$eic_mzmin) / BM$mz_acc), 1)
 
-    BM <- BM[, c("molecule", "adduct", "isoabb", "mz_acc", "charge")]
+    BM <- BM[, c("molecule", "adduct", "isoab", "peaks.mz_accurate", "charge")]
     BM$molecule <- as.character(BM$molecule)
-    BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Precursor Name" := paste0(molecule, "_", adduct, "_", round(isoab, 2))]
 
     BM <-  unique(BM[, c("Precursor Name", "charge")])[BM[, .(`Molecule List Name` = molecule,
-                                                      `Precursor m/z` = mean(mz_acc),
-                                                      `Product m/z` = mean(mz_acc)),
+                                                      `Precursor m/z` = mean(peaks.mz_accurate),
+                                                      `Product m/z` = mean(peaks.mz_accurate)),
                                                   by = .(`Precursor Name`)], on = .(`Precursor Name`)]
 
     BM <- BM[, c("Precursor charge", "Product charge") := .(charge, charge)][, !"charge"]
@@ -52,14 +52,14 @@ SkylineTransitionList <-
 SkylinePeakBoundaries <-
   function(BM){
 
-    BM <- BM[, c("molecule", "adduct", "isoabb", "FileName", "peaks.StartTime", "peaks.EndTime")]
+    BM <- BM[, c("molecule", "adduct", "isoab", "FileName", "peaks.StartTime", "peaks.EndTime")]
     BM$peaks.StartTime <- BM$peaks.StartTime / 60
     BM$peaks.EndTime <- BM$peaks.EndTime / 60
     BM$molecule <- as.character(BM$molecule)
 
-    BM[order(BM$isoabb, decreasing = TRUE),]
+    BM[order(BM$isoab, decreasing = TRUE),]
 
-    BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoabb, 2))]
+    BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoab, 2))]
 
 
     files <- data.table("FileName" = sort(unique(BM$FileName)),

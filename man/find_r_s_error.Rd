@@ -4,7 +4,7 @@
 \alias{find_r_s_error}
 \title{find_r_s_error}
 \usage{
-find_r_s_error(peak_area_b, peak_area_ug, peak_height_b, Connected)
+find_r_s_error(peak_area_b, peak_area, peak_height_b, Connected)
 }
 \arguments{
 \item{peak_height_b}{}

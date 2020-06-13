@@ -10,7 +10,6 @@
 #'
 #' @examples
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
-
   if(missing(var) | missing(comparison_data)) return(plotly::ggplotly(ggplot() + ggtitle("Missing arguments")))
 
   if(missing(choice_vector_comp)){
@@ -19,7 +18,8 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
   if(post_alignment == TRUE){
 
-    feat_t <- melt_fftable(comparison_data)
+    feat_t <- comparison_data[["feature_table"]]
+    feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
     BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
     #BM_bu <- na.omit(BM_nu, by = var)
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
@@ -28,11 +28,11 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     f_nf_dt <- feat_t[!is.na(area_b) &
                         main_feature == TRUE, c("molecule_b",
                                                 "adduct_b",
-                                                "isoabb_b",
+                                                "isoab_b",
                                                 "sample_id_b",
                                                 "area_g")][BM_bu[,..vct], on = .(molecule_b,
                                                                                  adduct_b,
-                                                                                 isoabb_b,
+                                                                                 isoab_b,
                                                                                  sample_id_b)]
 
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(area_g), 'TRUE', 'FALSE')]

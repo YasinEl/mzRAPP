@@ -28,7 +28,7 @@ getROIsForEICs <-
     if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
     if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
 
-    missing_cols <- setdiff(c("molecule", "adduct", "isoabb", "mz", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
+    missing_cols <- setdiff(c("molecule", "adduct", "isoab", "mz_ex", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
     if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", missing_cols))}
 
     if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
@@ -51,20 +51,20 @@ getROIsForEICs <-
 
     #   filter_table$user.rt <- round(filter_table$user.rt, 0)
 
-    #  filter_table <- setorder(filter_table, "isoabb")
+    #  filter_table <- setorder(filter_table, "isoab")
 
     #  filter_table$dpl_mz <- duplicated(filter_table, by = c("user.rt", "mz"))
 
     #   checkk <<- filter_table
 
-    #  if(nrow(filter_table[dpl_mz == TRUE & isoabb == 100]) > 0) {
+    #  if(nrow(filter_table[dpl_mz == TRUE & isoab == 100]) > 0) {
 
     #  warning(paste0("It seems like some of your target molecules are actually isotopologues of some of your other target molecules!
-    #                 In order to resolve this issue some target molecules(", length(unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule)),
+    #                 In order to resolve this issue some target molecules(", length(unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule)),
     #                 ")have been removed. Specificly: ",
-    #                 paste(unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule), collapse = ", ")))
+    #                 paste(unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule), collapse = ", ")))
 
-    #  Target.table <- Target.table[!(molecule %in% unique(filter_table[dpl_mz == TRUE & isoabb == 100]$molecule))]
+    #  Target.table <- Target.table[!(molecule %in% unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule))]
 
     #  }
     #
@@ -100,7 +100,7 @@ getROIsForEICs <-
       ##################################
       .xr <- suppressWarnings(xcms::xcmsRaw(files[which(tools::file_path_sans_ext(basename(files)) == tools::file_path_sans_ext(basename(file)))], profstep=0))
       Target.table.wk <- Target.table[FileName == file]
-      .Target.table.wk <- Target.table.wk[Target.table.wk[isoabb == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
+      .Target.table.wk <- Target.table.wk[Target.table.wk[isoab == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
                                                                            EndXICScan = which.min(abs(.xr@scantime - max(EndTime.EIC)))),
                                                           by=.(molecule)],
                                           on = .(molecule)]
@@ -119,7 +119,7 @@ getROIsForEICs <-
                                            dev = PrecisionMZtol * 1E-6,
                                            minCentroids = minCentroids,
                                            scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
-                                           #mzrange = c(Target.table.wk[molecule == molec]$mz[1] - 10, Target.table.wk[molecule == molec]$mz[1] + 10),
+                                           #mzrange = c(Target.table.wk[molecule == molec]$mz_ex[1] - 10, Target.table.wk[molecule == molec]$mz_ex[1] + 10),
                                            prefilter = c(minCentroids,0),
                                            noise = 0)
             )})
@@ -135,8 +135,8 @@ getROIsForEICs <-
                                    mzupperBD = mz)]
 
           Target.table.wk.molec <- Target.table.wk[molecule == molec]
-          Target.table.wk.molec[, `:=` (mzlowerBD = mz - mz * AccurateMZtol * 1e-6,
-                                        mzupperBD = mz + mz * AccurateMZtol * 1e-6)]
+          Target.table.wk.molec[, `:=` (mzlowerBD = mz_ex - mz_ex * AccurateMZtol * 1e-6,
+                                        mzupperBD = mz_ex + mz_ex * AccurateMZtol * 1e-6)]
 
           ##################################
           #join ROI-table with Target.table; a ROI is joined to an expected EIC in the target table if ROIs calculated mz falls within the calculated range of mzlowerBD - mzupperBD
@@ -158,15 +158,15 @@ getROIsForEICs <-
             #combine isolated ROIs if they were falling within the same the boundaries of the same expected EIC
             ##################################
             matches_summary <- mz.overlap[,.(eic_mzmin = as.double(min(mzmin)),
-                                             eic_mzmax = as.double(max(mzmax)),
-                                             mz_acc = as.double(mean(i.mz)),
-                                             roi_rtmin = as.numeric(min(rtmin)),
-                                             roi_rtmax = as.numeric(max(rtmax)),
+                                             eic_mzmax = as.double(max(mzmax))),#,
+                                             #mz_acc = as.double(mean(mz)),
+                                             #roi_rtmin = as.numeric(min(rtmin)),
+                                             #roi_rtmax = as.numeric(max(rtmax)),
                                              #roi_scmin = min(scmin),
                                              #roi_scmax = max(scmax),
                                              #roi_int = sum(abs(intensity)),
-                                             roi_count = .N),
-                                          by=.(molecule, adduct, isoabb, FileName)]
+                                             #roi_count = .N),
+                                          by=.(molecule, adduct, isoab, FileName)]
 
             ##################################
             #find the rt region where most isotopologues overlap with the most abundant isotopologue to estimate(!) the rt of the compound
@@ -188,5 +188,6 @@ getROIsForEICs <-
     ##################################
     matches <- data.table::rbindlist(Output)
 
-    return(matches[Target.table, on=.(molecule, adduct, isoabb, FileName), nomatch = NA])
+
+    return(matches[Target.table, on=.(molecule, adduct, isoab, FileName), nomatch = NA])
   }

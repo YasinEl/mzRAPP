@@ -4,7 +4,7 @@
 \alias{melt_fftable}
 \title{melt_fftable}
 \usage{
-melt_fftable(comparison_data)
+melt_fftable(ff_table, c_table)
 }
 \arguments{
 \item{fftable}{}

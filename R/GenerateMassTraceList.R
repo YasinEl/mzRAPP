@@ -12,7 +12,7 @@
 #' @param isotopes data frame of isotopes (see \code{\link{isotopes}})
 #'
 #' @details Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
-#' @details never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoabb", "formula", "charge" and "mz" are reserved.
+#' @details never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
 #'
 #'
 #' @import enviPat data.table
@@ -30,7 +30,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c"), colnames(DT))
   if(length(missing_cols) > 0){stop(paste0("DT is lacking columns: ", missing_cols))}
 
-  conflicting_cols <- intersect(c("adduct", "isoabb", "formula", "charge", "mz"), colnames(DT))
+  conflicting_cols <- intersect(c("adduct", "isoab", "formula", "charge", "mz" ,"mz_ex"), colnames(DT))
   if(length(conflicting_cols > 0)) stop(paste0("DT includes reserved column names! Specificly:", conflicting_cols))
 
   FileInfo = FALSE
@@ -38,8 +38,8 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
 
     FileInfo = TRUE
     DT_fileInfo <- copy(DT[, !"SumForm_c"])
-    DT <- unique(DT[, c("molecule", "SumForm_c", "adduct_c")], by = c("molecule", "adduct_c"))
-
+    colnames(DT_fileInfo)[grepl("adduct_c", colnames(DT_fileInfo))] <- "adduct"
+    DT <- unique(DT[, c("molecule", "SumForm_c", "adduct_c")])
 
   }
 
@@ -101,7 +101,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
   pattern <- enviPat::isopattern(isotopes,
                         chemforms = SF$new_formula,
                         plotit = FALSE,
-                        threshold = RelInt_threshold,
+                        threshold = 0.01,
                         charge = DT$Charge,
                         algo = 1,
                         rel_to = 0,
@@ -168,10 +168,10 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
                    SIMPLIFY=FALSE
   )
   Output <- as.data.table(do.call("rbind", Output))
-  Output <- Output[, .(isoabb = abundance/max(abundance) * 100,
+  Output <- Output[, .(isoab = abundance/max(abundance) * 100,
                        formula = formula,
                        charge = charge,
-                       mz = `m/z`),
+                       mz_ex = `m/z`),
                    by=.(molecule, adduct)]
 
   if(length(DTreg) > 3){
@@ -179,7 +179,9 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     Output <- Output[DTreg[, !c("adduct_c", "SumForm_c")], on = .(molecule, adduct)]
   }
 
-  Output <- na.omit(Output, col = "mz")
+  Output <- na.omit(Output, col = "mz_ex")
+
+  Output <- Output[isoab > RelInt_threshold]
 
 
   if(FileInfo == TRUE){

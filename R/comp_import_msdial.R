@@ -87,6 +87,7 @@ import_grouped_msdial <- function(file_path, options_dt){
   print('start msdial g import')
 
   if(is.null(file_path)){
+    return(NULL)
     stop('No grouped file selected')
   }
 

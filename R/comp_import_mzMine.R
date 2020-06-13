@@ -114,6 +114,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   print('start mzMine g import')
 
   if(is.null(file_path)){
+    return(NULL)
     stop('No grouped file selected')
   }
 

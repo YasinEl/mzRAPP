@@ -79,6 +79,7 @@ import_grouped_elmaven <- function (file, options_dt) {
   print('start El-MAVEN g import')
 
   if(is.null(file)){
+    return(NULL)
     stop('No grouped file selected')
   }
 

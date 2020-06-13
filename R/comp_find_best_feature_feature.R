@@ -12,7 +12,7 @@ find_best_feature_feature <- function(dt, bys) {
   dt <- copy(dt)
   dt <- dt[, 'cross_join_key' := 1]
 
-  all_iso <- sort(unique(dt$isoabb_b), decreasing=TRUE)
+  all_iso <- sort(unique(dt$isoab_b), decreasing=TRUE)
   #Stop if each iso occures axactly once, mark all as main feature
   if (length(all_iso) == nrow(dt)){
     return_dt <- setDT(list(feature_id_g = unique(dt$feature_id_g)))
@@ -24,7 +24,7 @@ find_best_feature_feature <- function(dt, bys) {
     exp_ratio = all_iso[2]/all_iso[1]
 
     #Figure out first (100) iso main feature
-    merged_dt <- merge(dt[isoabb_b == all_iso[1]], dt[isoabb_b == all_iso[2]], by='cross_join_key', allow.cartesian = TRUE)
+    merged_dt <- merge(dt[isoab_b == all_iso[1]], dt[isoab_b == all_iso[2]], by='cross_join_key', allow.cartesian = TRUE)
     merged_dt[, area_ratio := mean_area_g.y/mean_area_g.x]
     merged_dt[, main_feature := ifelse(abs(area_ratio-exp_ratio) == min(abs(area_ratio-exp_ratio)), TRUE, FALSE)]
 
@@ -44,7 +44,7 @@ find_best_feature_feature <- function(dt, bys) {
 
     for (i in 2:length(all_iso)) {
       exp_ratio = all_iso[i]/all_iso[1]
-      merged_dt <- merge(dt[feature_id_g == highest_main_feature], dt[isoabb_b == all_iso[i]], by='cross_join_key', allow.cartesian = TRUE)
+      merged_dt <- merge(dt[feature_id_g == highest_main_feature], dt[isoab_b == all_iso[i]], by='cross_join_key', allow.cartesian = TRUE)
       merged_dt[, area_ratio := mean_area_g.y/mean_area_g.x]
       merged_dt[, main_feature := ifelse(abs(area_ratio-exp_ratio) == min(abs(area_ratio-exp_ratio)), TRUE, FALSE)]
 

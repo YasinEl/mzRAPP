@@ -182,6 +182,7 @@ import_grouped_openms <- function(file_path, options_table){
   print('start OpenMS g import')
 
   if(is.null(file_path)){
+    return(NULL)
     stop('No grouped file selected')
   }
 

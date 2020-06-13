@@ -78,6 +78,7 @@ import_grouped_xcms <- function (file, options_dt) {
   print('start xcms g import')
 
   if(is.null(file)){
+    return(NULL)
     stop('No grouped file selected')
   }
 

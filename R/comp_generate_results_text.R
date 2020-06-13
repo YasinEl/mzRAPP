@@ -17,13 +17,23 @@ generate_results_text <- function(comparison_data){
   #split_features <- sum(main_peak_table[, count_split_features(feature_id_g), by=feature_id_b]$V1, na.rm=TRUE)
 
 
-  if(nrow(comparison_data$rs_table[missing_peaks == "S" | missing_peaks == "R"]) == 0) {
+  if(nrow(comparison_data$rs_table[missing_peaks_ug == "S" | missing_peaks_ug == "R"]) == 0) {
     bv_Missing_peaks <- rep(FALSE, 10)
   } else {
-    bv_Missing_peaks <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks == "R"])),
-                          rep(FALSE, nrow(comparison_data$rs_table[missing_peaks == "S"])))
+    bv_Missing_peaks <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_ug == "R"])),
+                          rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_ug == "S"])))
 
   }
+
+
+  if(nrow(comparison_data$rs_table[missing_peaks_g == "S" | missing_peaks_g == "R"]) == 0) {
+    bv_Missing_peaks_g <- rep(FALSE, 10)
+  } else {
+    bv_Missing_peaks_g <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_g == "R"])),
+                          rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_g == "S"])))
+
+  }
+
 
   results_text <- list(Assessed_tool = comparison_data$info_list$algorithm,
                        Benchmark = list(
@@ -33,8 +43,8 @@ generate_results_text <- function(comparison_data){
                        Before_alignment = list(
                          NT_peaks = UT_peaks,
                          Found_peaks = list(count = found_ug_peaks,
-                                            CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, found_ug_peaks),
-                                                                                             rep(FALSE, comparison_data$info_list$nr_of_b_peaks - found_ug_peaks))),
+                                            CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, found_ug_peaks),
+                                                                                             rep(FALSE, comparison_data$info_list$nr_of_b_peaks - found_ug_peaks)))),
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(length(which(dt))/length(dt)*100,1)
@@ -44,9 +54,9 @@ generate_results_text <- function(comparison_data){
                                                                type='basic')$basic
                          ),
                          Split_peaks = list(count = length(unique(comparison_data$split_table$comp_id_b)),
-                                            CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, length(unique(comparison_data$split_table$comp_id_b))),
+                                            CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, length(unique(comparison_data$split_table$comp_id_b))),
                                                                                              rep(FALSE, comparison_data$info_list$nr_of_b_peaks -
-                                                                                                   length(unique(comparison_data$split_table$comp_id_b))))),
+                                                                                                   length(unique(comparison_data$split_table$comp_id_b)))))),
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(length(which(dt))/length(dt)*100,1)
@@ -56,8 +66,8 @@ generate_results_text <- function(comparison_data){
                                                                type='basic')$basic
                          ),
                          Missing_peaks = list(
-                           Systematic = nrow(comparison_data$rs_table[missing_peaks == "S"]),
-                           Random =  list(count = nrow(comparison_data$rs_table[missing_peaks == "R"]),
+                           Systematic = nrow(comparison_data$rs_table[missing_peaks_ug == "S"]),
+                           Random =  list(count = nrow(comparison_data$rs_table[missing_peaks_ug == "R"]),
                                           CI = boot::boot.ci(boot::boot(data.frame(var = bv_Missing_peaks),
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
@@ -71,8 +81,8 @@ generate_results_text <- function(comparison_data){
                          IR_quality = list(
                            Error_inc_below20pp = nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. < 20%p"]),
                            Error_inc_above20pp = list(count = nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. > 20%p"]),
-                                                      CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. > 20%p"])),
-                                                                                                       rep(FALSE, nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. < 20%p"])))),
+                                                      CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. > 20%p"])),
+                                                                                                       rep(FALSE, nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. < 20%p"]))))),
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
                                                                                       round(length(which(dt))/length(dt)*100,1)
@@ -86,8 +96,8 @@ generate_results_text <- function(comparison_data){
                        Alignmnet = list(
                          #Errors = sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE)
                          Min.Errors = list(count = sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE),
-                                       CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE)),
-                                                                                        rep(FALSE, found_ug_peaks))),#var = comparison_data$ali_error_table$Min.errors),
+                                       CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE)),
+                                                                                        rep(FALSE, found_ug_peaks)))),#var = comparison_data$ali_error_table$Min.errors),
 
 
                                                                      function(data, indices){
@@ -98,8 +108,8 @@ generate_results_text <- function(comparison_data){
                                                           index=1,
                                                           type='basic')$basic),
                          BM_divergences = list(count = sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE),
-                                         CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE)),
-                                                                                          rep(FALSE, found_ug_peaks))),
+                                         CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE)),
+                                                                                          rep(FALSE, found_ug_peaks)))),
                                                                        function(data, indices){
                                                                          dt<-data[indices,]
                                                                          round(length(which(dt))/length(dt)*100,1)
@@ -108,8 +118,8 @@ generate_results_text <- function(comparison_data){
                                                             index=1,
                                                             type='basic')$basic),
                          Lost_b.A = list(count = sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE),
-                                         CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE)),
-                                                                                          rep(FALSE, found_ug_peaks))),
+                                         CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE)),
+                                                                                          rep(FALSE, found_ug_peaks)))),
                                                                        function(data, indices){
                                                                          dt<-data[indices,]
                                                                          round(length(which(dt))/length(dt)*100,1)
@@ -120,9 +130,9 @@ generate_results_text <- function(comparison_data){
                        ),
                        After_alignmnet = list(
                          Found_peaks = list(count = nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)]),
-                                            CI =  boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)])),
+                                            CI =  boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)])),
                                                                                               rep(FALSE, comparison_data$info_list$nr_of_b_peaks -
-                                                                                                    nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)])))),
+                                                                                                    nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)]))))),
                                                                            function(data, indices){
                                                                              dt<-data[indices,]
                                                                              round(length(which(dt))/length(dt)*100,1)
@@ -134,12 +144,25 @@ generate_results_text <- function(comparison_data){
                          Found_features = nrow(unique(comparison_data$feature_table[!is.na(area_b) &
                                                                                       !is.na(area_g) &
                                                                                       main_feature == TRUE,
-                                                                                    c("molecule_b", "adduct_b", "isoabb_b")], cols = c("molecule_b", "adduct_b", "isoabb_b"))),
+                                                                                    c("molecule_b", "adduct_b", "isoab_b")], cols = c("molecule_b", "adduct_b", "isoab_b"))),
+                         Missing_peaks = list(
+                           Systematic = nrow(comparison_data$rs_table[missing_peaks_g == "S"]),
+                           Random =  list(count = nrow(comparison_data$rs_table[missing_peaks_g == "R"]),
+                                          CI = boot::boot.ci(boot::boot(data.frame(var = bv_Missing_peaks_g),
+                                                                        function(data, indices){
+                                                                          dt<-data[indices,]
+                                                                          round(length(which(dt))/length(dt)*100,1)
+                                                                        },
+                                                                        R = 1000),
+                                                             index=1,
+                                                             type='basic')$basic
+                           )
+                         ),
                          IR_quality = list(
                            Error_inc_below20pp = nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. < 20%p"]),
                            Error_inc_above20pp = list(count = nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"]),
-                                                      CI = boot::boot.ci(boot::boot(data.frame(var = c(rep(TRUE, nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"])),
-                                                                                                       rep(FALSE, nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. < 20%p"])))),
+                                                      CI = boot::boot.ci(boot::boot(zeroTableToFalse(data.frame(var = c(rep(TRUE, nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"])),
+                                                                                                       rep(FALSE, nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. < 20%p"]))))),
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
                                                                                       round(length(which(dt))/length(dt)*100,1)
@@ -164,16 +187,37 @@ generate_results_text <- function(comparison_data){
   #                       nrow(unique(comparison_data$feature_table[!is.na(area_b) &
   #                                                                   !is.na(area_g) &
   #                                                                   main_feature == TRUE,
-  #                                                                 c("molecule_b", "adduct_b", "isoabb_b")], cols = c("molecule_b", "adduct_b", "isoabb_b"))), "/",
+  #                                                                 c("molecule_b", "adduct_b", "isoab_b")], cols = c("molecule_b", "adduct_b", "isoab_b"))), "/",
   #                       comparison_data$info_list$nr_of_b_features, " (",
   #                       round(nrow(unique(comparison_data$feature_table[!is.na(area_b) &
   #                                                                         !is.na(area_g) &
   #                                                                         main_feature == TRUE,
-  #                                                                       c("molecule_b", "adduct_b", "isoabb_b")], cols = c("molecule_b", "adduct_b", "isoabb_b")))/
+  #                                                                       c("molecule_b", "adduct_b", "isoab_b")], cols = c("molecule_b", "adduct_b", "isoab_b")))/
   #                         comparison_data$info_list$nr_of_b_features*100, 1), "%)", "     Pred. error increase >20%p (features): ", nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"]), "/", nrow(comparison_data$iso_err_dt[!is.na(diffH20PP_ft)]), " (",
   #                       round(nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"])/nrow(comparison_data$iso_err_dt[!is.na(diffH20PP_ft)]) * 100, 1), "%)")
 
   return(results_text)
+}
+
+
+
+
+
+
+#' zeroTableToFalse
+#'
+#' @param df
+#'
+#' @return
+#' @export
+#'
+#' @examples
+zeroTableToFalse <- function(df){
+
+  if(nrow(df) == 0){
+    return(data.frame(var = FALSE))
+  }
+  return(df)
 }
 
 

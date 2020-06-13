@@ -260,13 +260,22 @@ the “Peak Table”-panel\] -\> Export all groups -\> \[select “Peaks
 Detailed Format Comma Delimited (.csv)”\] <br> aligned file: \[click the
 “Export csv” button in the “Peak Table”-panel\] -\> Export all groups
 -\> \[select “Groups Summary Matrix Format Comma Delimited (.csv)”\]
-<br> <br> <u>Compound Discoverer:</u> <br> unaligned file: \[go to panel
-“Features”\] -\> \[click in any row\] -\> \[click “Show related Tables”
-on the bottom of the screen\] -\> \[go to panel “Chromatogram Peaks”\]
--\> \[make sure the columns “Apex Intensity”, “Area”, “Study File ID”,
-“Left RT \[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and “Apex m/z”
-are visible\] -\> \[right click any row\] -\> Export -\> As plain text…
-<br> <br> <b>Selecting a benchmark dataset and starting
+<br> <br> <u>OpenMS:</u> <br> When processing the FeatureFinderMetabo
+algorithm make sure to set local\_rt\_range as well as local\_mz\_range
+to 0. You will have to check ‘Show advanced parameters’ to make those
+parameters visible. Also set report\_covex\_hulls to true. <br>
+unaligned file: \[Connect a TextExporter node with seperator set to ‘,’
+directly to the FeatureFinderMetabo node\] <br> aligned file: \[Connect
+a TextExporter node with seperator set to ‘,’ directly to the
+FeatureLinkerUnlabeledQT node\] <br> <br> <u>Compound Discoverer:</u>
+<br> unaligned file: \[go to panel “Features”\] -\> \[click in any row\]
+-\> \[click “Show related Tables” on the bottom of the screen\] -\> \[go
+to panel “Chromatogram Peaks”\] -\> \[make sure the columns “Apex
+Intensity”, “Area”, “Study File ID”, “Left RT \[min\]”, “Right RT
+\[min\]” “Apex RT \[min\]” and “Apex m/z” are visible\] -\> \[right
+click any row\] -\> Export -\> As plain text… <br> aligned file:
+currently it is not possible to use aligned files from Compound
+Discoverer <br> <b>Selecting a benchmark dataset and starting
 assessment:</b><br> <br> Next the benchmark file has to be selected. If
 a benchmark has been created during this shiny session (the benchmark is
 still visible in the panel benchmark overview) the switch button “Use
@@ -406,11 +415,11 @@ figure 3) it is reflected in this variable.
 
 <div class="figure">
 
-<img src="inst/md/IR_tolerance.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
+<img src="inst/md/IR_tolerance.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Calculation of NPP abundance bias tolerance" width="50%" height="50%" />
 
 <p class="caption">
 
-<b>Figure 3 | </b> Overview of different peak populations
+<b>Figure 3 | </b> Calculation of NPP abundance bias tolerance
 
 </p>
 

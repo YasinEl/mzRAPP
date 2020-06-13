@@ -18,14 +18,14 @@ get_main_UT_groups <- function(DT){
 
   checked_files <- c()
   checked_UTgrps <- c()
-  checked_isoabb <- c()
+  checked_isoab <- c()
   used_UTgrps <- c()
 
 
   keep <- apply(DT[,!c("sample_id_b")], 1, function(x){any(!x %in% c("Lost_b.PP", "Lost_b.A", NA, ""))}) #find samples without any UT_groupes
   DT <- DT[keep,] #remove samples without any UN_groupes
 
-  #maybe check if some ut_groupes apper in more then one isoabb (mz error)
+  #maybe check if some ut_groupes apper in more then one isoab (mz error)
 
   repeat {
 
@@ -35,15 +35,15 @@ get_main_UT_groups <- function(DT){
 
     used_UTgrps <- c(used_UTgrps, best_UTgrp)
 
-    if(nrow(DT[DT[[bestIso]] == best_UTgrp]) < 2) {return(list(seq_along(checked_isoabb), checked_isoabb, checked_UTgrps))}
+    if(nrow(DT[DT[[bestIso]] == best_UTgrp]) < 2) {return(list(seq_along(checked_isoab), checked_isoab, checked_UTgrps))}
 
     if(length(setdiff(unique(DT[DT[[bestIso]] == best_UTgrp]$sample_id_b), checked_files)) >= 1) {
       checked_files <- unique(c(checked_files, DT[DT[[bestIso]] == best_UTgrp]$sample_id_b))
-      checked_isoabb <- c(checked_isoabb, bestIso)
+      checked_isoab <- c(checked_isoab, bestIso)
       checked_UTgrps <- c(checked_UTgrps, best_UTgrp)
     }
 
-    if(length(checked_files) == nrow(DT)) return(list(seq_along(checked_isoabb),checked_isoabb, checked_UTgrps))
+    if(length(checked_files) == nrow(DT)) return(list(seq_along(checked_isoab),checked_isoab, checked_UTgrps))
 
   }
 

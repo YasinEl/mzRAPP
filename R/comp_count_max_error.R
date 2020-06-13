@@ -10,7 +10,7 @@ count_errors_max <- function(dt){
   theMolecule <- unique(dt$molecule_b)
   theAdduct  <- unique(dt$adduct_b)
 
-  dt <- dt[main_peak=='TRUE' | is.na(main_peak), c('sample_id_b', 'isoabb_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_group_b', 'peak_area_g', 'peak_area_ug')]
+  dt <- dt[main_peak=='TRUE' | is.na(main_peak), c('sample_id_b', 'isoab_b', 'feature_id_g', 'molecule_b', 'adduct_b', 'peak_area_g', 'peak_area_ug')]
 
   #Generate peak status Column
   ## -1 = Peak not found in g or ug (peakpicking error)
@@ -21,7 +21,7 @@ count_errors_max <- function(dt){
                                           ifelse((!is.na(peak_area_g)) & (!is.na(peak_area_ug)) & (peak_area_g != peak_area_ug), -3, feature_id_g)))] # put -3 here
 
 
-  dt <- dcast(dt, sample_id_b ~ isoabb_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
+  dt <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
   theReturn <- count_alignment_errors(dt, get_main_UT_groups(dt))
   return(theReturn)

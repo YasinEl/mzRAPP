@@ -29,7 +29,7 @@ callmzRAPP <- function(){
     'Molecule' = 'molecule',
     'Filename' = 'FileName',
     'Adduct' = 'adduct',
-    'Theoretic isotopic abundance' = 'isoabb',
+    'Theoretic isotopic abundance' = 'isoab',
     'Introduced sample group' = 'Grp',
     'Predicted area' = 'ExpectedArea',
     'Error_predicted area [%]' = 'ErrorRel_A',
@@ -49,7 +49,7 @@ callmzRAPP <- function(){
     'Zigzag index' = 'peaks.zigZag_IDX_b',
     'Height' = 'peak_height_b',
     'Area' = 'peak_area_b',
-    'mz measured' = 'peaks.mz_accurate_b',
+    'mz measured' = 'mz_b',
     'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
     'mz range (abs)' = 'peaks.mz_span_abs_b',
@@ -58,7 +58,7 @@ callmzRAPP <- function(){
     'Molecule' = 'molecule_b',
     'Filename' = 'sample_name_b',
     'Adduct' = 'adduct_b',
-    'Theoretic isotopic abundance' = 'isoabb_b',
+    'Theoretic isotopic abundance' = 'isoab_b',
     'Introduced sample group' = 'Grp_b',
     'Predicted area' = 'ExpectedArea_b',
     'Error_predicted area [%]' = 'ErrorRel_A_b',
@@ -95,10 +95,11 @@ callmzRAPP <- function(){
       tabItems(
         tabItem(tabName = "Readme",
                 includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
+                #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), seamless=NA)
                 ),
         tabItem(tabName = "gBM_p",
                 fluidRow(
-                  column(4,
+                  column(5,
                          strong("1. Select necessary files", style = "font-size:30px"),
                          p("(and choose resolution used)")
                   )
@@ -567,7 +568,8 @@ callmzRAPP <- function(){
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
                 br(),
                 column(9, offset = 1,
-                       h4("In the following interactive scatter plot and histogram the distribution of found/not found peaks can be investigated as a function of different benchmark peak variables. ")
+                       h4("In the following interactive scatter plot and histogram the distribution of found/not found peaks can be investigated as a function of different benchmark peak variables.",
+                          "Points in the scatter plot can be clicked to inspect individual peaks.")
                 ),
                 fluidRow(
                   column(6, offset = 1,
@@ -654,7 +656,8 @@ callmzRAPP <- function(){
                 br(),
                 column(8, offset = 2,
                        h4(paste0("The quality of reported peak abundances are important in order to determine molecular compositions via isotopologue ratios or compare concentrations between ",
-                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP."))
+                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP.",
+                                 "In order to inspect peaks contributing to a ratio click on the plot edges."))
                 ),
                 br(),
 
@@ -1041,7 +1044,7 @@ callmzRAPP <- function(){
                   value = tags$p(style = "font-weight: normal; font-size: 100%;",
                                  HTML(paste("# of molecules: ", length(unique(benchmark_data$molecule)),
                                             br(),
-                                            "# of features: ", nrow(unique(benchmark_data, by = c("molecule", "adduct", "isoabb"))),
+                                            "# of features: ", nrow(unique(benchmark_data, by = c("molecule", "adduct", "isoab"))),
                                             br(),
                                             "# of peaks: ", nrow(benchmark_data)
                                  ))), color = "navy", fill = TRUE)
@@ -1081,7 +1084,7 @@ callmzRAPP <- function(){
       benchmark_data <- isolate(benchmark_data())
       if(!is.null(benchmark_data)){
         output$graph_area_bench_overview <- renderPlotly(plot_bench_overview(benchmark_data, input$bench_overview_input_x, input$bench_overview_input_y, input$bench_overview_input_color, choice_vector_bench))
-      }
+        }
     })
     #Benchmark historgramm plot
     observeEvent({benchmark_data(); input$select_bench_histo}, {
@@ -1122,15 +1125,28 @@ callmzRAPP <- function(){
       benchmark_data<-isolate(benchmark_data())
       if(!is.null(benchmark_data)){
         benchmark_data <- benchmark_data$PCal
-        updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoabb), 2), decreasing = TRUE))
+        updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
       }
     })
 
     observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
       benchmark_data<-isolate(benchmark_data())
       if(!is.null(benchmark_data)){
-        output$graph_area_bench_peak_overview <- renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia))
+        output$graph_area_bench_peak_overview <- renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
+                                                                event_register('plotly_click'))
       }
+    })
+
+    observeEvent(event_data("plotly_click", source = "bench_scatter"), {
+
+      bm<-isolate(benchmark_data())
+      bm <- bm[["PCal"]]
+      event.data <- event_data("plotly_click", source = "bench_scatter")
+      showModal(modalDialog(
+        renderPlotly({
+          plot_Peak(bm, IndexNumber = event.data$key)
+        })
+      ))
     })
 
 
@@ -1226,7 +1242,7 @@ callmzRAPP <- function(){
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
         comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-        updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoabb_b), 2), decreasing = TRUE))
+        updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoab_b), 2), decreasing = TRUE))
       }
     })
     observeEvent({comparison_data(); input$mol_c; input$add_c; input$ia_c},{
@@ -1241,8 +1257,30 @@ callmzRAPP <- function(){
     observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(), input$overview_plot_input_x, input$overview_plot_input_y, input$overview_plot_input_col, choice_vector_comp, post_alignment = input$PP_al_switch_ov))
+        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(),
+                                                                    input$overview_plot_input_x,
+                                                                    input$overview_plot_input_y,
+                                                                    input$overview_plot_input_col,
+                                                                    choice_vector_comp,
+                                                                    post_alignment = input$PP_al_switch_ov) %>%
+                                               event_register('plotly_click'))
       }
+    })
+
+
+    observeEvent(event_data("plotly_click", source = "scatter"), {
+
+      comparison_data <- comparison_data()
+      CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
+      CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
+      CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
+      event.data <- event_data("plotly_click", source = "scatter")
+
+      showModal(modalDialog(
+        renderPlotly({
+          plot_Peak(CE_plot, IndexNumber = event.data$key)
+        })
+      ))
     })
 
     #R/S Heatmap Plot
@@ -1269,9 +1307,39 @@ callmzRAPP <- function(){
     observeEvent({comparison_data()}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = FALSE))
+        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = FALSE) %>%
+                                              event_register('plotly_click'))
       }
     })
+
+
+    ####
+
+    observeEvent(event_data("plotly_click", source = "IRbias"), {
+
+      comparison_data <- comparison_data()
+      CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+      #CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
+      #CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
+      event.data <- event_data("plotly_click", source = "IRbias")
+      #tt <<- event.data
+      print(event.data)
+      showModal(modalDialog(
+        renderPlotly({
+          plot_IR_peaks(CE_plot, plotly_key = event.data$key)
+          #plot_ly(data.frame(x = c(rep('a', 10), rep('b', 10)),
+          #                   y = c(rnorm(10), rnorm(10, 3, 1))), x = ~x, y = ~y, type = 'box')
+        })
+      ))
+    })
+
+
+    ####
+
+
+
+
+
     #Results Text
     observeEvent(comparison_data(), {
       comparison_data <- isolate(comparison_data())
@@ -1349,10 +1417,13 @@ callmzRAPP <- function(){
                                             round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)",
                                             br(),
-                                            "Missing peaks (S|R): ",
-                                            "x",
-                                            " | ",
-                                            "y",
+                                            "Missing peaks (high): ",
+                                            result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],
+                                            "/",
+                                            result_list[["After_alignmnet"]][["Missing_peaks"]][["Systematic"]] + result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],
+                                            "( ", round(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][4],1) , " - ",
+                                            round(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
+                                            "%)",
                                             br(),
                                             "Degenerated IR: ",
                                             result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
@@ -1375,7 +1446,7 @@ callmzRAPP <- function(){
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$error_count <- renderTable(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
-      }
+        }
     })
 
 
@@ -1400,7 +1471,7 @@ callmzRAPP <- function(){
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 | BM.div == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         updatePickerInput(session = session, inputId = 'add_a', choices = choices)
-      }
+        }
     })
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())

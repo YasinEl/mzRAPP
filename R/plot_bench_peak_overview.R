@@ -11,7 +11,7 @@
 #' @examples
 plot_bench_peak_overview <- function (benchmark_data, molecule, adduct, ia){
   benchmark_data <- benchmark_data$PCal
-  if(nrow(benchmark_data[molecule == molecule & adduct == adduct & round(isoabb, 2) == ia]) > 0){
+  if(nrow(benchmark_data[molecule == molecule & adduct == adduct & round(isoab, 2) == ia]) > 0){
     p <- suppressWarnings(
           plot_Peak_per_mol(benchmark_data,
                             mol = molecule,

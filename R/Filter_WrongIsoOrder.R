@@ -22,7 +22,7 @@ Filter_WrongIsoOrder <- function(PeakCandidates, SampleIdentifier, MoleculeIdent
   #label isotopologues which have a higher area than than another isotopologue of the same molecule and adduct which should theoretically be the higher one
   ##################################
   DT_tmp <- PeakCandidates[PeakCandidates,
-                on = c(SampleIdentifier, MoleculeIdentifier, AdductIdentifier, 'isoabb < isoabb'),
+                on = c(SampleIdentifier, MoleculeIdentifier, AdductIdentifier, 'isoab < isoab'),
                 nomatch = 0L, mult = "all", allow.cartesian = TRUE][, WrongIsoOrder_tmp :=
                                                                       .(peaks.area/i.peaks.area > 1 |
                                                                           peaks.area/i.peaks.area == Inf |
@@ -43,7 +43,7 @@ Filter_WrongIsoOrder <- function(PeakCandidates, SampleIdentifier, MoleculeIdent
   #also label isotopologues which obey the theoretical abundance order if a higher isotopologue of the same molecule and adduct does not
   ##################################
   DT_tmp <- DT_tmp[DT_tmp,
-                   on = c(SampleIdentifier, MoleculeIdentifier, AdductIdentifier, 'isoabb < isoabb'),
+                   on = c(SampleIdentifier, MoleculeIdentifier, AdductIdentifier, 'isoab < isoab'),
                    nomatch = 0L, mult = "all", allow.cartesian = TRUE][, WrongIsoOrder :=
                                                                          .(i.WrongIsoOrder_tmp == TRUE |
                                                                              WrongIsoOrder_tmp == TRUE)]
