@@ -828,7 +828,7 @@ callmzRAPP <- function(){
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
-        output$grps_upload_file <- renderText(paste0(basename(file)[length(file)]))
+        output$grps_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -837,7 +837,7 @@ callmzRAPP <- function(){
       if(input$coi_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
-        output$coi_upload_file <- renderText(paste0(basename(file)[length(file)]))
+        output$coi_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -854,7 +854,11 @@ callmzRAPP <- function(){
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
+        root = tcltk::tktoplevel("width" = 1, "height" = 1)
+        tcltk::tkraise(root)
         files <- tcltk::tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        Sys.sleep(1)
+        tcltk::tkdestroy(root)
         print(files)
         ffug <<- files
         if (length(files) > 1){
@@ -869,9 +873,7 @@ callmzRAPP <- function(){
       if (input$g_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
-        ffg <<- file
-print(file)
-        output$g_upload_file <- renderText(paste0(basename(file)[length(file)]))
+        output$g_upload_file <- renderText(paste0(basename(file)))
 
         output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
@@ -881,9 +883,7 @@ print(file)
       if (input$benchmark_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
-        ffbm <<- file
-        print(file)
-        output$benchmark_upload_file <- renderText(paste0(basename(file)[length(file)]))
+        output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
     })
@@ -891,7 +891,6 @@ print(file)
       if (input$options_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
-        file <- file[length(file)]
         output$options_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
