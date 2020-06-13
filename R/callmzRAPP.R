@@ -828,8 +828,7 @@ callmzRAPP <- function(){
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
-        file <- file[length(file)]
-        output$grps_upload_file <- renderText(paste0(basename(file)))
+        output$grps_upload_file <- renderText(paste0(basename(file)[length(file)]))
         return(file)
       }
     })
@@ -838,8 +837,7 @@ callmzRAPP <- function(){
       if(input$coi_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
-        file <- file[length(file)]
-        output$coi_upload_file <- renderText(paste0(basename(file)))
+        output$coi_upload_file <- renderText(paste0(basename(file)[length(file)]))
         return(file)
       }
     })
@@ -857,6 +855,8 @@ callmzRAPP <- function(){
       if (input$ug_upload == 0){return(NULL)}
       else {
         files <- tcltk::tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        print(files)
+        ff <<- files
         if (length(files) > 1){
           output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
@@ -869,8 +869,7 @@ callmzRAPP <- function(){
       if (input$g_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
-        file <- file[length(file)]
-        output$benchmark_upload_file <- renderText(paste0(basename(file)))
+        output$g_upload_file <- renderText(paste0(basename(file)[length(file)]))
 
         output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
@@ -880,8 +879,7 @@ callmzRAPP <- function(){
       if (input$benchmark_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
-        file <- file[length(file)]
-        output$benchmark_upload_file <- renderText(paste0(basename(file)))
+        output$benchmark_upload_file <- renderText(paste0(basename(file)[length(file)]))
         return(file)
       }
     })
