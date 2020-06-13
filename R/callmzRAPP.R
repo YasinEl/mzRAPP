@@ -814,8 +814,9 @@ callmzRAPP <- function(){
     mzML_files <- reactive({
       if (input$mzML_upload == 0){return(NULL)}
       else {
-        #files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
-        files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE)
+        print("try")
+        files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
+        print("succ")
         if (length(files) > 1){
           output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
