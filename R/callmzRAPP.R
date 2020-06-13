@@ -828,6 +828,7 @@ callmzRAPP <- function(){
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        file <- file[length(file)]
         output$grps_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -837,6 +838,7 @@ callmzRAPP <- function(){
       if(input$coi_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        file <- file[length(file)]
         output$coi_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -867,9 +869,7 @@ callmzRAPP <- function(){
       if (input$g_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
-        print(file)
-        print(basename(file))
-        print(paste0(basename(file)))
+        file <- file[length(file)]
         output$benchmark_upload_file <- renderText(paste0(basename(file)))
 
         output$g_upload_file <- renderText(paste0(basename(file)))
@@ -880,9 +880,7 @@ callmzRAPP <- function(){
       if (input$benchmark_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
-        print(file)
-        print(basename(file))
-        print(paste0(basename(file)))
+        file <- file[length(file)]
         output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -891,6 +889,7 @@ callmzRAPP <- function(){
       if (input$options_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
+        file <- file[length(file)]
         output$options_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
