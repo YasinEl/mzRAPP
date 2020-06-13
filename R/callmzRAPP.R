@@ -867,6 +867,11 @@ callmzRAPP <- function(){
       if (input$g_upload == 0){return(NULL)}
       else {
         file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
+        print(file)
+        print(basename(file))
+        print(paste0(basename(file)))
+        output$benchmark_upload_file <- renderText(paste0(basename(file)))
+
         output$g_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
