@@ -5,9 +5,10 @@
 #'
 #'
 #' @examples
+
 callmzRAPP <- function(){
 
-
+  rm(list = ls(), envir = environment())
   if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment(), package = "enviPat")}
 
   choice_vector_bench <- c(
@@ -854,13 +855,11 @@ callmzRAPP <- function(){
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
-        root = tcltk::tktoplevel("width" = 1, "height" = 1)
-        tcltk::tkraise(root)
+        #root = tcltk::tktoplevel("width" = 1, "height" = 1)
+        #tcltk::tkraise(root)
         files <- tcltk::tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
-        Sys.sleep(1)
-        tcltk::tkdestroy(root)
-        print(files)
-        ffug <<- files
+        #Sys.sleep(1)
+        #tcltk::tkdestroy(root)
         if (length(files) > 1){
           output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
@@ -1145,11 +1144,12 @@ callmzRAPP <- function(){
       }
     })
 
-    observeEvent(event_data("plotly_click", source = "bench_scatter"), {
+
+    observeEvent(suppressWarnings(event_data("plotly_click", source = "bench_scatter", priority = "event")), {
 
       bm<-isolate(benchmark_data())
       bm <- bm[["PCal"]]
-      event.data <- event_data("plotly_click", source = "bench_scatter")
+      event.data <- suppressWarnings(event_data("plotly_click", source = "bench_scatter", priority = "event"))
       showModal(modalDialog(
         renderPlotly({
           plot_Peak(bm, IndexNumber = event.data$key)
@@ -1276,13 +1276,14 @@ callmzRAPP <- function(){
     })
 
 
-    observeEvent(event_data("plotly_click", source = "scatter"), {
+    observeEvent(suppressWarnings(event_data("plotly_click", source = "scatter", priority = "event")), {
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
       CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
-      event.data <- event_data("plotly_click", source = "scatter")
+
+        event.data <- suppressWarnings(event_data("plotly_click", source = "scatter", priority = "event"))
 
       showModal(modalDialog(
         renderPlotly({
@@ -1323,13 +1324,13 @@ callmzRAPP <- function(){
 
     ####
 
-    observeEvent(event_data("plotly_click", source = "IRbias"), {
+    observeEvent(suppressWarnings(event_data("plotly_click", source = "IRbias", priority = "event")), {
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
       #CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       #CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
-      event.data <- event_data("plotly_click", source = "IRbias")
+      event.data <- suppressWarnings(event_data("plotly_click", source = "IRbias", priority = "event"))
       #tt <<- event.data
       print(event.data)
       showModal(modalDialog(

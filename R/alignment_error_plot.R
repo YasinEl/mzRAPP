@@ -9,7 +9,7 @@
 #'
 #' @examples
 Alignment_error_plot <- function(comparison_data, mol, add){
-  if(missing(mol) | missing(add) | missing (comparison_data)) return(plotly::ggplotly(ggplot() +
+  if(missing(mol) | missing(add) | missing(comparison_data) | length(mol) < 1 | length(add) < 1) return(plotly::ggplotly(ggplot() +
                                                             ggtitle("Missing arguments")))
 
   dt <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
