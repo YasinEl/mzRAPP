@@ -3,6 +3,7 @@ title: "mzRAPP"
 output:
   html_document:
     toc: true
+    theme: null
     mathjax: null
 ---
 
