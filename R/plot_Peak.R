@@ -29,8 +29,8 @@ plot_Peak  <- function(PC, IndexNumber){
   p <- ggplot(plot.table, aes(x=rt, y=int)) +
     geom_line() +
     geom_point() +
-    geom_vline(xintercept = PC[IDX == IndexNumber, peaks.StartTime], color = "red") +
-    geom_vline(xintercept = PC[IDX == IndexNumber, peaks.EndTime], color = "red") +
+    geom_vline(xintercept = PC[IDX == IndexNumber, peaks.StartTime] - 0.01, color = "red") +
+    geom_vline(xintercept = PC[IDX == IndexNumber, peaks.EndTime]+0.01, color = "red") +
     theme(legend.position = "right") +
     ggtitle(paste0(PC[IDX == IndexNumber, molecule], " ",
                    PC[IDX == IndexNumber, adduct], " IsoAb.:",

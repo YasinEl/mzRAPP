@@ -304,7 +304,6 @@ print("alignmenttest start")
 
       ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
 
-
   dt <- ff_table_dt[main_feature == TRUE]
 
   id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",

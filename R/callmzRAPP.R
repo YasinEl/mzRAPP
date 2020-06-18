@@ -73,16 +73,12 @@ callmzRAPP <- function(){
     dashboardHeader(title = "mzRAPP"),
     dashboardSidebar(
       sidebarMenu(
+        id = "sbmenu",
         menuItem("Readme", tabName = "Readme"),
         menuItem("Generate Benchmark", tabName = "gBM_p"),
         menuItem("View Benchmark", tabName = "vBM_p"),
         menuItem("Setup NPP assessment", tabName = "sNPP_p"),
         menuItem("View NPP assessment", tabName = "vNPP_p")
-        #menuItem("oldAssessAlign", tabName = "oldAssessAlign"),
-        #menuItem("oldBM", tabName = "oldBM"),
-        #menuItem("oldAsessResultP", tabName = "oldAsessResultP")
-
-
       )
     ),
     dashboardBody(
@@ -95,7 +91,7 @@ callmzRAPP <- function(){
       #}'))),
       tabItems(
         tabItem(tabName = "Readme",
-                includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
+                includeMarkdown(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
                 #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), seamless=NA)
                 ),
         tabItem(tabName = "gBM_p",
@@ -319,7 +315,7 @@ callmzRAPP <- function(){
                 ),
                 fluidRow(
                   column(
-                    12, strong('2. Select ungrouped and grouped files', style = "font-size:30px"), br(), br()
+                    12, strong('2. Select unaligned and aligned files', style = "font-size:30px"), br(), br()
                   )
                 ),
                 fluidRow(
@@ -457,66 +453,6 @@ callmzRAPP <- function(){
                                 verbatimTextOutput('results_text_b')
                 )),
 
-                ########################################
-               # fluidRow(
-               #   column(
-               #     7,
-               #     style = 'padding:0px;margin:0px;display: inline-flex;',
-               #     dropdownButton(
-               #       br(
-               #         paste0("")
-               ##       ),
-               #       tooltip = tooltipOptions(title = 'Click for description'),
-              #        circle = TRUE,
-              #        width = 600,
-              #        status = 'info',
-              #        icon = icon('question-circle'),
-              #        size = 'sm'
-              #      ),            plotlyOutput('graph_area_bench_overview', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
-              #    ),
-              #    column(5,
-              #           style = 'padding:0px;margin:0px;display: inline-flex;',
-              #           dropdownButton(
-              #             br(
-              #               paste0("Here the distributions of different chromatographic peak variables can be inspected.")
-             #              ),
-            #               tooltip = tooltipOptions(title = 'Click for description'),
-            #               circle = TRUE,
-            ##               width = 600,
-             #              status = 'info',
-             #              icon = icon('question-circle'),
-             #              size = 'sm'
-             #            ),
-             #            plotlyOutput('graph_area_bench_histo', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1")
-#
-#                  )
-#                ),
-                ################################################cut
-
-
-
-                ########################################################
- #               fluidRow(
- #                 column(2, selectInput('bench_overview_input_x', 'x-axis',
- #                                       choices = choice_vector_bench, selected = 'ExpectedArea'
- #                 )),
- #                 column(2, selectInput('bench_overview_input_y', 'y-axis',
- ##                                       choices = choice_vector_bench, selected = 'peaks.area'
-  #                )
-  #                ),
-  #                column(2, selectInput('bench_overview_input_color', 'Color-by',
-  #                                      choices = choice_vector_bench, selected = 'molecule'
-  #                )
-  #                ),
-  #                column(2),
-  #                column(2, selectInput('select_bench_histo', 'Peak variable',
-  #                                      choices = choice_vector_bench, selected = 'peaks.PpP'
-  #                )
-#
-##
- #                 )
- #               ),
-##########################################################################cut
                 fluidRow(
                   column(
                     7,
@@ -554,7 +490,11 @@ callmzRAPP <- function(){
                 )
         ),
         tabItem(tabName = "vNPP_p",
-                h2("NPP assessment results:"),
+                h1('NPP assessment results'),
+                tags$div(class="header", checked=NA,
+                         tags$p("Ready to take the Shiny tutorial? If so"),
+                         tags$a(href=system.file("md","README.md", package = "mzRAPP", mustWork = TRUE), "Click Here!")
+                ),
                 h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
                          "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
                 br(),
@@ -566,10 +506,13 @@ callmzRAPP <- function(){
                   infoBoxOutput("A_info"),
                   infoBoxOutput("F_info")
                 ),
+                h4(paste("For more details please check the interactive plots below.")),
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
                 br(),
+                column(10, offset = 1, h2("Distribution of found/not found peaks")),
+
                 column(9, offset = 1,
-                       h4("In the following interactive scatter plot and histogram the distribution of found/not found peaks can be investigated as a function of different benchmark peak variables.",
+                       h4("In the following interactive scatter plot and histogram the distribution of", tags$span(style="color:blue", "found") ,"/", tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
                           "Points in the scatter plot can be clicked to inspect individual peaks.")
                 ),
                 fluidRow(
@@ -655,8 +598,9 @@ callmzRAPP <- function(){
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
 
                 br(),
+                column(10, offset = 1, h2("Quality of reported NPP peak abundances")),
                 column(8, offset = 2,
-                       h4(paste0("The quality of reported peak abundances are important in order to determine molecular compositions via isotopologue ratios or compare concentrations between ",
+                       h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
                                  "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP.",
                                  "In order to inspect peaks contributing to a ratio click on the plot edges."))
                 ),
@@ -695,6 +639,8 @@ callmzRAPP <- function(){
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
 
                 br(),
+                column(10, offset = 1, h2("The nature of missing values")),
+
                 column(8, offset = 2,
                        h4(paste0("The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
                                  "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC)."))
@@ -737,6 +683,7 @@ callmzRAPP <- function(){
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
 
                 br(),
+                column(10, offset = 1, h2("Errors in alignment process")),
 
                 column(10, offset = 1,
                        h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number ",
@@ -934,7 +881,7 @@ callmzRAPP <- function(){
         if(input$use_envipat_res_list == FALSE){
           if(input$resolution_drop == '------') {stop('Please select used Resolution')}
           res_input <- input$resolution_drop
-          resolution_df <- resolution_list[[res_input]]
+          resolution_df <- as.data.frame(resolution_list[[res_input]])
         } else {
           if(is.null(res_file()) || length(res_file()) == 0){
             stop('No Resolution/mz file selected')
@@ -983,6 +930,10 @@ callmzRAPP <- function(){
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
+
+
+                       if(any(duplicated(PCbp[, c("molecule", "isoab", "adduct", "FileName")]))){
+
                        #####################################################
                        incProgress(10/15, detail = "aligning peaks over samples...")
                        print('Start peak alignment')
@@ -993,6 +944,9 @@ callmzRAPP <- function(){
                                         pick_best = "rt_match"
                        )
 
+                       } else {
+                         PCal <- PCbp
+                       }
                        #####################################################
                        fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
                        print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
@@ -1016,12 +970,15 @@ callmzRAPP <- function(){
 
         sendSweetAlert(session,
                        title = 'Benchmark generated',
-                       text = paste0('Benchmark geneneration has been finished in ', round(proc.time, 0), ' min. You can proceed to use it for reliability
-                                  assessment of non-targeted data pre-processing. A benchmark overview is provided in section
-                                  "View Benchmark"'),
+                       text = paste0('Benchmark geneneration has been finished in ', round(proc.time, 0), ' min. The output has been saved to your
+                                  working directory as ', getwd(), '/Peak_list.csv). It can be inspected by importing it to Skyline with the instructions
+                                     printed in the R console or directly used for reliability assessment of a no-targeted processing run in the section
+                                     "Setup NPP assessment"'),
                        type = 'success',
                        closeOnClickOutside = FALSE,
                        showCloseButton = TRUE)
+
+        updateTabsetPanel(session, "sbmenu",selected = "vBM_p")
 
       },
       error=function(error_message){
@@ -1215,6 +1172,9 @@ callmzRAPP <- function(){
                                      type = 'success',
                                      closeOnClickOutside = FALSE,
                                      showCloseButton = TRUE)
+
+
+        updateTabsetPanel(session, "sbmenu",selected = "vNPP_p")
 
       },
       error=function(error_message){

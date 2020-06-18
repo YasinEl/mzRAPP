@@ -22,6 +22,7 @@ feature_compare <- function(b_table, g_table){
   #Bring b_table into wide format
   b_table <- dcast(b_table, feature_id_b + molecule_b + isoab_b + adduct_b + total_area_b + min_mz_start + max_mz_end + min_rt_start + max_rt_end + present_samples_b ~ sample_id_b_suf, value.var=c('peak_area_b'))
 
+
   #Calculate total area of g feature
   g_table <- g_table[, ':=' (total_area_g= sum(peak_area_g),
                              present_samples_g = paste(.SD$sample_id_g, collapse = ','),

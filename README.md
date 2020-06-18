@@ -314,6 +314,10 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
                             )
 ```
 
+<hr>
+
+<br><span id="anchorid">Point to this anchor</span><br>
+
 ## Matching between BM and NPP output (background)
 
 Before any NPP-performance metrics can be generated mzRAPP is matching

@@ -78,7 +78,7 @@ findBenchPeaks <- function(files,
   Output <-
     foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
             .packages = c("mzRAPP", "data.table")) %dopar% {
-  #                        for(file in 1:nrow(unique(CompCol[, "FileName"]))){
+   #                       for(file in 1:nrow(unique(CompCol[, "FileName"]))){
 
 
               ##################################
@@ -235,7 +235,7 @@ findBenchPeaks <- function(files,
                                 }
                               }
                             }
-#print("manual_bound")
+
 #print(manual_bound)
                             #automatic boundary imputation
                             if(manual_bound == FALSE){
@@ -263,16 +263,18 @@ findBenchPeaks <- function(files,
                             l.peaks <- mapply(
                               cutout_peaks,
                               l = sapply(M0_peaks$peaks.StartTime, function(val) {
-                                ifelse(which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) - 1 <= 1,
-                                       1,
-                                       which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) - 1)
+                                #ifelse(which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) - 1 <= 1,
+                                #       1,
+                                #       which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) - 1)
+                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
                               }),
                               r = sapply(M0_peaks$peaks.EndTime, function(val) {
-                                ifelse(
-                                  which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) + 1 >= length(EIC.dt[!is.na(int_wo_spikes)]$rt),
-                                  length(EIC.dt[!is.na(int_wo_spikes)]$rt),
-                                  which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) + 1
-                                )
+                                #ifelse(
+                                #  which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) + 1 >= length(EIC.dt[!is.na(int_wo_spikes)]$rt),
+                                #  length(EIC.dt[!is.na(int_wo_spikes)]$rt),
+                                #  which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val)) + 1
+                                #)
+                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
                               }),
                               M0.grp = M0_peaks$peaks.M0.grp, #ifelse(iso.run == "LAisos", paste0(M0_peaks$peaks.M0.grp), NA),
                               #main_adduct.grp = NA, #ifelse(iso.run == "MAiso", M0_peaks$peaks.main_adduct.grp, NA),
@@ -340,6 +342,9 @@ findBenchPeaks <- function(files,
                               l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
                               l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
 
+
+
+                              if(manual_bound == FALSE || sum(EIC.dt[rt > l.peaks$StartTime & rt < l.peaks$EndTime]$int) > 0){
                               ##################################
                               #get information on mz peaks for each chromatographic peak
                               ##################################
@@ -349,7 +354,9 @@ findBenchPeaks <- function(files,
                               #add additional variables for each chromatographic peak
                               ##################################
                               l.peaks <- Get_peak_vars(l.peaks, EIC.dt, CompCol_xic[i], l.peaks.mz_list, iso.run, adduct.run, manual_bound)
-#print("l.peaks:")
+
+
+                              }
                               #print(l.peaks)
                             } else {
                               l.peaks <- NULL
@@ -406,7 +413,8 @@ findBenchPeaks <- function(files,
 
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
-#ttpp <<- Result
+
+  #ttpp <<- Result
   #get rid of double isos
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
@@ -467,6 +475,7 @@ findBenchPeaks <- function(files,
   colnames(grp_tmp)[1] <- "Grp"
   Result <- Result[grp_tmp, on = .(Grp)]
 
+  Result <- Result[!is.na(molecule)]
 
 
 
@@ -474,6 +483,7 @@ findBenchPeaks <- function(files,
   Result[, iso_id := paste(round(mz_ex, 4), round(isoab, 2), sep = "_")]
 
   Result$IDX <- seq.int(nrow(Result))
+
 
   #print(colnames(Result))
 

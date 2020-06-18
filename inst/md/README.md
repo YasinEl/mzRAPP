@@ -315,6 +315,10 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
                             )
 ```
 
+<hr>
+
+<br><span id="anchorid">Point to this anchor</span><br>
+
 ## Matching between BM and NPP output (background)
 
 Before any NPP-performance metrics can be generated mzRAPP is matching
@@ -344,7 +348,7 @@ figure 3) as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="30%" height="50%" />
+<img src="Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="40%" height="50%" />
 
 <p class="caption">
 

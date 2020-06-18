@@ -28,7 +28,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   if(!isTRUE(is.data.table(DT))){DT <- as.data.table(DT)}
 
   missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c"), colnames(DT))
-  if(length(missing_cols) > 0){stop(paste0("DT is lacking columns: ", missing_cols))}
+  if(length(missing_cols) > 0){stop(paste0("DT is lacking columns: ", paste0(missing_cols, sep = ", ")))}
 
   conflicting_cols <- intersect(c("adduct", "isoab", "formula", "charge", "mz" ,"mz_ex"), colnames(DT))
   if(length(conflicting_cols > 0)) stop(paste0("DT includes reserved column names! Specificly:", conflicting_cols))
@@ -59,7 +59,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
 
 
   wrong_adducts <- setdiff(unique(DT$adduct_c), adducts$Name)
-  if(length(wrong_adducts) > 0){stop(paste0("Some of your adducts are not valid: ", paste(wrong_adducts, collapse = ", "), " Please only use adducts enabled in the envipat package. namely: ", adducts$Name))}
+  if(length(wrong_adducts) > 0){stop(paste0("Some of your adducts are not valid: ", wrong_adducts, " Please only use adducts enabled in the envipat package. namely: ", adducts$Name))}
 
 
 
@@ -72,7 +72,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   DTreg <- DT
   SF <- enviPat::check_chemform(isotopes,DT$SumForm_c)
 
-  if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste(setDT(SF)[warning == TRUE]$new_formula, collapse = ", ")))}
+  if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste0(setDT(SF)[warning == TRUE]$new_formula, sep = ", ")))}
 
 
   DT <- cbind(DT,SF)
@@ -93,7 +93,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   SF <- enviPat::check_chemform(isotopes,DT$SumForm2_c)
 
 
-if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste(setDT(SF)[warning == TRUE]$new_formula, collapse = ", ")))}
+if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are not valid, namely ", paste0(setDT(SF)[warning == TRUE]$new_formula, sep = ", ")))}
 
   ##################################
   #calculate theoretical isotope pattern
@@ -124,8 +124,7 @@ if(nrow(setDT(SF)[warning == TRUE]) > 0){stop(paste0("Some chemical formulas are
     DT <- DT[filter.vct$value]
     SF <- SF[filter.vct$value]
     warning(paste0("Some molecular formulas lead to m/z values which are outside the range of m/z values for which resolution values are provided in the enviPat package. ",
-                   "Those formulas are excldued. If you need to avoid that please provide additional R values to the instrumentRes table.
-                   The following molecular formulas have been excluded: ",
+                   "Those formulas are excldued. If you need to avoid that please provide additional R values to the instrumentRes table. The following molecular formulas have been excluded: ",
                    paste(as.character(filter.vct[value == FALSE]$variable), collapse = ", ")), noBreaks. = TRUE)
   }
 

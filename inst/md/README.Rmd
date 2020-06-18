@@ -1,7 +1,7 @@
 ---
 title: "mzRAPP"
 output:
-  github_document:
+  html_document:
     toc: true
 
 ---
@@ -213,6 +213,7 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 ```
 
 
+<hr><br><span id="anchorid">Point to this anchor</span><br>
 
 ## Matching between BM and NPP output (background)
 
@@ -223,7 +224,7 @@ Before any NPP-performance metrics can be generated mzRAPP is matching the NPP o
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
 Each benchmark peak (BP) is reported the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those to values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles relative IT ratio bias (as compared to the predicted ratio; see figure 3) as compared to the predicted IT-ratio.
 
-```{r figure1, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
+```{r figure1, out.width="40%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
 knitr::include_graphics("Peak matching graphic.png")
 ```
 <br>

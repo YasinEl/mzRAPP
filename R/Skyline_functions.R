@@ -53,14 +53,13 @@ SkylinePeakBoundaries <-
   function(BM){
 
     BM <- BM[, c("molecule", "adduct", "isoab", "FileName", "peaks.StartTime", "peaks.EndTime")]
-    BM$peaks.StartTime <- BM$peaks.StartTime / 60
-    BM$peaks.EndTime <- BM$peaks.EndTime / 60
-    BM$molecule <- as.character(BM$molecule)
+    BM[, peaks.StartTime := peaks.StartTime/60]
+    BM[, peaks.EndTime := peaks.EndTime/60]
+    BM[, molecule := as.character(molecule)]
 
     BM[order(BM$isoab, decreasing = TRUE),]
 
     BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoab, 2))]
-
 
     files <- data.table("FileName" = sort(unique(BM$FileName)),
                         "i" = seq(length(unique(BM$FileName))))
@@ -76,9 +75,10 @@ SkylinePeakBoundaries <-
       nomatch = NA
       ]
 
-    Peak_Boundaries_Skyline[is.na(peaks.StartTime)]$peaks.StartTime <- 0
-    Peak_Boundaries_Skyline[is.na(peaks.EndTime)]$peaks.EndTime <- 0
-    colnames(Peak_Boundaries_Skyline) <- c("File Name", "Peptide Modified Sequence", "Min Start Time", "Max End Time")
+      Peak_Boundaries_Skyline[is.na(peaks.StartTime), peaks.StartTime := 0]
+      Peak_Boundaries_Skyline[is.na(peaks.EndTime), peaks.EndTime := 0]
+
+      colnames(Peak_Boundaries_Skyline) <- c("File Name", "Peptide Modified Sequence", "Min Start Time", "Max End Time")
 
     fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
 
