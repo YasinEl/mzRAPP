@@ -491,12 +491,9 @@ callmzRAPP <- function(){
         ),
         tabItem(tabName = "vNPP_p",
                 h1('NPP assessment results'),
-                tags$div(class="header", checked=NA,
-                         tags$p("Ready to take the Shiny tutorial? If so"),
-                         tags$a(href="#shiny-tab-Readme", "Click Here!")
-                ),
                 h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
                          "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
+                a("Click here for more information.", onclick = "openTab('Readme')", href="#MetricsID"),
                 br(),
                 fluidRow(
                   # A static infoBox
@@ -513,7 +510,8 @@ callmzRAPP <- function(){
 
                 column(9, offset = 1,
                        h4("In the following interactive scatter plot and histogram the distribution of", tags$span(style="color:blue", "found") ,"/", tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
-                          "Points in the scatter plot can be clicked to inspect individual peaks.")
+                          "Points in the scatter plot can be clicked to inspect individual peaks."),
+                       a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
                 ),
                 fluidRow(
                   column(6, offset = 1,
@@ -602,7 +600,8 @@ callmzRAPP <- function(){
                 column(8, offset = 2,
                        h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
                                  "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP.",
-                                 "In order to inspect peaks contributing to a ratio click on the plot edges."))
+                                 "In order to inspect peaks contributing to a ratio click on the plot edges.")),
+                       a("Click here for more information.", onclick = "openTab('Readme')", href="#Peak_quality")
                 ),
                 br(),
 
@@ -643,7 +642,8 @@ callmzRAPP <- function(){
 
                 column(8, offset = 2,
                        h4(paste0("The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
-                                 "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC)."))
+                                 "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC).")),
+                       a("Click here for more information.", onclick = "openTab('Readme')", href="#Missing_values")
                 ),
                 br(),
                 fluidRow(
@@ -688,7 +688,8 @@ callmzRAPP <- function(){
                 column(10, offset = 1,
                        h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number ",
                                  "of errors by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count."))
+                                 "alignment errors in the benchmark do not affect this count.")),
+                       a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 br(),
                 fluidRow(
@@ -804,7 +805,7 @@ callmzRAPP <- function(){
       else {
         #root = tcltk::tktoplevel("width" = 1, "height" = 1)
         #tcltk::tkraise(root)
-        files <- tcltk::tk_choose.files(caption = 'Select ungrouped file(s)', multi = TRUE, filters = csv_filter)
+        files <- tcltk::tk_choose.files(caption = 'Select unaligned file(s)', multi = TRUE, filters = csv_filter)
         #Sys.sleep(1)
         #tcltk::tkdestroy(root)
         if (length(files) > 1){
@@ -818,7 +819,7 @@ callmzRAPP <- function(){
     g_file <- reactive({
       if (input$g_upload == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select grouped file', multi = FALSE, filters = csv_filter)
+        file <- tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter)
         output$g_upload_file <- renderText(paste0(basename(file)))
 
         output$g_upload_file <- renderText(paste0(basename(file)))
@@ -867,13 +868,50 @@ callmzRAPP <- function(){
           stop('No grps file selected')
         } else {
           grps <- fread(grps_file())
+
+          missing_cols <- setdiff(c("sample_name", "sample_group"), colnames(grps))
+          if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", paste(missing_cols, collapse = ", ")))}
+
+          if(nrow(grps[is.na(sample_name) | is.na(sample_group)]) > 0){
+            stop("Values in sample_group table must not be empty! If you have only one group please add the same sample_group value for each sample!")
+          }
+
         }
 
         #coi
         if(is.null(coi_file()) || length(coi_file()) == 0){
-          stop('No coi file selected')
+          stop('No target file selected')
         } else {
           targets <- fread(coi_file())
+
+          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC"), colnames(targets))
+          if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
+
+
+          if(!is.numeric(targets$StartTime.EIC) | !is.numeric(targets$EndTime.EIC)){
+            stop("Some values in your columns StartTime.EIC/EndTime.EIC are not numeric!")
+
+            if(nrow(targets[StartTime.EIC < 0 | EndTime.EIC < 0 | EndTime.EIC < StartTime.EIC]) > 0){
+              stop("Values for StartTime.EIC and EndTime.EIC cannot be lower than 0. Also values for StartTime.EIC have to be lower than those for EndTime.EIC!")
+            }
+
+          }
+
+          if("user.rtmin" %in% colnames(targets) | "user.rtmax" %in% colnames(targets)){
+            if(!all(c("user.rtmin", "user.rtmax") %in% colnames(targets))){
+              stop("Your target table includes only one of the columns user.rtmin/user.rtmax. If one is there you also need the other!")
+            }
+
+            if(!is.numeric(targets$user.rtmin) | !is.numeric(targets$user.rtmax)){
+              stop("Some values in your columns user.rtmin/user.rtmax are not numeric!")
+            }
+
+            if(nrow(targets[user.rtmin < StartTime.EIC | user.rtmax > EndTime.EIC]) > 0){
+              stop("Values for user.rtmin/user.rtmax cannot be lower/higher than values for StartTime.EIC/EndTime.EIC respectivly!")
+            }
+
+          }
+
           if(!is.character(targets$molecule)) {targets$molecule <- as.character(targets$molecule)}
         }
 

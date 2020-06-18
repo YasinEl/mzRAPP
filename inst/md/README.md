@@ -12,8 +12,8 @@ mzRAPP
   - [Generation and interpretation of NPP performance
     metrics](#generation-and-interpretation-of-npp-performance-metrics)
       - [Found peaks](#found-peaks)
-      - [Missing peaks (h/l)](#missing-peaks-hl)
       - [Split peaks](#split-peaks)
+      - [Missing peaks (h/l)](#missing-peaks-hl)
       - [Degenerated IR](#degenerated-ir)
       - [Alignment errors](#alignment-errors)
 
@@ -317,7 +317,7 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 
 <hr>
 
-<br><span id="anchorid">Point to this anchor</span><br>
+<br><span id="Matching_peaks"> </span><br>
 
 ## Matching between BM and NPP output (background)
 
@@ -368,6 +368,10 @@ isotopologue ratio bias (as compared to the predicted ratio; see figure
 3) over all NPs is selected (only NPs in samples which are also
 populated by a BP are considered).
 
+<hr>
+
+<br><span id="MetricsID"> </span><br>
+
 ## Generation and interpretation of NPP performance metrics
 
 Reliability assessment results can be inspected in the panel “View NPP
@@ -396,6 +400,15 @@ above.<br>
 
 </div>
 
+### Split peaks
+
+The number of split peaks which have been found for all benchmark peaks.
+For a graphical explanation of a split peak please check figure 1. <br>
+
+<hr>
+
+<br><span id="Missing_values"> </span><br>
+
 ### Missing peaks (h/l)
 
 The classification of not found peaks (as defined in figure 1) into high
@@ -406,10 +419,9 @@ feature which have a benchmark area which is more than 1.5 times higher
 than the lowest found peak are considered as high. Otherwise they are
 considered as low.
 
-### Split peaks
+<hr>
 
-The number of split peaks which have been found for all benchmark peaks.
-For a graphical explanation of a split peak please check figure 1. <br>
+<br><span id="Peak_quality"> </span><br>
 
 ### Degenerated IR
 
@@ -429,6 +441,10 @@ figure 3) it is reflected in this variable.
 </p>
 
 </div>
+
+<hr>
+
+<br><span id="Alignment_counting"> </span><br>
 
 ### Alignment errors
 
