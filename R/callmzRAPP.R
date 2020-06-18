@@ -82,6 +82,15 @@ callmzRAPP <- function(){
       )
     ),
     dashboardBody(
+      tags$script(HTML("
+        var openTab = function(tabName){
+          $('a', $('.sidebar')).each(function() {
+            if(this.getAttribute('data-value') == tabName) {
+              this.click()
+            };
+          });
+        }
+      ")),
 
       #tags$head(tags$style(HTML('
       #.main-header .logo {
