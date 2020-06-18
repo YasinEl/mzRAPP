@@ -90,7 +90,7 @@ callmzRAPP <- function(){
             };
           });
         }
-      ")),
+      ")),#adapted from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
 
       #tags$head(tags$style(HTML('
       #.main-header .logo {
