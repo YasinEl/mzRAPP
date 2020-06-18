@@ -317,7 +317,7 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 
 <hr>
 
-<br><span id="Matching_peaks"> </span><br>
+<span id="Matching_peaks"> </span>
 
 ## Matching between BM and NPP output (background)
 
@@ -370,7 +370,7 @@ populated by a BP are considered).
 
 <hr>
 
-<br><span id="MetricsID"> </span><br>
+<span id="MetricsID"> </span>
 
 ## Generation and interpretation of NPP performance metrics
 
@@ -407,7 +407,7 @@ For a graphical explanation of a split peak please check figure 1. <br>
 
 <hr>
 
-<br><span id="Missing_values"> </span><br>
+<span id="Missing_values"> </span>
 
 ### Missing peaks (h/l)
 
@@ -421,7 +421,7 @@ considered as low.
 
 <hr>
 
-<br><span id="Peak_quality"> </span><br>
+<span id="Peak_quality"> </span>
 
 ### Degenerated IR
 
@@ -444,7 +444,7 @@ figure 3) it is reflected in this variable.
 
 <hr>
 
-<br><span id="Alignment_counting"> </span><br>
+<span id="Alignment_counting"> </span>
 
 ### Alignment errors
 

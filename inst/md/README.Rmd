@@ -1,9 +1,9 @@
 ---
 title: "mzRAPP"
 output:
-  github_document:
+  html_document:
     toc: true
-
+    mathjax: null
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -213,7 +213,7 @@ comparison <- compare_peaks(b_table = NToutputs$b_table,
 ```
 
 
-<hr><br><span id="Matching_peaks"> </span><br>
+<hr><span id="Matching_peaks"> </span>
 
 ## Matching between BM and NPP output (background)
 
@@ -231,7 +231,7 @@ knitr::include_graphics("Peak matching graphic.png")
 <b>Matching of benchmark features with non-targeted features:</b> <br>
 For a NT feature (NF) to be considered as match for a benchmark feature (BF) its reported mz and RT value have to lie between the lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the considered benchmark feature, respectively. In case of multiple NF matching to the same BF the NF leading to smallest relative mean isotopologue ratio bias (as compared to the predicted ratio; see figure 3) over all NPs is selected (only NPs in samples which are also populated by a BP are considered). 
 
-<hr><br><span id="MetricsID"> </span><br>
+<hr><span id="MetricsID"> </span>
 
 ## Generation and interpretation of NPP performance metrics 
 
@@ -248,13 +248,13 @@ knitr::include_graphics("Peak_subsets.PNG")
 ### Split peaks
 The number of split peaks which have been found for all benchmark peaks. For a graphical explanation of a split peak please check figure 1. <br>
 
-<hr><br><span id="Missing_values"> </span><br>
+<hr><span id="Missing_values"> </span>
 
 ### Missing peaks (h/l)
 The classification of not found peaks (as defined in figure 1) into high and low is done for each benchmark feature individually. It is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest found peak are considered as high. Otherwise they are considered as low. 
 
 
-<hr><br><span id="Peak_quality"> </span><br>
+<hr><span id="Peak_quality"> </span>
 
 ### Degenerated IR
 Isotopologue abundance rations (IR) are calculated relative to the highest isotopologue of each compound. If the relative bias of an IR calculated using NPP-abundances is exceeding the tolerance (outlined in figure 3) it is reflected in this variable. 
@@ -263,7 +263,7 @@ Isotopologue abundance rations (IR) are calculated relative to the highest isoto
 knitr::include_graphics("IR_tolerance.PNG")
 ```
 
-<hr><br><span id="Alignment_counting"> </span><br>
+<hr><span id="Alignment_counting"> </span>
 
 ### Alignment errors
 Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 4 shows three isotopologues (IT) of the same benchmark compound detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry is counted as errors. Benchmark-trustful counting is a different way of counting alignment errors, which assumes correct alignment of the benchmark dataset. Here simply the number of deviations between BM and NPP alignments is counted as errors. This kind of counting should only be done after visual inspection of the benchmark dataset. Per default benchmark-critical counting is applied. 

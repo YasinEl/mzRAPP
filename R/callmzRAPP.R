@@ -73,6 +73,7 @@ callmzRAPP <- function(){
     dashboardHeader(title = "mzRAPP"),
     dashboardSidebar(
       sidebarMenu(
+        #style = "position: fixed; overflow: visible;",
         id = "sbmenu",
         menuItem("Readme", tabName = "Readme"),
         menuItem("Generate Benchmark", tabName = "gBM_p"),
@@ -82,6 +83,7 @@ callmzRAPP <- function(){
       )
     ),
     dashboardBody(
+      tags$script(HTML("$('body').addClass('fixed');")),
       tags$script(HTML("
         var openTab = function(tabName){
           $('a', $('.sidebar')).each(function() {
@@ -90,7 +92,7 @@ callmzRAPP <- function(){
             };
           });
         }
-      ")),#adapted from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
+      ")),#function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
 
       #tags$head(tags$style(HTML('
       #.main-header .logo {
@@ -100,7 +102,16 @@ callmzRAPP <- function(){
       #}'))),
       tabItems(
         tabItem(tabName = "Readme",
-                includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
+                #includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
+                #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), # put myMarkdown.html to /www
+                #            width = '100%', height = '800px',
+                #            frameborder = 0, scrolling = 'auto'
+                #)
+                #htmlOutput("Readme_op")
+                tags$div(
+                  class = "rmd-class",
+                  includeHTML(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
+                )
                 #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), seamless=NA)
                 ),
         tabItem(tabName = "gBM_p",
@@ -743,6 +754,9 @@ callmzRAPP <- function(){
 
   server <- function (input, output, session) {
 
+    output$Readme_op <- renderUI({
+    htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
+    })
     #shinyjs::js$disableTab('benchmark_results')
     #shinyjs::js$disableTab('results_tab_features')
     #shinyjs::js$disableTab('results_tab_peaks')
