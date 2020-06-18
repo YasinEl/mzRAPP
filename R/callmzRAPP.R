@@ -493,7 +493,7 @@ callmzRAPP <- function(){
                 h1('NPP assessment results'),
                 tags$div(class="header", checked=NA,
                          tags$p("Ready to take the Shiny tutorial? If so"),
-                         tags$a(href=system.file("md","README.md", package = "mzRAPP", mustWork = TRUE), "Click Here!")
+                         tags$a(href="#shiny-tab-Readme", "Click Here!")
                 ),
                 h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
                          "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
