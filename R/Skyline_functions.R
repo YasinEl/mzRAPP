@@ -26,7 +26,7 @@ SkylineTransitionList <-
     BM <- BM[, c("Precursor charge", "Product charge") := .(charge, charge)][, !"charge"]
 
 
-    fwrite(BM, file = "Skyline_Transition_List.csv", row.names = FALSE)
+    fwrite(unique(BM), file = "Skyline_Transition_List.csv", row.names = FALSE)
 
     print(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
 

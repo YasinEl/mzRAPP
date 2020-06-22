@@ -118,7 +118,9 @@ callmzRAPP <- function(){
                 fluidRow(
                   column(5,
                          strong("1. Select necessary files", style = "font-size:30px"),
-                         p("(and choose resolution used)")
+                         p("(and choose resolution used)"),
+                         a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
+
                   )
                 ),
 
@@ -226,7 +228,9 @@ callmzRAPP <- function(){
                 h2("Generated benchmark:"),
                 h4(paste("In the following key data and overview graphics for the generated benchmark are provided. Please note that the benchmark dataset contains only peaks which were confirmable",
                          "via associated isotopologues. Peaks which can not be confirmed are removed. This is behavior is intended and missed peaks do not cause problems for subsequent",
-                         "non-targeted data pre-processing evaluations.")),
+                         "non-targeted data pre-processing evaluations as long as there are overall enough peaks in the benchmark.")),
+                a("Click here for more information on how to proceed from here.", onclick = "openTab('Readme')", href="#vBMID"),
+
                 br(),
                 fluidRow(
                   # A static infoBox
@@ -239,11 +243,20 @@ callmzRAPP <- function(){
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
                 br(),
 
-                column(9, offset = 1,
-                       h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks please ",
-                                "use the exported Skyline-files. If you wish to adapt peak boundaries please add a 'user.rtmin'/'user.rtmax' column in your target csv file and regenerate the benchmark ",
-                                "in the 'Generate Benchmark' node as described in the readme. It is also possible to delete peaks from the benchmark by deleting rows from the exported 'Peak_list'."))
+                fluidRow(
+                column(7, offset = 1,
+                       h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks you can ",
+                                "click on the points in the scatter plot or export the benchmark to Skyline (button to the right) to get a more comprehensive overview. If you wish to adjust peak boundaries you have to repeat the benchmark ",
+                                "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') columns as described in the Readme (click the link below to get there).")),
+                       a("Click here for more information on how to proceed if you are not satisfied with the current benchmark dataset.", onclick = "openTab('Readme')", href="#vBMID")
                 ),
+                column(3,
+                       checkboxInput(inputId = 'Sky_add', label = 'Export only main adduct', value = TRUE, width = NULL),
+                       checkboxInput(inputId = 'Sky_iso', label = 'Export only most abundant isotopologue', value = TRUE, width = NULL),
+                        actionButton(inputId = 'Skyline_export',
+                                     label = HTML('Export Skyline Transition list<br/>and peak boundaries'),
+                                     width = '100%')
+                )),
 
 
 
@@ -335,7 +348,11 @@ callmzRAPP <- function(){
                 ),
                 fluidRow(
                   column(
-                    12, strong('2. Select unaligned and aligned files', style = "font-size:30px"), br(), br()
+                    12, strong('2. Select unaligned and aligned files', style = "font-size:30px"), br(),
+                    a("Click here for information on how to get unaligned and aligned files from different NPP tools.",
+                      onclick = "openTab('Readme')",
+                      href="#sNPP_readme"),
+                    br()
                   )
                 ),
                 fluidRow(
@@ -434,81 +451,6 @@ callmzRAPP <- function(){
 
         ),
 
-        tabItem(tabName = "oldAsessResultP",
-                fluidRow(column(12,
-                                verbatimTextOutput('results_text')
-                )),
-                fluidRow(
-
-                  column(4,
-                         fluidRow(
-                           column(1,
-                                  dropdownButton('',
-                                                 tooltip = tooltipOptions(title = 'Click for description'),
-                                                 circle = TRUE,
-                                                 status = 'info',
-                                                 icon = icon('question-circle'),
-                                                 size = 'sm',
-                                                 width = 600
-                                  )
-                           )
-                         ),
-                         fluidRow(column(12,plotlyOutput('graph_area_4') %>% shinycssloaders::withSpinner(color="#0dc5c1"))),
-                         fluidRow(##Open Dropdowns upwards
-                           tags$style(HTML("#mol_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                           tags$style(HTML("#add_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                           tags$style(HTML("#ia_c+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                           column(6, selectInput('mol_c', 'Molecule', c())),
-                           column(3, selectInput('add_c', 'Adduct', c())),
-                           column(3, selectInput('ia_c', 'Iso. Ab.', c()))
-                         )
-                  )
-                )
-        ),
-        tabItem(tabName = "oldAssessAlign",
-
-        ),
-        tabItem(tabName = "oldBM",
-                fluidRow(column(12,
-                                verbatimTextOutput('results_text_b')
-                )),
-
-                fluidRow(
-                  column(
-                    7,
-                    plotlyOutput('graph_area_bench_hm', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
-                  ),
-                  column(
-                    5,
-                    #offset = 7,
-                    style = 'padding:0px;margin:0px;display: inline-flex;',
-                    dropdownButton(
-                      br(
-                        "Here peaks corresponding to a specific molecule, adduct, isotopic abundance combination can be plotted over all samples"
-                      ),
-                      tooltip = tooltipOptions(title = 'Click for description'),
-                      circle = TRUE,
-                      width = 600,
-                      status = 'info',
-                      icon = icon('question-circle'),
-                      size = 'sm'
-                    ),
-                    plotlyOutput('graph_area_bench_peak_overview', width = "100%") %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
-                  )
-
-                ),
-                fluidRow(
-                  column(7),
-                  #column(6, numericInput('index_number', 'Index Number', 1, step = 1)),
-                  tags$style(HTML("#mol+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                  tags$style(HTML("#add+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                  tags$style(HTML("#ia+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
-                  column(2, selectInput('mol', 'Molecule', c())),
-                  column(1, selectInput('add', 'Adduct', c())),
-                  column(1, selectInput('ia', 'Iso. Ab.', c())),
-                  column(1)
-                )
-        ),
         tabItem(tabName = "vNPP_p",
                 h1('NPP assessment results'),
                 h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
@@ -754,6 +696,7 @@ callmzRAPP <- function(){
 
   server <- function (input, output, session) {
 
+
     output$Readme_op <- renderUI({
     htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
     })
@@ -822,6 +765,43 @@ callmzRAPP <- function(){
         return(file)
       }
     })
+
+    observeEvent(input$Skyline_export, {
+
+
+      benchmark_data <- isolate(benchmark_data())
+        benchmark_data <- benchmark_data$PCal
+
+        if(input$Sky_add == TRUE){
+          benchmark_data <- benchmark_data[adduct == main_adduct]
+        }
+        if(input$Sky_iso == TRUE){
+          benchmark_data <- benchmark_data[isoab == 100]
+        }
+
+        SkyTranList <- SkylineTransitionList(benchmark_data)
+        SkyPeakBo <- SkylinePeakBoundaries(benchmark_data)
+
+        cat(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' \nand set 'Precursor mass analyzer' to 'Centroided' and ",
+                   "Mass Accuracy to ", round(max(benchmark_data$peaks.mz_span_ppm) / 2, 1), " ppm. \nAlso make sure that 'Isotope peaks included:' is set to 'Count' and 'Peaks:' to '1'. \n",
+                   "On the bottom of the window you should check 'Include all matching scans'.\n",
+                   "Then go to 'Skyline -> Settings -> Transition Settings -> Filter' and make sure Ion types is set to 'p'.\n",
+                   "\nYou can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'.\n",
+                   "\nAfterwards you can import in your mzML files via 'File -> Import -> Results.' Make sure you that you do \nnot allow Skyline to change the names of files if asked.\n",
+                   "\nFinally peak boundaries can be importet via 'Skyline -> File -> Import -> Peak Boundaries...'"),
+            file="Skyline_Instructions_For_Import.txt",sep="\n")
+
+        sendSweetAlert(session,
+                       title = 'Files exported',
+                       text = paste0('The Skyline Transition list and peak boundaries have been exported as csv files to your current working directoy (', getwd(), ').
+                                     Also a txt file with instructions on how to import those files in Skyline and how to set parameters was exported to the same directory.'),
+                       type = 'success',
+                       closeOnClickOutside = FALSE,
+                       showCloseButton = TRUE)
+
+    })
+
+
     #Comparison
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
@@ -877,7 +857,13 @@ callmzRAPP <- function(){
     observe({options_file()})
 
     observeEvent(input$generate_benchmark, {
+
+      shinyjs::disable("generate_benchmark")
+
       tryCatch({
+
+
+
         #Get Files from reactives
         #mzML
         if(is.null(mzML_files()) || length(mzML_files()) == 0){
@@ -1016,10 +1002,6 @@ callmzRAPP <- function(){
 
                      }) #End of With Progress
 
-        SkyTranList <- SkylineTransitionList(PCal)
-
-        SkyPeakBo <- SkylinePeakBoundaries(PCal)
-
         benchmark_data(list(files = files, targets = targets, PCal = PCal))
 
         endtime <- Sys.time()
@@ -1032,12 +1014,14 @@ callmzRAPP <- function(){
         sendSweetAlert(session,
                        title = 'Benchmark generated',
                        text = paste0('Benchmark geneneration has been finished in ', round(proc.time, 0), ' min. The output has been saved to your
-                                  working directory as ', getwd(), '/Peak_list.csv). It can be inspected by importing it to Skyline with the instructions
+                                  working directory as ', getwd(), '/Peak_list.csv. It can be inspected by importing it to Skyline with the instructions
                                      printed in the R console or directly used for reliability assessment of a no-targeted processing run in the section
                                      "Setup NPP assessment"'),
                        type = 'success',
                        closeOnClickOutside = FALSE,
                        showCloseButton = TRUE)
+
+        shinyjs::enable("generate_benchmark")
 
         updateTabsetPanel(session, "sbmenu",selected = "vBM_p")
 
