@@ -21,7 +21,6 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     feat_t <- comparison_data[["feature_table"]]
     feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
     BM_bu <- rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_b_table), fill = TRUE)
-    #BM_bu <- na.omit(BM_nu, by = var)
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
     feat_t <- feat_t[main_feature == TRUE]
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
@@ -42,7 +41,6 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
   } else if(post_alignment == FALSE){
 
     f_nf_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-    #f_nf_dt <- na.omit(f_nf_dt, by = var)
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }
@@ -93,8 +91,8 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     df_bin <- as.data.table(df_bin)
     df_bin <- na.omit(df_bin)
     df_bin <- df_bin[df_bin[, .(MAXn = max(n)), by = var], on = .(var)]
-    #df_bin <- df_bin[MAXn>=10]
-    ###add zeros
+
+    #add zeros
     df_tmp <- df_bin
 
     df_tmp$dpl <- duplicated(df_tmp$var)
@@ -133,7 +131,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
         scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")
     )
-    plot_dist <- t %>% add_trace(x=~var,
+    plot_dist <- t %>% plotly::add_trace(x=~var,
                                  y =~no_pct,
                                  line = list(color = 'rgb(0, 0, 0)'),
                                  marker = list(color = 'rgb(0, 0, 0)'),
@@ -143,11 +141,9 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
                                  inherit = FALSE,
                                  mode = 'lines+markers',
                                  type = "scatter")%>%
-      layout(yaxis2 = list(
-        #tickfont = list(size=11.7),
+      plotly::layout(yaxis2 = list(
         titlefont=list(size=14.6),
         overlaying = "y",
-        #nticks = 5,
         side = "right",
         title = "found peaks [%]"
       ),

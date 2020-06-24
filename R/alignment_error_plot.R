@@ -42,8 +42,6 @@ suppressWarnings(
 
   dt_for_error_count <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
-  tt <<- dt_for_error_count
-
   error_count <- count_alignment_errors(dt_for_error_count, get_main_UT_groups(dt_for_error_count))[1]
 
   p <- ggplot(dt, aes(x = as.character(sample_name_b),

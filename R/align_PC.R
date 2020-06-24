@@ -9,7 +9,6 @@
 #'
 #' @return
 #' @export
-#' @import foreach
 #'
 #'
 #'

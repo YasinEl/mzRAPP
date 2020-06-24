@@ -16,7 +16,6 @@
 #' @param Min.Res At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as seperate peaks
 #'
 #'
-#' @import foreach
 #' @return data table with peak variables extracted from found peaks.
 #' @export
 

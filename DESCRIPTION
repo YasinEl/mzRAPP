@@ -16,21 +16,20 @@ Depends:
     shinydashboard,
     shiny,
     shinyWidgets,
-    plotly,
     dplyr,
-    doFuture,
     bit64
 biocViews:
 Imports:
     shinybusy,
+    plotly,
     tcltk,
+    doFuture,
     hutils,
     DT,
     tools,
     retistruct,
     xcms,
     enviPat,
-    plotly,
     stats,
     parallel,
     doBy,
@@ -48,4 +47,5 @@ Imports:
     knitr
 Suggests: 
     rmarkdown
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr

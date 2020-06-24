@@ -124,7 +124,7 @@ op <- op[, c("molecule", "adduct", "isoab") := tstrsplit(identity, "___", fixed=
 
 
 
-op2 <- dcast(op, rn + identity + molecule + adduct + isoab ~ abu, value.var = c("p adj", "fc"), fun = mean)
+op2 <- dcast(op, rn + identity + molecule + adduct + isoab ~ abu, value.var = c("p adj", "fc"), fun.aggregate = mean)
 
 
 op2[, c("signi_b", "signi_ug", "signi_g") := .(sum(`p adj_benchmark` < 0.05) > 0, any(`p adj_NPP_ug` < 0.05), any(`p adj_NPP_g` < 0.05)),

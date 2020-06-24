@@ -9,7 +9,6 @@
 #' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)
 #' @param plan see \code{\link{plan}}
 #'
-#' @import foreach
 #'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export
