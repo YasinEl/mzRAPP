@@ -147,6 +147,6 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
     theme(legend.title = element_blank())
 
 
-  return(ggplotly(p, tooltip = c("molecule", "adduct", "isoab", "sample", "Pred_error"), dynamicTicks = "y", source = "IRbias"))
+  return(plotly::ggplotly(p, tooltip = c("molecule", "adduct", "isoab", "sample", "Pred_error"), dynamicTicks = "y", source = "IRbias"))
 
 }

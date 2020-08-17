@@ -62,7 +62,7 @@ plot_Peak  <- function(PC, IndexNumber){
   }
 
 
-  ggplotly(p)
+  plotly::ggplotly(p)
 }
 
 #' plot_Peak_with_predicted_peak
@@ -340,7 +340,7 @@ plot_IR_peaks  <- function(PC, plotly_key){
              color="blue") +
     facet_wrap(~lab)
 
-  subplot(ggplotly(p_hi, dynamicTicks = TRUE), ggplotly(p_li, dynamicTicks = TRUE))
+  plotly::subplot(plotly::ggplotly(p_hi, dynamicTicks = TRUE), plotly::ggplotly(p_li, dynamicTicks = TRUE))
 
 
 }

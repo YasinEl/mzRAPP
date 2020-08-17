@@ -1,0 +1,204 @@
+---
+title: "NPP assessment - Report"
+subtitle: "(this report was automatically generated via mzRAPP)"
+output: html_document
+params:
+  comp_d: NA
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+result_list <- generate_results_text(params$comp_d)
+```
+
+Assessment of non targeted data pre-processing (NPP) was performed via mzRAPP (version 1.0). mzRAPP is based on user provided manually curated information on a number of chromatographic peaks with known molecular composition which is then automatically checked and extended in order to generate a benchmark data set (BM). This BM is then applied as reference to the NPP output in order to extract a number of performance metrics for the overall NPP output as well as individual steps. Additional information on the underlying processes are provided [here](https://github.com/YasinEl/mzRAPP).
+<br>
+<br>
+
+# NPP performance metrics
+Different NPP performance metrics are assessed automatically via mzRAPP. During the evaluation process mzRAPP is considering a multitude of orthogonal information for benchmark generation as well as for determination of NPP performance metrics. This is done in order to avoid relying completely on user provided or mzRAPP-generated information. 
+
+<div class = "row">
+<div class = "col-md-6">
+<br>
+<br>
+<br>
+<b><p style="font-size:25px">Peak/feature detection</p></b>
+Peaks recovered from the benchmark after the step of peak picking (inner donut) and peak alignment (outer donut). Peaks appearing only after alignment could be due to filling gaps, errors in NPP peak alignment, or differences in peak matching between benchmark and NPP output after alignment.
+[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+dt_peak_presence <- data.table(metrics = c("Found_peaks_pp", "Found_peaks_al"),
+                               values = c(paste0(result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
+                                            "/",
+                                            result_list[["Benchmark"]][["BM_peaks"]],
+                                            " (", round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", 
+                                          round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
+                                            "%)"),
+                                          paste0(result_list[["After_alignmnet"]][["Found_peaks"]][["count"]],
+                                            "/",
+                                            result_list[["Benchmark"]][["BM_peaks"]],
+                                            " (",
+                                            round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", 
+                                          round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
+                                            "%)"))
+                               )
+
+
+kableExtra::kable(dt_peak_presence) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = FALSE, position="left")
+```
+</div>
+<div class = "col-md-6">
+```{r message=FALSE, warning=FALSE, echo=FALSE, out.width="90%", out.height="20%"}
+plot_sunburst_peaks(result_list, params$comp_d)
+```
+</div>
+</div>
+
+<div class = "row">
+<div class = "col-md-6">
+<br>
+<br>
+<br>
+<b><p style="font-size:25px">Peak/feature quality</p></b>
+The quality of reported NPP peak abundances is assessed via the increase of the isotopic ratio (IR) bias relative to the IR bias of the BM. The inner donut corresponds to IRs calculated from abundances reported after peak picking, the outer donut to abundances after alignment. Changes of IR qualities downstream of peak picking can be due to errors in peak alignments (see below).
+[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+dt_peakQual <- data.table(metrics = c("IR_bias>20%_pp", "IR_bias>20%_al"),
+                          values = c(paste0(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
+                                            "/",
+                                            result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] +
+                                       result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_below20pp"]],
+                                            " (",
+                                     round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 
+                                           1), " - ",
+                                     round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 
+                                           1), "%)"),
+                                     paste0(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
+                                            "/",
+                                            result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + 
+                                       result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]],
+                                            " (",
+                                     round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 
+                                           1), " - ",
+                                     round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 
+                                           1), "%)")
+                                     )
+                          )
+
+
+kableExtra::kable(dt_peakQual) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = FALSE, position="left")
+```
+</div>
+
+<div class = "col-md-6">
+```{r message=FALSE, warning=FALSE, echo=FALSE, out.width="90%", out.height="20%"}
+plot_sunburst_peakQuality(result_list, params$comp_d)
+```
+</div>
+</div>
+
+<div class = "row">
+<div class = "col-md-6">
+<br>
+<br>
+<br>
+<b><p style="font-size:25px">Peak alignment</p></b>
+The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number of errors by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way alignment errors in the benchmark do not affect this count. The number of additional benchmark divergences which can not be verified via isotopologues is also shown. However, its accuracy depends on the correct (user provided) alignment of the benchmark data set. "Lost peaks" are those which have been detected with a specific area before alignment, but the same peak (with the same area) is not present anymore after alignment.
+[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+dt_alignment <- data.table(metrics = c("Lost_peaks", "Min._errors", "BM divergences"),
+                           values = c(paste0(result_list[["Alignmnet"]][["Lost_b.A"]][["count"]],
+                                            " (", round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"),
+                                      paste0(result_list[["Alignmnet"]][["Min.Errors"]][["count"]],
+                                            " (", round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)"),
+                                      paste0(result_list[["Alignmnet"]][["BM_divergences"]][["count"]],
+                                            " (", round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)")
+                                      )
+                           )
+
+kableExtra::kable(dt_alignment) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = FALSE, position="left")
+```
+</div>
+
+<div class = "col-md-6">
+```{r message=FALSE, warning=FALSE, echo=FALSE, out.width="90%", out.height="20%"}
+plot_sunburst_alignment(result_list)
+```
+</div>
+</div>
+
+
+# Generated benchmark
+Key metrics of the mzRAPP generated benchmark are summarized in the following. 
+<div class = "row">
+<div class = "col-md-4">
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+bm <- rbindlist(list(params$comp_d$c_table, params$comp_d$nf_b_table), fill = TRUE, use.names = TRUE)
+
+dt_benchmark <- data.table(metrics = c("molecule count", "sample count", "peak count", "med_scan_acqu._rate [1/s]"),
+                           values = c(round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE]$molecule_b)), 0),
+                                      round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE]$sample_name_b)),0),
+                                      round(nrow(bm[Split_peak == FALSE & main_peak == TRUE]),0),
+                                      round(median(bm[Split_peak == FALSE & main_peak == TRUE & 
+                                                  !is.na(peaks.data_rate_b)]$peaks.data_rate_b), 1)
+
+                                      ))
+
+
+kableExtra::kable(dt_benchmark) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = FALSE, position="left")
+```
+</div>
+
+<div class = "col-md-8">
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+subplot(plot_bench_histo(benchmark_data = params$comp_d, 
+                         var = "peak_height_b", 
+                         choice_vector_bench = c(log10_peak_height = "peak_height_b"), 
+                         post_comp = TRUE,
+                         color = "blue"), 
+        plot_bench_histo(benchmark_data = params$comp_d , 
+                         var = "ErrorRel_A_b", 
+                         choice_vector_bench = c(peak_IR_bias = "ErrorRel_A_b"), 
+                         post_comp = TRUE,
+                         color = "orange"),
+        plot_bench_histo(benchmark_data = params$comp_d , 
+                         var = "peaks.PpP_b", 
+                         choice_vector_bench = c(scans_per_peak = "peaks.PpP_b"), 
+                         post_comp = TRUE,
+                         color = "green"),
+        plot_bench_histo(benchmark_data = params$comp_d , 
+                         var = "peaks.FW50M_b", 
+                         choice_vector_bench = c(peak_FWHM = "peaks.FW50M_b"), 
+                         post_comp = TRUE,
+                         color = "red"), 
+        plot_bench_histo(benchmark_data = params$comp_d , 
+                         var = "peaks.mz_accuracy_ppm_b", 
+                         choice_vector_bench = c(peak_mz_accuracy = "peaks.mz_accuracy_ppm_b"), 
+                         post_comp = TRUE,
+                         color = "gray"), 
+        plot_bench_histo(benchmark_data = params$comp_d , 
+                         var = "peaks.mz_span_ppm_b", 
+                         choice_vector_bench = c(peak_mz_precision = "peaks.mz_span_ppm_b"), 
+                         post_comp = TRUE,
+                         color = "black"), 
+        nrows = 3,
+        shareY = TRUE) %>%
+    layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+```
+</div>
+</div>
+
+
+
+

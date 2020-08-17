@@ -167,7 +167,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                              mz_end_b_temp >= mz_ug_temp),
                               allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
-  #Find Peaks inside of benchmark bounderies
+  #Find Peaks inside of benchmark boundaries
   split_middle_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
                                               new_rt_start_b_temp <= rt_start_ug_temp,
                                               new_rt_end_b_temp >= rt_end_ug_temp,
@@ -267,7 +267,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   ali_error_table <-
     rbindlist(list(c_table, nf_b_table), fill = TRUE)
-print("alignmenttest start")
+
   if('peak_area_rounded_ug' %in% colnames(ali_error_table)){
     ali_error_table <- ali_error_table[, 'peak_area_ug' := peak_area_rounded_ug]
   }
@@ -289,12 +289,6 @@ print("alignmenttest start")
     ali_error_table <- setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
 
   }
-  print("alignmenttest end")
-  print('Start FF Compare')
-  print(nrow(g_table))
-  #if(nrow(g_table) > 0){
-
-
 
 
   #Generate feature table
@@ -334,6 +328,15 @@ print("alignmenttest start")
                            sample_name_b = c_table[["sample_name_b"]]))
   feature_table <- dt_n[tmp, on = .(sample_id_b)]
 
+  ug_info <- rbindlist(list(c_table, nf_b_table), fill = TRUE, use.names = TRUE)
+
+  feature_table <-
+  feature_table[!is.na(area_b)][ug_info[, c("molecule_b",
+                                            "adduct_b",
+                                            "isoab_b",
+                                            "sample_name_b",
+                                            "peak_area_ug")],
+                                on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
     } else {
 
@@ -342,7 +345,9 @@ print("alignmenttest start")
                                                                           "max_rt_end", "main_feature", "sample_id_b", "area_g", "area_b",
                                                                           "sample_name_b"))
       ff_table_dt <- data.table(NULL)
-      }
+    }
+
+
 
   #Generate Random and systematic error DT
   rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)

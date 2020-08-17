@@ -8,6 +8,11 @@
 #' @examples
 clean_peak_assignments <- function(Input_table){
 
+  if(nrow(Input_table) < 1){
+    return(Input_table)
+
+  }
+
   Depl_table <- Input_table
   Depl_table$IDX <- seq.int(nrow(Depl_table))
   dpl_peaks <- hutils::duplicated_rows(Depl_table, by = c("peaks.rt_raw",

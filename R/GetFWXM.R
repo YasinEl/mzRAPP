@@ -25,9 +25,13 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
   tl <- rle(Int_vect > gw)
   l <- tl[["lengths"]]
   v <- tl[["values"]]
+
   dt <- data.table(idx = seq(1:length(l)),
                    l = l,
                    v = v)
+
+  if(nrow(dt[v == TRUE]) == 0 || max(dt[v == TRUE]$l) < 4){return(NA_real_)}
+
   main_peak <- dt[v == TRUE & l == max(dt[v == TRUE]$l)]$idx[1]
   IntSec1 <- NA
   IntSec2 <- NA

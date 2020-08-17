@@ -57,7 +57,6 @@ findBenchPeaks <- function(files,
   }
 
 
-
   CompCol <-
     na.omit(CompCol_all,
             cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
@@ -77,7 +76,7 @@ findBenchPeaks <- function(files,
   Output <-
     foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
             .packages = c("mzRAPP", "data.table")) %dopar% {
-   #                       for(file in 1:nrow(unique(CompCol[, "FileName"]))){
+#                          for(file in 1:nrow(unique(CompCol[, "FileName"]))){
 
 
               ##################################
@@ -102,16 +101,16 @@ findBenchPeaks <- function(files,
               for (adduct.run in c("main_adduct", "screen_adducts")) {
                 for (iso.run in c("MAiso", "LAisos")) {
 
-#print(adduct.run)
+                  #print(adduct.run)
                   #print(iso.run)
-                  #print(head(MA.Isos))
+
+
                   Bureau <- NULL
                   if(adduct.run == "main_adduct" & iso.run == "MAiso" | nrow(MA.Isos) > 0 & "peaks.PpP" %in% colnames(MA.Isos)){
                     .CompCol_xic <- Limit_Target_list(CompCol, MA.Isos, iso.run, adduct.run, files[file], Min.PointsperPeak)
                   } else .CompCol_xic <- data.table(NULL)
 
 
-#print(nrow(.CompCol_xic))
                   if(nrow(.CompCol_xic) > 0){
                     #print("something")
                     ##################################
@@ -142,7 +141,8 @@ findBenchPeaks <- function(files,
                     #apply peak detection and evaluation to all EICs; Output is stored in Bureau
                     ##################################
                     Bureau <-
-                    future.apply::future_lapply(seq(length(.ChromData)), function(i,
+                    #future.apply::future_lapply(seq(length(.ChromData)), function(i,
+                      lapply(seq(length(.ChromData)), function(i,
                                                                CompCol_xic = .CompCol_xic,
                                                                raw_data = .raw_data,
                                                                ChromData = .ChromData) {
@@ -171,12 +171,15 @@ findBenchPeaks <- function(files,
                         Drawer_fill[["molecule"]] <- CompCol_xic[i]$molecule
                         Drawer_fill[["adduct"]] <-  CompCol_xic[i]$adduct
                         Drawer_fill[["isoab"]] <- CompCol_xic[i]$isoab
-                        Drawer_fill[["user.rt"]] <- CompCol_xic[i]$user.rt
+
+                          Drawer_fill[["user.rt"]] <- if("user.rt" %in% colnames(CompCol_xic)){CompCol_xic[i]$user.rt}else{NA}
+
                         Drawer_fill[["FileName"]] <- raw_data@phenoData@data[["sample_name"]]
                         Drawer_fill[["Grp"]] <- raw_data@phenoData@data[["sample_group"]]
                         Drawer_fill[["RT.v"]] <- paste(as.character(unname(ChromData[[i]]@rtime)), collapse = ",")
                         Drawer_fill[["Intensities.v"]] <- paste(as.character(unname(ChromData[[i]]@intensity)), collapse = ",")
-
+                        #print( Drawer_fill[["molecule"]])
+                        #print( Drawer_fill[["FileName"]])
                         ##################################
                         #prepare table with smoothed and spike depleted EICs
                         ##################################
@@ -239,7 +242,7 @@ findBenchPeaks <- function(files,
                             #automatic boundary imputation
                             if(manual_bound == FALSE){
                               l.peaks <- cutout_peaks(
-                                int = EIC.dt[!is.na(int_wo_spikes)]$int_smooth,
+                                int = EIC.dt[!is.na(int_wo_spikes)]$int,
                                 rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
                                 Min.PpP = Min.PointsperPeak,
                                 peak.spotting.factor. = peak.spotting.factor,
@@ -278,7 +281,7 @@ findBenchPeaks <- function(files,
                               M0.grp = M0_peaks$peaks.M0.grp, #ifelse(iso.run == "LAisos", paste0(M0_peaks$peaks.M0.grp), NA),
                               #main_adduct.grp = NA, #ifelse(iso.run == "MAiso", M0_peaks$peaks.main_adduct.grp, NA),
                               MoreArgs = list(
-                                int = EIC.dt[!is.na(int_wo_spikes)]$int_smooth,
+                                int = EIC.dt[!is.na(int_wo_spikes)]$int,
                                 rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
                                 Min.PpP = Min.PointsperPeak,
                                 peak.spotting.factor. = peak.spotting.factor,
@@ -304,23 +307,25 @@ findBenchPeaks <- function(files,
                               #get start and end time for detected peaks and add them to the table
                               ##################################
 
+                              Integration_baseL_factor_set <- Integration_baseL_factor
                               if (iso.run == "MAiso" & adduct.run == "main_adduct" & manual_bound == TRUE){
-#print(l.peaks)
-                                l.peaks <- l.peaks[, StartTime := rtmin]
-                                l.peaks <- l.peaks[, EndTime := rtmax]
+                                #l.peaks <- l.peaks[, StartTime := rtmin]
+                                #l.peaks <- l.peaks[, EndTime := rtmax]
+                                Integration_baseL_factor_set <- 0.03
 
-                              } else{
+                              }
+
                                l.peaks <- l.peaks[l.peaks[, .(StartTime = GetFWXM(
                                      EIC.dt[rt >= rtmin &
                                               rt <= rtmax &
                                               !is.na(int_wo_spikes)]$rt,
                                      EIC.dt[rt >= rtmin &
                                               rt <= rtmax &
-                                              !is.na(int_wo_spikes)]$int_smooth,
+                                              !is.na(int_wo_spikes)]$int,
                                      min(EIC.dt[rt >= rtmin &
                                                   rt <= rtmax &
-                                                  !is.na(int_wo_spikes)]$int_smooth),
-                                     ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                                                  !is.na(int_wo_spikes)]$int),
+                                     ifelse(iso.run == "MAiso", Integration_baseL_factor_set, 0.03),
                                      peak_borders = TRUE
                                    )[1],
                                  EndTime = GetFWXM(
@@ -329,34 +334,43 @@ findBenchPeaks <- function(files,
                                             !is.na(int_wo_spikes)]$rt,
                                    EIC.dt[rt >= rtmin &
                                             rt <= rtmax &
-                                            !is.na(int_wo_spikes)]$int_smooth,
+                                            !is.na(int_wo_spikes)]$int,
                                    min(EIC.dt[rt >= rtmin &
                                                 rt <= rtmax &
-                                                !is.na(int_wo_spikes)]$int_smooth),
-                                   ifelse(iso.run == "MAiso", Integration_baseL_factor, 0),
+                                                !is.na(int_wo_spikes)]$int),
+                                   ifelse(iso.run == "MAiso", Integration_baseL_factor_set, 0.03),
                                    peak_borders = TRUE
                                  )[2]), by = .(idx)], on = .(idx)]
+
+
+                              #l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
+                              #l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
+
+
+                              l.peaks <- l.peaks[!is.na(StartTime) & !is.na(EndTime)]
+
+                              if(nrow(l.peaks) < 1){
+                                l.peaks <- NULL
+                                Drawer_fill[["peaks"]] <- l.peaks
+                                Drawer_closed <- data.frame(Drawer_fill, stringsAsFactors = FALSE)
+                                return(Drawer_closed)
                               }
-
-                              l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
-                              l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
-
-
+#print(l.peaks)
 
                               if(manual_bound == FALSE || sum(EIC.dt[rt > l.peaks$StartTime & rt < l.peaks$EndTime]$int) > 0){
                               ##################################
                               #get information on mz peaks for each chromatographic peak
                               ##################################
-                              l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i])
-
+                                #print("mzs")
+                              l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i], EIC.dt)
+#print("mze")
                               ##################################
                               #add additional variables for each chromatographic peak
                               ##################################
                               l.peaks <- Get_peak_vars(l.peaks, EIC.dt, CompCol_xic[i], l.peaks.mz_list, iso.run, adduct.run, manual_bound)
-
-
+#print("ve")
+#print(l.peaks)
                               }
-                              #print(l.peaks)
                             } else {
                               l.peaks <- NULL
                             }
@@ -364,11 +378,7 @@ findBenchPeaks <- function(files,
                           } else {
                             l.peaks <- NULL
                           }
-
                           Drawer_fill[["peaks"]] <- l.peaks
-
-                          #print(CompCol_xic[i]$molecule)
-                          #print(Drawer_fill)
                         }
                         Drawer_closed <- data.frame(Drawer_fill, stringsAsFactors = FALSE)
                         return(Drawer_closed)
@@ -378,14 +388,42 @@ findBenchPeaks <- function(files,
                   #first combine peaks from all compounds into one table then peaks from all adducts and isotopologues into one table
                   ##################################
                   if (iso.run == "MAiso") {
+                    #print("here")
+                    #why <<- Bureau
+
                     MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+
+                    #fwrite(MA.Isos, "maisos1.csv")
+#print("maisosstart")
+#print(colnames(MA.Isos))
+                    if(!("peaks.PpP" %in% colnames(MA.Isos))){
+                      MA.Isos[, peaks.PpP := 0]
+                    }
+
+                    if(!("peaks.mz_accuracy_ppm" %in% colnames(MA.Isos))){
+                      MA.Isos[, peaks.mz_accuracy_ppm := 5000]
+                    }
+#print("maisosstart2")
+#print(colnames(MA.Isos))
+
                     if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.PpP"  %in% colnames(MA.Isos)){
-                      MA.Isos <- clean_peak_assignments(MA.Isos[peaks.PpP >= Min.PointsperPeak & peaks.mz_accuracy_ppm < max.mz.diff_ppm])
+                      #print("maiso")
+                      #print("maisosstart3")
+                      #print(colnames(MA.Isos))
+                      MA.Isos <- MA.Isos[peaks.PpP >= Min.PointsperPeak & peaks.mz_accuracy_ppm < max.mz.diff_ppm]
+                      #print("maisosstart4")
+                      #print(colnames(MA.Isos))
+                      MA.Isos <- clean_peak_assignments(MA.Isos)
+                      #print("maisodone")
+                      #print(colnames(MA.Isos))
+                      #print(nrow(MA.Isos))
+                      #fwrite(MA.Isos, "testMAisos.csv")
                       }
                     if (adduct.run == "screen_adducts"){
                       if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct]
                     }
                   } else if (iso.run == "LAisos"){
+                    #whyLA <<- Bureau
                     LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
                     if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & c("peaks.cor_w_M0")  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
                                                                                                                               peaks.PpP >= Min.PointsperPeak &
@@ -407,13 +445,12 @@ findBenchPeaks <- function(files,
             }
 
   future::plan("sequential")
-
+#print("out")
 
 
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
-
-  #ttpp <<- Result
+  ttpp <<- Result
   #get rid of double isos
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
@@ -483,6 +520,18 @@ findBenchPeaks <- function(files,
 
   Result$IDX <- seq.int(nrow(Result))
 
+
+  if(any(duplicated(Result[, c("molecule", "isoab", "adduct", "FileName")]))){
+    Results_ia100 <- Result[isoab == 100]
+
+
+    Results_ia100 <- Results_ia100[, rt_diff := .(peaks.rt_raw - user.rt), by = .(molecule, adduct, isoab, FileName)]
+    Results_ia100 <- Results_ia100[, min_rt_diff := .(min(rt_diff)), by = .(molecule, adduct, isoab, FileName)]
+    Results_ia100 <- Results_ia100[rt_diff == min_rt_diff][, !c("rt_diff", "min_rt_diff")]
+
+    Result <- Result[Results_ia100[, c("molecule", "adduct", "FileName", "peaks.M0.grp")], on =.(molecule, adduct, FileName, peaks.M0.grp), nomatch = NULL]
+
+  }
 
   #print(colnames(Result))
 

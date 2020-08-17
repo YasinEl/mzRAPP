@@ -12,8 +12,9 @@ callmzRAPP <- function(){
   if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment(), package = "enviPat")}
 
   choice_vector_bench <- c(
-    'Retention time [sec]' = 'peaks.rt_raw',
+    'Retention time [s]' = 'peaks.rt_raw',
     'Points per peak' = 'peaks.PpP',
+    'Mean scan to scan time [s]' = 'peaks.data_rate',
     'Sharpness' = 'peaks.sharpness',
     'FW25M' = 'peaks.FW25M',
     'FW50M'= 'peaks.FW50M',
@@ -43,6 +44,7 @@ callmzRAPP <- function(){
   choice_vector_comp <- c(
     'Retention time [sec]' = 'rt_b',
     'Points per peak' = 'peaks.PpP_b',
+    'Mean scan to scan time [s]' = 'peaks.data_rate_b',
     'Sharpness' = 'peaks.sharpness_b',
     'FW25M' = 'peaks.FW25M_b',
     'FW50M'= 'peaks.FW50M_b',
@@ -113,7 +115,7 @@ callmzRAPP <- function(){
                   includeHTML(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
                 )
                 #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), seamless=NA)
-                ),
+        ),
         tabItem(tabName = "gBM_p",
                 fluidRow(
                   column(5,
@@ -244,19 +246,19 @@ callmzRAPP <- function(){
                 br(),
 
                 fluidRow(
-                column(7, offset = 1,
-                       h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks you can ",
-                                "click on the points in the scatter plot or export the benchmark to Skyline (button to the right) to get a more comprehensive overview. If you wish to adjust peak boundaries you have to repeat the benchmark ",
-                                "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') columns as described in the Readme (click the link below to get there).")),
-                       a("Click here for more information on how to proceed if you are not satisfied with the current benchmark dataset.", onclick = "openTab('Readme')", href="#vBMID")
-                ),
-                column(3,
-                       checkboxInput(inputId = 'Sky_add', label = 'Export only main adduct', value = TRUE, width = NULL),
-                       checkboxInput(inputId = 'Sky_iso', label = 'Export only most abundant isotopologue', value = TRUE, width = NULL),
-                        actionButton(inputId = 'Skyline_export',
-                                     label = HTML('Export Skyline Transition list<br/>and peak boundaries'),
-                                     width = '100%')
-                )),
+                  column(7, offset = 1,
+                         h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks you can ",
+                                  "click on the points in the scatter plot or export the benchmark to Skyline (button to the right) to get a more comprehensive overview. If you wish to adjust peak boundaries you have to repeat the benchmark ",
+                                  "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') columns as described in the Readme (click the link below to get there).")),
+                         a("Click here for more information on how to proceed if you are not satisfied with the current benchmark dataset.", onclick = "openTab('Readme')", href="#vBMID")
+                  ),
+                  column(3,
+                         checkboxInput(inputId = 'Sky_add', label = 'Export only main adduct', value = TRUE, width = NULL),
+                         checkboxInput(inputId = 'Sky_iso', label = 'Export only most abundant isotopologue', value = TRUE, width = NULL),
+                         actionButton(inputId = 'Skyline_export',
+                                      label = HTML('Export Skyline Transition list<br/>and peak boundaries'),
+                                      width = '100%')
+                  )),
 
 
 
@@ -274,7 +276,7 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
-                         fluidRow(column(12, plotlyOutput('graph_area_bench_overview') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+                         fluidRow(column(12, plotly::plotlyOutput('graph_area_bench_overview') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
                          fluidRow(
                            tags$style(HTML("#bench_overview_input_x+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
                            tags$style(HTML("#bench_overview_input_y+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
@@ -317,7 +319,7 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
-                         fluidRow(column(12,plotlyOutput('graph_area_bench_histo') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+                         fluidRow(column(12,plotly::plotlyOutput('graph_area_bench_histo') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
                          fluidRow(
                            tags$style(HTML("#select_bench_histo+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
                            column(8,
@@ -465,6 +467,24 @@ callmzRAPP <- function(){
                   infoBoxOutput("A_info"),
                   infoBoxOutput("F_info")
                 ),
+                br(),
+                fluidRow(
+                downloadButton("report", "Generate report"), align="center"
+                ),
+         #       fluidRow(
+         #         # A static infoBox
+         #         #infoBox("New Orders", 10 * 2, icon = icon("credit-card")),
+         #         # Dynamic infoBoxes
+         #         column(4,
+         #                plotly::plotlyOutput('sunburst_pp') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         ),
+         #         column(4,
+         #                plotly::plotlyOutput('sunburst_al') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         ),
+         #         column(4,
+         #                plotly::plotlyOutput('sunburst_ft') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         )
+         #       ),
                 h4(paste("For more details please check the interactive plots below.")),
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
                 br(),
@@ -496,7 +516,7 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
-                         fluidRow(column(12, plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+                         fluidRow(column(12, plotly::plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
                          fluidRow(
                            column(3,
                                   selectInput('overview_plot_input_x',
@@ -542,7 +562,7 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
-                         fluidRow(column(12,plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+                         fluidRow(column(12,plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
                          fluidRow(
                            column(8,
                                   selectInput('graph_select_input',
@@ -587,7 +607,7 @@ callmzRAPP <- function(){
                          #                     value = FALSE)
                          # )
                        ),
-                       fluidRow(column(12,plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
+                       fluidRow(column(12,plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
                 ),
 
 
@@ -634,8 +654,8 @@ callmzRAPP <- function(){
                            )
 
                          ),
-                         fluidRow(column(12,plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
-                         #fluidRow(column(12,plotlyOutput('graph_area_1')))
+                         fluidRow(column(12,plotly::plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
+                         #fluidRow(column(12,plotly::plotlyOutput('graph_area_1')))
                   ),
 
                 ),
@@ -672,7 +692,7 @@ callmzRAPP <- function(){
                   column(7,
                          fluidRow(
                            column(12,
-                                  plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+                                  plotly::plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
                            )),
                          fluidRow(
                            column(4, pickerInput('mol_a', 'Molecule', c(), options = list(`live-search`=TRUE))),
@@ -698,7 +718,7 @@ callmzRAPP <- function(){
 
 
     output$Readme_op <- renderUI({
-    htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
+      htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
     })
     #shinyjs::js$disableTab('benchmark_results')
     #shinyjs::js$disableTab('results_tab_features')
@@ -770,34 +790,34 @@ callmzRAPP <- function(){
 
 
       benchmark_data <- isolate(benchmark_data())
-        benchmark_data <- benchmark_data$PCal
+      benchmark_data <- benchmark_data$PCal
 
-        if(input$Sky_add == TRUE){
-          benchmark_data <- benchmark_data[adduct == main_adduct]
-        }
-        if(input$Sky_iso == TRUE){
-          benchmark_data <- benchmark_data[isoab == 100]
-        }
+      if(input$Sky_add == TRUE){
+        benchmark_data <- benchmark_data[adduct == main_adduct]
+      }
+      if(input$Sky_iso == TRUE){
+        benchmark_data <- benchmark_data[isoab == 100]
+      }
 
-        SkyTranList <- SkylineTransitionList(benchmark_data)
-        SkyPeakBo <- SkylinePeakBoundaries(benchmark_data)
+      SkyTranList <- SkylineTransitionList(benchmark_data)
+      SkyPeakBo <- SkylinePeakBoundaries(benchmark_data)
 
-        cat(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' \nand set 'Precursor mass analyzer' to 'Centroided' and ",
-                   "Mass Accuracy to ", round(max(benchmark_data$peaks.mz_span_ppm) / 2, 1), " ppm. \nAlso make sure that 'Isotope peaks included:' is set to 'Count' and 'Peaks:' to '1'. \n",
-                   "On the bottom of the window you should check 'Include all matching scans'.\n",
-                   "Then go to 'Skyline -> Settings -> Transition Settings -> Filter' and make sure Ion types is set to 'p'.\n",
-                   "\nYou can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'.\n",
-                   "\nAfterwards you can import in your mzML files via 'File -> Import -> Results.' Make sure you that you do \nnot allow Skyline to change the names of files if asked.\n",
-                   "\nFinally peak boundaries can be importet via 'Skyline -> File -> Import -> Peak Boundaries...'"),
-            file="Skyline_Instructions_For_Import.txt",sep="\n")
+      cat(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' \nand set 'Precursor mass analyzer' to 'Centroided' and ",
+                 "Mass Accuracy to ", round(max(benchmark_data$peaks.mz_span_ppm) / 2, 1), " ppm. \nAlso make sure that 'Isotope peaks included:' is set to 'Count' and 'Peaks:' to '1'. \n",
+                 "On the bottom of the window you should check 'Include all matching scans'.\n",
+                 "Then go to 'Skyline -> Settings -> Transition Settings -> Filter' and make sure Ion types is set to 'p'.\n",
+                 "\nYou can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'.\n",
+                 "\nAfterwards you can import in your mzML files via 'File -> Import -> Results.' Make sure you that you do \nnot allow Skyline to change the names of files if asked.\n",
+                 "\nFinally peak boundaries can be importet via 'Skyline -> File -> Import -> Peak Boundaries...'"),
+          file="Skyline_Instructions_For_Import.txt",sep="\n")
 
-        sendSweetAlert(session,
-                       title = 'Files exported',
-                       text = paste0('The Skyline Transition list and peak boundaries have been exported as csv files to your current working directoy (', getwd(), ').
+      sendSweetAlert(session,
+                     title = 'Files exported',
+                     text = paste0('The Skyline Transition list and peak boundaries have been exported as csv files to your current working directoy (', getwd(), ').
                                      Also a txt file with instructions on how to import those files in Skyline and how to set parameters was exported to the same directory.'),
-                       type = 'success',
-                       closeOnClickOutside = FALSE,
-                       showCloseButton = TRUE)
+                     type = 'success',
+                     closeOnClickOutside = FALSE,
+                     showCloseButton = TRUE)
 
     })
 
@@ -893,7 +913,7 @@ callmzRAPP <- function(){
         } else {
           targets <- fread(coi_file())
 
-          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC"), colnames(targets))
+          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC", "main_adduct"), colnames(targets))
           if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
 
 
@@ -955,7 +975,7 @@ callmzRAPP <- function(){
                        ###################################################
                        incProgress(1/15, detail = "detecting ROIs...")
                        print('Start ROI detection')
-
+                       fwrite(MassTraces, "MassTraces.csv")
 
                        rois <- getROIsForEICs(files = files,
                                               Target.table = MassTraces,
@@ -964,7 +984,7 @@ callmzRAPP <- function(){
                                               minCentroids = 4,#input$min_centroids_input,
                                               AccurateMZtol = input$accurate_MZ_tol_input
                        )
-
+                       fwrite(rois, "rois.csv")
                        ################################################
                        incProgress(3/15, detail = "detecting peaks...")
                        print('Start peak detection and evaluation')
@@ -977,19 +997,18 @@ callmzRAPP <- function(){
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
-
-
                        if(any(duplicated(PCbp[, c("molecule", "isoab", "adduct", "FileName")]))){
+                         warning("Duplicated peaks present")
+                         fwrite(PCbp, "pcbp.csv")
+                         #####################################################
+                         incProgress(10/15, detail = "aligning peaks over samples...")
+                         print('Start peak alignment')
 
-                       #####################################################
-                       incProgress(10/15, detail = "aligning peaks over samples...")
-                       print('Start peak alignment')
-
-                       PCal <- align_PC(PCbp[Iso_count > 1],
-                                        add = "main_adduct",
-                                        plan = input$plan_input,
-                                        pick_best = "rt_match"
-                       )
+                         PCal <- align_PC(PCbp[Iso_count > 1],
+                                          add = "main_adduct",
+                                          plan = input$plan_input,
+                                          pick_best = "rt_match"
+                         )
 
                        } else {
                          PCal <- PCbp
@@ -1092,14 +1111,15 @@ callmzRAPP <- function(){
     observeEvent({benchmark_data(); input$bench_overview_input_x; input$bench_overview_input_y; input$bench_overview_input_color}, {
       benchmark_data <- isolate(benchmark_data())
       if(!is.null(benchmark_data)){
-        output$graph_area_bench_overview <- renderPlotly(plot_bench_overview(benchmark_data, input$bench_overview_input_x, input$bench_overview_input_y, input$bench_overview_input_color, choice_vector_bench))
-        }
+        output$graph_area_bench_overview <- plotly::renderPlotly(plot_bench_overview(benchmark_data, input$bench_overview_input_x, input$bench_overview_input_y, input$bench_overview_input_color, choice_vector_bench))
+      }
     })
     #Benchmark historgramm plot
     observeEvent({benchmark_data(); input$select_bench_histo}, {
       benchmark_data <- isolate(benchmark_data())
       if(!is.null(benchmark_data)){
-        output$graph_area_bench_histo <- renderPlotly(plot_bench_histo(benchmark_data, input$select_bench_histo, choice_vector_bench))
+        output$graph_area_bench_histo <- plotly::renderPlotly(plot_bench_histo(benchmark_data, input$select_bench_histo, choice_vector_bench) %>%
+                                                                layout(legend = list(orientation = "h", x = 0.4, y = -0.2)))
       }
     })
 
@@ -1108,7 +1128,7 @@ callmzRAPP <- function(){
       benchmark_data <- isolate(benchmark_data())
       if(!is.null(benchmark_data)){
         plot_and_text <- plot_bench_heatmap(benchmark_data)
-        output$graph_area_bench_hm <- renderPlotly(plot_and_text$p)
+        output$graph_area_bench_hm <- plotly::renderPlotly(plot_and_text$p)
         output$results_text_b <- renderText(plot_and_text$t)
       }
     })
@@ -1141,19 +1161,19 @@ callmzRAPP <- function(){
     observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
       benchmark_data<-isolate(benchmark_data())
       if(!is.null(benchmark_data)){
-        output$graph_area_bench_peak_overview <- renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
-                                                                event_register('plotly_click'))
+        output$graph_area_bench_peak_overview <- plotly::renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
+                                                                        plotly::event_register('plotly_click'))
       }
     })
 
 
-    observeEvent(suppressWarnings(event_data("plotly_click", source = "bench_scatter", priority = "event")), {
+    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "bench_scatter", priority = "event")), {
 
       bm<-isolate(benchmark_data())
       bm <- bm[["PCal"]]
-      event.data <- suppressWarnings(event_data("plotly_click", source = "bench_scatter", priority = "event"))
+      event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "bench_scatter", priority = "event"))
       showModal(modalDialog(
-        renderPlotly({
+        plotly::renderPlotly({
           plot_Peak(bm, IndexNumber = event.data$key)
         })
       ))
@@ -1261,7 +1281,7 @@ callmzRAPP <- function(){
     observeEvent({comparison_data(); input$mol_c; input$add_c; input$ia_c},{
       comparison_data <- isolate(comparison_data())
       if (!is.null(comparison_data)){
-        output$graph_area_4 <- renderPlotly(plot_comp_peak_overview(comparison_data, input$mol_c, input$add_c, input$ia_c))
+        output$graph_area_4 <- plotly::renderPlotly(plot_comp_peak_overview(comparison_data, input$mol_c, input$add_c, input$ia_c))
       }
     })
 
@@ -1270,28 +1290,28 @@ callmzRAPP <- function(){
     observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$overview_plot <- renderPlotly(plot_comp_scatter_plot(comparison_data(),
-                                                                    input$overview_plot_input_x,
-                                                                    input$overview_plot_input_y,
-                                                                    input$overview_plot_input_col,
-                                                                    choice_vector_comp,
-                                                                    post_alignment = input$PP_al_switch_ov) %>%
-                                               event_register('plotly_click'))
+        output$overview_plot <- plotly::renderPlotly(plot_comp_scatter_plot(comparison_data(),
+                                                                            input$overview_plot_input_x,
+                                                                            input$overview_plot_input_y,
+                                                                            input$overview_plot_input_col,
+                                                                            choice_vector_comp,
+                                                                            post_alignment = input$PP_al_switch_ov) %>%
+                                                       plotly::event_register('plotly_click'))
       }
     })
 
 
-    observeEvent(suppressWarnings(event_data("plotly_click", source = "scatter", priority = "event")), {
+    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "scatter", priority = "event")), {
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
       CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
 
-        event.data <- suppressWarnings(event_data("plotly_click", source = "scatter", priority = "event"))
+      event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "scatter", priority = "event"))
 
       showModal(modalDialog(
-        renderPlotly({
+        plotly::renderPlotly({
           plot_Peak(CE_plot, IndexNumber = event.data$key)
         })
       ))
@@ -1302,9 +1322,9 @@ callmzRAPP <- function(){
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         if(input$PP_al_switch_hm_off == TRUE){
-          output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm))
+          output$graph_area_1 <- plotly::renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm))
         } else {
-          output$graph_area_1 <- renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm, disable_plot = TRUE))
+          output$graph_area_1 <- plotly::renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm, disable_plot = TRUE))
 
         }
       }
@@ -1314,32 +1334,32 @@ callmzRAPP <- function(){
     observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_3 <- renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp = choice_vector_comp, post_alignment = input$PP_al_switch_dist))
+        output$graph_area_3 <- plotly::renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp = choice_vector_comp, post_alignment = input$PP_al_switch_dist))
       }
     })
     #Isotopologe prediction error
     observeEvent({comparison_data()}, {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_area_2 <- renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = FALSE) %>%
-                                              event_register('plotly_click'))
+        output$graph_area_2 <- plotly::renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = FALSE) %>%
+                                                      plotly::event_register('plotly_click'))
       }
     })
 
 
     ####
 
-    observeEvent(suppressWarnings(event_data("plotly_click", source = "IRbias", priority = "event")), {
+    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event")), {
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
       #CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       #CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
-      event.data <- suppressWarnings(event_data("plotly_click", source = "IRbias", priority = "event"))
+      event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
       #tt <<- event.data
       print(event.data)
       showModal(modalDialog(
-        renderPlotly({
+        plotly::renderPlotly({
           plot_IR_peaks(CE_plot, plotly_key = event.data$key)
           #plot_ly(data.frame(x = c(rep('a', 10), rep('b', 10)),
           #                   y = c(rnorm(10), rnorm(10, 3, 1))), x = ~x, y = ~y, type = 'box')
@@ -1453,6 +1473,10 @@ callmzRAPP <- function(){
         })
 
 
+        #output$sunburst_pp <- plotly::renderPlotly(plot_sunburst_peaks(result_list, comparison_data))
+        #output$sunburst_al <- plotly::renderPlotly(plot_sunburst_peakQuality(result_list, comparison_data))
+        #output$sunburst_ft <- plotly::renderPlotly(plot_sunburst_alignment(result_list))
+
       }
     })
     #Alignment table
@@ -1460,7 +1484,7 @@ callmzRAPP <- function(){
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$error_count <- renderTable(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
-        }
+      }
     })
 
 
@@ -1485,14 +1509,38 @@ callmzRAPP <- function(){
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 | BM.div == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         updatePickerInput(session = session, inputId = 'add_a', choices = choices)
-        }
+      }
     })
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$graph_hm_split <- renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
+        output$graph_hm_split <- plotly::renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
     })
+
+    output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        tempReport <- file.path(system.file("md","mzRAPP_report_template.Rmd", package = "mzRAPP", mustWork = TRUE))
+        file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+        # Set up parameters to pass to Rmd document
+        params <- list(comp_d = comparison_data())
+
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv())
+        )
+      }
+    )
+
 
   }
 

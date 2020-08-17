@@ -14,11 +14,25 @@
 #' @examples
 Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound){
 
+  li_te <<- list(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound)
+
+  if(length(l.peaks) == 1){return(NULL)}
+
+  l.peaks <-
+  l.peaks[l.peaks[, .(pnts = length(EIC.dt[!is.na(int_wo_spikes) & rt >= StartTime & rt <= EndTime & int > 0]$int)), by = .(idx)]$pnts > 5]
+
+  if(nrow(l.peaks) < 1){return(NULL)}
+
+  l.peaks[, idx := seq(1:nrow(l.peaks))]
+
+
   suppressWarnings(
     l.peaks <- l.peaks[l.peaks[, .(
       PpP = sum(EIC.dt[!is.na(int_wo_spikes) &
                          rt >= StartTime &
-                         rt <= EndTime]$int > 0),
+                         rt <= EndTime]$int > 0.1 * max(EIC.dt[!is.na(int_wo_spikes) &
+                                                                 rt >= StartTime &
+                                                                 rt <= EndTime]$int)),
 
       mz_accurate = weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])),
 

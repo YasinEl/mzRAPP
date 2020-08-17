@@ -8,8 +8,13 @@
 #' @export
 #'
 #' @examples
-Get_MZ_list <- function(l.peaks, raw_data, CompCol_xic){
+Get_MZ_list <- function(l.peaks, raw_data, CompCol_xic, EIC.dt){
 
+
+  l.peaks <-
+    l.peaks[l.peaks[, .(pnts = length(EIC.dt[!is.na(int_wo_spikes) & rt >= StartTime & rt <= EndTime & int > 0]$int)), by = .(idx)]$pnts > 5]
+
+  if(nrow(l.peaks) < 1){return(NULL)}
 
   suppressWarnings(
     raw_data_lim <- raw_data %>%

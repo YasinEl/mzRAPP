@@ -174,7 +174,7 @@ op3$variable <- c("benchmark", "peak_picking", "aligned")[op3$variable]
 
 
 suppressWarnings(
-ggplotly(
+plotly::ggplotly(
   ggplot() +
     geom_point(data = op3[variable != "peak_picking" & lost == FALSE], aes(x = ifelse(fc < 0,
                                                                                       -log2(as.numeric(-fc)),

@@ -4,7 +4,13 @@
 \alias{plot_bench_histo}
 \title{plot_bench_histo}
 \usage{
-plot_bench_histo(benchmark_data, var, choice_vector_bench)
+plot_bench_histo(
+  benchmark_data,
+  var,
+  choice_vector_bench,
+  color = "blue",
+  post_comp = FALSE
+)
 }
 \arguments{
 \item{choice_vector_bench}{}
