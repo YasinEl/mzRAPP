@@ -1,19 +1,29 @@
 mzRAPP
 ================
 
-  - [Installation](#installation)
   - [Benchmark dataset generation](#benchmark-dataset-generation)
+      - [Select mzML files](#select-mzml-files)
+      - [Select sample-group file](#select-sample-group-file)
+      - [Select target file](#select-target-file)
+      - [Select instrument and
+        resolution](#select-instrument-and-resolution)
+      - [Setting parameters](#setting-parameters)
+      - [Starting benchmark generation](#starting-benchmark-generation)
+      - [How to edit the benchmark
+        dataset](#how-to-edit-the-benchmark-dataset)
   - [Reliability assessment of non-targeted data
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
       - [Exporting NPP outputs from different
         tools](#exporting-npp-outputs-from-different-tools)
+      - [Selecting a benchmark dataset and starting
+        assessment](#selecting-a-benchmark-dataset-and-starting-assessment)
   - [Matching between BM and NPP output
     (background)](#matching-between-bm-and-npp-output-background)
   - [Generation and interpretation of NPP performance
     metrics](#generation-and-interpretation-of-npp-performance-metrics)
       - [Found peaks](#found-peaks)
-      - [Missing peaks (h/l)](#missing-peaks-hl)
       - [Split peaks](#split-peaks)
+      - [Missing peaks (high/(high+low))](#missing-peaks-highhighlow)
       - [Degenerated IR](#degenerated-ir)
       - [Alignment errors](#alignment-errors)
 
@@ -33,51 +43,51 @@ molecules directly from mzML files. The resulting benchmark dataset is
 used to extract different performance measures for NPP performed on the
 same mzML files.
 
-## Installation
-
-You can install mzRAPP from [GitHub](https://github.com/) with:
-
-``` r
-if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
-devtools::install_github("YasinEl/mzRAPP")
-```
+<span id="sBM_readme"> </span>
 
 ## Benchmark dataset generation
 
-mzRAPP can be used via a shiny interface or via a set of functions. <br>
+In order to get started it is necessary to know retention times for a
+minimum of 50 compounds with known molecular formulas. mzRAPP applies
+this knowledge for the generation of a benchmark dataset from mzML
+files. This benchmark dataset is supposed to include a subset of all
+true peaks in those mzML files. All benchmark peak abundances are
+automatically validated via isotopic pattern (in peak area and height)
+and only compounds with at least two observed isotopologues are kept.
 
-<b>Via user interface:</b> <br>
+<br>
 
-Open mzRAPP as shiny app using:
+### Select mzML files
 
-``` r
-library(mzRAPP)
-callmzRAPP()
-```
+In order to generate a benchmark you need to provide your
+<b>centroided</b> mzML files. Conversion of files of different vendors
+to mzML as well as centroiding can be than by Proteowizards
+[MSconvert](http://proteowizard.sourceforge.net/tools.shtml).
 
-Following that you can go to the ‘Generate Benchmark’ panel of mzRAPP:
+<br>
 
-<h4>
+### Select sample-group file
 
-First:
+This csv file should contain two columns:
 
-</h4>
+<b>sample\_name:</b> names of all mzML files from which peaks should be
+extracted (with our without file extension (.mzML)) <br> <br>
+<b>sample\_group:</b> group labels of the respective samples
+(e.g. treated, untreated,..). If there is only one group this still
+needs to be filled out. <br> <br>
 
-In order to generate a benchmark you need to provide your centroided
-mzML files as well as two additional csv files. The <u><b>sample-group
-file</b></u> should contain two columns:
+<span id="vSetupTarget"> </span>
 
-<b>sample\_name:</b> names of all mzML files <br> <b>sample\_group:</b>
-group labels of the respective samples (e.g. treated, untreated,..) <br>
+### Select target file
 
-The <u><b>target file</b></u> should contain information on the target
-molecules:
+This csv file should contain information on the target molecules/peaks
+and include the following columns:
 
 <b>molecule:</b> names of target molecules (should be unique
-identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
-(e.g. M+H or M+Na). If more than one adduct is to be investigated
-another line with the same molecule name should be added. All adducts
-enabled in the enviPat package are allowed:
+identifiers) <br> <br> <b>adduct\_c:</b> adducts that should be
+evaluated (e.g. M+H or M+Na; without brackets). If more than one adduct
+is to be investigated another line with the same molecule name should be
+added. All adducts enabled in the enviPat package are allowed:
 
 ``` r
 library(enviPat)
@@ -104,128 +114,113 @@ adducts$Name
 
 <b>main\_adduct:</b> One main adduct has to be defined for each molecule
 (e.g. M+H). If the main\_adduct is not detected also other adducts wont
-be accepted. <br> <b>SumForm\_c:</b> Molecular composition of the
-neutral molecule (e.g. C10H15N5O10P2). <br> <b>StartTime.EIC:</b> Start
-time for chromatograms extracted for this molecule (seconds). <br>
+be accepted. <br> <br> <b>SumForm\_c:</b> Molecular composition of the
+neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
+0 behind an element like behind the N in C12H8N0S2. <br> <br>
+<b>StartTime.EIC:</b> Start time for chromatograms extracted for this
+molecule (seconds). Peaks are only detected from this time on. <br> <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this
-molecule (seconds). <br> <b>user.rtmin:</b> (optional) Start time of
-peak. This substitutes peak detection done by mzRAPP (seconds). <br>
+molecule (seconds). Peaks are only detected up to this time. <br> <br>
+<b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak
+detection done by mzRAPP (seconds). Although mzRAPP enables peak
+detection this is just like any other peak detection algorithm not
+without errors. It is therefore always the best way to import peak
+boundaries which have been manually evaluated. It is worth noting that
+peaks for which user.rtmin/user.rtmax are provided will still be
+rejected if the isotopic information is not fitting. <br> <br>
 <b>user.rtmax:</b> (optional) End time of peak. This substitutes peak
-detection done by mzRAPP (seconds). <br> <b>user.rt:</b> Retention time
-expected for this molecule. If multiple peaks are detected the peak
-closest to this time is chosen (seconds). <br> <b>FileName:</b>
-(optional) Name of sample file with or without extension. Using this
-different user.rt/rtmin/rtmax values can be used for each sample. <br>
+detection done by mzRAPP (seconds). <br> <br> <b>user.rt:</b> Retention
+time expected for this molecule. If multiple peaks are detected the peak
+closest to this time is chosen (seconds). This value is only applied if
+user.rtmin/user.rtmax are not provided and more than one peak has been
+detected by mzRAPP within StartTime.EIC and EndTime.EIC. <br> <br>
+<b>FileName:</b> (optional) Name of sample file with or without file
+extension. Using this different user.rtmin/user.rtmax values can be used
+for each sample. <br> <br> <b>Additional columns: </b> It is possible to
+add additional columns. Those will be kept for the final benchmark
+dataset. <br> <br>
 
-Afterwards the used <u><b>instrument and resolution</u></b> has to be
-selected. This is necessary in order to apply the correct mass
-resolution for any given m/z value. All instruments enabled via the
-enviPat package can be selected from the envipat resolution list. For
-other instruments a custom resolution list has to be uploaded as .csv
-file. This .csv file has to have two columns: <br> <b>R: </b> Resolution
-value at half height of a mass peak <br> <b>m/z: </b> m/z value for the
-correspondig resolution <br> Resolution values for at least 10 equally
-distributed m/z values are recommended.
+### Select instrument and resolution
 
-<h4>
+This is necessary in order to apply the correct mass resolution for any
+given m/z value when isotopologues are predicted for different molecular
+formulas. All instruments enabled via the enviPat package can be
+selected from the envipat resolution list. For other instruments a
+custom resolution list has to be uploaded as .csv file. This .csv file
+has to consist of two columns: <br> <b>R: </b> Resolution value at half
+height of a mass peak <br> <b>m/z: </b> m/z value for the correspondig
+resolution <br> Resolution values for at least 10 equally distributed
+m/z values are recommended.<br> <br>
 
-Second:
+### Setting parameters
 
-</h4>
+In a next step a few paramters have to be set: <br> <b>Lowest iso. to be
+considered \[%\]:</b> Lowest relative isotopologue abundance to be
+considered for each molecule (\>= 0.05). <br> <b>Min. \# of scans per
+peak:</b> Minimum number of points for a chromatographic peak to be
+considered as such. <br> <b>mz precision \[ppm\]:</b> Maximum spread of
+mass peaks in the mz dimension to be still considered part of the same
+chromatogram. <br> <b>mz accuracy \[ppm\]:</b> Maximum difference
+between the accurate mz of two ion traces to be considered to be
+originating from the same ion. <br> <b>Processing plan:</b> How should
+the benchmark generation be done? <u>sequential</u> (only using one
+core; often slow but does not use much RAM) or <u>multiprocess</u>
+(using multiple cores; faster but needs more RAM) <br> <br>
 
-In a next step a view paramters have to be set: <br> <b>Lowest iso. to
-be considered \[%\]:</b> Lowest relative isotopologue abundance to be
-considered for each molecule. <br> <b>Min. \# of scans per peak:</b>
-Minimum number of points for a chromatographic peak to be considered as
-such. <br> <b>mz precision \[ppm\]:</b> Maximum spread of mass peaks in
-the mz dimension to be still considered part of the same chromatogram.
-<br> <b>mz accuracy \[ppm\]:</b> Maximum difference between the accurate
-mz of two ion traces to be considered to be originating from the same
-ion. <br> <b>Processing plan:</b> How should the benchmark generation be
-done? <u>sequential</u> (only using one core; often slow but does not
-use much RAM) or <u>multiprocess</u> (using multiple cores; faster but
-needs more RAM) <br>
-
-<h4>
-
-Third:
-
-</h4>
+### Starting benchmark generation
 
 Benchmark generation can be started using the blue Start button. The
 necessary time for the generation depends on the number of mzML files,
 the number of target compounds and of course computational recources.
+Typically this process takes minutes to hours. Afterwards the generated
+benchmark dataset is automatically exported to the working directory as
+csv file.<br> <br>
 
-<h4>
+<span id="vBMID"> </span>
 
-Fourth:
+### How to edit the benchmark dataset
 
-</h4>
-
-Afterwards the generated benchmark dataset can be inspected in the “View
-Benchmark” panel. The plots in the first row can be used to inspect
-different qualities of the dataset. A molecule not being added does not
+An overview over different benchmark key data is provided in the “View
+Benchmark” panel. The plots can be used in order to inspect different
+qualities of the dataset. A molecule not being detected does not
 necessarily mean that there is no peak, but that mzRAPP was not able to
-validate it. This could be because no additional isotopologue
-(full-filling strict criteria in abundance and peak shape correlation)
-coule be detected. In order to have a closer look on benchmark peaks
-please use the exported Skyline transition list and peak boundaries.<br>
-<br> <b>Via R-functions:</b><br>
+validate it. This could happen if less than two isotopologues
+(full-filling strict criteria in abundance and peak shape correlation
+and number of points per peak) were detected as two isotopologues are
+required for each molecule in each file to be kept in the respective
+file. In order to get a better overview over picked peaks two csv files
+as well as instructions can be exported. Those can be used in order to
+generate a mirror image of the benchmark dataset in the free software
+[Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
+This is especially recommended if peak detection was performed
+automativally via mzRAPP (user.rtmin/user.rtmax have not been used in
+the target-csv file). Notably Skyline can also be used to adapt peak
+boundaries or add peaks which might have been missed by mzRAPP. However,
+it is only possible to make those adaptations for the most abundant
+isotopologue of the main\_adduct. Other peaks will always be detected
+automatically by mzRAPP within the boundaries of that main-peak.
+Afterwards a new target-csv file can be prepared as described above
+(using the columns user.rtmin, user.rtmax and FileName). Finally the
+benchmark generation has to be repeated with this adapted target
+file.<br>
 
-``` r
-library(mzRAPP)
+When the benchmark is satisfactory it can be used for reliabiliy
+assessment of non targeted data pre-processing as explained in the
+following chapter.
 
-#load necessary files into environment
-targets <- fread("PATH_TO_TARGET_MOLECULE_FILE/TARGETS.csv")
-grps <- fread("PATH_TO_SAMPLE_INFORMATION_FILE/SAMPLE_INFORMATION.csv")
-files <- list.files("PATH_TO_FOLDER_WITH_MZML_FILES", recursive = TRUE, full.names = TRUE, pattern=".mzML")
-
-#load resolution list of your choice from envipat package or via fread(Path.csv) from a .csv file
-data("resolution_list", package = "enviPat")
-mz_res_dependence_df <- resolution_list[["Q-Exactive,ExactivePlus_R70000@200"]]
-
-#generate table with mass traces
-MassTraces <- getMZtable(
-  targets,
-  instrumentRes = mz_res_dependence_df,
-)
-
-#genereate table with regions of interest
-rois <- getROIsForEICs(
-  files = files,
-  Target.table = MassTraces,
-  PrecisionMZtol = 8,
-  AccurateMZtol = 5
-)
-
-#generate table with peaks
-PCbp <- findBenchPeaks(
-  files = files,
-  Grps = grps,
-  CompCol = rois,
-  Min.PointsperPeak = 7
-)
-
-#reducing number of peaks to a maximum of 1 per mass trace and generating final benchmark dataset
-PCal <- align_PC(PCbp)
-```
-
-The generated benchmark can then be used to assess the reliability of
-non-targeted data pre-processing.
+<span id="sNPP_readme"> </span>
 
 ## Reliability assessment of non-targeted data pre-processing
-
-<b>Via user interface:</b> <br>
 
 Reliabiliy assessment of NPP can be set up in the panel “Setup NPP
 assessment”. First the tool to be evaluated has to be set. Afterwards
 the unaligned and aligned output files of the tools to be assessed have
 to be selected. The way those files can be exported from different tools
-are linde out in the following. <br>
+are lined out in the following. <br> <br>
 
 ### Exporting NPP outputs from different tools
 
-<br> <u>XCMS (R-version):</u>
+<u>XCMS (R-version):</u>
 
 ``` r
 #unaligned file:
@@ -265,64 +260,36 @@ algorithm make sure to set local\_rt\_range as well as local\_mz\_range
 to 0. You will have to check ‘Show advanced parameters’ to make those
 parameters visible. Also set report\_covex\_hulls to true. <br>
 unaligned file: \[Connect a TextExporter node with seperator set to ‘,’
-directly to the FeatureFinderMetabo node\] <br> aligned file: \[Connect
-a TextExporter node with seperator set to ‘,’ directly to the
-FeatureLinkerUnlabeledQT node\] <br> <br> <u>Compound Discoverer:</u>
-<br> unaligned file: \[go to panel “Features”\] -\> \[click in any row\]
--\> \[click “Show related Tables” on the bottom of the screen\] -\> \[go
-to panel “Chromatogram Peaks”\] -\> \[make sure the columns “Apex
-Intensity”, “Area”, “Study File ID”, “Left RT \[min\]”, “Right RT
-\[min\]” “Apex RT \[min\]” and “Apex m/z” are visible\] -\> \[right
-click any row\] -\> Export -\> As plain text… <br> aligned file:
-currently it is not possible to use aligned files from Compound
-Discoverer <br> <b>Selecting a benchmark dataset and starting
-assessment:</b><br> <br> Next the benchmark file has to be selected. If
-a benchmark has been created during this shiny session (the benchmark is
-still visible in the panel benchmark overview) the switch button “Use
-generated benchmark” can be clicked as an alternative. If you want to
-adapt mzRAPP to a tool/non-targeted output format other than those
-mentioned above this can be done by clicking the “Use generated options”
-switch button. The way those option files can be generated manually is
-described at the bottom of this readme. <br> <br> After performing those
-steps the assessment can be started via the blue “Start assessment
-button”. <br>
+directly to the FeatureFinderMetabo node\] -\> \[connect TextExporter to
+Output Folder\] <br> aligned file: \[Connect a TextExporter node with
+seperator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\>
+\[connect TextExporter to Output Folder\] <br> <br> <u>Compound
+Discoverer:</u> <br> unaligned file: \[go to panel “Features”\] -\>
+\[click in any row\] -\> \[click “Show related Tables” on the bottom of
+the screen\] -\> \[go to panel “Chromatogram Peaks”\] -\> \[make sure
+the columns “Apex Intensity”, “Area”, “Study File ID”, “Left RT
+\[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and “Apex m/z” are
+visible\] -\> \[right click any row\] -\> Export -\> As plain text… <br>
+aligned file: currently it is not possible to use aligned files from
+Compound Discoverer <br> <br>
 
-<b>Via R-functions:</b><br>
+### Selecting a benchmark dataset and starting assessment
 
-``` r
-library(mzRAPP)
+Next the benchmark file has to be selected. If a benchmark has been
+created during this shiny session (the benchmark is still visible in the
+panel benchmark overview) the switch button “Use generated benchmark”
+can be clicked as an alternative. <br> <br> After performing those steps
+the assessment can be started via the blue “Start assessment button”.
+<br>
 
-#set used algorith. Can be "XCMS", "msDial", "mzMine" or "CompoundDiscoverer"
-algo = "XCMS"
-
-#import generated benchmark dataset
-benchmark_list <- import_benchmark(file = "PATH_TO_BENCHMARK/Benchmark.csv", 
-                                   algo = algo
-                                   )
-#import genereated outputs from non-targeted tools 
-NToutputs <- pick_algorithm(ug_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_BEFORE_ALIGNMENT/UNALIGNED_OUTPUT.csv", 
-                            g_table_path = "PATH_TO_BENCHMARK_NTOUTPUT_AFTER_ALIGNMENT/ALIGNED_OUTPUT.csv", 
-                            options_table = benchmark_list$options_table, 
-                            algo = algo
-                            )
-
-#perform comparison
-comparison <- compare_peaks(b_table = NToutputs$b_table, 
-                            ug_table = NToutputs$ug_table, 
-                            g_table = NToutputs$g_table,
-                            algo = algo
-                            )
-```
-
-<hr>
-
-<br><span id="anchorid">Point to this anchor</span><br>
+<span id="Matching_peaks"> </span>
 
 ## Matching between BM and NPP output (background)
 
 Before any NPP-performance metrics can be generated mzRAPP is matching
-the NPP output files against the BM. The ways in which this is done are
-explained in the following.
+the non-targeted data pre-processing (NPP) output files against the
+benchmark (BM). The ways in which this is done are explained in the
+following.
 
 <h3>
 
@@ -331,23 +298,23 @@ Comparison of benchmark with non-targeted output
 </h3>
 
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
-Each benchmark peak (BP) is reported the smallest and highest mz value
-contributing to the chromatographic peak. In order to be considered as
-possible match for a BP a NT peak (NP) has to come with an mz value
-between those to values. Matching rules considering retention time (RT)
-are depicted in Figure 1. A NP has to cover the whole core of a BP while
-having a RT within the borders (RTmin, RTmax) of the BP. If only a part
-of the core is covered by a NP with its RT in the borders of the BP, the
-NP it is counted as a split peak. NPs which are not overlapping with the
-core of a BP are not considered. If there is more than one NP matching
-to a single BP, BPs corresponding to the same molecule but other
-isotopologues (IT) are considered to choose the NP leading to the
-smalles relative IT ratio bias (as compared to the predicted ratio; see
-figure 3) as compared to the predicted IT-ratio.
+Each benchmark peak (BP) is reported with the smallest and highest mz
+value contributing to the chromatographic peak. In order to be
+considered as possible match for a BP a NT peak (NP) has to come with an
+mz value between those two values. Matching rules considering retention
+time (RT) are depicted in Figure 1. A NP has to cover the whole core of
+a BP while having a RT within the borders (RTmin, RTmax) of the BP. If
+only a part of the core is covered by a NP with its RT in the borders of
+the BP, the NP it is counted as a split peak. NPs which are not
+overlapping with the core of a BP are not considered. If there is more
+than one NP matching to a single BP, BPs corresponding to the same
+molecule but other isotopologues (IT) are considered to choose the NP
+leading to the smalles relative IT ratio bias (as compared to the
+predicted ratio; see figure 3) as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="30%" height="50%" />
+<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="40%" height="50%" />
 
 <p class="caption">
 
@@ -365,7 +332,22 @@ considered benchmark feature, respectively. In case of multiple NF
 matching to the same BF the NF leading to smallest relative mean
 isotopologue ratio bias (as compared to the predicted ratio; see figure
 3) over all NPs is selected (only NPs in samples which are also
-populated by a BP are considered).
+populated by a BP are considered for the IT ratio bias calculation).
+<br>
+
+<b>Matching of non-targeted peaks to non-targeted features:</b> <br> In
+order to count alignment errors (explained below) it is necessary to
+trace non-targeted peaks (NP) reported before alignment in the
+non-targeted features (NF) of the aligned file. This is done by matching
+the exact area reported in an unaligned file on the same area in the
+aligned file. This generally works since areas usually do not change
+during alignment process. In rare exceptions (MS-DIAL) areas have to be
+rounded before comparisson. If a peak can not be detected in the aligned
+file but was detected in the unaligned file it is considered as being
+lost during the alignment process which is reported in one of the
+performance metrics (see below).
+
+<span id="MetricsID"> </span>
 
 ## Generation and interpretation of NPP performance metrics
 
@@ -395,62 +377,81 @@ above.<br>
 
 </div>
 
-### Missing peaks (h/l)
-
-The classification of not found peaks (as defined in figure 1) into high
-and low is done for each benchmark feature individually. It is based on
-the lowest benchmark peak present in the respective feature which has
-been found by the non-targeted algorithm. All benchmark peaks in this
-feature which have a benchmark area which is more than 1.5 times higher
-than the lowest found peak are considered as high. Otherwise they are
-considered as low.
-
 ### Split peaks
 
 The number of split peaks which have been found for all benchmark peaks.
-For a graphical explanation of a split peak please check figure 1. <br>
+For a graphical explanation of a split peak please check figure 1. It is
+worth noting that there can be more than one split peak per benchmark
+peak. <br>
 
-### Degenerated IR
+<span id="Missing_values"> </span>
 
-Isotopologue abundance rations (IR) are calculated relative to the
-highest isotopologue of each compound. If the relative bias of an IR
-calculated using NPP-abundances is exceeding the tolerance (outlined in
-figure 3) it is reflected in this variable.
+### Missing peaks (high/(high+low))
+
+The classification of not found peaks (NAs, as defined in figure 2) into
+high and low is done for each benchmark feature individually. It is
+based on the lowest benchmark peak present in the respective feature
+which has been found by the non-targeted algorithm. All benchmark peaks
+in this feature which have a benchmark area which is more than 1.5 times
+higher than the lowest benchmark peak found via the non-targeted
+approach are considered high. Otherwise they are considered as low.
 
 <div class="figure">
 
-<img src="inst/md/IR_tolerance.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Calculation of NPP abundance bias tolerance" width="50%" height="50%" />
+<img src="inst/md/Missing value graphic.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Diffentiation between classes of missing peaks/values" width="30%" height="50%" />
 
 <p class="caption">
 
-<b>Figure 3 | </b> Calculation of NPP abundance bias tolerance
+<b>Figure 3 | </b> Diffentiation between classes of missing peaks/values
 
 </p>
 
 </div>
 
+<span id="Peak_quality"> </span>
+
+### Degenerated IR
+
+Isotopologue abundance rations (IR) are calculated relative to the
+highest isotopologue of each molecule. If the relative bias of an IR
+calculated using NPP-abundances is exceeding the tolerance (outlined in
+figure 4) it is reflected in this variable.
+
+<div class="figure">
+
+<img src="inst/md/IR_tolerance.PNG" alt="\label{fig:figure4}&lt;b&gt;Figure 4 | &lt;/b&gt; Calculation of NPP abundance bias tolerance" width="50%" height="50%" />
+
+<p class="caption">
+
+<b>Figure 4 | </b> Calculation of NPP abundance bias tolerance
+
+</p>
+
+</div>
+
+<span id="Alignment_counting"> </span>
+
 ### Alignment errors
 
 Benchmark-critical counting counts the minimum number of alignment
 errors without relying on correct alignment of the benchmark dataset
-itself. Figure 4 shows three isotopologues (IT) of the same benchmark
-compound detected in 5 samples. The color coding indicates the feature
+itself. Figure 5 shows three isotopologues (IT) of the same benchmark
+molecule detected in 5 samples. The color coding indicates the feature
 the peak has been assigned to by the NPP aligorthm. Whenever there is an
 asymmetry in the assignment of the different IT the minimum number of
-steps to reverse that asymmetry is counted as errors. Benchmark-trustful
-counting is a different way of counting alignment errors, which assumes
-correct alignment of the benchmark dataset. Here simply the number of
-deviations between BM and NPP alignments is counted as errors. This kind
-of counting should only be done after visual inspection of the benchmark
-dataset. Per default benchmark-critical counting is applied.
+steps to reverse that asymmetry are counted as errors. Counting
+benchmark divergencies as errors, assumes correct alignment of the
+benchmark dataset. This kind of counting should only be done after
+visual inspection of the benchmark dataset. Both counts are given in the
+output of the NPP-assessment.
 
 <div class="figure">
 
-<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure4}&lt;b&gt;Figure 4 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
+<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure5}&lt;b&gt;Figure 5 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
 
 <p class="caption">
 
-<b>Figure 4 | </b> Counting alignment errors
+<b>Figure 5 | </b> Counting alignment errors
 
 </p>
 
@@ -458,9 +459,3 @@ dataset. Per default benchmark-critical counting is applied.
 
 <b>Overview plots:</b><br> <br> For explanations of the overview plots
 please click the blue question marks above the individual plots. <br>
-
-<b>Via R-functions:</b><br>
-
-``` r
-library(mzRAPP)
-```
