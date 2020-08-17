@@ -146,10 +146,14 @@ Key metrics of the mzRAPP generated benchmark are summarized in the following.
 bm <- rbindlist(list(params$comp_d$c_table, params$comp_d$nf_b_table), fill = TRUE, use.names = TRUE)
 
 dt_benchmark <- data.table(metrics = c("molecule count", "sample count", "peak count", "med_scan_acqu._rate [1/s]"),
-                           values = c(round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE]$molecule_b)), 0),
-                                      round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE]$sample_name_b)),0),
-                                      round(nrow(bm[Split_peak == FALSE & main_peak == TRUE]),0),
-                                      round(median(bm[Split_peak == FALSE & main_peak == TRUE & 
+                           values = c(round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE | 
+                                                               is.na(peak_area_ug)]$molecule_b)), 0),
+                                      round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE | 
+                                                               is.na(peak_area_ug)]$sample_name_b)),0),
+                                      round(nrow(bm[Split_peak == FALSE & main_peak == TRUE | 
+                                                               is.na(peak_area_ug)]),0),
+                                      round(median(bm[(Split_peak == FALSE & main_peak == TRUE | 
+                                                               is.na(peak_area_ug)) & 
                                                   !is.na(peaks.data_rate_b)]$peaks.data_rate_b), 1)
 
                                       ))
@@ -166,32 +170,38 @@ subplot(plot_bench_histo(benchmark_data = params$comp_d,
                          var = "peak_height_b", 
                          choice_vector_bench = c(log10_peak_height = "peak_height_b"), 
                          post_comp = TRUE,
-                         color = "blue"), 
+                         color = "blue",
+                         rm_NF_legend = FALSE), 
         plot_bench_histo(benchmark_data = params$comp_d , 
                          var = "ErrorRel_A_b", 
                          choice_vector_bench = c(peak_IR_bias = "ErrorRel_A_b"), 
                          post_comp = TRUE,
-                         color = "orange"),
+                         color = "orange",
+                         rm_NF_legend = TRUE),
         plot_bench_histo(benchmark_data = params$comp_d , 
                          var = "peaks.PpP_b", 
                          choice_vector_bench = c(scans_per_peak = "peaks.PpP_b"), 
                          post_comp = TRUE,
-                         color = "green"),
+                         color = "green",
+                         rm_NF_legend = TRUE),
         plot_bench_histo(benchmark_data = params$comp_d , 
                          var = "peaks.FW50M_b", 
                          choice_vector_bench = c(peak_FWHM = "peaks.FW50M_b"), 
                          post_comp = TRUE,
-                         color = "red"), 
+                         color = "purple",
+                         rm_NF_legend = TRUE), 
         plot_bench_histo(benchmark_data = params$comp_d , 
                          var = "peaks.mz_accuracy_ppm_b", 
                          choice_vector_bench = c(peak_mz_accuracy = "peaks.mz_accuracy_ppm_b"), 
                          post_comp = TRUE,
-                         color = "gray"), 
+                         color = "gray",
+                         rm_NF_legend = TRUE), 
         plot_bench_histo(benchmark_data = params$comp_d , 
                          var = "peaks.mz_span_ppm_b", 
                          choice_vector_bench = c(peak_mz_precision = "peaks.mz_span_ppm_b"), 
                          post_comp = TRUE,
-                         color = "black"), 
+                         color = "black",
+                         rm_NF_legend = TRUE), 
         nrows = 3,
         shareY = TRUE) %>%
     layout(legend = list(orientation = "h", x = 0.4, y = -0.2))

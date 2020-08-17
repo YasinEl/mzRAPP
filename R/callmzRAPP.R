@@ -1119,7 +1119,7 @@ callmzRAPP <- function(){
       benchmark_data <- isolate(benchmark_data())
       if(!is.null(benchmark_data)){
         output$graph_area_bench_histo <- plotly::renderPlotly(plot_bench_histo(benchmark_data, input$select_bench_histo, choice_vector_bench) %>%
-                                                                layout(legend = list(orientation = "h", x = 0.4, y = -0.2)))
+                                                                plotly::layout(legend = list(orientation = "h", x = 0.4, y = -0.2)))
       }
     })
 

@@ -9,7 +9,8 @@ plot_bench_histo(
   var,
   choice_vector_bench,
   color = "blue",
-  post_comp = FALSE
+  post_comp = FALSE,
+  rm_NF_legend = FALSE
 )
 }
 \arguments{

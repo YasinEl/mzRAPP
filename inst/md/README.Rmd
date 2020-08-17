@@ -28,7 +28,7 @@ The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-p
 
 ## Benchmark dataset generation
 
-In order to get started it is necessary to know retention times for a minimum of 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept.
+In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept.
 
 
 <br>
@@ -107,7 +107,7 @@ Benchmark generation can be started using the blue Start button. The necessary t
 ### How to edit the benchmark dataset
 An overview over different benchmark key data is provided in the "View Benchmark" panel. The plots can be used in order to inspect different qualities of the dataset. A molecule not being detected does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could happen if less than two isotopologues (full-filling strict criteria in abundance and peak shape correlation and number of points per peak) were detected as two isotopologues are required for each molecule in each file to be kept in the respective file. In order to get a better overview over picked peaks two csv files as well as instructions can be exported. Those can be used in order to generate a mirror image of the benchmark dataset in the free software [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view). This is especially recommended if peak detection was performed automativally via mzRAPP (user.rtmin/user.rtmax have not been used in the target-csv file). Notably Skyline can also be used to adapt peak boundaries or add peaks which might have been missed by mzRAPP. However, it is only possible to make those adaptations for the most abundant isotopologue of the main_adduct. Other peaks will always be detected automatically by mzRAPP within the boundaries of that main-peak. Afterwards a new target-csv file can be prepared as described above (using the columns user.rtmin, user.rtmax and FileName). Finally the benchmark generation has to be repeated with this adapted target file.<br>
 
-When the benchmark is satisfactory it can be used for reliabiliy assessment of non targeted data pre-processing as explained in the following chapter.
+When the benchmark is satisfactory it can be used for reliability assessment of non targeted data pre-processing as explained in the following chapter.
 
 
 <span id="sNPP_readme"> </span>
@@ -115,7 +115,7 @@ When the benchmark is satisfactory it can be used for reliabiliy assessment of n
  
 ## Reliability assessment of non-targeted data pre-processing
 
-Reliabiliy assessment of NPP can be set up in the panel "Setup NPP assessment". First the tool to be evaluated has to be set. Afterwards the unaligned and aligned output files of the tools to be assessed have to be selected. The way those files can be exported from different tools are lined out in the following. <br>
+Reliability assessment of NPP can be set up in the panel "Setup NPP assessment". First the tool to be evaluated has to be set. Afterwards the unaligned and aligned output files of the tools to be assessed have to be selected. The way those files can be exported from different tools are lined out in the following. <br>
 <br>
 
 ### Exporting NPP outputs from different tools
@@ -137,7 +137,7 @@ aligned file: select the same xcms3xset.Rda file <br>
 <br>
 <u>MS-DIAL:</u> <br>
 unaligned files: Export -> Peak list result -> [Add all files] -> [set Export format to txt] <br>
-aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequat). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
+aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequate). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
 <br>
 <u>mzMine:</u> <br>
 unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export/Import -> Export to CSV file -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Peak name", "Peak height", "Peak area", "Peak RT start", "Peak RT end", "Peak RT", "Peak m/z", "Peak m/z min" and "Peak m/z max"] -> [set Filter rows to ALL] <br>
@@ -231,7 +231,7 @@ knitr::include_graphics("IR_tolerance.PNG")
 <span id="Alignment_counting"> </span>
 
 ### Alignment errors
-Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 5 shows three isotopologues (IT) of the same benchmark molecule detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry are counted as errors. Counting  benchmark divergencies as errors, assumes correct alignment of the benchmark dataset. This kind of counting should only be done after visual inspection of the benchmark dataset. Both counts are given in the output of the NPP-assessment.
+Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 5 shows three isotopologues (IT) of the same benchmark molecule detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP algorithm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry are counted as errors. Counting  benchmark divergences as errors, assumes correct alignment of the benchmark dataset. This kind of counting should only be done after visual inspection of the benchmark dataset. Both counts are given in the output of the NPP-assessment.
 
 ```{r figure5, out.width="80%", out.height="80%", echo=FALSE,fig.cap="\\label{fig:figure5}<b>Figure 5 | </b> Counting alignment errors"}
 knitr::include_graphics("Alignment error graphic.png")
