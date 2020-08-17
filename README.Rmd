@@ -23,6 +23,29 @@ knitr::opts_chunk$set(
 The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files. 
 
 
+## Installation
+
+First install the most recent version of
+
+1. [R](https://cran.r-project.org/)
+2. [R Studio](https://rstudio.com/products/rstudio/download/) and 
+3. [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
+In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:
+```{r eval=FALSE} 
+if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
+devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE)
+
+```
+
+Afterwards you can run mzRAPP using:
+```{r eval=FALSE} 
+library(mzRAPP)
+callmzRAPP()
+```
+or use mzRAPP without shiny interface as described below.
+
+
+
 <span id="sBM_readme"> </span>
 
 ## Benchmark dataset generation

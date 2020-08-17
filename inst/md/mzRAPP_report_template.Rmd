@@ -139,7 +139,7 @@ plot_sunburst_alignment(result_list)
 
 
 # Generated benchmark
-Key metrics of the mzRAPP generated benchmark are summarized in the following. 
+Key metrics of the mzRAPP generated benchmark are summarized in the following. Additionally the dependence of some benchmark variables on the successful detection of peaks in the aligned NPP results is provided in different histograms.
 <div class = "row">
 <div class = "col-md-4">
 ```{r message=FALSE, warning=FALSE, echo=FALSE}

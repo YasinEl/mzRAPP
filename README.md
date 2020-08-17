@@ -1,6 +1,7 @@
 mzRAPP
 ================
 
+  - [Installation](#installation)
   - [Benchmark dataset generation](#benchmark-dataset-generation)
       - [Select mzML files](#select-mzml-files)
       - [Select sample-group file](#select-sample-group-file)
@@ -42,6 +43,33 @@ peaks for all (envipat predicted) isotopologues of those target
 molecules directly from mzML files. The resulting benchmark dataset is
 used to extract different performance measures for NPP performed on the
 same mzML files.
+
+## Installation
+
+First install the most recent version of
+
+1.  [R](https://cran.r-project.org/)
+2.  [R Studio](https://rstudio.com/products/rstudio/download/) and
+3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br> In
+    case of R tools make sure you also follow the subsequent
+    instructions described on the webpage. Afterwards you can install
+    mzRAPP using:
+
+<!-- end list -->
+
+``` r
+if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
+devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE)
+```
+
+Afterwards you can run mzRAPP using:
+
+``` r
+library(mzRAPP)
+callmzRAPP()
+```
+
+or use mzRAPP without shiny interface as described below.
 
 <span id="sBM_readme"> </span>
 
