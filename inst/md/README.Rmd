@@ -24,11 +24,33 @@ knitr::opts_chunk$set(
 The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files. 
 
 
+## Installation
+
+First install the most recent version of
+
+1. [R](https://cran.r-project.org/)
+2. [R Studio](https://rstudio.com/products/rstudio/download/) and 
+3. [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
+In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:
+```{r eval=FALSE} 
+if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
+devtools::install_github("YasinEl/mzRAPP", auth_token = "a68cf9e8dfef3eb4bd3974aca220f49ebf034309", dependencies = TRUE)
+```
+
+Afterwards you can run mzRAPP using:
+```{r eval=FALSE} 
+library(mzRAPP)
+callmzRAPP()
+```
+or use mzRAPP without shiny interface as described below.
+
+
 <span id="sBM_readme"> </span>
 
 ## Benchmark dataset generation
 
-In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept.
+In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept. <br>
+The benchmark dataset generation can be initiated in the panel 'Generate Benchmark'. In the following the setup of necessary csv and mzML files is explained. 
 
 
 <br>
@@ -68,7 +90,7 @@ adducts$Name
 <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this molecule (seconds). Peaks are only detected up to this time. <br>
 <br>
-<b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak detection done by mzRAPP (seconds). Although mzRAPP enables peak detection this is just like any other peak detection algorithm not without errors. It is therefore always the best way to import peak boundaries which have been manually evaluated. It is worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is not fitting. <br>
+<b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak detection done by mzRAPP (seconds). Although mzRAPP enables peak detection this is just like any other peak detection algorithm not without errors. It is therefore always the best way to import peak boundaries which have been manually evaluated. It is worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is not fitting. <u>It is highly recommended to use this variable!</u><br>
 <br>
 <b>user.rtmax:</b> (optional) End time of peak. This substitutes peak detection done by mzRAPP (seconds). <br>
 <br>

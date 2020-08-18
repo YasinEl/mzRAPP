@@ -39,3 +39,29 @@ reIndexFeatures <- function(vct){
 
 }
 
+
+
+#' round.woe
+#'
+#' @param x
+#' @param digi
+#'
+#' @return
+#' @export
+#'
+#' @examples
+round.woe <- function(x, digi){
+
+  if(is.numeric(x) == TRUE){
+
+    return(round(x, digi))
+
+  } else return(NA)
+
+
+}
+
+
+
+
+

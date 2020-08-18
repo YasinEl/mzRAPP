@@ -64,6 +64,7 @@ if (window.hljs) {
 
 <div id="TOC">
 <ul>
+<li><a href="#installation">Installation</a></li>
 <li><a href="#benchmark-dataset-generation">Benchmark dataset generation</a><ul>
 <li><a href="#select-mzml-files">Select mzML files</a></li>
 <li><a href="#select-sample-group-file">Select sample-group file</a></li>
@@ -92,10 +93,25 @@ if (window.hljs) {
 <!-- badges: start -->
 <!-- badges: end -->
 <p>The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). This is achieved by utilizing user provided information on a set of molecules (at best &gt; 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance measures for NPP performed on the same mzML files.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>First install the most recent version of</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://cran.r-project.org/">R</a></li>
+<li><a href="https://rstudio.com/products/rstudio/download/">R Studio</a> and</li>
+<li><a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>. <br> In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:</li>
+</ol>
+<pre class="r"><code>if(&quot;devtools&quot; %in% rownames(installed.packages()) == FALSE) {install.packages(&quot;devtools&quot;)}
+devtools::install_github(&quot;YasinEl/mzRAPP&quot;, auth_token = &quot;a68cf9e8dfef3eb4bd3974aca220f49ebf034309&quot;, dependencies = TRUE)</code></pre>
+<p>Afterwards you can run mzRAPP using:</p>
+<pre class="r"><code>library(mzRAPP)
+callmzRAPP()</code></pre>
+<p>or use mzRAPP without shiny interface as described below.</p>
 <p><span id="sBM_readme"> </span></p>
+</div>
 <div id="benchmark-dataset-generation" class="section level2">
 <h2>Benchmark dataset generation</h2>
-<p>In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept.</p>
+<p>In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept. <br> The benchmark dataset generation can be initiated in the panel ‘Generate Benchmark’. In the following the setup of necessary csv and mzML files is explained.</p>
 <p><br></p>
 <div id="select-mzml-files" class="section level3">
 <h3>Select mzML files</h3>
@@ -132,7 +148,7 @@ adducts$Name
 #&gt; [41] &quot;M+Na-2H&quot;        &quot;M+Cl&quot;           &quot;M+K-2H&quot;         &quot;M+Br&quot;          
 #&gt; [45] &quot;M+TFA-H&quot;        &quot;2M-H&quot;           &quot;2M+FA-H&quot;        &quot;2M+Hac-H&quot;      
 #&gt; [49] &quot;3M-H&quot;</code></pre>
-<p><b>main_adduct:</b> One main adduct has to be defined for each molecule (e.g. M+H). If the main_adduct is not detected also other adducts wont be accepted. <br> <br> <b>SumForm_c:</b> Molecular composition of the neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a 0 behind an element like behind the N in C12H8N0S2. <br> <br> <b>StartTime.EIC:</b> Start time for chromatograms extracted for this molecule (seconds). Peaks are only detected from this time on. <br> <br> <b>EndTime.EIC:</b> End time for chromatograms extracted for this molecule (seconds). Peaks are only detected up to this time. <br> <br> <b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak detection done by mzRAPP (seconds). Although mzRAPP enables peak detection this is just like any other peak detection algorithm not without errors. It is therefore always the best way to import peak boundaries which have been manually evaluated. It is worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is not fitting. <br> <br> <b>user.rtmax:</b> (optional) End time of peak. This substitutes peak detection done by mzRAPP (seconds). <br> <br> <b>user.rt:</b> Retention time expected for this molecule. If multiple peaks are detected the peak closest to this time is chosen (seconds). This value is only applied if user.rtmin/user.rtmax are not provided and more than one peak has been detected by mzRAPP within StartTime.EIC and EndTime.EIC. <br> <br> <b>FileName:</b> (optional) Name of sample file with or without file extension. Using this different user.rtmin/user.rtmax values can be used for each sample. <br> <br> <b>Additional columns: </b> It is possible to add additional columns. Those will be kept for the final benchmark dataset. <br> <br></p>
+<p><b>main_adduct:</b> One main adduct has to be defined for each molecule (e.g. M+H). If the main_adduct is not detected also other adducts wont be accepted. <br> <br> <b>SumForm_c:</b> Molecular composition of the neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a 0 behind an element like behind the N in C12H8N0S2. <br> <br> <b>StartTime.EIC:</b> Start time for chromatograms extracted for this molecule (seconds). Peaks are only detected from this time on. <br> <br> <b>EndTime.EIC:</b> End time for chromatograms extracted for this molecule (seconds). Peaks are only detected up to this time. <br> <br> <b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak detection done by mzRAPP (seconds). Although mzRAPP enables peak detection this is just like any other peak detection algorithm not without errors. It is therefore always the best way to import peak boundaries which have been manually evaluated. It is worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is not fitting. <u>It is highly recommended to use this variable!</u><br> <br> <b>user.rtmax:</b> (optional) End time of peak. This substitutes peak detection done by mzRAPP (seconds). <br> <br> <b>user.rt:</b> Retention time expected for this molecule. If multiple peaks are detected the peak closest to this time is chosen (seconds). This value is only applied if user.rtmin/user.rtmax are not provided and more than one peak has been detected by mzRAPP within StartTime.EIC and EndTime.EIC. <br> <br> <b>FileName:</b> (optional) Name of sample file with or without file extension. Using this different user.rtmin/user.rtmax values can be used for each sample. <br> <br> <b>Additional columns: </b> It is possible to add additional columns. Those will be kept for the final benchmark dataset. <br> <br></p>
 </div>
 <div id="select-instrument-and-resolution" class="section level3">
 <h3>Select instrument and resolution</h3>

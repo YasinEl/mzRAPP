@@ -223,7 +223,7 @@ callmzRAPP <- function(){
                   )
                 ),
                 fluidRow(
-                  column(2,actionButton('generate_benchmark', 'Generate benchmark', style = "background-color: #d2f8fa"))
+                  column(2,actionButton('generate_benchmark', 'Generate benchmark', style = "background.woe-color: #d2f8fa"))
                 ),
         ),
         tabItem(tabName = "vBM_p",
@@ -447,7 +447,7 @@ callmzRAPP <- function(){
                   column(12,
                          style = "display: inline-flex;",
                          actionButton('start_compare', 'Start assessment', style =
-                                        'height: 34px; allign: center; background-color: #d2f8fa')
+                                        'height: 34px; allign: center; background.woe-color: #d2f8fa')
                   )
                 )
 
@@ -762,7 +762,7 @@ callmzRAPP <- function(){
     grps_file <- reactive({
       if(input$grps_upload[1] == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter), collapse = " ")
         output$grps_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -771,7 +771,7 @@ callmzRAPP <- function(){
     coi_file <- reactive({
       if(input$coi_upload == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter), collapse = " ")
         output$coi_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -803,7 +803,7 @@ callmzRAPP <- function(){
       SkyPeakBo <- SkylinePeakBoundaries(benchmark_data)
 
       cat(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' \nand set 'Precursor mass analyzer' to 'Centroided' and ",
-                 "Mass Accuracy to ", round(max(benchmark_data$peaks.mz_span_ppm) / 2, 1), " ppm. \nAlso make sure that 'Isotope peaks included:' is set to 'Count' and 'Peaks:' to '1'. \n",
+                 "Mass Accuracy to ", round.woe(max(benchmark_data$peaks.mz_span_ppm) / 2, 1), " ppm. \nAlso make sure that 'Isotope peaks included:' is set to 'Count' and 'Peaks:' to '1'. \n",
                  "On the bottom of the window you should check 'Include all matching scans'.\n",
                  "Then go to 'Skyline -> Settings -> Transition Settings -> Filter' and make sure Ion types is set to 'p'.\n",
                  "\nYou can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'.\n",
@@ -1082,7 +1082,7 @@ callmzRAPP <- function(){
         output$chrom_info <- renderInfoBox({
           infoBox(tags$p(style = "font-weight: bold; font-size: 110%","Peak rt-metrics"),
                   value = tags$p(style = "font-weight: normal; font-size: 100%;",
-                                 HTML(paste("Median FWHM [s]: ", round(median(benchmark_data$peaks.FW50M, na.rm = TRUE),0),
+                                 HTML(paste("Median FWHM [s]: ", round.woe(median(benchmark_data$peaks.FW50M, na.rm = TRUE),0),
                                             br(),
                                             "Median # of points: ", median(benchmark_data$peaks.PpP, na.rm = TRUE)
                                  ))), color = "blue", fill = TRUE)
@@ -1092,11 +1092,11 @@ callmzRAPP <- function(){
         output$mz_info <- renderInfoBox({
           infoBox(tags$p(style = "font-weight: bold; font-size: 110%","Peak m/z-metrics"),
                   value = tags$p(style = "font-weight: normal; font-size: 100%;",
-                                 HTML(paste("Median mz accuracy [ppm] | abs: ", round(median(benchmark_data$peaks.mz_accuracy_ppm, na.rm = TRUE),1), " | ",
-                                            round(median(benchmark_data$peaks.mz_accuracy_abs, na.rm = TRUE),4),
+                                 HTML(paste("Median mz accuracy [ppm] | abs: ", round.woe(median(benchmark_data$peaks.mz_accuracy_ppm, na.rm = TRUE),1), " | ",
+                                            round.woe(median(benchmark_data$peaks.mz_accuracy_abs, na.rm = TRUE),4),
                                             br(),
-                                            "Median mz range [ppm] | abs: ", round(median(benchmark_data$peaks.mz_span_ppm, na.rm = TRUE),1), " | ",
-                                            round(median(benchmark_data$peaks.mz_span_abs, na.rm = TRUE),4)
+                                            "Median mz range [ppm] | abs: ", round.woe(median(benchmark_data$peaks.mz_span_ppm, na.rm = TRUE),1), " | ",
+                                            round.woe(median(benchmark_data$peaks.mz_span_abs, na.rm = TRUE),4)
                                  ))), color = "teal", fill = TRUE)
         })
 
@@ -1154,7 +1154,7 @@ callmzRAPP <- function(){
       benchmark_data<-isolate(benchmark_data())
       if(!is.null(benchmark_data)){
         benchmark_data <- benchmark_data$PCal
-        updateSelectInput(session, 'ia', choices = sort(round(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
+        updateSelectInput(session, 'ia', choices = sort(round.woe(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
       }
     })
 
@@ -1275,7 +1275,7 @@ callmzRAPP <- function(){
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
         comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-        updateSelectInput(session, 'ia_c', choices = sort(round(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoab_b), 2), decreasing = TRUE))
+        updateSelectInput(session, 'ia_c', choices = sort(round.woe(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoab_b), 2), decreasing = TRUE))
       }
     })
     observeEvent({comparison_data(); input$mol_c; input$add_c; input$ia_c},{
@@ -1389,23 +1389,23 @@ callmzRAPP <- function(){
                                             result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
-                                            " (", round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
-                                            #" (", round(result_list[["Before_alignment"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
+                                            " (", round.woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", round.woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
+                                            #" (", round.woe(result_list[["Before_alignment"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
                                             "%)",
                                             br(),
                                             "Missing peaks (high): ",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
                                             "/",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Systematic"]] + result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
-                                            "( ", round(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][4],1) , " - ",
-                                            round(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
+                                            "( ", round.woe(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][4],1) , " - ",
+                                            round.woe(result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
                                             "%)",
                                             br(),
                                             "Split peaks: ",
                                             result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
-                                            "(", round(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][4], 1), " - ", round(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][5], 1),
+                                            "(", round.woe(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][4], 1), " - ", round.woe(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][5], 1),
                                             "%)",
                                             br(),
                                             "Degenerated IR: ",
@@ -1413,9 +1413,9 @@ callmzRAPP <- function(){
                                             "/",
                                             result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_below20pp"]],
                                             " (",
-                                            round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1), " - ",
-                                            round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
-                                            #round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]] /
+                                            round.woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1), " - ",
+                                            round.woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
+                                            #round.woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]] /
                                             # (result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]] + result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_below20pp"]]) *100,1),
                                             "%)"
                                  ))), color = "navy", fill = TRUE)
@@ -1426,16 +1426,16 @@ callmzRAPP <- function(){
           infoBox(tags$p(style = "font-weight: bold; font-size: 110%","Alignment step"),
                   value = tags$p(style = "font-weight: normal; font-size: 100%;",
                                  HTML(paste("Min. errors: ", result_list[["Alignmnet"]][["Min.Errors"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)",
+                                            " (", round.woe(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
+                                            round.woe(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)",
                                             br(),
                                             "BM divergences: ", result_list[["Alignmnet"]][["BM_divergences"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)",
+                                            " (", round.woe(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
+                                            round.woe(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)",
                                             br(),
                                             "Lost peaks: ", result_list[["Alignmnet"]][["Lost_b.A"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"
+                                            " (", round.woe(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
+                                            round.woe(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"
                                  ))), color = "blue", fill = TRUE)
         })
 
@@ -1447,26 +1447,26 @@ callmzRAPP <- function(){
                                             result_list[["After_alignmnet"]][["Found_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
-                                            " (", #round(result_list[["After_alignmnet"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
-                                            round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
+                                            " (", #round.woe(result_list[["After_alignmnet"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
+                                            round.woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", round.woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)",
                                             br(),
                                             "Missing peaks (high): ",
                                             result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],
                                             "/",
                                             result_list[["After_alignmnet"]][["Missing_peaks"]][["Systematic"]] + result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],
-                                            "( ", round(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][4],1) , " - ",
-                                            round(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
+                                            "( ", round.woe(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][4],1) , " - ",
+                                            round.woe(result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["CI"]][5],1),
                                             "%)",
                                             br(),
                                             "Degenerated IR: ",
                                             result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
                                             "/",
                                             result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]],
-                                            " (", #round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]] /
+                                            " (", #round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]] /
                                             #        (result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]] + result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]]) *100,1),
-                                            round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1), " - ",
-                                            round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
+                                            round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1), " - ",
+                                            round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
 
                                             "%)"
                                  ))), color = "teal", fill = TRUE)
@@ -1518,6 +1518,7 @@ callmzRAPP <- function(){
       }
     })
 
+
     output$report <- downloadHandler(
       # For PDF output, change this to "report.pdf"
       filename = "report.html",
@@ -1534,7 +1535,8 @@ callmzRAPP <- function(){
         # Knit the document, passing in the `params` list, and eval it in a
         # child of the global environment (this isolates the code in the document
         # from the code in this app).
-        rmarkdown::render(tempReport, output_file = file,
+        rmarkdown::render(tempReport,
+                          output_file = file,
                           params = params,
                           envir = new.env(parent = globalenv())
         )
