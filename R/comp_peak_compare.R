@@ -335,6 +335,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                             "adduct_b",
                                             "isoab_b",
                                             "sample_name_b",
+                                            "peak_area_b",
                                             "peak_area_ug")],
                                 on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
 

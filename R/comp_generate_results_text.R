@@ -13,7 +13,7 @@ generate_results_text <- function(comparison_data){
 
   main_peak_table <- comparison_data$c_table[main_peak == TRUE]
 
-  found_ug_peaks <- length(unique(main_peak_table$comp_id_ug))
+  found_ug_peaks <- nrow(main_peak_table)#length(unique(main_peak_table$comp_id_ug))
   #split_features <- sum(main_peak_table[, count_split_features(feature_id_g), by=feature_id_b]$V1, na.rm=TRUE)
 
 
