@@ -168,7 +168,7 @@ kableExtra::kable(dt_benchmark) %>%
 
 <div class = "col-md-8">
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-subplot(plot_bench_histo(benchmark_data = params$comp_d, 
+plotly::subplot(plot_bench_histo(benchmark_data = params$comp_d, 
                          var = "peak_height_b", 
                          choice_vector_bench = c(log10_peak_height = "peak_height_b"), 
                          post_comp = TRUE,
@@ -206,7 +206,7 @@ subplot(plot_bench_histo(benchmark_data = params$comp_d,
                          rm_NF_legend = TRUE), 
         nrows = 3,
         shareY = TRUE) %>%
-    layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+    plotly::layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
 ```
 </div>
 </div>
