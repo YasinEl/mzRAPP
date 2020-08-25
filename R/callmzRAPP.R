@@ -97,7 +97,7 @@ callmzRAPP <- function(){
             };
           });
         }
-      ")),#function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
+      ")), #function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
 
       tabItems(
         tabItem(tabName = "Readme",
@@ -169,7 +169,7 @@ callmzRAPP <- function(){
                                           selectInput(
                                             'resolution_drop',
                                             'Select instrument & resolution',
-                                            c('------' ,names(resolution_list)),
+                                            c('------', names(resolution_list)),
                                             selected = '------',
                                             width = "100%"
                                           ))
@@ -183,7 +183,7 @@ callmzRAPP <- function(){
 
                 fluidRow(
                   conditionalPanel(condition = "input.use_envipat_res_list",
-                                   column(2, verbatimTextOutput(outputId = 'custom_res_mz',placeholder = TRUE)
+                                   column(2, verbatimTextOutput(outputId = 'custom_res_mz', placeholder = TRUE)
                                    )
                   )
                 ),
@@ -1502,12 +1502,7 @@ callmzRAPP <- function(){
         )
       }
     )
-
-
   }
-
-
-
 
   shinyApp(ui, server)
 
