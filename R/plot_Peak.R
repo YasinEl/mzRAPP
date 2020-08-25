@@ -298,6 +298,7 @@ plot_IR_peaks  <- function(PC, plotly_key){
 
 
   p_hi <- ggplot(plot.table_hi, aes(x=rt, y=int)) +
+    theme_classic() +
     geom_line() +
     geom_point() +
     geom_vline(xintercept = PC[isoab_b == 100, rt_start_b], color = "red") +
@@ -321,6 +322,7 @@ plot_IR_peaks  <- function(PC, plotly_key){
   #         color="blue")
 
   p_li <- ggplot(plot.table_li, aes(x=rt, y=int)) +
+    theme_classic() +
     geom_line() +
     geom_point() +
     geom_vline(xintercept = PC[isoab_b != 100, rt_start_b], color = "red") +

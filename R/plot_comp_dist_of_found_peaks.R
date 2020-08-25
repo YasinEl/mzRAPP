@@ -66,6 +66,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     plot_dist <-
         ggplot2::ggplot() +
+      theme_classic() +
           geom_col(data = f_nf_plot, aes(get(var), N, fill = f_nf_col),
                    position = position_dodge(preserve = "single")) +
           theme(legend.position = "none") +
@@ -127,6 +128,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
         geom_col(data = df_bin, aes(var, n, fill = f_nf_col),
                  position = position_dodge(preserve = "single"),
                  orientation = "x") +
+        theme_classic() +
         theme(legend.position = "none") +
         scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
         ggtitle("Distribution of found/not found peaks")

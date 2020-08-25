@@ -120,7 +120,7 @@ callmzRAPP <- function(){
                 fluidRow(
                   column(5,
                          strong("1. Select necessary files", style = "font-size:30px"),
-                         p("(and choose resolution used)"),
+                         p("(please note that dialog boxes to select files might not be directly visible as they tend to open behind the R console. Try to minimize your windows if it dialog boxes do not appear after clicking.)"),
                          a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
 
                   )
@@ -780,7 +780,7 @@ callmzRAPP <- function(){
     res_file <- reactive({
       if(input$custom_res_mz == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter),collapse = " ")
         output$custom_res_mz <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -842,7 +842,7 @@ callmzRAPP <- function(){
     g_file <- reactive({
       if (input$g_upload == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter), collapse = " ")
         output$g_upload_file <- renderText(paste0(basename(file)))
 
         output$g_upload_file <- renderText(paste0(basename(file)))
@@ -852,7 +852,7 @@ callmzRAPP <- function(){
     benchmark_file <- reactive({
       if (input$benchmark_upload == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter), collapse = " ")
         output$benchmark_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }
@@ -860,7 +860,7 @@ callmzRAPP <- function(){
     options_file <- reactive({
       if (input$options_upload == 0){return(NULL)}
       else {
-        file <- tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter)
+        file <- paste(tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter), collapse = " ")
         output$options_upload_file <- renderText(paste0(basename(file)))
         return(file)
       }

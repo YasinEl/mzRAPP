@@ -140,6 +140,7 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
                                                       diffH20PP = diffH20PP,
                                                       key = grp_col
     )), alpha = 0.3)) +
+    theme_classic() +
     #scale_color_manual(name = "+ > 20%p", values=c("blue", "red")) +
     scale_color_manual(name = "+ > 20%p", values=c(`Inc. < 20%p` = "blue", `Inc. > 20%p` = "red", `Feature Inc. > 20%p` = "goldenrod2")) +
     ggtitle("Relative IT ratio bias") +

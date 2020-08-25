@@ -23,6 +23,7 @@ plot_bench_overview <- function(benchmark_data, x, y, colb, choice_vector_bench)
                                                                         isoab = isoab,
                                                                         sample_name = FileName,
                                                                         key = IDX)) +
+      theme_classic() +
       labs(x = names(choice_vector_bench)[choice_vector_bench == x],
            y = names(choice_vector_bench)[choice_vector_bench == y]) +
       labs(color=names(choice_vector_bench)[choice_vector_bench == colb]) +

@@ -106,6 +106,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
       FileName = sample_name_b
       )
     ) +
+    theme_classic() +
     geom_tile() +
     #scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
     #scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +

@@ -37,7 +37,7 @@ findBenchPeaks <- function(files,
 
 
 
-  if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
+  #if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
   if(!isTRUE(is.data.frame(CompCol_all))){stop(paste0("CompCol_all has to be a data frame and/or data table!"))}
   if(!isTRUE(is.data.table(CompCol_all))){CompCol_all <- as.data.table(CompCol_all)}
 
@@ -50,6 +50,12 @@ findBenchPeaks <- function(files,
   Grps <- Grps[, sample_name := tools::file_path_sans_ext(basename(sample_name))]
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", paste(files[!file.exists(files)], collapse = ", ")))
+
+  if(length(dplyr::intersect(sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files)), Grps$sample_name)) == 0){
+    stop("Filenames in your sample_group file are not the same as those of your uploaded mzML files!")
+  }
+
+
 
   if(all(c("user.rtmin", "user.rtmax") %in% colnames(CompCol_all))){
     colnames(CompCol_all)[which(names(CompCol_all) == "user.rtmin")] <- "rtmin"

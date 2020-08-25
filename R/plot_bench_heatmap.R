@@ -38,6 +38,7 @@ plot_bench_heatmap <- function(benchmark_data) {
       FileName = FileName
     )
   ) +
+    theme_classic() +
     geom_tile() +
     scale_fill_manual(values=c("firebrick", "forestgreen")) +
     ggtitle("Found/not found compounds per sample") +
