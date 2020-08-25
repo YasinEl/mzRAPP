@@ -8,9 +8,13 @@
 
 callmzRAPP <- function(){
 
+
+  #load resolution list from enviPat
   rm(list = ls(), envir = environment())
   if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment(), package = "enviPat")}
 
+
+  #setup choice vectors
   choice_vector_bench <- c(
     'Retention time [s]' = 'peaks.rt_raw',
     'Points per peak' = 'peaks.PpP',
@@ -75,7 +79,6 @@ callmzRAPP <- function(){
     dashboardHeader(title = "mzRAPP"),
     dashboardSidebar(
       sidebarMenu(
-        #style = "position: fixed; overflow: visible;",
         id = "sbmenu",
         menuItem("Readme", tabName = "Readme"),
         menuItem("Generate Benchmark", tabName = "gBM_p"),
@@ -94,29 +97,17 @@ callmzRAPP <- function(){
             };
           });
         }
-      ")),#function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
+      ")), #function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
 
-      #tags$head(tags$style(HTML('
-      #.main-header .logo {
-      #  font-family: Arial;
-      #  font-weight: bold;
-      #  font-size: 24px;
-      #}'))),
       tabItems(
         tabItem(tabName = "Readme",
-                #includeMarkdown(system.file("md","README.md", package = "mzRAPP", mustWork = TRUE))
-                #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), # put myMarkdown.html to /www
-                #            width = '100%', height = '800px',
-                #            frameborder = 0, scrolling = 'auto'
-                #)
-                #htmlOutput("Readme_op")
                 tags$div(
                   class = "rmd-class",
                   includeHTML(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
                 )
-                #tags$iframe(src = system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), seamless=NA)
         ),
         tabItem(tabName = "gBM_p",
+
                 fluidRow(
                   column(5,
                          strong("1. Select necessary files", style = "font-size:30px"),
@@ -126,7 +117,6 @@ callmzRAPP <- function(){
                   )
                 ),
 
-                #2nd Row
                 fluidRow(
                   column(6,
                          fluidRow(
@@ -159,9 +149,8 @@ callmzRAPP <- function(){
                          )
                   )
                 ),
-                #Line Break for layout
+
                 fluidRow(column(6,br())),
-                ###
 
                 fluidRow(
                   column(
@@ -173,13 +162,14 @@ callmzRAPP <- function(){
                                  width = '190px')
                   )
                 ),
+
                 fluidRow(
                   conditionalPanel(condition = "!input.use_envipat_res_list",
                                    column(4,
                                           selectInput(
                                             'resolution_drop',
                                             'Select instrument & resolution',
-                                            c('------' ,names(resolution_list)),
+                                            c('------', names(resolution_list)),
                                             selected = '------',
                                             width = "100%"
                                           ))
@@ -193,7 +183,7 @@ callmzRAPP <- function(){
 
                 fluidRow(
                   conditionalPanel(condition = "input.use_envipat_res_list",
-                                   column(2, verbatimTextOutput(outputId = 'custom_res_mz',placeholder = TRUE)
+                                   column(2, verbatimTextOutput(outputId = 'custom_res_mz', placeholder = TRUE)
                                    )
                   )
                 ),
@@ -204,17 +194,21 @@ callmzRAPP <- function(){
                          br()
                   )
                 ),
+
                 fluidRow(
                   column(2,numericInput('RelInt_Thresh_input', 'Lowest iso. to be considered [%]', 0.05, step = 0.01, max = 100)),
                   column(2,numericInput('min_PpP_input', 'Min. # of scans per peak', 10, step = 1, min = 5))
                 ),
+
                 fluidRow(
                   column(2,numericInput('percision_mz_tol_input', 'mz precision [ppm]', 5, step = 0.1)),
                   column(2,numericInput('accurate_MZ_tol_input', 'mz accuracy [ppm]', 5, step = 0.1))
                 ),
+
                 fluidRow(
                   column(2,selectInput('plan_input', 'Processing plan', c('multiprocess', 'sequential')))
                 ),
+
                 fluidRow(
                   column(6,
                          strong("3. Start benchmark generation", style = "font-size:30px"),
@@ -222,10 +216,12 @@ callmzRAPP <- function(){
                          p("(depending on the number of files and compounds this can take some time (minutes to hours))")
                   )
                 ),
+
                 fluidRow(
                   column(2,actionButton('generate_benchmark', 'Generate benchmark', style = "background.woe-color: #d2f8fa"))
                 ),
         ),
+
         tabItem(tabName = "vBM_p",
                 h2("Generated benchmark:"),
                 h4(paste("In the following key data and overview graphics for the generated benchmark are provided. Please note that the benchmark dataset contains only peaks which were confirmable",
@@ -234,15 +230,15 @@ callmzRAPP <- function(){
                 a("Click here for more information on how to proceed from here.", onclick = "openTab('Readme')", href="#vBMID"),
 
                 br(),
+
                 fluidRow(
-                  # A static infoBox
-                  #infoBox("New Orders", 10 * 2, icon = icon("credit-card")),
-                  # Dynamic infoBoxes
                   infoBoxOutput("size_info"),
                   infoBoxOutput("chrom_info"),
                   infoBoxOutput("mz_info")
                 ),
+
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
+
                 br(),
 
                 fluidRow(
@@ -260,8 +256,6 @@ callmzRAPP <- function(){
                                       width = '100%')
                   )),
 
-
-
                 fluidRow(
                   column(6, offset = 1,
                          fluidRow(
@@ -276,7 +270,9 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
+
                          fluidRow(column(12, plotly::plotlyOutput('graph_area_bench_overview') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
                          fluidRow(
                            tags$style(HTML("#bench_overview_input_x+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
                            tags$style(HTML("#bench_overview_input_y+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
@@ -319,7 +315,9 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
+
                          fluidRow(column(12,plotly::plotlyOutput('graph_area_bench_histo') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
                          fluidRow(
                            tags$style(HTML("#select_bench_histo+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
                            column(8,
@@ -332,22 +330,27 @@ callmzRAPP <- function(){
                          )
                   )
                 ),
+
                 br()
 
 
         ),
+
         tabItem(tabName = "sNPP_p",
+
                 fluidRow(
                   column(
                     12, strong('1. Select used tool', style = "font-size:30px"), br(), br()
                   )
                 ),
+
                 fluidRow(
                   column(
 
                     12, selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'msDial', 'CompoundDiscoverer', 'mzMine', 'El-MAVEN', 'OpenMS'), selected = '---')
                   )
                 ),
+
                 fluidRow(
                   column(
                     12, strong('2. Select unaligned and aligned files', style = "font-size:30px"), br(),
@@ -357,6 +360,7 @@ callmzRAPP <- function(){
                     br()
                   )
                 ),
+
                 fluidRow(
                   column(
                     12,
@@ -370,6 +374,7 @@ callmzRAPP <- function(){
                                  width = '190px')
                   )
                 ),
+
                 fluidRow(
                   column(
                     12,
@@ -380,11 +385,13 @@ callmzRAPP <- function(){
                     div(style = "width: 20px;")
                   )
                 ),
+
                 fluidRow(
                   column(
                     12, strong('3. Select benchmark and/or options file', style = "font-size:30px"), br(), br()
                   )
                 ),
+
                 fluidRow(
                   column(
                     12,
@@ -400,6 +407,7 @@ callmzRAPP <- function(){
                                  width = '190px')
                   )
                 ),
+
                 fluidRow(
                   column(
                     12,
@@ -421,6 +429,7 @@ callmzRAPP <- function(){
                     )
                   )
                 ),
+
                 fluidRow(
                   column(
                     12,
@@ -438,11 +447,13 @@ callmzRAPP <- function(){
                     )
                   )
                 ),
+
                 fluidRow(
                   column(
                     12, strong('4. Start NPP assessment', style = "font-size:30px"), br(), br()
                   )
                 ),
+
                 fluidRow(
                   column(12,
                          style = "display: inline-flex;",
@@ -458,16 +469,17 @@ callmzRAPP <- function(){
                 h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
                          "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
                 a("Click here for more information.", onclick = "openTab('Readme')", href="#MetricsID"),
+
                 br(),
+
                 fluidRow(
-                  # A static infoBox
-                  #infoBox("New Orders", 10 * 2, icon = icon("credit-card")),
-                  # Dynamic infoBoxes
                   infoBoxOutput("PP_info"),
                   infoBoxOutput("A_info"),
                   infoBoxOutput("F_info")
                 ),
+
                 br(),
+
                 fluidRow(
                 downloadButton("report", "Generate report"), align="center"
                 ),
@@ -486,15 +498,17 @@ callmzRAPP <- function(){
          #         )
          #       ),
                 h4(paste("For more details please check the interactive plots below.")),
+
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
+
                 br(),
                 column(10, offset = 1, h2("Distribution of found/not found peaks")),
-
                 column(9, offset = 1,
                        h4("In the following interactive scatter plot and histogram the distribution of", tags$span(style="color:blue", "found") ,"/", tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
                           "Points in the scatter plot can be clicked to inspect individual peaks."),
                        a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
                 ),
+
                 fluidRow(
                   column(6, offset = 1,
                          fluidRow(
@@ -516,7 +530,9 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
+
                          fluidRow(column(12, plotly::plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
                          fluidRow(
                            column(3,
                                   selectInput('overview_plot_input_x',
@@ -542,6 +558,7 @@ callmzRAPP <- function(){
                          )
                   ),
                   column(4,
+
                          fluidRow(
                            column(1,
                                   dropdownButton(
@@ -562,7 +579,9 @@ callmzRAPP <- function(){
                                   )
                            )
                          ),
+
                          fluidRow(column(12,plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
                          fluidRow(
                            column(8,
                                   selectInput('graph_select_input',
@@ -573,11 +592,13 @@ callmzRAPP <- function(){
                          )
                   )
                 ),
+
                 br(),
 
                 fluidRow(column(10, offset = 1, tags$hr(style="border-color: darkgray;"))),
 
                 br(),
+
                 column(10, offset = 1, h2("Quality of reported NPP peak abundances")),
                 column(8, offset = 2,
                        h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
@@ -586,10 +607,8 @@ callmzRAPP <- function(){
                        a("Click here for more information.", onclick = "openTab('Readme')", href="#Peak_quality")
                 ),
                 br(),
-
-
-
                 column(8, offset = 2,
+
                        fluidRow(
                          column(1,
                                 dropdownButton('',
@@ -600,19 +619,11 @@ callmzRAPP <- function(){
                                                size = 'sm',
                                                width = 600
                                 )
-                         )#,
-                         # column(11,
-                         #        prettySwitch(inputId = 'PP_al_switch_ITe',
-                         #                     label = 'after PeakPicking | Alignment',
-                         #                     value = FALSE)
-                         # )
+                         )
                        ),
+
                        fluidRow(column(12,plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
                 ),
-
-
-
-
 
                 br(),
                 br(),
@@ -655,7 +666,6 @@ callmzRAPP <- function(){
 
                          ),
                          fluidRow(column(12,plotly::plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
-                         #fluidRow(column(12,plotly::plotlyOutput('graph_area_1')))
                   ),
 
                 ),
@@ -666,7 +676,6 @@ callmzRAPP <- function(){
 
                 br(),
                 column(10, offset = 1, h2("Errors in alignment process")),
-
                 column(10, offset = 1,
                        h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number ",
                                  "of errors by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way ",
@@ -674,6 +683,7 @@ callmzRAPP <- function(){
                        a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 br(),
+
                 fluidRow(
                   column(4),
                   column(1, dropdownButton('',
@@ -686,29 +696,26 @@ callmzRAPP <- function(){
                   ))
 
                 ),
+
                 fluidRow(
                   column(3, offset = 1, tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
-
                   column(7,
+
                          fluidRow(
                            column(12,
                                   plotly::plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
                            )),
+
                          fluidRow(
                            column(4, pickerInput('mol_a', 'Molecule', c(), options = list(`live-search`=TRUE))),
                            column(3, pickerInput('add_a', 'Adduct', c(), options = list(`live-search`=TRUE)))
+                           )
                          )
                   )
-
-                )
-
-
+         )
         )
-
-
       )
     )
-  )
 
 
 
@@ -720,25 +727,12 @@ callmzRAPP <- function(){
     output$Readme_op <- renderUI({
       htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
     })
-    #shinyjs::js$disableTab('benchmark_results')
-    #shinyjs::js$disableTab('results_tab_features')
-    #shinyjs::js$disableTab('results_tab_peaks')
-    #shinyjs::disable('ug_upload_files')
-
 
     ##Reactive Values
     data_dir <- reactiveVal(getwd())
     benchmark_data <- reactiveVal(NULL)
     comparison_data <- reactiveVal(NULL)
 
-    #observe({
-    #  if((input$main_panel == 'benchmark_results') & is.null(benchmark_data())) {
-    #    sendSweetAlert(session, title = 'No benchmark file generated', text = 'Benchmark must be generated before viewing the results', type = 'warning')
-    #  }
-    ##  if(((input$main_panel == 'results_tab_peaks') |(input$main_panel == 'results_tab_features')) & is.null(comparison_data())) {
-    #   sendSweetAlert(session, title = 'No peak comparison file generated', text = 'Peak comparison must be generated before viewing the results', type = 'warning')
-    # }
-    #})
 
     ##File Filters for choice cialogues
     mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
@@ -826,11 +820,7 @@ callmzRAPP <- function(){
     ug_files <- reactive({
       if (input$ug_upload == 0){return(NULL)}
       else {
-        #root = tcltk::tktoplevel("width" = 1, "height" = 1)
-        #tcltk::tkraise(root)
         files <- tcltk::tk_choose.files(caption = 'Select unaligned file(s)', multi = TRUE, filters = csv_filter)
-        #Sys.sleep(1)
-        #tcltk::tkdestroy(root)
         if (length(files) > 1){
           output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
         } else {
@@ -877,13 +867,10 @@ callmzRAPP <- function(){
     observe({options_file()})
 
     observeEvent(input$generate_benchmark, {
-
       shinyjs::disable("generate_benchmark")
 
+
       tryCatch({
-
-
-
         #Get Files from reactives
         #mzML
         if(is.null(mzML_files()) || length(mzML_files()) == 0){
@@ -981,7 +968,7 @@ callmzRAPP <- function(){
                                               Target.table = MassTraces,
                                               PrecisionMZtol = input$percision_mz_tol_input,
                                               plan = input$plan_input,
-                                              minCentroids = 4,#input$min_centroids_input,
+                                              minCentroids = 4,
                                               AccurateMZtol = input$accurate_MZ_tol_input
                        )
                        fwrite(rois, "rois.csv")
@@ -1046,17 +1033,11 @@ callmzRAPP <- function(){
 
       },
       error=function(error_message){
-        #shinybusy::remove_modal_spinner()
-        #Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
         sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error', closeOnClickOutside = FALSE)
         print(error_message)
         return(NULL)
       })
     })
-
-
-
-
 
 
     #Benchmark Plot Functions
@@ -1319,7 +1300,6 @@ callmzRAPP <- function(){
 
     #R/S Heatmap Plot
     observeEvent({comparison_data(); input$PP_al_switch_hm; input$PP_al_switch_hm_off}, {
-      #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         if(input$PP_al_switch_hm_off == TRUE){
           output$graph_area_1 <- plotly::renderPlotly(plot_comp_missing_value_hm(comparison_data(), post_alignment = input$PP_al_switch_hm))
@@ -1332,14 +1312,12 @@ callmzRAPP <- function(){
 
     #Ditsribution of peaks plot
     observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
-      #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$graph_area_3 <- plotly::renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp = choice_vector_comp, post_alignment = input$PP_al_switch_dist))
       }
     })
     #Isotopologe prediction error
     observeEvent({comparison_data()}, {
-      #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$graph_area_2 <- plotly::renderPlotly(plot_comp_iso_pred_error(comparison_data(), post_alignment = FALSE) %>%
                                                       plotly::event_register('plotly_click'))
@@ -1353,16 +1331,11 @@ callmzRAPP <- function(){
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
-      #CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
-      #CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
       event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
-      #tt <<- event.data
       print(event.data)
       showModal(modalDialog(
         plotly::renderPlotly({
           plot_IR_peaks(CE_plot, plotly_key = event.data$key)
-          #plot_ly(data.frame(x = c(rep('a', 10), rep('b', 10)),
-          #                   y = c(rnorm(10), rnorm(10, 3, 1))), x = ~x, y = ~y, type = 'box')
         })
       ))
     })
@@ -1378,7 +1351,6 @@ callmzRAPP <- function(){
     observeEvent(comparison_data(), {
       comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data)){
-        #output$results_text <- renderText(generate_results_text(comparison_data))
 
         result_list <- generate_results_text(comparison_data)
 
@@ -1390,7 +1362,6 @@ callmzRAPP <- function(){
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
                                             " (", round.woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", round.woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
-                                            #" (", round.woe(result_list[["Before_alignment"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
                                             "%)",
                                             br(),
                                             "Missing peaks (high): ",
@@ -1447,7 +1418,7 @@ callmzRAPP <- function(){
                                             result_list[["After_alignmnet"]][["Found_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
-                                            " (", #round.woe(result_list[["After_alignmnet"]][["Found_peaks"]]/result_list[["Benchmark"]][["BM_peaks"]] * 100, 1),
+                                            " (",
                                             round.woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", round.woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)",
                                             br(),
@@ -1463,8 +1434,7 @@ callmzRAPP <- function(){
                                             result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
                                             "/",
                                             result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]],
-                                            " (", #round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]] /
-                                            #        (result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]] + result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]]) *100,1),
+                                            " (",
                                             round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1), " - ",
                                             round.woe(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
 
@@ -1494,7 +1464,6 @@ callmzRAPP <- function(){
 
     #Alignment error plot
     observeEvent(comparison_data(),{
-      #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
         error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0, Molecule]))
         no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors == 0 & Lost_b.A == 0 | BM.div == 0, Molecule]))
@@ -1503,7 +1472,6 @@ callmzRAPP <- function(){
       }
     })
     observeEvent({comparison_data();input$mol_a}, {
-      #comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data())){
         error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors > 0 | Lost_b.A > 0 | BM.div > 0), Adduct])
         no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 | BM.div == 0), Adduct])
@@ -1512,7 +1480,6 @@ callmzRAPP <- function(){
       }
     })
     observeEvent(comparison_data(), {
-      #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$graph_hm_split <- plotly::renderPlotly(Alignment_error_plot(comparison_data(), mol = input$mol_a, add = input$add_a))
       }
@@ -1520,21 +1487,14 @@ callmzRAPP <- function(){
 
 
     output$report <- downloadHandler(
-      # For PDF output, change this to "report.pdf"
       filename = "report.html",
       content = function(file) {
-        # Copy the report file to a temporary directory before processing it, in
-        # case we don't have write permissions to the current working dir (which
-        # can happen when deployed).
         tempReport <- file.path(system.file("md","mzRAPP_report_template.Rmd", package = "mzRAPP", mustWork = TRUE))
         file.copy("report.Rmd", tempReport, overwrite = TRUE)
 
         # Set up parameters to pass to Rmd document
         params <- list(comp_d = comparison_data())
 
-        # Knit the document, passing in the `params` list, and eval it in a
-        # child of the global environment (this isolates the code in the document
-        # from the code in this app).
         rmarkdown::render(tempReport,
                           output_file = file,
                           params = params,
@@ -1542,12 +1502,7 @@ callmzRAPP <- function(){
         )
       }
     )
-
-
   }
-
-
-
 
   shinyApp(ui, server)
 
