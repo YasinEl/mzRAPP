@@ -1,16 +1,13 @@
 #' compare_peaks
 #'
-#' @param b_table
-#' @param ug_table
-#' @param g_table
-#' @param algo
+#' @param b_table output from \code{\link{import_benchmark}}
+#' @param ug_table one of the listed objects (ug_table) in output of \code{\link{pick_algorithm}}. e.g. pick_algo_output$ug_table
+#' @param g_table one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table
+#' @param algo tool output format of ug_table and g_table. Can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine.
 #'
-#' @description
-#'
-#' @return
+#' @return returns list containing different tables including data from different types of comparisons
 #' @export
 #'
-#' @examples
 compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   info_list <- list()

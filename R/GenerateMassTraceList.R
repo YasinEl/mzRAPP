@@ -6,20 +6,18 @@
 #'
 #' @param DT data.table with columns "molecule", "SumForm_c" and "adduct_c" (see details)
 #' @param instrumentRes data frame with mz vs resolution dependence (see \code{\link{resolution_list}}) e.g. "resolution_list$`OTFusion,QExactiveHF_120000@200`"
-#' @param RelInt_threshold relative abundance of the lowest isotopologue to be considered
+#' @param RelInt_threshold relative abundance of the lowest isotopologue to be considered as percentage
 #' @param stick_method method that should be used to calculate discrete m/z values from calculated profile pattern e.g. "intensoid" (see \code{\link{vdetect}})
-#' @param adducts data frame with adducts (see \code{\link{adducts}})
-#' @param isotopes data frame of isotopes (see \code{\link{isotopes}})
+#' @param adducts data frame containing adducts (see \code{\link{adducts}})
+#' @param isotopes data frame containing isotopes (see \code{\link{isotopes}})
 #'
 #' @details Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
 #' @details never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
 #'
 #'
-#' @import enviPat data.table
 #' @return data.table with columns "molecule", "formula", "adduct", "charge", "m/z" and "abundance"
 #' @export
 #'
-#' @examples
 
 getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method = "intensoid", adducts, isotopes)
 {

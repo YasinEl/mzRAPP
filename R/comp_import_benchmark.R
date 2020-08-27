@@ -1,15 +1,13 @@
 #' import_benchmark
 #'
-#' @param file file
-#' @param options_path options_path
-#' @param from_csv
+#' @param file output of \code{\link{findBenchPeaks}}. Can be path to csv file or a data table  object (meaning that is.data.table(file) returns TRUE).
+#' @param options_path can be a string "generate" in order to use default column names for chosen algo. In the future we might include a possibility to allow the user to choose column names.
+#' @param from_csv TRUE or FALSE depending on file being a data.table object or a path to a csv
+#' @param algo tool output format to compare the benchmark against. can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.
 #'
-#' @description
-#'
-#' @return
+#' @return returns a list including the benchmark in a format readable by \code{\link{compare_peaks}}.
 #' @export
 #'
-#' @examples
 import_benchmark <- function (file, options_path = "generate", from_csv = TRUE, algo) {
 
   if(from_csv){
