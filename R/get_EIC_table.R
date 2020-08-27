@@ -4,7 +4,7 @@
 #' @param int int
 #' @param Min.PpP Min.PpP
 #'
-#' @keyword Internal
+
 #'
 #' @export
 #'

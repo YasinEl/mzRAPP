@@ -6,7 +6,7 @@
 #' @param r r
 #' @param Min.Res Min.Res
 #'
-#' @keyword Internal
+
 #' @export
 #'
 #' @noRd

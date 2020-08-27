@@ -4,7 +4,7 @@
 #' @param Min.PpP Min.PpP
 #' @param peak.spotting.factor peak.spotting.factor
 #'
-#' @keyword Internal
+
 #' @export
 #'
 #' @noRd

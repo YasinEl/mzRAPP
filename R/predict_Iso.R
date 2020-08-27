@@ -9,7 +9,7 @@
 #' @param isoab_col name of column with isotopic abundance information
 #' @param flag_extremes whether outliers should be flagged (more than 30\% of in area or more than 30\% of in area but with area and height being in agreement within 30\%)
 #'
-#' @keyword Internal
+
 #' @export
 #' @noRd
 #'

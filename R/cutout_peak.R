@@ -13,7 +13,7 @@
 #' @param main_adduct.grp main_adduct.grp
 #' @param Min.Res. Min.Res.
 #'
-#' @keyword Internal
+
 #' @export
 #' @noRd
 #'

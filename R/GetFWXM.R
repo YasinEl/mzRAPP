@@ -8,7 +8,7 @@
 #' @param X peak height at which width should be measured (e.g. 0.5 means width at halfe maximum)
 #' @param return_diff TRUE/FALSE; should the output be a difference of end point and start point, or both points as a vector
 #'
-#' @keyword Internal
+
 #' @export
 #' @return Width of the peak (numeric)
 #'
