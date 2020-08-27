@@ -66,10 +66,9 @@ import_ungrouped_elmaven <- function(file, options_dt){
 
 #' import_grouped_xcms
 #'
-#' @param file
-#' @param options_dt
+#' @param file file
+#' @param options_dt options_dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd

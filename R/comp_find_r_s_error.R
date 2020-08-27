@@ -1,10 +1,9 @@
 #' find_r_s_error
 #'
-#' @param peak_area_b
-#' @param peak_area_ug
-#' @param peak_height_b
+#' @param peak_area_b peak_area_b
+#' @param peak_area_ug peak_area_ug
+#' @param peak_height_b peak_height_b
 #'
-#' @return
 #' @export
 #'
 #' @noRd
