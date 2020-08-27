@@ -2,6 +2,8 @@
 #'
 #' @param comparison
 #'
+#' @description
+#'
 #' @return
 #' @export
 #'

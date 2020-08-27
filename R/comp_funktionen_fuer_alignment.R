@@ -1,14 +1,13 @@
 #' @title get_main_UT_groups
 #'
-#' @description Find most occuring feature ID within matched peaks of a benchmark feature
-#' @param DT
+#' @param DT DT
 #'
-#' @return
+#' @description Find most occuring feature ID within matched peaks of a benchmark feature
+#'
+#'
 #' @export
 #'
 #' @noRd
-
-
 
 get_main_UT_groups <- function(DT){
 
@@ -53,11 +52,10 @@ get_main_UT_groups <- function(DT){
 #' @title count_alignment_errors
 #'
 #' @description count alignment errors occuring within a compound
-#' @param DT
-#' @param main_UTgroups
-#' @param method
+#' @param DT DT
+#' @param main_UTgroups main_UTgroups
+#' @param method method
 #'
-#' @return
 #' @export
 #'
 #' @noRd

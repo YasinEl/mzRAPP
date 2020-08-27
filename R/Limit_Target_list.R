@@ -1,11 +1,10 @@
 #' Limit_Target_list
 #'
-#' @param CompCol
-#' @param CondPeaks
-#' @param iso.run
-#' @param file
+#' @param CompCol CompCol
+#' @param CondPeaks CondPeaks
+#' @param iso.run iso.run
+#' @param file file
 #'
-#' @return
 #' @export
 #'
 #' @noRd

@@ -1,9 +1,8 @@
 #' import_ungrouped_cd
 #'
-#' @param file_path
-#' @param options_table
+#' @param file_path file_path
+#' @param options_table options_table
 #'
-#' @return
 #' @export
 #'
 #' @noRd

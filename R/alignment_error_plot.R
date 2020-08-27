@@ -1,13 +1,12 @@
 #' Alignment_error_plot
 #'
-#' @param mol
-#' @param add
-#' @param comparison_data
+#' @param mol Name of molecule
+#' @param add Name of adduct
+#' @param comparison_data output of compare_peaks
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 Alignment_error_plot <- function(comparison_data, mol, add){
   if(missing(mol) | missing(add) | missing(comparison_data) | length(mol) < 1 | length(add) < 1) return(plotly::ggplotly(ggplot() +
                                                             ggtitle("Missing arguments")))

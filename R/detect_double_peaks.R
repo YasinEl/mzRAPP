@@ -1,14 +1,13 @@
 #' detect_double_peaks2
 #'
-#' @param pot.doubleP.v
-#' @param Min.PpP
-#' @param l
-#' @param r
-#' @param Min.Res
+#' @param pot.doubleP.v pot.doubleP.v
+#' @param Min.PpP Min.PpP
+#' @param l l
+#' @param r r
+#' @param Min.Res Min.Res
 #'
 #' @keyword Internal
 #' @export
-#' @return
 #'
 #' @noRd
 detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(pot.doubleP.v), Min.Res = 70) {
@@ -133,9 +132,8 @@ peak.dt$breakP <- as.integer(peak.dt$breakP)
 
 #' get_avg_noise
 #'
-#' @param int
+#' @param int int
 #'
-#' @return
 #' @export
 #'
 #' @noRd

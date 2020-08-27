@@ -1,11 +1,10 @@
 #' pick_algorithm
 #'
-#' @param ug_table_path
-#' @param g_table_path
-#' @param options_table
-#' @param algo
+#' @param ug_table_path ug_table_path
+#' @param g_table_path g_table_path
+#' @param options_table options_table
+#' @param algo algo
 #'
-#' @return
 #' @export
 #'
 #' @noRd

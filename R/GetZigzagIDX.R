@@ -1,9 +1,8 @@
 #' GetZigzagIDX
 #'
-#' @param int
-#' @param height
+#' @param int int
+#' @param height height
 #'
-#' @return
 #' @export
 #'
 #' @noRd

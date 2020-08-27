@@ -1,12 +1,11 @@
 #' get_pot_peak_ranges2
 #'
-#' @param int
-#' @param Min.PpP
-#' @param peak.spotting.factor
+#' @param int int
+#' @param Min.PpP Min.PpP
+#' @param peak.spotting.factor peak.spotting.factor
 #'
 #' @keyword Internal
 #' @export
-#' @return
 #'
 #' @noRd
 get_pot_peak_ranges2 <- function(int, Min.PpP = 10, peak.spotting.factor = 0.01){

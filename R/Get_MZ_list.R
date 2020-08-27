@@ -1,10 +1,9 @@
 #' Get_MZ_list
 #'
-#' @param l.peaks
-#' @param raw_data
-#' @param CompCol_xic
+#' @param l.peaks l.peaks
+#' @param raw_data raw_data
+#' @param CompCol_xic CompCol_xic
 #'
-#' @return
 #' @export
 #'
 #' @noRd

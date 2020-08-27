@@ -53,10 +53,10 @@ find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 
 #' File_con_test
 #'
-#' @param FileName
-#' @param feature_id
+#' @param FileName FileName
+#' @param feature_id feature_id
 #'
-#' @return
+#' @return connected file grps
 #' @export
 #'
 #' @noRd

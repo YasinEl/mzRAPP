@@ -1,8 +1,7 @@
 #' melt_fftable
 #'
-#' @param fftable
+#' @param fftable fftable
 #'
-#' @return
 #' @export
 #'
 #' @noRd

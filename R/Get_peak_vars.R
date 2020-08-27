@@ -1,14 +1,13 @@
 #' Get_peak_vars
 #'
-#' @param l.peaks
-#' @param EIC.dt
-#' @param CompCol_xic
-#' @param iso.run
-#' @param adduct.run
-#' @param manual_bound
-#' @param l.peaks.mz_list
+#' @param l.peaks l.peaks
+#' @param EIC.dt EIC.dt
+#' @param CompCol_xic CompCol_xic
+#' @param iso.run iso.run
+#' @param adduct.run adduct.run
+#' @param manual_bound manual_bound
+#' @param l.peaks.mz_list l.peaks.mz_list
 #'
-#' @return
 #' @export
 #'
 #' @noRd

@@ -2,20 +2,19 @@
 #'
 #' @description detects peaks
 #'
-#' @param int
-#' @param rt
-#' @param Min.PpP
-#' @param peak.spotting.factor.
-#' @param Integration_baseL_factor.
-#' @param l
-#' @param r
-#' @param M0.grp
-#' @param main_adduct.grp
-#' @param Min.Res.
+#' @param int int
+#' @param rt rt
+#' @param Min.PpP Min.PpP
+#' @param peak.spotting.factor. peak.spotting.factor.
+#' @param Integration_baseL_factor. Integration_baseL_factor.
+#' @param l l
+#' @param r r
+#' @param M0.grp M0.grp
+#' @param main_adduct.grp main_adduct.grp
+#' @param Min.Res. Min.Res.
 #'
 #' @keyword Internal
 #' @export
-#' @return
 #' @noRd
 #'
 cutout_peaks <-

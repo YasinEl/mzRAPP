@@ -11,7 +11,6 @@
 #'
 #' @keyword Internal
 #' @export
-#' @return
 #' @noRd
 #'
 predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, isoab_col, flag_extremes = FALSE)

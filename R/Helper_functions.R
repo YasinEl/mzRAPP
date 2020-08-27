@@ -1,9 +1,8 @@
 #' getXIC
 #'
-#' @param PC
-#' @param IndexNumber
+#' @param PC PC
+#' @param IndexNumber IndexNumber
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -20,7 +19,7 @@ return(plot.table)
 
 #' reIndexFeatures
 #'
-#' @param vct
+#' @param vct vct
 #'
 #' @return
 #'
@@ -43,10 +42,9 @@ reIndexFeatures <- function(vct){
 
 #' round.woe
 #'
-#' @param x
-#' @param digi
+#' @param x x
+#' @param digi digi
 #'
-#' @return
 #' @export
 #'
 #' @noRd

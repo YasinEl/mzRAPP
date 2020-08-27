@@ -1,8 +1,7 @@
 #' import_options
 #'
-#' @param file_path
+#' @param file_path file_path
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -26,12 +25,11 @@ import_options <- function (file_path) {
 #Renames the columns of dt by replacing all names defined in vector old_columns by vector new_columns
 #' rename_columns_from_options
 #'
-#' @param dt
-#' @param options_table
-#' @param old_columns
-#' @param new_columns
+#' @param dt dt
+#' @param options_table options_table
+#' @param old_column options_tables
+#' @param new_columns new_columns
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -44,10 +42,10 @@ rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns
 
 #' remove_identical_peaks
 #'
-#' @param dt
-#' @param incl_height
+#' @param dt dt
+#' @param incl_height height
 #'
-#' @return
+#' @return dpl
 #' @export
 #'
 #' @noRd

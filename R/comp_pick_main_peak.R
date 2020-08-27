@@ -1,8 +1,7 @@
 #' pick_main_peak
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -18,9 +17,8 @@ pick_main_peak <- function(dt){
 
 #' pick_main_peak_sd
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd

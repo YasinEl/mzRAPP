@@ -1,9 +1,8 @@
 #' feature_compare
 #'
-#' @param b_table
-#' @param g_table
+#' @param b_table b_table
+#' @param g_table g_table
 #'
-#' @return
 #' @export
 #'
 #' @noRd

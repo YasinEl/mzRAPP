@@ -1,9 +1,9 @@
 #' find_best_feature_feature
 #'
-#' @param dt
-#' @param bys
+#' @param dt dt
+#' @param bys bys
 #'
-#' @return
+#' @return best feature
 #' @export
 #'
 #' @noRd

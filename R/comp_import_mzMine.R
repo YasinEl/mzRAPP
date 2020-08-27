@@ -2,10 +2,9 @@
 
 #' import_ungrouped_mzmine
 #'
-#' @param folder_path
-#' @param options_table
+#' @param folder_path folder_path
+#' @param options_table options_table
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -102,8 +101,8 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 
 #' import_grouped_mzmine
 #'
-#' @param file_path
-#' @param options_table
+#' @param file_path file_path
+#' @param options_table options_table
 #'
 #' @return
 #' @export

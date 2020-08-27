@@ -1,9 +1,8 @@
 #' import_ungrouped_openms
 #'
-#' @param file_list
-#' @param options_dt
+#' @param file_list file_list
+#' @param options_dt options_dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -170,10 +169,9 @@ import_ungrouped_openms <- function(file_list, options_dt){
 
 #' import_grouped_openms
 #'
-#' @param file_path
-#' @param options_table
+#' @param file_path file_path
+#' @param options_table options_table
 #'
-#' @return
 #' @export
 #'
 #' @noRd

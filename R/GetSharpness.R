@@ -1,8 +1,7 @@
 #' GetSharpness
 #'
-#' @param int
+#' @param int int
 #'
-#' @return
 #' @export
 #'
 #' @noRd

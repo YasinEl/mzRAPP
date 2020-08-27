@@ -1,9 +1,8 @@
 #' generate_options
 #'
-#' @param raw_b_table
-#' @param algo
+#' @param raw_b_table raw_b_table
+#' @param algo algo
 #'
-#' @return
 #' @export
 #'
 #' @noRd

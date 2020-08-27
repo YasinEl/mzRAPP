@@ -1,9 +1,9 @@
 #' assemble_peaks
 #'
-#' @param peak.grp
-#' @param s
-#' @param e
-#' @param breakP
+#' @param peak.grp peak.grp
+#' @param s start
+#' @param e end
+#' @param breakP break point
 #'
 #' @noRd
 #'

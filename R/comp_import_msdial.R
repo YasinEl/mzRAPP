@@ -1,9 +1,8 @@
 #' import_ungrouped_msdial
 #'
-#' @param file_list
-#' @param options_dt
+#' @param file_list file_list
+#' @param options_dt options_dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -75,10 +74,9 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
 #' import_grouped_msdial
 #'
-#' @param file_path
-#' @param options_dt
+#' @param file_path file_path
+#' @param options_dt options_dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd

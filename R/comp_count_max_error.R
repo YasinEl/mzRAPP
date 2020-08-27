@@ -1,8 +1,7 @@
 #' count_errors_max
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd

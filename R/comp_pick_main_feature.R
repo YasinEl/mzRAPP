@@ -1,8 +1,7 @@
 #' pick_main_feature
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -21,9 +20,8 @@ pick_main_feature <- function(dt){
 
 #' pick_main_feature_sd
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
@@ -77,9 +75,8 @@ pick_main_feature_sd <- function(dt){
 
 #' best_feature_per_comparison
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd

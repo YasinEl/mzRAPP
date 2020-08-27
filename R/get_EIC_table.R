@@ -1,12 +1,11 @@
 #' get_EIC_table
 #'
-#' @param rt
-#' @param int
-#' @param Min.PpP
+#' @param rt rt
+#' @param int int
+#' @param Min.PpP Min.PpP
 #'
 #' @keyword Internal
 #'
-#' @return
 #' @export
 #'
 #' @noRd

@@ -1,8 +1,7 @@
 #' classify_false_negative
 #'
-#' @param dt
+#' @param dt dt
 #'
-#' @return
 #' @export
 #'
 #' @noRd
