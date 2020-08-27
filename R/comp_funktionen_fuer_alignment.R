@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 
 
 
@@ -60,7 +60,7 @@ get_main_UT_groups <- function(DT){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 
 count_alignment_errors <- function(DT, main_UTgroups, method = "both"){
 

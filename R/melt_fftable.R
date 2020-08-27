@@ -5,7 +5,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 melt_fftable <- function(ff_table, c_table){
 
   dt <-  ff_table

@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_openms <- function(file_list, options_dt){
 
   print('start OpenMS ug import')
@@ -176,7 +176,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_grouped_openms <- function(file_path, options_table){
 
   print('start OpenMS g import')

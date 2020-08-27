@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_elmaven <- function(file, options_dt){
 
   print('start elmaven ug import')
@@ -73,7 +73,7 @@ import_ungrouped_elmaven <- function(file, options_dt){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_grouped_elmaven <- function (file, options_dt) {
 
   print('start El-MAVEN g import')

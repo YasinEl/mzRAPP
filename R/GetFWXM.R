@@ -14,6 +14,7 @@
 #'
 #' @importFrom retistruct line.line.intersection
 #'
+#' @noRd
 
 
 GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_diff = FALSE)

@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_msdial <- function(file_list, options_dt){
 
   print('start msdial ug import')
@@ -81,7 +81,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_grouped_msdial <- function(file_path, options_dt){
 
   print('start msdial g import')

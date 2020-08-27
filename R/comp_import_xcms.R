@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_xcms <- function(file, options_dt){
 
   print('start xcms ug import')
@@ -72,7 +72,7 @@ import_ungrouped_xcms <- function(file, options_dt){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_grouped_xcms <- function (file, options_dt) {
 
   print('start xcms g import')

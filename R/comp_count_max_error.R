@@ -5,7 +5,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 count_errors_max <- function(dt){
   theMolecule <- unique(dt$molecule_b)
   theAdduct  <- unique(dt$adduct_b)

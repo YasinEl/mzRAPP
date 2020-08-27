@@ -7,7 +7,8 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
+#'
 find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 
   temp_dt <- data.table(peak_area_b, peak_area, peak_height_b, Connected)
@@ -58,7 +59,8 @@ find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
+#'
 File_con_test <- function(FileName, feature_id){
 
   sub_tab <- data.table(FileName, feature_id)

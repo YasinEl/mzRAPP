@@ -5,7 +5,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 GetSharpness <- function(int){
 
 

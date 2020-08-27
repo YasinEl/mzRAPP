@@ -5,7 +5,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 classify_false_negative <- function(dt) {
 
   #check if feature ID = main ID
@@ -15,7 +15,6 @@ classify_false_negative <- function(dt) {
 
 
   dt <- dt[, feature_id_b_temp := feature_id_b]
-  #fwrite(dt, file="debug.csv")
   temp_groups <- dt[, if(any(false_negative == 'TRUE')) .SD, by=.(feature_id_b_temp)]
   temp_groups <- temp_groups[, if(!all(false_negative == 'TRUE')) .SD, by=.(feature_id_b_temp)]
 
@@ -37,15 +36,6 @@ classify_false_negative <- function(dt) {
 
   temp_groups <- temp_groups[, r_s_check(.SD), by=.(feature_id_b)]
   temp_groups <- temp_groups[, false_negative := paste(false_negative, false_negative_type, sep="_")]
-
-
-  #Split-Apply-Combine aproach, propably very inefficent, try to vectorise or use lapply!!!!!
-  #all_temp_groups <- split(temp_groups, by=c('feature_id_b'))
-  #return_groups <- list()
-  #for (group in all_temp_groups) {
-  #  group <- group[order(peak_area_b)]
-  #  group <- group[, b_order_temp := .N]
-  #}
 
   return(temp_groups)
 }

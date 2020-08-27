@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examplesx
+#' @noRd
 find_best_feature_feature <- function(dt, bys) {
 
   dt <- copy(dt)

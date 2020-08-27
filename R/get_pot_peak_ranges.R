@@ -8,7 +8,7 @@
 #' @export
 #' @return
 #'
-#' @examples
+#' @noRd
 get_pot_peak_ranges2 <- function(int, Min.PpP = 10, peak.spotting.factor = 0.01){
 
 

@@ -7,8 +7,9 @@
 #' @keyword Internal
 #'
 #' @return
+#' @export
 #'
-#' @examples
+#' @noRd
 get_EIC_table <- function(rt, int, Min.PpP) {
   EIC.dt <- data.table(
     rt = rt,

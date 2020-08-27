@@ -5,9 +5,9 @@
 #' @param e
 #' @param breakP
 #'
-#' @return
+#' @noRd
 #'
-#' @examples
+
 assemble_peaks <- function(peak.grp, s, e, breakP) {
   if (anyNA(breakP)) {
     data.frame(peak.grp = peak.grp,

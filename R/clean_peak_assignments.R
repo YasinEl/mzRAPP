@@ -5,7 +5,8 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
+#'
 clean_peak_assignments <- function(Input_table){
 
   if(nrow(Input_table) < 1){

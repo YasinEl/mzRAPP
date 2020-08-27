@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 GetZigzagIDX <- function(int, height){
 
   Zaeler_zzi = 0

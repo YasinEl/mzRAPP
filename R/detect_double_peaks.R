@@ -10,7 +10,7 @@
 #' @export
 #' @return
 #'
-#' @examples
+#' @noRd
 detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(pot.doubleP.v), Min.Res = 70) {
 
   pot.doubleP.v <- pot.doubleP.v[l:r]
@@ -138,7 +138,7 @@ peak.dt$breakP <- as.integer(peak.dt$breakP)
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 get_avg_noise <- function(int){
 
   int <- unique(int)
@@ -176,85 +176,4 @@ get_avg_noise <- function(int){
   return(c(noise_steps_bm, noise_steps_am))
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Log_op_fkt <- function(a, op, b, int.v) {
-  foo <- match.fun(FUN = op)
-
-  rle.v <- Rle(foo(a, b))
-
-
-  rle.dt <-
-    data.table(
-      idx = as.numeric(seq.int(length(
-        rle.v@values
-      ))),
-      values = rle.v@values,
-      lengths = rle.v@lengths,
-      start = start(rle.v),
-      end = end(rle.v)
-    )
-
-  rle.dt <- rle.dt[rle.dt[, .(means = mean(int.v[start:end]),
-                              maxs = max(int.v[start:end])
-                              ),
-                          by = .(idx)], on =.(idx)]
-
-
-  return(rle.dt)
-}
-
-
-
-
-t <- function(){
-
-t <- mapply(Log_op_fkt,
-            b = sort(seq(min(tv),
-                         max(tv),
-                         0.0005 * max(tv)),
-                     decreasing = FALSE),
-            MoreArgs = list(a = tv,
-                            op = ">",
-                            int.v = tv),
-            SIMPLIFY = FALSE)
-
-names(t) <- sort(seq(min(tv), max(tv), 0.0005 * max(tv)), decreasing = FALSE) /max(tv) * 100
-
-t <- t[!duplicated(t)]
-
-
-peak.slices <- lapply(t, function(x) {setDT(x)[values == TRUE & lengths > 5]})
-peak.slices <- peak.slices[!duplicated(peak.slices)]
-
-double.peak.slices <- peak.slices[sapply(peak.slices, function(x) dim(x)[1]) >= 2]
-double.peak.slices <- double.peak.slices[!duplicated(double.peak.slices)]
-
-
-tt <- lapply(t, function(i) setDT(i)[, z := sum(x/y), by=.(a,b)])
-
-scenarios <- lapply(scenarios, function(i) setDT(i)[, z := sum(x/y), by=.(a,b)])
-
-
-
-
-tt <- data.table::rbindlist(t, fill = TRUE)
-
-
-}
 

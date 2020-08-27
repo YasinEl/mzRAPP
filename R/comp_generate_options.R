@@ -1,3 +1,12 @@
+#' generate_options
+#'
+#' @param raw_b_table
+#' @param algo
+#'
+#' @return
+#' @export
+#'
+#' @noRd
 generate_options <- function(raw_b_table, algo){
   #Hardcoded internal columns
   columns_dt <- data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name','molecule', 'adduct', 'isoab', 'mz_exact',

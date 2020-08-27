@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_cd <- function(file_path, options_table){
 
   print('Start import ungrouped compound discoverer')

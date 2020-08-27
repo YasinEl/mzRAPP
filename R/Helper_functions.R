@@ -6,7 +6,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 getXIC <- function(PC, IndexNumber){
 
 plot.table <- data.table(rt = as.numeric(unlist(strsplit(PC[IDX == IndexNumber, RT.v], split = ","))),
@@ -24,7 +24,7 @@ return(plot.table)
 #'
 #' @return
 #'
-#' @examples
+#' @noRd
 reIndexFeatures <- function(vct){
 
   apply(as.matrix(vct), 1, function(x, tab = names(sort(table(vct), decreasing = TRUE))){
@@ -49,7 +49,7 @@ reIndexFeatures <- function(vct){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 round.woe <- function(x, digi){
 
   if(is.numeric(x) == TRUE){

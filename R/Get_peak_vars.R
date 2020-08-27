@@ -11,10 +11,10 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound){
 
-  li_te <<- list(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound)
+  li_te <- list(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound)
 
   if(length(l.peaks) == 1){return(NULL)}
 

@@ -214,31 +214,3 @@ generate_results_text <- function(comparison_data){
 }
 
 
-
-
-
-
-
-#' zeroTableToFalse
-#'
-#' @param df
-#'
-#' @return
-#' @export
-#'
-#' @examples
-zeroTableToFalse <- function(df){
-
-  if(nrow(df) == 0){
-    return(data.frame(var = FALSE))
-  }
-  return(df)
-}
-
-
-#count_split_features <- function(feature_id_ug){
-#  if(length(unique(feature_id_ug))>1){return (TRUE)}
-#  else {return (FALSE)}
-#}
-
-#generate_results_text(comparison_ug_g)

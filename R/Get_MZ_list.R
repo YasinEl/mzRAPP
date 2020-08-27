@@ -7,7 +7,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 Get_MZ_list <- function(l.peaks, raw_data, CompCol_xic, EIC.dt){
 
 

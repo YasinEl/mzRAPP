@@ -6,7 +6,8 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
+#'
 feature_compare <- function(b_table, g_table){
 
   #Find smallest and largest mz and rt and area per feature

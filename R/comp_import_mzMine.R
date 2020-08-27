@@ -8,7 +8,7 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_ungrouped_mzmine <- function(folder_path, options_table){
   print('start ungroupd mzmine import')
 
@@ -108,7 +108,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 #' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 import_grouped_mzmine <- function(file_path, options_table){
 
   print('start mzMine g import')

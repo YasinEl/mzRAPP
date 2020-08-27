@@ -16,6 +16,7 @@
 #' @keyword Internal
 #' @export
 #' @return
+#' @noRd
 #'
 cutout_peaks <-
   function(int,
