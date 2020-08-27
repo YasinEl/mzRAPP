@@ -13,5 +13,5 @@ generate_results_text(comparison_data)
 
 }
 \description{
-generate_results_text
+
 }
