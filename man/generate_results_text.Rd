@@ -7,11 +7,11 @@
 generate_results_text(comparison_data)
 }
 \arguments{
-\item{comparison}{}
+\item{comparison}{output from \code{\link{compare_peaks}}}
 }
 \value{
-
+returns a list containing containing different performance metrics of non-targeted data pre-processing.
 }
 \description{
-
+in order to estimate confidence intervals boots trapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic".
 }

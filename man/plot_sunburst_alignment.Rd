@@ -7,10 +7,10 @@
 plot_sunburst_alignment(result_txt)
 }
 \arguments{
-\item{result_txt}{}
+\item{result_txt}{output from \code{\link{generate_results_text}}}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_sunburst_alignment

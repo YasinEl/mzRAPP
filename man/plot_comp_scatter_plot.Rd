@@ -14,10 +14,20 @@ plot_comp_scatter_plot(
 )
 }
 \arguments{
-\item{comparison_data}{}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
+
+\item{x}{variable (column name) to be plotted on x axis}
+
+\item{y}{variable (column name) to be plotted on y axis}
+
+\item{col}{variable (column name) to be colored by}
+
+\item{choice_vector_comp}{named vector including all variables used as elements}
+
+\item{post_alignment}{TRUE/FALSE should NT data from before or after alignment be plotted}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_comp_scatter_plot

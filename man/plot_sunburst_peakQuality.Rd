@@ -7,10 +7,12 @@
 plot_sunburst_peakQuality(result_txt, comparison_object)
 }
 \arguments{
-\item{comparison_object}{}
+\item{result_txt}{output from \code{\link{generate_results_text}}}
+
+\item{comparison_object}{output from \code{\link{compare_peaks}}}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_sunburst_peakQuality

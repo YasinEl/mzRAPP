@@ -14,10 +14,14 @@ plot_bench_histo(
 )
 }
 \arguments{
-\item{choice_vector_bench}{}
+\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+
+\item{var}{variable name to be plotted}
+
+\item{choice_vector_bench}{named vector including variable to be plotted as element}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_bench_histo

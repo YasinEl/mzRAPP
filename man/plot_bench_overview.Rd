@@ -7,10 +7,18 @@
 plot_bench_overview(benchmark_data, x, y, colb, choice_vector_bench)
 }
 \arguments{
-\item{choice_vector_bench}{}
+\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+
+\item{x}{variable (column name) to be plotted on x axis}
+
+\item{y}{variable (column name) to be plotted on y axis}
+
+\item{colb}{variable (column name) to color by}
+
+\item{choice_vector_bench}{named vector including all variables used as elements}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_bench_overview

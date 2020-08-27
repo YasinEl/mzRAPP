@@ -7,12 +7,12 @@
 plot_Peak(PC, IndexNumber)
 }
 \arguments{
-\item{PC}{PeakCandidates tabel from from which peak should be plotted}
+\item{PC}{output from \code{\link{findBenchPeaks}}}
 
 \item{IndexNumber}{IDX number of peak to be plotted}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_Peak

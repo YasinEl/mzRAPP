@@ -11,10 +11,14 @@ plot_comp_missing_value_hm(
 )
 }
 \arguments{
-\item{disable_plot}{}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
+
+\item{post_alignment}{TRUE/FALSE should NT data from before or after alignment be plotted}
+
+\item{disable_plot}{if TRUE plot is not generated (for shiny app due to long loading times)}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_comp_missing_value_hm

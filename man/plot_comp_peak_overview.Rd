@@ -7,10 +7,16 @@
 plot_comp_peak_overview(comparison_data, mol_c, add_c, ia_c)
 }
 \arguments{
-\item{ia_c}{}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
+
+\item{mol_c}{molecule}
+
+\item{add_c}{adduct}
+
+\item{ia_c}{isotopic abundance rounded to 2 digits}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_comp_peak_overview

@@ -11,10 +11,14 @@ plot_comp_iso_pred_error(
 )
 }
 \arguments{
-\item{comparison_data}{}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
+
+\item{post_alignment}{TRUE/FALSE should NT data from before or after alignment be plotted}
+
+\item{BMvsPPvsAl}{TRUE/FALSE should argument post_alignment be ignored in order to plot both in one plot}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_comp_iso_pred_error

@@ -12,10 +12,16 @@ plot_comp_dist_of_found_peaks(
 )
 }
 \arguments{
-\item{post_alignment}{}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
+
+\item{var}{variable (column name) to be plotted}
+
+\item{choice_vector_comp}{named vector containing variable to be plotted as element}
+
+\item{post_alignment}{TRUE/FALSE should data be plotted from before or after alignment.}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_comp_dist_of_found_peaks

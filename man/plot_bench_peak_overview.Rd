@@ -7,10 +7,16 @@
 plot_bench_peak_overview(benchmark_data, molecule, adduct, ia)
 }
 \arguments{
-\item{ia}{}
+\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+
+\item{molecule}{molecule}
+
+\item{adduct}{adduct}
+
+\item{ia}{isotopic abundance rounded to 2 digits}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_bench_peak_overview

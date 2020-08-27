@@ -7,10 +7,16 @@
 plot_Peak_per_mol(PC_object, mol, ia = 100, add = "M+H")
 }
 \arguments{
-\item{add}{}
+\item{PC_object}{output from \code{\link{compare_peaks}} or output from \code{\link{findBenchPeaks}}}
+
+\item{mol}{molecule}
+
+\item{ia}{isotopic abundance rounded to 2 digits}
+
+\item{add}{adduct}
 }
 \value{
-
+plotly object
 }
 \description{
 plot_Peak_per_mol
