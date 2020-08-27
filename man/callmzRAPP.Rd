@@ -7,7 +7,7 @@
 callmzRAPP()
 }
 \value{
-
+shiny app
 }
 \description{
 callmzRAPP
