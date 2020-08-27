@@ -11,7 +11,7 @@
 #'
 pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
 
-  if(is.list(options_table)){
+  if(is.list(options_table) == TRUE && is.data.table(options_table) == FALSE){
 
     options_table <- options_table$options_table
 

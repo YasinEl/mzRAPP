@@ -1104,47 +1104,47 @@ callmzRAPP <- function(){
     })
 
     #Benchmark heatmap plot
-    observeEvent({benchmark_data()}, {
-      benchmark_data <- isolate(benchmark_data())
-      if(!is.null(benchmark_data)){
-        plot_and_text <- plot_bench_heatmap(benchmark_data)
-        output$graph_area_bench_hm <- plotly::renderPlotly(plot_and_text$p)
-        output$results_text_b <- renderText(plot_and_text$t)
-      }
-    })
+    #observeEvent({benchmark_data()}, {
+    #  benchmark_data <- isolate(benchmark_data())
+    #  if(!is.null(benchmark_data)){
+    #    plot_and_text <- plot_bench_heatmap(benchmark_data)
+    #    output$graph_area_bench_hm <- plotly::renderPlotly(plot_and_text$p)
+    #    output$results_text_b <- renderText(plot_and_text$t)
+    #  }
+    #})
 
 
     #Benchmark peak overview plot
-    observeEvent(benchmark_data(),{
-      benchmark_data<-isolate(benchmark_data())
-      if(!is.null(benchmark_data)){
-        benchmark_data <- benchmark_data$PCal
-        updateSelectInput(session, 'mol', choices = as.character(unique(benchmark_data$molecule)), selected = as.character(unique(benchmark_data$molecule)[1]))
-      }
-    })
-    observeEvent(input$mol, {
-      benchmark_data<-isolate(benchmark_data())
-      if(!is.null(benchmark_data)){
-        benchmark_data <- benchmark_data$PCal
-        updateSelectInput(session, 'add', choices = unique(benchmark_data[molecule == input$mol]$adduct))
-      }
-    })
+    #observeEvent(benchmark_data(),{
+    #  benchmark_data<-isolate(benchmark_data())
+    #  if(!is.null(benchmark_data)){
+    #    benchmark_data <- benchmark_data$PCal
+    #    updateSelectInput(session, 'mol', choices = as.character(unique(benchmark_data$molecule)), selected = as.character(unique(benchmark_data$molecule)[1]))
+    #  }
+    #})
+    #observeEvent(input$mol, {
+    #  benchmark_data<-isolate(benchmark_data())
+    #  if(!is.null(benchmark_data)){
+    #    benchmark_data <- benchmark_data$PCal
+    #    updateSelectInput(session, 'add', choices = unique(benchmark_data[molecule == input$mol]$adduct))
+    #  }
+    #})
 
-    observeEvent({input$mol; input$add}, {
-      benchmark_data<-isolate(benchmark_data())
-      if(!is.null(benchmark_data)){
-        benchmark_data <- benchmark_data$PCal
-        updateSelectInput(session, 'ia', choices = sort(round.woe(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
-      }
-    })
+    #observeEvent({input$mol; input$add}, {
+    #  benchmark_data<-isolate(benchmark_data())
+    #  if(!is.null(benchmark_data)){
+    #    benchmark_data <- benchmark_data$PCal
+    #    updateSelectInput(session, 'ia', choices = sort(round.woe(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
+    #  }
+    #})
 
-    observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
-      benchmark_data<-isolate(benchmark_data())
-      if(!is.null(benchmark_data)){
-        output$graph_area_bench_peak_overview <- plotly::renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
-                                                                        plotly::event_register('plotly_click'))
-      }
-    })
+    #observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
+    #  benchmark_data<-isolate(benchmark_data())
+    #  if(!is.null(benchmark_data)){
+    #    output$graph_area_bench_peak_overview <- plotly::renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
+    #                                                                    plotly::event_register('plotly_click'))
+    #  }
+    #})
 
 
     observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "bench_scatter", priority = "event")), {

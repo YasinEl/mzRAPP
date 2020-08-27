@@ -27,14 +27,13 @@ import_options <- function (file_path) {
 #'
 #' @param dt dt
 #' @param options_table options_table
-#' @param old_column options_tables
+#' @param old_column old_column
 #' @param new_columns new_columns
 #'
 #' @export
 #'
 #' @noRd
 rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns) {
-
   rename_table = na.omit(options_dt[, c(old_columns, new_columns), with=FALSE], old_columns)
   return(setnames(dt, rename_table[[old_columns]], rename_table[[new_columns]]))
 }

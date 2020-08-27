@@ -79,7 +79,7 @@ getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method 
   ##################################
   #calculate new sum formulas from adducts
   ##################################
-  DT$SumForm2_c <- mapply(multiform,DT$new_formula,DT$Mult)
+  DT$SumForm2_c <- mapply(enviPat::multiform,DT$new_formula,DT$Mult)
   DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") enviPat::mergeform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_add)
   DT$SumForm2_c <- mapply(function(formula1, formula2){if(formula2 != "FALSE") enviPat::subform(formula1, formula2) else formula1}, DT$SumForm2_c, DT$Formula_ded)
   DT <- DT[SumForm2_c != "H from formula 2 not part of formula1"]
