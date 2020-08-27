@@ -1,12 +1,11 @@
 #' plot_Peak
 #'
-#' @param PC PeakCandidates tabel from from which peak should be plotted
+#' @param PC output from \code{\link{findBenchPeaks}}
 #' @param IndexNumber IDX number of peak to be plotted
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_Peak  <- function(PC, IndexNumber){
 
   UT_comp <- FALSE
@@ -62,19 +61,18 @@ plot_Peak  <- function(PC, IndexNumber){
   }
 
 
-  plotly::ggplotly(p)
+  plotly::ggplotly(p, dynamicTicks = TRUE)
 }
 
 #' plot_Peak_with_predicted_peak
 #'
-#' @param PC
-#' @param molecule
-#' @param file
+#' @param PC output from \code{\link{findBenchPeaks}}
+#' @param molecule molecule
+#' @param file file name
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
 
@@ -121,7 +119,7 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
     ggtitle(paste0(mol, " ", add, " ", round(iso, 2)))
 
-  plotly::ggplotly(p)
+  plotly::ggplotly(p, dynamicTicks = TRUE)
 
 
 }
@@ -131,17 +129,22 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
 #' plot_Peak_per_mol
 #'
-#' @param PC_object
-#' @param mol
-#' @param ia
-#' @param add
+#' @param PC_object output from \code{\link{compare_peaks}} or output from \code{\link{findBenchPeaks}}
+#' @param mol molecule
+#' @param ia isotopic abundance rounded to 2 digits
+#' @param add adduct
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_Peak_per_mol  <- function(PC_object, mol, ia = 100, add = "M+H"){
 UT_comp = FALSE
+
+if(is.list(PC_object) == TRUE){
+  PC_object <- rbindlist(list(PC_object$c_table, PC_object$nf_b_table), fill = TRUE, use.names = TRUE)
+}
+
+
   if("molecule_b" %in% colnames(PC_object) == TRUE){
     UT_comp = TRUE
     PC_object <- PC_object[main_peak == TRUE | is.na(peak_area_ug)]
@@ -273,13 +276,12 @@ plot_dt <- plot_dt[-1]
 
 #' plot_IR_peaks
 #'
-#' @param PC
-#' @param plotly_key
+#' @param PC PC
+#' @param plotly_key plotly_key
 #'
-#' @return
 #' @export
 #'
-#' @examples
+#' @noRd
 plot_IR_peaks  <- function(PC, plotly_key){
   id_vetor <- unlist(strsplit(plotly_key, split = "_;_"))
 

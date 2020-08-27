@@ -1,16 +1,15 @@
 #' plot_comp_scatter_plot
 #'
-#' @param x
-#' @param y
-#' @param col
-#' @param choice_vector_comp
-#' @param post_alignment
-#' @param comparison_data
+#' @param x variable (column name) to be plotted on x axis
+#' @param y variable (column name) to be plotted on y axis
+#' @param col variable (column name) to be colored by
+#' @param choice_vector_comp named vector including all variables used as elements
+#' @param post_alignment TRUE/FALSE should NT data from before or after alignment be plotted
+#' @param comparison_data output from \code{\link{compare_peaks}}
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_comp, post_alignment = FALSE){
   if(missing(x) | missing(y) | missing (comparison_data)) return(plotly::ggplotly(ggplot() +
                                                                                     ggtitle("Missing arguments")))

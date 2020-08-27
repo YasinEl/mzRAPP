@@ -1,14 +1,14 @@
 #' generate_results_text
 #'
-#' @param comparison
+#' @param comparison output from \code{\link{compare_peaks}}
 #'
-#' @description
+#' @description in order to estimate confidence intervals boots trapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic".
 #'
-#' @return
+#' @return returns a list containing containing different performance metrics of non-targeted data pre-processing.
 #' @export
 #'
-#' @examples
 generate_results_text <- function(comparison_data){
+
   UT_peaks <-
     nrow(rbindlist(list(comparison_data$c_table[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))
 

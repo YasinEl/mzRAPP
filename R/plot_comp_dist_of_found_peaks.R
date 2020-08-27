@@ -1,14 +1,13 @@
 #' plot_comp_dist_of_found_peaks
 #'
-#' @param comparison_data
-#' @param var
-#' @param choice_vector_comp
-#' @param post_alignment
+#' @param comparison_data output from \code{\link{compare_peaks}}
+#' @param var variable (column name) to be plotted
+#' @param choice_vector_comp named vector containing variable to be plotted as element
+#' @param post_alignment TRUE/FALSE should data be plotted from before or after alignment.
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
   if(missing(var) | missing(comparison_data)) return(plotly::ggplotly(ggplot() + ggtitle("Missing arguments")))
 

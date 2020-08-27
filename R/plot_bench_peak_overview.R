@@ -1,14 +1,13 @@
 #' plot_bench_peak_overview
 #'
-#' @param benchmark_data
-#' @param molecule
-#' @param adduct
-#' @param ia
+#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param molecule molecule
+#' @param adduct adduct
+#' @param ia isotopic abundance rounded to 2 digits
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_bench_peak_overview <- function (benchmark_data, molecule, adduct, ia){
   benchmark_data <- benchmark_data$PCal
   if(nrow(benchmark_data[molecule == molecule & adduct == adduct & round(isoab, 2) == ia]) > 0){

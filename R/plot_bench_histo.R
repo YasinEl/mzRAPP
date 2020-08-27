@@ -1,14 +1,13 @@
 
 #' plot_bench_histo
 #'
-#' @param benchmark_data
-#' @param var
-#' @param choice_vector_bench
+#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param var variable name to be plotted
+#' @param choice_vector_bench named vector including variable to be plotted as element
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_bench_histo <- function(benchmark_data, var, choice_vector_bench, color = "blue", post_comp = FALSE, rm_NF_legend = FALSE){
 
   if(post_comp == FALSE){

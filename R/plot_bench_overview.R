@@ -1,15 +1,14 @@
 #' plot_bench_overview
 #'
-#' @param benchmark_data
-#' @param x
-#' @param y
-#' @param colb
-#' @param choice_vector_bench
+#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param x variable (column name) to be plotted on x axis
+#' @param y variable (column name) to be plotted on y axis
+#' @param colb variable (column name) to color by
+#' @param choice_vector_bench named vector including all variables used as elements
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_bench_overview <- function(benchmark_data, x, y, colb, choice_vector_bench){
   benchmark_data <- benchmark_data$PCal
 

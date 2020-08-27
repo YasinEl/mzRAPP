@@ -1,11 +1,10 @@
 #' plot_sunburst_alignment
 #'
-#' @param result_txt
+#' @param result_txt output from \code{\link{generate_results_text}}
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_sunburst_alignment <- function(result_txt){
 
 
@@ -81,13 +80,12 @@ plot_sunburst_alignment <- function(result_txt){
 
 #' plot_sunburst_peaks
 #'
-#' @param result_txt
-#' @param comparison_object
+#' @param result_txt output from \code{\link{generate_results_text}}
+#' @param comparison_object output from \code{\link{compare_peaks}}
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_sunburst_peaks <- function(result_txt, comparison_object){
 
   summary_tab <- comparison_object[["feature_table"]]
@@ -141,13 +139,12 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 
 #' plot_sunburst_peakQuality
 #'
-#' @param result_txt
-#' @param comparison_object
+#' @param result_txt output from \code{\link{generate_results_text}}
+#' @param comparison_object output from \code{\link{compare_peaks}}
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
   bm <- rbindlist(list(comparison_object$c_table,
@@ -229,14 +226,12 @@ plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
 #' as.sunburstDF
 #'
-#' @param DF
-#' @param valueCol
+#' @param DF DF
+#' @param valueCol valueCol
 #'
 #' @description This function was written by ismirsehregal on stackoverflow https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram
-#' @return
 #' @export
 #'
-#' @examples
 as.sunburstDF <- function(DF, valueCol = NULL){
   require(data.table)
 

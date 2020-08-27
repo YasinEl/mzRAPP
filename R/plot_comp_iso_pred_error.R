@@ -1,8 +1,10 @@
 #' plot_comp_iso_pred_error
 #'
-#' @param comparison_data
+#' @param comparison_data output from \code{\link{compare_peaks}}
+#' @param post_alignment TRUE/FALSE should NT data from before or after alignment be plotted
+#' @param BMvsPPvsAl TRUE/FALSE should argument post_alignment be ignored in order to plot both in one plot
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
 #' @examples

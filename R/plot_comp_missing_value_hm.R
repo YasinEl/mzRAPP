@@ -1,13 +1,12 @@
 #' plot_comp_missing_value_hm
 #'
-#' @param comparison_data
-#' @param post_alignment
-#' @param disable_plot
+#' @param comparison_data output from \code{\link{compare_peaks}}
+#' @param post_alignment TRUE/FALSE should NT data from before or after alignment be plotted
+#' @param disable_plot if TRUE plot is not generated (for shiny app due to long loading times)
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, disable_plot = FALSE) {
 
   if(missing (comparison_data) | disable_plot == TRUE) return(plotly::ggplotly(ggplot() + ggtitle("Disabeled")))

@@ -1,14 +1,13 @@
 #' plot_comp_peak_overview
 #'
-#' @param comparison_data
-#' @param mol_c
-#' @param add_c
-#' @param ia_c
+#' @param comparison_data output from \code{\link{compare_peaks}}
+#' @param mol_c molecule
+#' @param add_c adduct
+#' @param ia_c isotopic abundance rounded to 2 digits
 #'
-#' @return
+#' @return plotly object
 #' @export
 #'
-#' @examples
 plot_comp_peak_overview <- function(comparison_data, mol_c, add_c, ia_c) {
 
   plot_dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
