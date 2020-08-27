@@ -87,12 +87,12 @@ generate_results_text <- function(comparison_data){
 
   results_text <- list(Assessed_tool = comparison_data$info_list$algorithm,
                        Benchmark = list(
-                         BM_peaks = comparison_data$info_list$nr_of_b_peaks,
+                         BM_peaks = (sum(sum_tab$Found_peaks_pp, na.rm = TRUE) + sum(sum_tab$Not_Found_peaks_pp, na.rm = TRUE)),
                          Features = comparison_data$info_list$nr_of_b_features
                        ),
                        Before_alignment = list(
                          NT_peaks = UT_peaks,
-                         Found_peaks = list(count = found_ug_peaks,
+                         Found_peaks = list(count = sum(sum_tab$Found_peaks_pp, na.rm = TRUE),
                                             CI = boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
@@ -102,7 +102,7 @@ generate_results_text <- function(comparison_data){
                                                                index=1,
                                                                type='basic')$basic
                          ),
-                         Split_peaks = list(count = length(unique(comparison_data$split_table$comp_id_b)),
+                         Split_peaks = list(count = sum(sum_tab$Split_peaks, na.rm = TRUE),
                                             CI = boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
@@ -113,8 +113,8 @@ generate_results_text <- function(comparison_data){
                                                                type='basic')$basic
                          ),
                          Missing_peaks = list(
-                           Systematic = nrow(comparison_data$rs_table[missing_peaks_ug == "S"]),
-                           Random =  list(count = nrow(comparison_data$rs_table[missing_peaks_ug == "R"]),
+                           Systematic = sum(sum_tab$S_pp, na.rm = TRUE),
+                           Random =  list(count = sum(sum_tab$R_pp, na.rm = TRUE),
                                           CI = boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
@@ -126,8 +126,8 @@ generate_results_text <- function(comparison_data){
                            )
                          ),
                          IR_quality = list(
-                           Error_inc_below20pp = nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. < 20%p"]),
-                           Error_inc_above20pp = list(count = nrow(comparison_data$iso_err_dt[diffH20PP_pp == "Inc. > 20%p"]),
+                           Error_inc_below20pp = sum(sum_tab$IRb_ok_pp, na.rm = TRUE),
+                           Error_inc_above20pp = list(count = sum(sum_tab$IRb_off_pp, na.rm = TRUE),
                                                       CI = boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
@@ -140,7 +140,7 @@ generate_results_text <- function(comparison_data){
                          )
                        ),
                        Alignmnet = list(
-                         Min.Errors = list(count = sum(comparison_data$ali_error_table$Min.errors, na.rm = TRUE),
+                         Min.Errors = list(count = sum(sum_tab$Min.er, na.rm = TRUE),
                                            CI = boot::boot.ci(boot::boot(sum_tab,
                                                                          function(data, indices){
                                                                            dt<-data[indices,]
@@ -149,7 +149,7 @@ generate_results_text <- function(comparison_data){
                                                                          R = 1000),
                                                               index=1,
                                                               type='basic')$basic),
-                         BM_divergences = list(count = sum(comparison_data$ali_error_table$BM.div, na.rm = TRUE),
+                         BM_divergences = list(count = sum(sum_tab$BM.div, na.rm = TRUE),
                                                CI = boot::boot.ci(boot::boot(sum_tab,
                                                                              function(data, indices){
                                                                                dt<-data[indices,]
@@ -158,7 +158,7 @@ generate_results_text <- function(comparison_data){
                                                                              R = 1000),
                                                                   index=1,
                                                                   type='basic')$basic),
-                         Lost_b.A = list(count = sum(comparison_data$ali_error_table$Lost_b.A, na.rm = TRUE),
+                         Lost_b.A = list(count = sum(sum_tab$lost, na.rm = TRUE),
                                          CI = boot::boot.ci(boot::boot(sum_tab,
                                                                        function(data, indices){
                                                                          dt<-data[indices,]
@@ -169,7 +169,7 @@ generate_results_text <- function(comparison_data){
                                                             type='basic')$basic)
                        ),
                        After_alignmnet = list(
-                         Found_peaks = list(count = nrow(comparison_data$feature_table[!is.na(area_b) & main_feature == TRUE & !is.na(area_g)]),
+                         Found_peaks = list(count = sum(sum_tab$Found_peaks_ft, na.rm = TRUE),
                                             CI =  boot::boot.ci(boot::boot(sum_tab,
                                                                            function(data, indices){
                                                                              dt<-data[indices,]
@@ -184,8 +184,8 @@ generate_results_text <- function(comparison_data){
                                                                                       main_feature == TRUE,
                                                                                     c("molecule_b", "adduct_b", "isoab_b")], cols = c("molecule_b", "adduct_b", "isoab_b"))),
                          Missing_peaks = list(
-                           Systematic = nrow(comparison_data$rs_table[missing_peaks_g == "S"]),
-                           Random =  list(count = nrow(comparison_data$rs_table[missing_peaks_g == "R"]),
+                           Systematic = sum(sum_tab$S_ft, na.rm = TRUE),
+                           Random =  list(count = sum(sum_tab$R_ft, na.rm = TRUE),
                                           CI = boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
@@ -197,8 +197,8 @@ generate_results_text <- function(comparison_data){
                            )
                          ),
                          IR_quality = list(
-                           Error_inc_below20pp = nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. < 20%p"]),
-                           Error_inc_above20pp = list(count = nrow(comparison_data$iso_err_dt[diffH20PP_ft == "Inc. > 20%p"]),
+                           Error_inc_below20pp = sum(sum_tab$IRb_ok_ft, na.rm = TRUE),
+                           Error_inc_above20pp = list(count = sum(sum_tab$IRb_off_ft, na.rm = TRUE),
                                                       CI = boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
