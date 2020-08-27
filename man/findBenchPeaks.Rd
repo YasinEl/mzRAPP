@@ -30,19 +30,19 @@ findBenchPeaks(
 
 \item{Min.PointsperPeak}{minimum number of points per peak for a peak to be considered}
 
-\item{peak.spotting.factor}{relative height to the heighest point of the EIC above which points should be considered. e.g. 0.001 corresponds to 0.1\% of the maximum.}
+\item{peak.spotting.factor}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. Relative height to the highest point of the EIC above which points should be considered during peak detection process. e.g. 0.001 corresponds to 0.1\% of the maximum.}
 
-\item{Integration_baseL_factor}{h}
+\item{Integration_baseL_factor}{relative peak height factor upon which points should be considered to be part of the peak. 0.1 would correspond to 10\% of the peak maximum.}
 
-\item{Min.Res}{At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as seperate peaks}
+\item{Min.Res}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks}
 
 \item{plan}{see \code{\link{plan}}}
 
-\item{Min.cor.w.main_adduct}{Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be considered}
+\item{Min.cor.w.main_adduct}{Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be retained}
 
-\item{Min.cor.w.M0}{Minimum pearson correlation coefficient between higher isotopologues and lower isotopologues for lower isotopologues to be considered}
+\item{Min.cor.w.M0}{Minimum pearson correlation coefficient between highest isotopologues and lower isotopologues for lower isotopologues to be retained.}
 
-\item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output}
+\item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.}
 
 \item{return_unsuc_searches}{Should unsuccsessfull searches be returned (TRUE/FALSE)}
 }

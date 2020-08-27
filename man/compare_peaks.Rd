@@ -7,11 +7,17 @@
 compare_peaks(b_table, ug_table, g_table, algo)
 }
 \arguments{
-\item{algo}{}
+\item{b_table}{output from \code{\link{import_benchmark}}}
+
+\item{ug_table}{one of the listed objects (ug_table) in output of \code{\link{pick_algorithm}}. e.g. pick_algo_output$ug_table}
+
+\item{g_table}{one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table}
+
+\item{algo}{tool output format of ug_table and g_table. Can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine.}
 }
 \value{
-
+returns list containing different tables including data from different types of comparisons
 }
 \description{
-
+compare_peaks
 }

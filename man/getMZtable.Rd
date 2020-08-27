@@ -18,13 +18,13 @@ getMZtable(
 
 \item{instrumentRes}{data frame with mz vs resolution dependence (see \code{\link{resolution_list}}) e.g. "resolution_list$`OTFusion,QExactiveHF_120000@200`"}
 
-\item{RelInt_threshold}{relative abundance of the lowest isotopologue to be considered}
+\item{RelInt_threshold}{relative abundance of the lowest isotopologue to be considered as percentage}
 
 \item{stick_method}{method that should be used to calculate discrete m/z values from calculated profile pattern e.g. "intensoid" (see \code{\link{vdetect}})}
 
-\item{adducts}{data frame with adducts (see \code{\link{adducts}})}
+\item{adducts}{data frame containing adducts (see \code{\link{adducts}})}
 
-\item{isotopes}{data frame of isotopes (see \code{\link{isotopes}})}
+\item{isotopes}{data frame containing isotopes (see \code{\link{isotopes}})}
 }
 \value{
 data.table with columns "molecule", "formula", "adduct", "charge", "m/z" and "abundance"

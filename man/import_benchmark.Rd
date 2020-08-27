@@ -7,15 +7,17 @@
 import_benchmark(file, options_path = "generate", from_csv = TRUE, algo)
 }
 \arguments{
-\item{file}{file}
+\item{file}{output of \code{\link{findBenchPeaks}}. Can be path to csv file or a data table  object (meaning that is.data.table(file) returns TRUE).}
 
-\item{options_path}{options_path}
+\item{options_path}{can be a string "generate" in order to use default column names for chosen algo. In the future we might include a possibility to allow the user to choose column names.}
 
-\item{from_csv}{}
+\item{from_csv}{TRUE or FALSE depending on file being a data.table object or a path to a csv}
+
+\item{algo}{tool output format to compare the benchmark against. can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.}
 }
 \value{
-
+returns a list including the benchmark in a format readable by \code{\link{compare_peaks}}.
 }
 \description{
-
+import_benchmark
 }
