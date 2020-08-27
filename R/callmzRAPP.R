@@ -1,10 +1,9 @@
 #' callmzRAPP
 #'
-#' @return
+#' @return shiny app
 #' @export
 #'
 #'
-#' @examples
 
 callmzRAPP <- function(){
 

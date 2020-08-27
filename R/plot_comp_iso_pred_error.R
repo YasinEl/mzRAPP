@@ -7,7 +7,6 @@
 #' @return plotly object
 #' @export
 #'
-#' @examples
 plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BMvsPPvsAl = TRUE) {
 #if(post_alignment == TRUE){
 
