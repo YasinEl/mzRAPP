@@ -7,11 +7,15 @@
 import_benchmark(file, options_path = "generate", from_csv = TRUE, algo)
 }
 \arguments{
+\item{file}{file}
+
+\item{options_path}{options_path}
+
 \item{from_csv}{}
 }
 \value{
 
 }
 \description{
-import_benchmark
+
 }

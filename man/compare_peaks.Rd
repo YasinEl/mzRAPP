@@ -13,5 +13,5 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 }
 \description{
-compare_peaks
+
 }

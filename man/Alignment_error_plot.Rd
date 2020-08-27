@@ -7,10 +7,14 @@
 Alignment_error_plot(comparison_data, mol, add)
 }
 \arguments{
-\item{comparison_data}{}
+\item{comparison_data}{output of compare_peaks}
+
+\item{mol}{Name of molecule}
+
+\item{add}{Name of adduct}
 }
 \value{
-
+plotly object
 }
 \description{
 Alignment_error_plot
