@@ -201,7 +201,7 @@ Before any NPP-performance metrics can be generated mzRAPP is matching the non-t
 Each benchmark peak (BP) is reported with the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those two values. Matching rules considering retention time (RT) are depicted in Figure 1. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. If there is more than one NP matching to a single BP, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smalles relative IT ratio bias (as compared to the predicted ratio; see figure 3) as compared to the predicted IT-ratio.
 
 ```{r figure1, out.width="40%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching rules of BP with NP"}
-knitr::include_graphics("inst/md/Peak matching graphic.png")
+knitr::include_graphics("inst/md/Peak_matching_graphic.png")
 ```
 <br>
 <b>Matching of benchmark features with non-targeted features:</b> <br>
@@ -238,7 +238,7 @@ The number of split peaks which have been found for all benchmark peaks. For a g
 The classification of not found peaks (NAs, as defined in figure 2) into high and low is done for each benchmark feature individually. It is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest benchmark peak found via the non-targeted approach are considered high. Otherwise they are considered as low. 
 
 ```{r figure3, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure3}<b>Figure 3 | </b> Diffentiation between classes of missing peaks/values"}
-knitr::include_graphics("inst/md/Missing value graphic.PNG")
+knitr::include_graphics("inst/md/Missing_value_graphic.PNG")
 ```
 
 <span id="Peak_quality"> </span>
@@ -256,7 +256,7 @@ knitr::include_graphics("inst/md/IR_tolerance.PNG")
 Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark dataset itself. Figure 5 shows three isotopologues (IT) of the same benchmark molecule detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP aligorthm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry are counted as errors. Counting  benchmark divergencies as errors, assumes correct alignment of the benchmark dataset. This kind of counting should only be done after visual inspection of the benchmark dataset. Both counts are given in the output of the NPP-assessment.
 
 ```{r figure5, out.width="80%", out.height="80%", echo=FALSE,fig.cap="\\label{fig:figure5}<b>Figure 5 | </b> Counting alignment errors"}
-knitr::include_graphics("inst/md/Alignment error graphic.png")
+knitr::include_graphics("inst/md/Alignment_error_graphic.png")
 ```
 
 <b>Overview plots:</b><br>

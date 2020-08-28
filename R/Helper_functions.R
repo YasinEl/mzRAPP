@@ -66,16 +66,16 @@ reIndexFeatures <- function(vct){
 #' round.woe
 #'
 #' @param x x
-#' @param digi digi
+#' @param stellen stellen
 #'
 #' @export
 #'
 #' @noRd
-round.woe <- function(x, digi){
+round.woe <- function(x, stellen){
 
-  if(is.numeric(x) == TRUE){
+  if(!is.na(x) == TRUE & !is.null(x) == TRUE){
 
-    return(round(x, digi))
+    return(round(x, stellen))
 
   } else return(NA)
 
