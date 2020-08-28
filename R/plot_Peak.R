@@ -66,9 +66,9 @@ plot_Peak  <- function(PC, IndexNumber){
 
 #' plot_Peak_with_predicted_peak
 #'
-#' @param PC output from \code{\link{findBenchPeaks}}
-#' @param molecule molecule
-#' @param file file name
+#' @param PC_object output from \code{\link{findBenchPeaks}}
+#' @param IndexNumber IDX number of peak to be plotted
+#'
 #'
 #' @return plotly object
 #' @export

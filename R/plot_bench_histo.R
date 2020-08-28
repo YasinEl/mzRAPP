@@ -4,6 +4,9 @@
 #' @param benchmark_data output from \code{\link{findBenchPeaks}}
 #' @param var variable name to be plotted
 #' @param choice_vector_bench named vector including variable to be plotted as element
+#' @param color color of histogram
+#' @param post_comp TRUE/FALSE are data from benchmark or comparison with non-targeted
+#' @param rm_NF_legend for shiny functionality
 #'
 #' @return plotly object
 #' @export

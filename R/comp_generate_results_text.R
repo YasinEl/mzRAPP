@@ -1,8 +1,12 @@
 #' generate_results_text
 #'
-#' @param comparison output from \code{\link{compare_peaks}}
+#'
 #'
 #' @description in order to estimate confidence intervals boots trapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic".
+#'
+#'
+#' @param comparison_data output from \code{\link{compare_peaks}}
+#'
 #'
 #' @return returns a list containing containing different performance metrics of non-targeted data pre-processing.
 #' @export
