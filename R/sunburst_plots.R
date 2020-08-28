@@ -54,7 +54,7 @@ plot_sunburst_alignment <- function(result_txt){
   dt1[labels == "correct", labels := "correct<br>alignment"]
   dt1[labels == "incorrect", labels := "incorrect<br>alignment"]
   dt1[labels == "BM div", labels := "Benchmark<br>divergencies"]
-  dt1[labels == "min errors", labels := "Min. #<br>of errors"]
+  dt1[labels == "min errors", labels := "Confirmable<br>errors"]
 
   p <-
     plotly::plot_ly(data = dt1,

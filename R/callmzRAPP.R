@@ -194,6 +194,8 @@ callmzRAPP <- function(){
                 fluidRow(
                   column(6,
                          strong("2. Set parameters", style = "font-size:30px"),
+                         p("mz precision corresponds to the highest tolerable difference of mass peaks along the mz dimension in ppm. Typical values for orbitraps range from 5 to 8. For some TOF instruments this can go up to 20 ppm."),
+                         p("mz accuracy corresponds to the maximum allowed difference between the theoretical mz of an ion species and the intensity weighthed average of all mz values over a chromatographic peak in ppm. Those values are typicaly between 3 and 5 for orbitrap as well as TOF instruments."),
                          br()
                   )
                 ),
