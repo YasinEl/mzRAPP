@@ -1,3 +1,26 @@
+#' plotly_click_wo_warnings
+#'
+#' @param sc sc
+#'
+#' @return
+#' @export
+#'
+#' @noRd
+plotly_click_wo_warnings <- function(sc){
+
+  storeWarn<- getOption("warn")
+  options(warn = -1)
+  event <- plotly::event_data("plotly_click", source = sc, priority = "event")
+
+
+  #options(warn = storeWarn)
+
+  return(event)
+
+}
+
+
+
 #' getXIC
 #'
 #' @param PC PC

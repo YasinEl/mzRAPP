@@ -98,6 +98,8 @@ callmzRAPP <- function(){
         }
       ")), #function from https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1
 
+
+
       tabItems(
         tabItem(tabName = "Readme",
                 tags$div(
@@ -723,6 +725,7 @@ callmzRAPP <- function(){
   server <- function (input, output, session) {
 
 
+
     output$Readme_op <- renderUI({
       htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
     })
@@ -1147,11 +1150,12 @@ callmzRAPP <- function(){
     #})
 
 
-    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "bench_scatter", priority = "event")), {
+    observeEvent({plotly_click_wo_warnings(sc = "bench_scatter")}, {
+
 
       bm<-isolate(benchmark_data())
       bm <- bm[["PCal"]]
-      event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "bench_scatter", priority = "event"))
+      event.data <- plotly_click_wo_warnings(sc = "bench_scatter")
       showModal(modalDialog(
         plotly::renderPlotly({
           plot_Peak(bm, IndexNumber = event.data$key)
@@ -1266,10 +1270,13 @@ callmzRAPP <- function(){
     })
 
 
+
     #Scatter_plot
     observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
       #comparison_data <- isolate(comparison_data())
+      #print("start")
       if(!is.null(comparison_data())){
+        #print("in")
         output$overview_plot <- plotly::renderPlotly(plot_comp_scatter_plot(comparison_data(),
                                                                             input$overview_plot_input_x,
                                                                             input$overview_plot_input_y,
@@ -1277,11 +1284,19 @@ callmzRAPP <- function(){
                                                                             choice_vector_comp,
                                                                             post_alignment = input$PP_al_switch_ov) %>%
                                                        plotly::event_register('plotly_click'))
+
       }
     })
 
 
-    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "scatter", priority = "event")), {
+
+    suppressWarnings(
+    observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
+
+#      shinyjs::delay(expr =({
+      #Sys.time((0.1))
+#        options(warn = storeWarn)
+#      }) ,ms = 100)
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
@@ -1296,6 +1311,7 @@ callmzRAPP <- function(){
         })
       ))
     })
+    )
 
     #R/S Heatmap Plot
     observeEvent({comparison_data(); input$PP_al_switch_hm; input$PP_al_switch_hm_off}, {
@@ -1326,7 +1342,7 @@ callmzRAPP <- function(){
 
     ####
 
-    observeEvent(suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event")), {
+    observeEvent(plotly_click_wo_warnings(sc = "IRbias"), {
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
@@ -1454,6 +1470,9 @@ callmzRAPP <- function(){
       if(!is.null(comparison_data())){
         output$error_count <- renderTable(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
       }
+      #shinyjs::delay(expr =({
+      #  options(warn = storeWarn)
+      #}) ,ms = 100)
     })
 
 
@@ -1501,7 +1520,10 @@ callmzRAPP <- function(){
         )
       }
     )
+    options(warn = 0)
   }
+
+
 
   shinyApp(ui, server)
 
