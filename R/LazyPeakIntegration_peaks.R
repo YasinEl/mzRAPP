@@ -14,7 +14,8 @@
 #' @param Min.iso.count Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.
 #' @param return_unsuc_searches Should unsuccsessfull searches be returned (TRUE/FALSE)
 #' @param Min.Res this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks
-#'
+#' @param max.rt.diff_sec maximum difference between user.rt in position of peak maximum in seconds
+#' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expeted ion species in ppm
 #'
 #' @return data table with peak variables extracted from found peaks.
 #' @export
@@ -189,7 +190,7 @@ findBenchPeaks <- function(files,
                         ##################################
                         #prepare table with smoothed and spike depleted EICs
                         ##################################
-                        EIC.dt <- mzRAPP:::get_EIC_table(rt = unname(ChromData[[i]]@rtime),
+                        EIC.dt <- get_EIC_table(rt = unname(ChromData[[i]]@rtime),
                                                             int = unname(ChromData[[i]]@intensity),
                                                             Min.PpP = Min.PointsperPeak)
 
