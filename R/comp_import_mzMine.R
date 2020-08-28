@@ -9,7 +9,7 @@
 #'
 #' @noRd
 import_ungrouped_mzmine <- function(folder_path, options_table){
-  print('start ungroupd mzmine import')
+  message('Starting unaligned mzmine import')
 
   if(is.null(folder_path)){
     stop('No ungrouped files selected')
@@ -93,7 +93,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  print(paste0('Successful mzMine ug import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful mzMine unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 
@@ -110,7 +110,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 #' @noRd
 import_grouped_mzmine <- function(file_path, options_table){
 
-  print('start mzMine g import')
+  message('start mzMine aligned import')
 
   if(is.null(file_path)){
     return(NULL)
@@ -178,7 +178,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  print(paste0('Successful mzMine g import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful mzMine aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

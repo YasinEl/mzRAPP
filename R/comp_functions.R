@@ -6,7 +6,7 @@
 #'
 #' @noRd
 import_options <- function (file_path) {
-  print(file_path)
+  #print(file_path)
   if(is.null(file_path)){
     stop('No options file selected')
   }
@@ -53,11 +53,11 @@ remove_identical_peaks <- function(dt, grouped = FALSE){
   if (grouped == FALSE){
     dt <- dt[!duplicated(dt, by=c('peak_area', 'peak_height', 'mz', 'mz_start', 'mz_end', 'rt', 'rt_start', 'rt_end'))]
   } else {
-    print( dt[duplicated(dt, by=c('peak_area', 'mz', 'rt')) | duplicated(dt, by=c('peak_area', 'mz', 'rt'), fromLast = TRUE)])
+    #print( dt[duplicated(dt, by=c('peak_area', 'mz', 'rt')) | duplicated(dt, by=c('peak_area', 'mz', 'rt'), fromLast = TRUE)])
     dt <- dt[!duplicated(dt, by=c('peak_area', 'mz', 'rt'))]
   }
   peaks_removed <- peaks_before-nrow(dt)
-  print(paste0('Removed ', peaks_removed,' identical peaks'))
+  message(paste0('Removed ', peaks_removed,' identical peaks from non-targeted output'))
   return(dt)
 }
 

@@ -89,7 +89,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #  print('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
     total_ug_peaks <- nrow(ug_table)
     ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_area_ug'))]
-    print(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate non-aligned peaks to prevent errors'))
+    message(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate non-aligned peaks from non-targeted output (identical rt, mz and area'))
   #}
   #if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){
   #  print('Duplicate peaks present in grouped. This can lead to further errors during analysis.')
@@ -100,6 +100,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ##############
 
 
+    message("Staring to compare benchmark with non-targeted output")
   ##############
   #Generating minimum peak bounderies in benchmark
   #Untrageted rt range must completely envelope these bounderies
@@ -179,9 +180,9 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
 
-  print(paste('Before Main Peak Check: ', nrow(c_table)))
+  #print(paste('Before Main Peak Check: ', nrow(c_table)))
   c_table <- pick_main_peak(c_table)
-  print(paste('After Main Peak Check: ', nrow(c_table[main_peak == TRUE])))
+  message(paste('Number of benchmark peaks with unaligned non-targeted peak matches: ', nrow(c_table[main_peak == TRUE])))
 
 
   c_table <- c_table[main_peak == TRUE]
@@ -291,7 +292,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   #Generate feature table
-    print("feature table start")
 
     if(nrow(g_table) > 0){
 
@@ -355,8 +355,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   rs_table <- rs_table[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "peak_area_b", "peak_height_b",
                            "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
   )]
-
-  print(nrow(rs_table))
 
   if(nrow(g_table) > 0){
 
@@ -491,7 +489,8 @@ if(nrow(g_table) > 0){
   return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list,
                       'split_table' = split_table, 'ff_table' = ff_table_dt, 'rs_table'= rs_table, 'iso_err_dt' = iso_err_dt, 'ali_error_table' = ali_error_table,
                       'feature_table' = feature_table)
-  print('Compare Succesfull')
+
+  message('Successful comparison!')
 
 
   return(return_list)

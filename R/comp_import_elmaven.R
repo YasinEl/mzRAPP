@@ -8,7 +8,7 @@
 #' @noRd
 import_ungrouped_elmaven <- function(file, options_dt){
 
-  print('start elmaven ug import')
+  message('start elmaven unaligned import')
 
   if(is.null(file)){
     stop('No ungrouped file selected')
@@ -56,7 +56,7 @@ import_ungrouped_elmaven <- function(file, options_dt){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  print(paste0('Successful El-MAVEN ug import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful El-MAVEN unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
 
 
@@ -74,7 +74,7 @@ import_ungrouped_elmaven <- function(file, options_dt){
 #' @noRd
 import_grouped_elmaven <- function (file, options_dt) {
 
-  print('start El-MAVEN g import')
+  message('Starting El-MAVEN aligned import')
 
   if(is.null(file)){
     return(NULL)
@@ -125,7 +125,7 @@ import_grouped_elmaven <- function (file, options_dt) {
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  print(paste0('Successful El-MAVEN g import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful El-MAVEN aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

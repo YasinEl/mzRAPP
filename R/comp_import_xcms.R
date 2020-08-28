@@ -8,7 +8,7 @@
 #' @noRd
 import_ungrouped_xcms <- function(file, options_dt){
 
-  print('start xcms ug import')
+  message('Starting xcms unlaigned import')
 
   if(is.null(file)){
     stop('No ungrouped file selected')
@@ -57,7 +57,7 @@ import_ungrouped_xcms <- function(file, options_dt){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  print(paste0('Successful xcms ug import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful xcms unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }
@@ -73,7 +73,7 @@ import_ungrouped_xcms <- function(file, options_dt){
 #' @noRd
 import_grouped_xcms <- function (file, options_dt) {
 
-  print('start xcms g import')
+  message('Starting xcms aligned import')
 
   if(is.null(file)){
     return(NULL)
@@ -128,7 +128,7 @@ import_grouped_xcms <- function (file, options_dt) {
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  print(paste0('Successful xcms g import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful xcms aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

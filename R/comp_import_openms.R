@@ -8,7 +8,7 @@
 #' @noRd
 import_ungrouped_openms <- function(file_list, options_dt){
 
-  print('start OpenMS ug import')
+  message('start OpenMS unaligned import')
 
   if(is.null(file_list)){
     stop('No ungrouped files selected')
@@ -158,7 +158,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  print(paste0('Successful OpenMS ug import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful OpenMS unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }
@@ -177,7 +177,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
 #' @noRd
 import_grouped_openms <- function(file_path, options_table){
 
-  print('start OpenMS g import')
+  message('Starting OpenMS aligned import')
 
   if(is.null(file_path)){
     return(NULL)
@@ -273,7 +273,7 @@ import_grouped_openms <- function(file_path, options_table){
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  print(paste0('Successful OpenMS g import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful OpenMS algined import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

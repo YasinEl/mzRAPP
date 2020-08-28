@@ -8,7 +8,7 @@
 #' @noRd
 import_ungrouped_msdial <- function(file_list, options_dt){
 
-  print('start msdial ug import')
+  message('Starting msdial unaligned import')
 
   if(is.null(file_list)){
     stop('No ungrouped files selected')
@@ -67,7 +67,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  print(paste0('Successful msdial ug import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful msdial unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }
@@ -82,7 +82,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 #' @noRd
 import_grouped_msdial <- function(file_path, options_dt){
 
-  print('start msdial g import')
+  message('Starting msdial aligned import')
 
   if(is.null(file_path)){
     return(NULL)
@@ -144,7 +144,7 @@ import_grouped_msdial <- function(file_path, options_dt){
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  print(paste0('Successful msdial g import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful msdial aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

@@ -30,8 +30,7 @@ find_best_feature_feature <- function(dt, bys) {
 
     #Debug check - exactly one main feature should be present and no na
     if (nrow(merged_dt[main_feature == TRUE]) > 1){
-      print('error in main feature')
-      stop()
+      stop('error in main feature')
     }
 
     highest_main_feature <- merged_dt[main_feature == TRUE]$feature_id_g.x
@@ -50,8 +49,7 @@ find_best_feature_feature <- function(dt, bys) {
 
       #Debug check - exactly one main feature should be present and no na
       if (nrow(merged_dt[main_feature == TRUE]) > 1){
-        print('error in main feature')
-        stop()
+        stop('error in main feature')
       }
 
       main_features[i] <- merged_dt[main_feature == TRUE]$feature_id_g.y

@@ -8,7 +8,7 @@
 #' @noRd
 import_ungrouped_cd <- function(file_path, options_table){
 
-  print('Start import ungrouped compound discoverer')
+  message('Start import unaligned compound discoverer')
 
   if(is.null(file_path)){
     stop('No ungrouped file selected')
@@ -51,7 +51,7 @@ import_ungrouped_cd <- function(file_path, options_table){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-	print(paste0('Successful compound discoverer ug import. No. of peaks imported: ', nrow(ug_table)))
+	message(paste0('Successful import of unaligned Compound Discoverer output. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }

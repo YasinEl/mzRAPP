@@ -87,6 +87,8 @@ callmzRAPP <- function(){
       )
     ),
     dashboardBody(
+      useShinyjs(),
+      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};'), #always start from top of panel
       tags$script(HTML("$('body').addClass('fixed');")),
       tags$script(HTML("
         var openTab = function(tabName){
@@ -724,7 +726,9 @@ callmzRAPP <- function(){
 
   server <- function (input, output, session) {
 
-
+      observeEvent(input$sidebarID, { #always start from top of panel
+        js$scrolltop()
+      })
 
     output$Readme_op <- renderUI({
       htmltools::tags$iframe(seamless="seamless", src= system.file("md","README.html", package = "mzRAPP", mustWork = TRUE), width=800, height=800)
@@ -953,7 +957,7 @@ callmzRAPP <- function(){
                        starttime <- Sys.time()
 
                        ###################################################
-                       print('Start calculating isotopologue mz')
+                       message("Predicting isotopologues using enviPat")
 
                        MassTraces <- getMZtable(targets,
                                                 instrumentRes = resolution_df,
@@ -963,8 +967,8 @@ callmzRAPP <- function(){
 
                        ###################################################
                        incProgress(1/15, detail = "detecting ROIs...")
-                       print('Start ROI detection')
-                       fwrite(MassTraces, "MassTraces.csv")
+
+                       message("Finding regions of interest using xcms")
 
                        rois <- getROIsForEICs(files = files,
                                               Target.table = MassTraces,
@@ -973,12 +977,12 @@ callmzRAPP <- function(){
                                               minCentroids = 4,
                                               AccurateMZtol = input$accurate_MZ_tol_input
                        )
-                       fwrite(rois, "rois.csv")
+
                        ################################################
                        incProgress(3/15, detail = "detecting peaks...")
-                       print('Start peak detection and evaluation')
+                       message("Evaluating peaks in extracted ion chromatograms")
 
-                       PCbp <- findBenchPeaks(files = files,
+                       PCal <- findBenchPeaks(files = files,
                                               Grps = grps,
                                               plan = input$plan_input,
                                               CompCol_all = rois,
@@ -986,25 +990,25 @@ callmzRAPP <- function(){
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
-                       if(any(duplicated(PCbp[, c("molecule", "isoab", "adduct", "FileName")]))){
-                         warning("Duplicated peaks present")
-                         fwrite(PCbp, "pcbp.csv")
-                         #####################################################
-                         incProgress(10/15, detail = "aligning peaks over samples...")
-                         print('Start peak alignment')
-
-                         PCal <- align_PC(PCbp[Iso_count > 1],
-                                          add = "main_adduct",
-                                          plan = input$plan_input,
-                                          pick_best = "rt_match"
-                         )
-
-                       } else {
-                         PCal <- PCbp
-                       }
+                  #     if(any(duplicated(PCbp[, c("molecule", "isoab", "adduct", "FileName")]))){
+                  #       warning("Duplicated peaks present")
+                  #       fwrite(PCbp, "pcbp.csv")
+                  #       #####################################################
+                  #       incProgress(10/15, detail = "aligning peaks over samples...")
+                  #       print('Start peak alignment')
+#
+##                         PCal <- align_PC(PCbp[Iso_count > 1],
+ #                                         add = "main_adduct",
+ #                                         plan = input$plan_input,
+ #                                         pick_best = "rt_match"
+ #                        )
+#
+#                       } else {
+                        # PCal <- PCbp
+#                       }
                        #####################################################
                        fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
-                       print(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
+                       message(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
                        incProgress(15/15, detail = "Finished")
 
 
@@ -1347,7 +1351,7 @@ callmzRAPP <- function(){
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
       event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
-      print(event.data)
+      #print(event.data)
       showModal(modalDialog(
         plotly::renderPlotly({
           plot_IR_peaks(CE_plot, plotly_key = event.data$key)
