@@ -45,6 +45,10 @@ findBenchPeaks(
 \item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.}
 
 \item{return_unsuc_searches}{Should unsuccsessfull searches be returned (TRUE/FALSE)}
+
+\item{max.rt.diff_sec}{maximum difference between user.rt in position of peak maximum in seconds}
+
+\item{max.mz.diff_ppm}{maximum difference between intensity weighted mz of a peak and the calculated mz of the expeted ion species in ppm}
 }
 \value{
 data table with peak variables extracted from found peaks.
