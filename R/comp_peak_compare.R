@@ -89,7 +89,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #  print('Duplicate peaks present in ungrouped dataset. This can lead to further errors during analysis.')
     total_ug_peaks <- nrow(ug_table)
     ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_area_ug'))]
-    message(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicate non-aligned peaks from non-targeted output (identical rt, mz and area'))
+    message(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicated non-aligned peaks from non-targeted output (identical rt, mz and area)'))
   #}
   #if (any(duplicated(g_table, by = c('rt_g', 'mz_g', 'peak_area_g')))){
   #  print('Duplicate peaks present in grouped. This can lead to further errors during analysis.')

@@ -726,7 +726,7 @@ callmzRAPP <- function(){
 
   server <- function (input, output, session) {
 
-      observeEvent(input$sidebarID, { #always start from top of panel
+      observeEvent(input$sbmenu, { #always start from top of panel
         js$scrolltop()
       })
 
