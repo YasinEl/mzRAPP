@@ -3,9 +3,8 @@
 #' @param file file
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_xcms <- function(file, options_dt){
 
   message('Starting xcms unlaigned import')
@@ -68,9 +67,8 @@ import_ungrouped_xcms <- function(file, options_dt){
 #' @param file file
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_grouped_xcms <- function (file, options_dt) {
 
   message('Starting xcms aligned import')

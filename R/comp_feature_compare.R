@@ -3,9 +3,8 @@
 #' @param b_table b_table
 #' @param g_table g_table
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 #'
 feature_compare <- function(b_table, g_table){
 

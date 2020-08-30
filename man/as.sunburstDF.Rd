@@ -14,3 +14,4 @@ as.sunburstDF(DF, valueCol = NULL)
 \description{
 This function was written by ismirsehregal on stackoverflow https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram
 }
+\keyword{internal}

@@ -4,7 +4,7 @@ Title: Benchmark Dataset Generation
 Version: 0.2.0
 Author: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
 Maintainer: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
-Description: Generation and evaluation of LC-HRMS benchmark dataset from mzML files.
+Description: Generation and evaluation of LC-HRMS benchmark datasets and assessment of non-targeted data pre-processing.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -13,15 +13,14 @@ Depends:
     data.table,
     ggplot2,
     shinyjs,
-    shinydashboard,
-    shiny,
-    doFuture,
-    shinyWidgets,
-    dplyr,
-    bit64
+    dplyr
 biocViews:
 Imports:
     shinybusy,
+    shinydashboard,
+    shiny,
+    shinyWidgets,
+    doFuture,
     plotly,
     tcltk,
     hutils,
@@ -42,10 +41,12 @@ Imports:
     signal,
     intervals,
     future.apply,
+    foreach,
     S4Vectors,
     V8,
     boot,
     future,
+    bit64,
     htmltools,
     kableExtra,
     shinythemes,

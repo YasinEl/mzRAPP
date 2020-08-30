@@ -41,6 +41,9 @@ getROIsForEICs <-
     if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
 
 
+
+#    if(dplyr::intersect(sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files), ))
+
     #if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
 
     #if("user.rt" %in% colnames(Target.table)){
@@ -85,14 +88,18 @@ getROIsForEICs <-
       Target.table <- Target.table[, !"fileIdx"]
     } else {
       Target.table[, FileName := tools::file_path_sans_ext(basename(FileName))]
+      Target.table <- Target.table[FileName %in% tools::file_path_sans_ext(basename(files))]
+      if(nrow(Target.table) == 0){stop("It appears there are no user.rtmin and user.rtmax provided for the mzML files provided!")}
+
     }
 
     ##################################
     #initiate parallel processing
     ##################################
+    `%dopar%` <- foreach::`%dopar%`
     doFuture::registerDoFuture()
     future::plan(plan)
-    Output <- foreach(file = unique(Target.table$FileName), .packages = c("mzRAPP")) %dopar% {
+    Output <- foreach::foreach(file = unique(Target.table$FileName), .packages = c("mzRAPP")) %dopar% {
       #for(file in seq(length(files))){
 
       ##################################
@@ -179,14 +186,14 @@ getROIsForEICs <-
 
           } else return(NULL)
         })
-      return(data.table::rbindlist(matches_perfile_list))
+      return(rbindlist(matches_perfile_list))
     }
 
     future::plan("sequential")
     ##################################
     #collect and return cluster output
     ##################################
-    matches <- data.table::rbindlist(Output)
+    matches <- rbindlist(Output)
 
 
     return(matches[Target.table, on=.(molecule, adduct, isoab, FileName), nomatch = NA])

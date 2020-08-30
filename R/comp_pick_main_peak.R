@@ -2,9 +2,8 @@
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 pick_main_peak <- function(dt){
 
   main_peak_dt <- dt[, pick_main_peak_sd(.SD), by=c('molecule_b', 'adduct_b', 'sample_id_b'), .SDcols=c('molecule_b', 'adduct_b', 'sample_id_b', 'comp_id_b', 'comp_id_ug', 'isoab_b', 'rt_start_ug', 'rt_end_ug', 'peak_area_ug')]
@@ -19,9 +18,8 @@ pick_main_peak <- function(dt){
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 pick_main_peak_sd <- function(dt){
   dt <- copy(dt)
   all_iso_abbs <- sort(unique(dt[,isoab_b]), decreasing = TRUE)

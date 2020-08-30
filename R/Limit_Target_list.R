@@ -5,9 +5,8 @@
 #' @param iso.run iso.run
 #' @param file file
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min.PointsperPeak){
 
   if (iso.run == "MAiso") {

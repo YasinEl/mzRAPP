@@ -52,7 +52,7 @@ findBenchPeaks <- function(files,
 
   if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", paste(files[!file.exists(files)], collapse = ", ")))
 
-  if(length(dplyr::intersect(sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files)), Grps$sample_name)) == 0){
+  if(length(intersect(sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files)), Grps$sample_name)) == 0){
     stop("Filenames in your sample_group file are not the same as those of your uploaded mzML files!")
   }
 
@@ -77,11 +77,12 @@ findBenchPeaks <- function(files,
   ##################################
   doFuture::registerDoFuture()
   future::plan(plan)
+  `%dopar%` <- foreach::`%dopar%`
   #future::plan(list("sequential", "multiprocess"))
   #future::plan(multiprocess(workers = 40))
   Output <- list()
   Output <-
-    foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
+    foreach::foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
             .packages = c("mzRAPP", "data.table")) %dopar% {
 #                          for(file in 1:nrow(unique(CompCol[, "FileName"]))){
 
@@ -300,7 +301,7 @@ findBenchPeaks <- function(files,
 
 
                             if (!is.null(l.peaks)) {
-                              l.peaks <- data.table::rbindlist(l.peaks, use.names = TRUE)
+                              l.peaks <- rbindlist(l.peaks, use.names = TRUE)
                               l.peaks$idx <- 1:nrow(l.peaks)
                             }
                           } else if (nrow(M0_peaks) == 0) {
@@ -398,7 +399,7 @@ findBenchPeaks <- function(files,
                     #print("here")
                     #why <<- Bureau
 
-                    MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+                    MA.Isos <- rbindlist(Bureau, fill = TRUE, use.names = TRUE)
 
                     #fwrite(MA.Isos, "maisos1.csv")
 #print("maisosstart")
@@ -431,7 +432,7 @@ findBenchPeaks <- function(files,
                     }
                   } else if (iso.run == "LAisos"){
                     #whyLA <<- Bureau
-                    LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+                    LA.Isos <- rbindlist(Bureau, fill = TRUE, use.names = TRUE)
                     if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & c("peaks.cor_w_M0")  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
                                                                                                                               peaks.PpP >= Min.PointsperPeak &
                                                                                                                               peaks.mz_accuracy_ppm < max.mz.diff_ppm]
@@ -455,7 +456,7 @@ findBenchPeaks <- function(files,
 #print("out")
 
 
-  Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
+  Result <- rbindlist(Output, fill = TRUE, use.names = TRUE)
 
   ttpp <<- Result
   #get rid of double isos

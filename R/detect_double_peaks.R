@@ -6,10 +6,8 @@
 #' @param r r
 #' @param Min.Res Min.Res
 #'
-
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(pot.doubleP.v), Min.Res = 70) {
 
   pot.doubleP.v <- pot.doubleP.v[l:r]
@@ -134,9 +132,8 @@ peak.dt$breakP <- as.integer(peak.dt$breakP)
 #'
 #' @param int int
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 get_avg_noise <- function(int){
 
   int <- unique(int)

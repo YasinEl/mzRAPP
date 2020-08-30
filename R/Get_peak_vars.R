@@ -8,9 +8,8 @@
 #' @param manual_bound manual_bound
 #' @param l.peaks.mz_list l.peaks.mz_list
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound){
 
   li_te <- list(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound)

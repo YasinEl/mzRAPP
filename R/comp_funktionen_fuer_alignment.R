@@ -5,9 +5,8 @@
 #' @description Find most occuring feature ID within matched peaks of a benchmark feature
 #'
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 
 get_main_UT_groups <- function(DT){
 
@@ -56,9 +55,8 @@ get_main_UT_groups <- function(DT){
 #' @param main_UTgroups main_UTgroups
 #' @param method method
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 
 count_alignment_errors <- function(DT, main_UTgroups, method = "both"){
 

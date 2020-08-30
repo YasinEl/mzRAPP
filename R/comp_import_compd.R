@@ -3,9 +3,8 @@
 #' @param file_path file_path
 #' @param options_table options_table
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_cd <- function(file_path, options_table){
 
   message('Start import unaligned compound discoverer')

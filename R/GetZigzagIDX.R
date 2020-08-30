@@ -3,9 +3,8 @@
 #' @param int int
 #' @param height height
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 GetZigzagIDX <- function(int, height){
 
   Zaeler_zzi = 0

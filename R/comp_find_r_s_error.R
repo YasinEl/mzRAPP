@@ -6,7 +6,7 @@
 #'
 #' @export
 #'
-#' @noRd
+#' @keywords internal
 #'
 find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 
@@ -56,9 +56,8 @@ find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 #' @param feature_id feature_id
 #'
 #' @return connected file grps
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 #'
 File_con_test <- function(FileName, feature_id){
 

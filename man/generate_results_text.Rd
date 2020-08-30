@@ -7,7 +7,7 @@
 generate_results_text(comparison_data)
 }
 \arguments{
-\item{comparison}{output from \code{\link{compare_peaks}}}
+\item{comparison_data}{output from \code{\link{compare_peaks}}}
 }
 \value{
 returns a list containing containing different performance metrics of non-targeted data pre-processing.

@@ -230,10 +230,9 @@ plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 #' @param valueCol valueCol
 #'
 #' @description This function was written by ismirsehregal on stackoverflow https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram
-#' @export
+#' @keywords internal
 #'
 as.sunburstDF <- function(DF, valueCol = NULL){
-  require(data.table)
 
   DT <- data.table(DF, stringsAsFactors = FALSE)
   DT[, root := "total"]

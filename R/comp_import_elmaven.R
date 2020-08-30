@@ -3,9 +3,8 @@
 #' @param file file
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_elmaven <- function(file, options_dt){
 
   message('start elmaven unaligned import')
@@ -69,9 +68,8 @@ import_ungrouped_elmaven <- function(file, options_dt){
 #' @param file file
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_grouped_elmaven <- function (file, options_dt) {
 
   message('Starting El-MAVEN aligned import')

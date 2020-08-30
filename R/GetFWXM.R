@@ -8,13 +8,11 @@
 #' @param X peak height at which width should be measured (e.g. 0.5 means width at halfe maximum)
 #' @param return_diff TRUE/FALSE; should the output be a difference of end point and start point, or both points as a vector
 #'
-
-#' @export
 #' @return Width of the peak (numeric)
 #'
 #' @importFrom retistruct line.line.intersection
 #'
-#' @noRd
+#' @keywords internal
 
 
 GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_diff = FALSE)

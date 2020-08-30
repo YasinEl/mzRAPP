@@ -4,11 +4,9 @@
 #' @param int int
 #' @param Min.PpP Min.PpP
 #'
-
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 get_EIC_table <- function(rt, int, Min.PpP) {
   EIC.dt <- data.table(
     rt = rt,

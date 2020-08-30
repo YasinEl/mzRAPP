@@ -3,9 +3,8 @@
 #' @param file_list file_list
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_msdial <- function(file_list, options_dt){
 
   message('Starting msdial unaligned import')
@@ -77,9 +76,8 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 #' @param file_path file_path
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_grouped_msdial <- function(file_path, options_dt){
 
   message('Starting msdial aligned import')

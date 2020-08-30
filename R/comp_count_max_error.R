@@ -2,9 +2,8 @@
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 count_errors_max <- function(dt){
   theMolecule <- unique(dt$molecule_b)
   theAdduct  <- unique(dt$adduct_b)

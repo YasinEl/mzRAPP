@@ -13,9 +13,7 @@
 #' @param main_adduct.grp main_adduct.grp
 #' @param Min.Res. Min.Res.
 #'
-
-#' @export
-#' @noRd
+#' @keywords internal
 #'
 cutout_peaks <-
   function(int,
@@ -47,7 +45,7 @@ cutout_peaks <-
     ##################################
     #pickup potential peaks by counting consectuive points above the base line
     ##################################
-    pot.peak.ranges <- mzRAPP::get_pot_peak_ranges2(int,
+    pot.peak.ranges <- get_pot_peak_ranges2(int,
                                                       Min.PpP = Min.PpP,
                                                       peak.spotting.factor = peak.spotting.factor.)
     if (is.null(pot.peak.ranges)) {
@@ -74,7 +72,7 @@ cutout_peaks <-
       SIMPLIFY = FALSE
     )
     double.peak.borders <-
-      data.table::rbindlist(double.peak.borders, use.names = TRUE)
+      rbindlist(double.peak.borders, use.names = TRUE)
     if (nrow(double.peak.borders) > 0) {
       ##################################
       #insert double peak borders into potential peak ranges

@@ -66,7 +66,6 @@ generate_results_text <- function(comparison_data){
 
 
 
-
   main_peak_table <- comparison_data$c_table[main_peak == TRUE]
 
   found_ug_peaks <- nrow(main_peak_table)#length(unique(main_peak_table$comp_id_ug))
@@ -121,14 +120,14 @@ generate_results_text <- function(comparison_data){
                          Missing_peaks = list(
                            Systematic = sum(sum_tab$S_pp, na.rm = TRUE),
                            Random =  list(count = sum(sum_tab$R_pp, na.rm = TRUE),
-                                          CI = boot::boot.ci(boot::boot(sum_tab,
+                                          CI = if(sum(sum_tab$R_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
                                                                           round(sum(dt$R_pp, na.rm = TRUE)/(sum(dt$R_pp, na.rm = TRUE) + sum(dt$S_pp, na.rm = TRUE))*100,0)
                                                                         },
                                                                         R = 1000),
                                                              index=1,
-                                                             type='basic')$basic
+                                                             type='basic')$basic} else {rep(0,5)}
                            )
                          ),
                          IR_quality = list(
@@ -192,14 +191,14 @@ generate_results_text <- function(comparison_data){
                          Missing_peaks = list(
                            Systematic = sum(sum_tab$S_ft, na.rm = TRUE),
                            Random =  list(count = sum(sum_tab$R_ft, na.rm = TRUE),
-                                          CI = boot::boot.ci(boot::boot(sum_tab,
+                                          CI = if(sum(sum_tab$R_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
                                                                           round(sum(dt$R_ft, na.rm = TRUE)/(sum(dt$R_ft, na.rm = TRUE) + sum(dt$S_ft, na.rm = TRUE))*100,0)
                                                                         },
                                                                         R = 1000),
                                                              index=1,
-                                                             type='basic')$basic
+                                                             type='basic')$basic} else{rep(0,5)}
                            )
                          ),
                          IR_quality = list(

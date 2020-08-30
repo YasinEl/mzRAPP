@@ -2,9 +2,8 @@
 #'
 #' @param fftable fftable
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 melt_fftable <- function(ff_table, c_table){
 
   dt <-  ff_table

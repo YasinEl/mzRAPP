@@ -19,6 +19,12 @@ plot_bench_histo(
 \item{var}{variable name to be plotted}
 
 \item{choice_vector_bench}{named vector including variable to be plotted as element}
+
+\item{color}{color of histogram}
+
+\item{post_comp}{TRUE/FALSE are data from benchmark or comparison with non-targeted}
+
+\item{rm_NF_legend}{for shiny functionality}
 }
 \value{
 plotly object

@@ -2,9 +2,8 @@
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 pick_main_feature <- function(dt){
 
   all_g_samples <- colnames(dt)[grep('sample_\\d{1,}_g', colnames(dt))]
@@ -22,9 +21,8 @@ pick_main_feature <- function(dt){
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 pick_main_feature_sd <- function(dt){
   dt <- copy(dt)
 
@@ -77,9 +75,8 @@ pick_main_feature_sd <- function(dt){
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 best_feature_per_comparison <- function(dt){
   dt <- copy(dt)
   #checkT <<- dt

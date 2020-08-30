@@ -4,9 +4,8 @@
 #' @param bys bys
 #'
 #' @return best feature
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 find_best_feature_feature <- function(dt, bys) {
 
   dt <- copy(dt)

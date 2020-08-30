@@ -64,7 +64,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     colnames(f_nf_plot)[colnames(f_nf_plot) == "var_r"] <- var
 
     plot_dist <-
-        ggplot2::ggplot() +
+        ggplot() +
       theme_classic() +
           geom_col(data = f_nf_plot, aes(get(var), N, fill = f_nf_col),
                    position = position_dodge(preserve = "single")) +
@@ -123,7 +123,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
 
     t <- plotly::ggplotly(
-      ggplot2::ggplot() +
+      ggplot() +
         geom_col(data = df_bin, aes(var, n, fill = f_nf_col),
                  position = position_dodge(preserve = "single"),
                  orientation = "x") +

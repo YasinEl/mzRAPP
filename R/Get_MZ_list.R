@@ -4,9 +4,8 @@
 #' @param raw_data raw_data
 #' @param CompCol_xic CompCol_xic
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 Get_MZ_list <- function(l.peaks, raw_data, CompCol_xic, EIC.dt){
 
 

@@ -3,9 +3,8 @@
 #' @param Input_table unfinished benchmark
 #'
 #' @return unfinished benchmark
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 #'
 clean_peak_assignments <- function(Input_table){
 

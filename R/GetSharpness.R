@@ -2,9 +2,8 @@
 #'
 #' @param int int
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 GetSharpness <- function(int){
 
 

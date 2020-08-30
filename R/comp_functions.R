@@ -2,9 +2,8 @@
 #'
 #' @param file_path file_path
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_options <- function (file_path) {
   #print(file_path)
   if(is.null(file_path)){
@@ -30,9 +29,8 @@ import_options <- function (file_path) {
 #' @param old_column old_column
 #' @param new_columns new_columns
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns) {
   rename_table = na.omit(options_dt[, c(old_columns, new_columns), with=FALSE], old_columns)
   return(setnames(dt, rename_table[[old_columns]], rename_table[[new_columns]]))
@@ -45,9 +43,8 @@ rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns
 #' @param incl_height height
 #'
 #' @return dpl
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 remove_identical_peaks <- function(dt, grouped = FALSE){
   peaks_before <- nrow(dt)
   if (grouped == FALSE){

@@ -2,10 +2,9 @@
 #'
 #' @param sc sc
 #'
-#' @return
-#' @export
+#' @return dataframe; plotly event
 #'
-#' @noRd
+#' @keywords internal
 plotly_click_wo_warnings <- function(sc){
 
   storeWarn<- getOption("warn")
@@ -26,9 +25,8 @@ plotly_click_wo_warnings <- function(sc){
 #' @param PC PC
 #' @param IndexNumber IndexNumber
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 getXIC <- function(PC, IndexNumber){
 
 plot.table <- data.table(rt = as.numeric(unlist(strsplit(PC[IDX == IndexNumber, RT.v], split = ","))),
@@ -44,9 +42,9 @@ return(plot.table)
 #'
 #' @param vct vct
 #'
-#' @return
+#' @return list
 #'
-#' @noRd
+#' @keywords internal
 reIndexFeatures <- function(vct){
 
   apply(as.matrix(vct), 1, function(x, tab = names(sort(table(vct), decreasing = TRUE))){
@@ -63,15 +61,14 @@ reIndexFeatures <- function(vct){
 
 
 
-#' round.woe
+#' round_woe
 #'
 #' @param x x
 #' @param stellen stellen
 #'
-#' @export
 #'
-#' @noRd
-round.woe <- function(x, stellen){
+#' @keywords internal
+round_woe <- function(x, stellen){
 
   if(!is.na(x) == TRUE & !is.null(x) == TRUE){
 

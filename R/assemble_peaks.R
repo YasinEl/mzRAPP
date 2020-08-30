@@ -5,7 +5,7 @@
 #' @param e end
 #' @param breakP break point
 #'
-#' @noRd
+#' @keywords internal
 #'
 
 assemble_peaks <- function(peak.grp, s, e, breakP) {

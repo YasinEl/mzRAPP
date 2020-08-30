@@ -279,9 +279,8 @@ plot_dt <- plot_dt[-1]
 #' @param PC PC
 #' @param plotly_key plotly_key
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 plot_IR_peaks  <- function(PC, plotly_key){
   id_vetor <- unlist(strsplit(plotly_key, split = "_;_"))
 

@@ -3,9 +3,8 @@
 #' @param file_list file_list
 #' @param options_dt options_dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_openms <- function(file_list, options_dt){
 
   message('start OpenMS unaligned import')
@@ -28,9 +27,10 @@ import_ungrouped_openms <- function(file_list, options_dt){
   #future::plan(multiprocess(workers = 40))
 
   t <- Sys.time()
+  `%dopar%` <- foreach::`%dopar%`
   Output <- list()
   Output <-
-    foreach(i = 1:length(file_list),
+    foreach::foreach(i = 1:length(file_list),
             .packages = c("mzRAPP")) %dopar% {
 
 
@@ -65,7 +65,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
                     return(ug_table)
             }
 
-  ug_table <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
+  ug_table <- rbindlist(Output, fill = TRUE, use.names = TRUE)
 
   #}
 
@@ -172,9 +172,8 @@ import_ungrouped_openms <- function(file_list, options_dt){
 #' @param file_path file_path
 #' @param options_table options_table
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_grouped_openms <- function(file_path, options_table){
 
   message('Starting OpenMS aligned import')

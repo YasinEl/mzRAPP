@@ -7,11 +7,9 @@
 plot_Peak_with_predicted_peak(PC_object, IndexNumber)
 }
 \arguments{
-\item{PC}{output from \code{\link{findBenchPeaks}}}
+\item{PC_object}{output from \code{\link{findBenchPeaks}}}
 
-\item{molecule}{molecule}
-
-\item{file}{file name}
+\item{IndexNumber}{IDX number of peak to be plotted}
 }
 \value{
 plotly object

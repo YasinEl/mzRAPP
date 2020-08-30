@@ -2,9 +2,8 @@
 #'
 #' @param dt dt
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 classify_false_negative <- function(dt) {
 
   #check if feature ID = main ID

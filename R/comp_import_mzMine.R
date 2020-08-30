@@ -5,9 +5,8 @@
 #' @param folder_path folder_path
 #' @param options_table options_table
 #'
-#' @export
 #'
-#' @noRd
+#' @keywords internal
 import_ungrouped_mzmine <- function(folder_path, options_table){
   message('Starting unaligned mzmine import')
 
@@ -104,10 +103,9 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 #' @param file_path file_path
 #' @param options_table options_table
 #'
-#' @return
-#' @export
+#' @return data.table
 #'
-#' @noRd
+#' @keywords internal
 import_grouped_mzmine <- function(file_path, options_table){
 
   message('start mzMine aligned import')
