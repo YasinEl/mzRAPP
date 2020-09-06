@@ -727,11 +727,10 @@ callmzRAPP <- function(){
 
 
   server <- function (input, output, session) {
-
-
-
       observeEvent(input$sbmenu, { #always start from top of panel
-        js$scrolltop()
+        if(input$sbmenu != "Readme"){
+          js$scrolltop()
+        }
       })
 
     output$Readme_op <- renderUI({
