@@ -49,7 +49,7 @@ pick_main_feature_sd <- function(dt){
     #Check for features with same area, if present pick first one
     dt <- dt[!duplicated(dt, by=c('total_area_g'))]
 
-    #Build compariosn DT
+    #Build compariosn DT // here feature with best IR bias is selected
     comp_dt <- merge(dt, dt, by=c('merge_key'), allow.cartesian = TRUE)
     comp_dt <- comp_dt[isoab_b.x > isoab_b.y]
     comp_dt <- comp_dt[, 'compare_ratio' := isoab_b.y/isoab_b.x]

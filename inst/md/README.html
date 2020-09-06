@@ -99,8 +99,9 @@ if (window.hljs) {
 <ol style="list-style-type: decimal">
 <li><a href="https://cran.r-project.org/">R</a></li>
 <li><a href="https://rstudio.com/products/rstudio/download/">R Studio</a> and</li>
-<li><a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>. <br> In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:</li>
+<li><a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>. <br></li>
 </ol>
+<p>In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:</p>
 <pre class="r"><code>if(&quot;devtools&quot; %in% rownames(installed.packages()) == FALSE) {install.packages(&quot;devtools&quot;)}
 devtools::install_github(&quot;YasinEl/mzRAPP&quot;, auth_token = &quot;a68cf9e8dfef3eb4bd3974aca220f49ebf034309&quot;, dependencies = TRUE)</code></pre>
 <p>Afterwards you can run mzRAPP using:</p>

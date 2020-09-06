@@ -44,7 +44,7 @@ pick_main_peak_sd <- function(dt){
     #Calculate %difference from expected ratio
     comp_dt <- comp_dt[,'ratio_diff' := (peak_area_ug.y/peak_area_ug.x)/(isoab_b.y/isoab_b.x)]
 
-    #Calc best best peak per comparison
+    #Calc best best peak per comparison (=comp)
     comp_dt <- comp_dt[, 'min_ratio_diff' := ifelse(ratio_diff == min(ratio_diff), TRUE, FALSE), by=c('isoab_b.x', 'isoab_b.y')]
 
     x_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('comp_id_b.x', 'comp_id_ug.x', 'ratio_diff')], c('comp_id_b.x', 'comp_id_ug.x'), c('comp_id_b', 'comp_id_ug'))

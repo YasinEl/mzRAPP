@@ -50,12 +50,10 @@ First install the most recent version of
 
 1.  [R](https://cran.r-project.org/)
 2.  [R Studio](https://rstudio.com/products/rstudio/download/) and
-3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br> In
-    case of R tools make sure you also follow the subsequent
-    instructions described on the webpage. Afterwards you can install
-    mzRAPP using:
+3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
 
-<!-- end list -->
+In case of R tools make sure you also follow the subsequent instructions
+described on the webpage. Afterwards you can install mzRAPP using:
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
@@ -342,7 +340,7 @@ predicted ratio; see figure 3) as compared to the predicted IT-ratio.
 
 <div class="figure">
 
-<img src="inst/md/Peak matching graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="40%" height="50%" />
+<img src="inst/md/Peak_matching_graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="40%" height="50%" />
 
 <p class="caption">
 
@@ -426,7 +424,7 @@ approach are considered high. Otherwise they are considered as low.
 
 <div class="figure">
 
-<img src="inst/md/Missing value graphic.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Diffentiation between classes of missing peaks/values" width="30%" height="50%" />
+<img src="inst/md/Missing_value_graphic.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Diffentiation between classes of missing peaks/values" width="30%" height="50%" />
 
 <p class="caption">
 
@@ -475,7 +473,7 @@ output of the NPP-assessment.
 
 <div class="figure">
 
-<img src="inst/md/Alignment error graphic.png" alt="\label{fig:figure5}&lt;b&gt;Figure 5 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
+<img src="inst/md/Alignment_error_graphic.png" alt="\label{fig:figure5}&lt;b&gt;Figure 5 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
 
 <p class="caption">
 

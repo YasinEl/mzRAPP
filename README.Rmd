@@ -30,6 +30,7 @@ First install the most recent version of
 1. [R](https://cran.r-project.org/)
 2. [R Studio](https://rstudio.com/products/rstudio/download/) and 
 3. [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
+
 In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:
 ```{r eval=FALSE} 
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
