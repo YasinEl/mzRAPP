@@ -87,7 +87,7 @@ and only compounds with at least two observed isotopologues are kept.
 
 In order to generate a benchmark you need to provide your
 <b>centroided</b> mzML files. Conversion of files of different vendors
-to mzML as well as centroiding can be than by Proteowizards
+to mzML as well as centroiding can be done by Proteowizards
 [MSconvert](http://proteowizard.sourceforge.net/tools.shtml).
 
 <br>

@@ -57,7 +57,7 @@ In order to get started it is necessary to know retention times for a minimum of
 <br>
 
 ### Select mzML files
-In order to generate a benchmark you need to provide your <b>centroided</b> mzML files. Conversion of files of different vendors to mzML as well as centroiding can be than by Proteowizards [MSconvert](http://proteowizard.sourceforge.net/tools.shtml).
+In order to generate a benchmark you need to provide your <b>centroided</b> mzML files. Conversion of files of different vendors to mzML as well as centroiding can be done by Proteowizards [MSconvert](http://proteowizard.sourceforge.net/tools.shtml).
 
 
 <br>
