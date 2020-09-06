@@ -50,8 +50,8 @@ or use mzRAPP without shiny interface as described below.
 
 ## Benchmark dataset generation
 
-In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark dataset is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept. <br>
-The benchmark dataset generation can be initiated in the panel 'Generate Benchmark'. In the following the setup of necessary csv and mzML files is explained. 
+In order to get started it is necessary to know retention times for a minimum of about 50 compounds with known molecular formulas. mzRAPP applies this knowledge for the generation of a benchmark dataset from mzML files. This benchmark data set is supposed to include a subset of all true peaks in those mzML files. All benchmark peak abundances are automatically validated via isotopic pattern (in peak area and height) and only compounds with at least two observed isotopologues are kept. <br>
+The benchmark data set generation can be initiated in the panel 'Generate Benchmark'. In the following the setup of necessary csv and mzML files is explained. 
 
 
 <br>
