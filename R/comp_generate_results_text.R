@@ -66,28 +66,32 @@ generate_results_text <- function(comparison_data){
 
 
 
+  setnafill(sum_tab, fill=0, cols = colnames(sum_tab)[-1])
+
+  #what <<- sum_tab
+
   main_peak_table <- comparison_data$c_table[main_peak == TRUE]
 
   found_ug_peaks <- nrow(main_peak_table)#length(unique(main_peak_table$comp_id_ug))
   #split_features <- sum(main_peak_table[, count_split_features(feature_id_g), by=feature_id_b]$V1, na.rm=TRUE)
 
 
-  if(nrow(comparison_data$rs_table[missing_peaks_ug == "S" | missing_peaks_ug == "R"]) == 0) {
-    bv_Missing_peaks <- rep(FALSE, 10)
-  } else {
-    bv_Missing_peaks <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_ug == "R"])),
-                          rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_ug == "S"])))
+ # if(nrow(comparison_data$rs_table[missing_peaks_ug == "S" | missing_peaks_ug == "R"]) == 0) {
+ #   bv_Missing_peaks <- rep(FALSE, 10)
+  #} else {
+  #  bv_Missing_peaks <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_ug == "R"])),
+  #                        rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_ug == "S"])))
+#
+#  }
 
-  }
 
+#  if(nrow(comparison_data$rs_table[missing_peaks_g == "S" | missing_peaks_g == "R"]) == 0) {
+#    bv_Missing_peaks_g <- rep(FALSE, 10)
+#  } else {
+#    bv_Missing_peaks_g <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_g == "R"])),
+#                            rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_g == "S"])))
 
-  if(nrow(comparison_data$rs_table[missing_peaks_g == "S" | missing_peaks_g == "R"]) == 0) {
-    bv_Missing_peaks_g <- rep(FALSE, 10)
-  } else {
-    bv_Missing_peaks_g <- c(rep(TRUE, nrow(comparison_data$rs_table[missing_peaks_g == "R"])),
-                            rep(FALSE, nrow(comparison_data$rs_table[missing_peaks_g == "S"])))
-
-  }
+ # }
 
 
   results_text <- list(Assessed_tool = comparison_data$info_list$algorithm,
@@ -123,8 +127,11 @@ generate_results_text <- function(comparison_data){
                                           CI = if(sum(sum_tab$R_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
-                                                                          round(sum(dt$R_pp, na.rm = TRUE)/(sum(dt$R_pp, na.rm = TRUE) + sum(dt$S_pp, na.rm = TRUE))*100,0)
-                                                                        },
+                                                                          ret <- round(sum(dt$R_pp, na.rm = TRUE)/(sum(dt$R_pp, na.rm = TRUE) + sum(dt$S_pp, na.rm = TRUE))*100,0)
+                                                                          if(is.nan(ret)){
+                                                                            return(0)
+                                                                          } else return(ret)
+                                                                          },
                                                                         R = 1000),
                                                              index=1,
                                                              type='basic')$basic} else {rep(0,5)}
@@ -167,8 +174,11 @@ generate_results_text <- function(comparison_data){
                                          CI = boot::boot.ci(boot::boot(sum_tab,
                                                                        function(data, indices){
                                                                          dt<-data[indices,]
-                                                                         round(sum(dt$lost, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
-                                                                       },
+                                                                         ret <- round(sum(dt$lost, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                         if(is.nan(ret)){
+                                                                           return(0)
+                                                                         } else return(ret)
+                                                                         },
                                                                        R = 1000),
                                                             index=1,
                                                             type='basic')$basic)
@@ -194,8 +204,11 @@ generate_results_text <- function(comparison_data){
                                           CI = if(sum(sum_tab$R_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
-                                                                          round(sum(dt$R_ft, na.rm = TRUE)/(sum(dt$R_ft, na.rm = TRUE) + sum(dt$S_ft, na.rm = TRUE))*100,0)
-                                                                        },
+                                                                          ret <- round(sum(dt$R_ft, na.rm = TRUE)/(sum(dt$R_ft, na.rm = TRUE) + sum(dt$S_ft, na.rm = TRUE))*100,0)
+                                                                          if(is.nan(ret)){
+                                                                            return(0)
+                                                                          } else return(ret)
+                                                                          },
                                                                         R = 1000),
                                                              index=1,
                                                              type='basic')$basic} else{rep(0,5)}
@@ -207,7 +220,10 @@ generate_results_text <- function(comparison_data){
                                                       CI = boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
-                                                                                      round(sum(dt$IRb_off_ft, na.rm = TRUE)/(sum(dt$IRb_off_ft, na.rm = TRUE) + sum(dt$IRb_ok_ft, na.rm = TRUE))*100,0)
+                                                                                      ret <- round(sum(dt$IRb_off_ft, na.rm = TRUE)/(sum(dt$IRb_off_ft, na.rm = TRUE) + sum(dt$IRb_ok_ft, na.rm = TRUE))*100,0)
+                                                                                      if(is.nan(ret)){
+                                                                                        return(0)
+                                                                                      } else return(ret)
                                                                                     },
                                                                                     R = 1000),
                                                                          index=1,
