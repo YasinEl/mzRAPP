@@ -1213,7 +1213,7 @@ callmzRAPP <- function(){
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
 
-        comp_data <<- comparison_ug_g
+        #comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))
@@ -1512,8 +1512,14 @@ callmzRAPP <- function(){
 
 
     output$report <- downloadHandler(
+
       filename = "report.html",
       content = function(file) {
+
+        withProgress(message = 'Report is generated',
+                     detail = "This takes some seconds...", value = 0, {
+                       incProgress(4/15, detail = "This takes some seconds...")
+
         tempReport <- file.path(system.file("md","mzRAPP_report_template.Rmd", package = "mzRAPP", mustWork = TRUE))
         file.copy("report.Rmd", tempReport, overwrite = TRUE)
 
@@ -1525,6 +1531,8 @@ callmzRAPP <- function(){
                           params = params,
                           envir = new.env(parent = globalenv())
         )
+        incProgress(15/15, detail = "Done.")
+        })
       }
     )
     options(warn = 0)

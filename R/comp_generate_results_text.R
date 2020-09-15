@@ -26,8 +26,8 @@ generate_results_text <- function(comparison_data){
   peaks_pp <- bm_tab[,.(Found_peaks_pp = sum(main_peak),
                         Not_Found_peaks_pp = length(main_peak) - sum(main_peak)), by = .(molecule_b)]
 
-  peaks_ft <- comparison_data$feature_table[!is.na(peak_area_b), .(Found_peaks_ft = sum(main_feature, na.rm = TRUE),
-                                                                   Not_Found_peaks_ft = length(main_feature) - sum(main_feature, na.rm = TRUE)),
+  peaks_ft <- comparison_data$feature_table[!is.na(peak_area_b) & !is.na(main_feature) && main_feature == TRUE, .(Found_peaks_ft = sum(!is.na(area_g)),
+                                                                   Not_Found_peaks_ft = sum(is.na(area_g))),
                                             by = .(molecule_b)]
 
   IRb <- comparison_data$iso_err_dt[, c("molecule_b", "diffH20PP_pp", "diffH20PP_ft")][, .(IRb_ok_pp = sum(diffH20PP_pp == "Inc. < 20%p", na.rm = TRUE),
