@@ -147,19 +147,10 @@ neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
 molecule (seconds). Peaks are only detected from this time on. <br> <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this
 molecule (seconds). Peaks are only detected up to this time. <br> <br>
-<b>user.rtmin:</b> (optional) Start time of peak. This substitutes peak
-detection done by mzRAPP (seconds). Although mzRAPP enables peak
-detection this is just like any other peak detection algorithm not
-without errors. It is therefore always the best way to import peak
-boundaries which have been manually evaluated. It is worth noting that
+<b>user.rtmin:</b> Start time of peak (seconds). It is worth noting that
 peaks for which user.rtmin/user.rtmax are provided will still be
-rejected if the isotopic information is not fitting. <br> <br>
-<b>user.rtmax:</b> (optional) End time of peak. This substitutes peak
-detection done by mzRAPP (seconds). <br> <br> <b>user.rt:</b> Retention
-time expected for this molecule. If multiple peaks are detected the peak
-closest to this time is chosen (seconds). This value is only applied if
-user.rtmin/user.rtmax are not provided and more than one peak has been
-detected by mzRAPP within StartTime.EIC and EndTime.EIC. <br> <br>
+rejected if the isotopic information is fitting. <br> <br>
+<b>user.rtmax:</b> End time of peak (seconds). <br> <br>
 <b>FileName:</b> (optional) Name of sample file with or without file
 extension. Using this different user.rtmin/user.rtmax values can be used
 for each sample. <br> <br> <b>Additional columns: </b> It is possible to
@@ -218,17 +209,14 @@ file. In order to get a better overview over picked peaks two csv files
 as well as instructions can be exported. Those can be used in order to
 generate a mirror image of the benchmark dataset in the free software
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
-This is especially recommended if peak detection was performed
-automativally via mzRAPP (user.rtmin/user.rtmax have not been used in
-the target-csv file). Notably Skyline can also be used to adapt peak
-boundaries or add peaks which might have been missed by mzRAPP. However,
-it is only possible to make those adaptations for the most abundant
-isotopologue of the main\_adduct. Other peaks will always be detected
-automatically by mzRAPP within the boundaries of that main-peak.
-Afterwards a new target-csv file can be prepared as described above
-(using the columns user.rtmin, user.rtmax and FileName). Finally the
-benchmark generation has to be repeated with this adapted target
-file.<br>
+Notably Skyline can also be used to adapt peak boundaries or add peaks
+which might have been missed by mzRAPP. However, it is only possible to
+make those adaptations for the most abundant isotopologue of the
+main\_adduct. Other peaks will always be detected automatically by
+mzRAPP within the boundaries of that main-peak. Afterwards a new
+target-csv file can be prepared as described above (using the columns
+user.rtmin, user.rtmax and FileName). Finally the benchmark generation
+has to be repeated with this adapted target file.<br>
 
 When the benchmark is satisfactory it can be used for reliabiliy
 assessment of non targeted data pre-processing as explained in the

@@ -250,7 +250,7 @@ callmzRAPP <- function(){
                   shiny::column(7, offset = 1,
                          shiny::h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks you can ",
                                   "click on the points in the scatter plot or export the benchmark to Skyline (button to the right) to get a more comprehensive overview. If you wish to adjust peak boundaries you have to repeat the benchmark ",
-                                  "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') shiny::columns as described in the Readme (click the link below to get there).")),
+                                  "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') columns as described in the Readme (click the link below to get there).")),
                          shiny::a("Click here for more information on how to proceed if you are not satisfied with the current benchmark dataset.", onclick = "openTab('Readme')", href="#vBMID")
                   ),
                   shiny::column(3,
