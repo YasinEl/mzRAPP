@@ -458,7 +458,7 @@ findBenchPeaks <- function(files,
 
   Result <- rbindlist(Output, fill = TRUE, use.names = TRUE)
 
-  ttpp <<- Result
+  #ttpp <<- Result
   #get rid of double isos
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
