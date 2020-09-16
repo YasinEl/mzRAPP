@@ -304,10 +304,12 @@ plot_IR_peaks  <- function(PC, plotly_key){
     geom_point() +
     geom_vline(xintercept = PC[isoab_b == 100, rt_start_b], color = "red") +
     geom_vline(xintercept = PC[isoab_b == 100, rt_end_b], color = "red") +
-    ggtitle(paste0(PC[isoab_b == 100, molecule_b], " | ",
-                   PC[isoab_b == 100, adduct_b], " | ",
-                   PC[isoab_b == 100, sample_name_b])) +
-    labs(x = "Retention time [sec]", y = "Intensity") +
+    labs(x = "Retention time [sec]",
+         y = "Intensity",
+         subtitle = "Chromatograms plotted as extracted during benchmark generation.",
+         title = paste0(PC[isoab_b == 100, molecule_b], " | ",
+                        PC[isoab_b == 100, adduct_b], " | ",
+                        PC[isoab_b == 100, sample_name_b])) +
     #annotate("text",
     #         x = min(plot.table_hi$rt) + (max(plot.table_hi$rt) - min(plot.table_hi$rt)) * 0.8,
     #         y = max(plot.table_hi$int),
@@ -343,8 +345,15 @@ plot_IR_peaks  <- function(PC, plotly_key){
              color="blue") +
     facet_wrap(~lab)
 
-  plotly::subplot(plotly::ggplotly(p_hi, dynamicTicks = TRUE), plotly::ggplotly(p_li, dynamicTicks = TRUE))
+  plotly::subplot(plotly::ggplotly(p_hi, dynamicTicks = TRUE), plotly::ggplotly(p_li, dynamicTicks = TRUE))  %>%
+    plotly::layout(title = list(text = paste0(paste0(PC[isoab_b == 100, molecule_b], " | ",
+                                                     PC[isoab_b == 100, adduct_b], " | ",
+                                                     PC[isoab_b == 100, sample_name_b]),
+                                              '<br>',
+                                              '<sup>',
+                                              "Chromatogram plotted as extracted in benchmark.",
+                                              '</sup>')),
+                   margin=list(t = 90))
 
 
 }
-
