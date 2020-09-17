@@ -284,10 +284,10 @@ Detailed Format Comma Delimited (.csv)”\] <br> aligned file: \[click the
 algorithm make sure to set local\_rt\_range as well as local\_mz\_range
 to 0. You will have to check ‘Show advanced parameters’ to make those
 parameters visible. Also set report\_covex\_hulls to true. <br>
-unaligned file: \[Connect a TextExporter node with seperator set to ‘,’
+unaligned file: \[Connect a TextExporter node with separator set to ‘,’
 directly to the FeatureFinderMetabo node\] -\> \[connect TextExporter to
 Output Folder\] <br> aligned file: \[Connect a TextExporter node with
-seperator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\>
+separator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\>
 \[connect TextExporter to Output Folder\] <br> <br> <u>Compound
 Discoverer:</u> <br> unaligned file: \[go to panel “Features”\] -\>
 \[click in any row\] -\> \[click “Show related Tables” on the bottom of
@@ -296,7 +296,27 @@ the columns “Apex Intensity”, “Area”, “Study File ID”, “Left RT
 \[min\]”, “Right RT \[min\]” “Apex RT \[min\]” and “Apex m/z” are
 visible\] -\> \[right click any row\] -\> Export -\> As plain text… <br>
 aligned file: currently it is not possible to use aligned files from
-Compound Discoverer <br> <br>
+Compound Discoverer <br> <br> <u>PatRoon:</u> <br> patRoon is not
+supported directly but can still be loaded since it allows to generate
+xcmsSet objects internally. Hence, it has to be loaded into mzRAPP as
+“XCMS” output which has to be stated as such in the “Setup NPP
+assessment tab”.
+
+``` r
+xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
+
+#unaligned file:
+data.table::fwrite(xcms::peaks(xcmsSet_object), "blabla_unaligned_file.csv")
+
+#aligned file:
+data.table::fwrite(xcms::peakTable(xcmsSet_object), "blabla_aligned_file.csv")
+```
+
+<br> <u>any other tool:</u> <br> It is also possible to use the outputs
+of other tools. However, they have to be adapted in a way that they
+resemble the output of one of the tools listed above. If this is not
+possible for some cases but important to you please contact me at
+<yasin.el.abiead@univie.ac.at> <br>
 
 ### Selecting a benchmark data set and starting assessment
 
