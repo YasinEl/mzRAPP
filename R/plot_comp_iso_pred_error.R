@@ -146,9 +146,12 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
     scale_color_manual(name = "+ > 20%p", values=c(`Inc. < 20%p` = "blue", `Inc. > 20%p` = "red", `Feature Inc. > 20%p` = "goldenrod2")) +
     ggtitle("Relative IT ratio bias") +
     labs(x = "", y = "IT ratio bias [%]") +
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank(),
+          legend.position = 'top')
 
 
-  return(plotly::ggplotly(p, tooltip = c("molecule", "adduct", "isoab", "sample", "Pred_error"), dynamicTicks = "y", source = "IRbias"))
+  return(plotly::ggplotly(p, tooltip = c("molecule", "adduct", "isoab", "sample", "Pred_error"),
+                          dynamicTicks = "y",
+                          source = "IRbias")  %>% plotly::layout(legend = list(orientation = "h")))
 
 }

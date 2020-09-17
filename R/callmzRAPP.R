@@ -508,14 +508,58 @@ callmzRAPP <- function(){
 
                 shiny::br(),
                 shiny::column(10, offset = 1, shiny::h2("Distribution of found/not found peaks")),
-                shiny::column(9, offset = 1,
-                              shiny::h4("In the following interactive scatter plot and histogram the distribution of", shiny::tags$span(style="color:blue", "found") ,"/", shiny::tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
-                          "Points in the scatter plot can be clicked to inspect individual peaks."),
-                       shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
-                ),
+
+         shiny::fluidRow(
+           shiny::column(10, offset = 1,
+                         shiny::h4("In the following interactive scatter plot and histogram the distribution of", shiny::tags$span(style="color:blue", "found") ,"/", shiny::tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
+                                   "Points in the scatter plot can be clicked to inspect individual peaks. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut classifies peaks in aligned features."),
+                         shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
+                         )
+           ),
+         shiny::br(),
+         shiny::fluidRow(
+           shiny::fluidRow(
+               shiny::column(1, offset = 1,
+                             shinyWidgets::dropdownButton(
+                               shiny::br('1'),
+                               tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                               circle = TRUE,
+                               width = 600,
+                               status = 'info',
+                               icon = shiny::icon('question-circle'),
+                               size = 'sm'
+                             )
+               ),
+               shiny::column(8,
+                             shinyWidgets::prettySwitch(inputId = 'PP_al_switch_dist',
+                                                        label = 'after PeakPicking | Alignment',
+                                                        slim = TRUE,
+                                                        value = FALSE
+                             )
+               )
+
+           ),
+           shiny::column(6, offset = 1,
+
+
+                         shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
+                         shiny::fluidRow(
+                           shiny::column(8,
+                                         shiny::selectInput('graph_select_input',
+                                                            'x-axis',
+                                                            choice_vector_comp
+                                         )
+                           )
+                         )
+           ),
+           shiny::column(4,
+                         plotly::plotlyOutput('sunburst_pp') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+         ),
+         shiny::br(),
 
                 shiny::fluidRow(
-                  shiny::column(6, offset = 1,
+                  shiny::column(10, offset = 1,
                          shiny::fluidRow(
                            shiny::column(1,
                                   shinyWidgets::dropdownButton(shiny::br(""),
@@ -561,41 +605,8 @@ callmzRAPP <- function(){
                            )
 
                          )
-                  ),
-                  shiny::column(4,
-
-                         shiny::fluidRow(
-                           shiny::column(1,
-                                  shinyWidgets::dropdownButton(
-                                    shiny::br('1'),
-                                    tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                                    circle = TRUE,
-                                    width = 600,
-                                    status = 'info',
-                                    icon = shiny::icon('question-circle'),
-                                    size = 'sm'
-                                  )
-                           ),
-                           shiny::column(11,
-                                  shinyWidgets::prettySwitch(inputId = 'PP_al_switch_dist',
-                                               label = 'after PeakPicking | Alignment',
-                                               slim = TRUE,
-                                               value = FALSE
-                                  )
-                           )
-                         ),
-
-                         shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
-
-                         shiny::fluidRow(
-                           shiny::column(8,
-                                  shiny::selectInput('graph_select_input',
-                                              'x-axis',
-                                              choice_vector_comp
-                                  )
-                           )
-                         )
                   )
+
                 ),
 
                 shiny::br(),
@@ -605,14 +616,14 @@ callmzRAPP <- function(){
                 shiny::br(),
 
                 shiny::column(10, offset = 1, shiny::h2("Quality of reported NPP peak abundances")),
-                shiny::column(8, offset = 2,
+                shiny::column(10, offset = 1,
                        shiny::h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
-                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP.",
-                                 "In order to inspect peaks contributing to a ratio click on the plot edges.")),
+                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP. ",
+                                 "In order to inspect peaks contributing to a ratio click on the edges or center of the line plot. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut relates to aligned features.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Peak_quality")
                 ),
                 shiny::br(),
-                shiny::column(8, offset = 2,
+                shiny::column(10, offset = 1,
 
                        shiny::fluidRow(
                          shiny::column(1,
@@ -627,8 +638,12 @@ callmzRAPP <- function(){
                          )
                        ),
 
-                       shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)))
+                       shiny::fluidRow(
+                         shiny::column(7,plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)),
+                         shiny::column(5,plotly::plotlyOutput('sunburst_pq') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+                         )
                 ),
+
 
                 shiny::br(),
                 shiny::br(),
@@ -682,29 +697,40 @@ callmzRAPP <- function(){
                 shiny::br(),
                 shiny::column(10, offset = 1, shiny::h2("Errors in alignment process")),
                 shiny::column(10, offset = 1,
-                       shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number ",
-                                 "of errors by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count.")),
+                       shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
+                                 "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
+                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 shiny::br(),
 
-                shiny::fluidRow(
-                  shiny::column(4),
-                  shiny::column(1, shinyWidgets::dropdownButton('',
-                                           tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                                           circle = TRUE,
-                                           status = 'info',
-                                           icon = shiny::icon('question-circle'),
-                                           size = 'sm',
-                                           width = 600
-                  ))
+   #             shiny::fluidRow(
+   #               shiny::column(4),
+   #               shiny::column(1, shinyWidgets::dropdownButton('',
+   #                                        tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+   #                                        circle = TRUE,
+   #                                        status = 'info',
+   #                                        icon = shiny::icon('question-circle'),
+   #                                        size = 'sm',
+   #                                        width = 600
+   #               ))
+#
+ #               ),
 
-                ),
+         shiny::fluidRow(
+           shiny::column(10, offset = 1,
+                         shiny::column(6, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:375px"),
+                         shiny::column(6, plotly::plotlyOutput('sunburst_al') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+                         )
+         ),
+
+shiny::br(),
+
+
 
                 shiny::fluidRow(
-                  shiny::column(3, offset = 1, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
-                  shiny::column(7,
+                  #shiny::column(3, offset = 1, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
+                  shiny::column(10, offset = 1,
 
                          shiny::fluidRow(
                            shiny::column(12,
@@ -1213,7 +1239,7 @@ callmzRAPP <- function(){
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
 
-        comp_data <<- comparison_ug_g
+        #comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))
@@ -1221,7 +1247,7 @@ callmzRAPP <- function(){
 
 
         shinybusy::remove_modal_spinner()
-        Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
+        Sys.sleep(0.2) # Otherwise remove modal overwrites error modal
         shinyWidgets::sendSweetAlert(session,
                                      title = 'Assessment complete',
                                      text = paste0('Assessment has been finished in ', round(proc.time, 0), ' seconds. An overview is provided in panel "View NPP assessment"!'),
@@ -1280,10 +1306,7 @@ callmzRAPP <- function(){
 
     #Scatter_plot
     observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
-      #comparison_data <- isolate(comparison_data())
-      #print("start")
       if(!is.null(comparison_data())){
-        #print("in")
         output$overview_plot <- plotly::renderPlotly(plot_comp_scatter_plot(comparison_data(),
                                                                             input$overview_plot_input_x,
                                                                             input$overview_plot_input_y,
@@ -1299,11 +1322,6 @@ callmzRAPP <- function(){
 
     suppressWarnings(
     observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
-
-#      delay(expr =({
-      #Sys.time((0.1))
-#        options(warn = storeWarn)
-#      }) ,ms = 100)
 
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
@@ -1332,7 +1350,7 @@ callmzRAPP <- function(){
       }
     })
 
-    #Ditsribution of peaks plot
+    #Distribution of peaks plot
     observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
       if(!is.null(comparison_data())){
         output$graph_area_3 <- plotly::renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp = choice_vector_comp, post_alignment = input$PP_al_switch_dist))
@@ -1465,9 +1483,9 @@ callmzRAPP <- function(){
         })
 
 
-        #output$sunburst_pp <- plotly::renderPlotly(plot_sunburst_peaks(result_list, comparison_data))
-        #output$sunburst_al <- plotly::renderPlotly(plot_sunburst_peakQuality(result_list, comparison_data))
-        #output$sunburst_ft <- plotly::renderPlotly(plot_sunburst_alignment(result_list))
+        output$sunburst_pp <- plotly::renderPlotly(plot_sunburst_peaks(result_list, comparison_data))
+        output$sunburst_pq <- plotly::renderPlotly(plot_sunburst_peakQuality(result_list, comparison_data))
+        output$sunburst_al <- plotly::renderPlotly(plot_sunburst_alignment(result_list))
 
       }
     })
