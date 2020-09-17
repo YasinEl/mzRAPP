@@ -10,8 +10,7 @@ mzRAPP
         resolution](#select-instrument-and-resolution)
       - [Setting parameters](#setting-parameters)
       - [Starting benchmark generation](#starting-benchmark-generation)
-      - [How to edit the benchmark data
-        set](#how-to-edit-the-benchmark-data-set)
+      - [How check the benchmark](#how-check-the-benchmark)
   - [Reliability assessment of non-targeted data
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
       - [Exporting NPP outputs from different
@@ -206,28 +205,20 @@ csv file.<br> <br>
 
 <span id="vBMID"> </span>
 
-### How to edit the benchmark data set
+### How check the benchmark
 
 An overview over different benchmark key data is provided in the “View
 Benchmark” panel. The plots can be used in order to inspect different
 qualities of the data set. A molecule not being detected does not
 necessarily mean that there is no peak, but that mzRAPP was not able to
 validate it. This could happen if less than two isotopologues
-(full-filling strict criteria in abundance and peak shape correlation
-and number of points per peak) were detected as two isotopologues are
-required for each molecule in each file to be kept in the respective
-file. In order to get a better overview over picked peaks two csv files
-as well as instructions can be exported. Those can be used in order to
-generate a mirror image of the benchmark data set in the free software
+(full-filling strict criteria in abundance, peak shape correlation and
+number of points per peak) which is required for a given molecule to be
+kept in the given file. In order to get a better overview over picked
+peaks two csv files as well as instructions can be exported. Those can
+be used in order to generate a mirror image of the benchmark data set in
+the free software
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
-Notably Skyline can also be used to adapt peak boundaries or add peaks
-which might have been missed by mzRAPP. However, it is only possible to
-make those adaptations for the most abundant isotopologue of the
-main\_adduct. Other peaks will always be detected automatically by
-mzRAPP within the boundaries of that main-peak. Afterwards a new
-target-csv file can be prepared as described above (using the columns
-user.rtmin, user.rtmax and FileName). Finally the benchmark generation
-has to be repeated with this adapted target file.<br>
 
 When the benchmark is satisfactory it can be used for reliability
 assessment of non targeted data pre-processing as explained in the

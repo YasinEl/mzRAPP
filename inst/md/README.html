@@ -72,7 +72,7 @@ if (window.hljs) {
 <li><a href="#select-instrument-and-resolution">Select instrument and resolution</a></li>
 <li><a href="#setting-parameters">Setting parameters</a></li>
 <li><a href="#starting-benchmark-generation">Starting benchmark generation</a></li>
-<li><a href="#how-to-edit-the-benchmark-data-set">How to edit the benchmark data set</a></li>
+<li><a href="#how-check-the-benchmark">How check the benchmark</a></li>
 </ul></li>
 <li><a href="#reliability-assessment-of-non-targeted-data-pre-processing">Reliability assessment of non-targeted data pre-processing</a><ul>
 <li><a href="#exporting-npp-outputs-from-different-tools">Exporting NPP outputs from different tools</a></li>
@@ -165,9 +165,9 @@ adducts$Name
 <p>Benchmark generation can be started using the blue Start button. The necessary time for the generation depends on the number of mzML files, the number of target compounds and of course computational resources. Typically this process takes minutes to hours. Afterwards the generated benchmark data set is automatically exported to the working directory as csv file.<br> <br></p>
 <p><span id="vBMID"> </span></p>
 </div>
-<div id="how-to-edit-the-benchmark-data-set" class="section level3">
-<h3>How to edit the benchmark data set</h3>
-<p>An overview over different benchmark key data is provided in the “View Benchmark” panel. The plots can be used in order to inspect different qualities of the data set. A molecule not being detected does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could happen if less than two isotopologues (full-filling strict criteria in abundance and peak shape correlation and number of points per peak) were detected as two isotopologues are required for each molecule in each file to be kept in the respective file. In order to get a better overview over picked peaks two csv files as well as instructions can be exported. Those can be used in order to generate a mirror image of the benchmark data set in the free software <a href="https://skyline.ms/project/home/software/Skyline/begin.view">Skyline</a>. Notably Skyline can also be used to adapt peak boundaries or add peaks which might have been missed by mzRAPP. However, it is only possible to make those adaptations for the most abundant isotopologue of the main_adduct. Other peaks will always be detected automatically by mzRAPP within the boundaries of that main-peak. Afterwards a new target-csv file can be prepared as described above (using the columns user.rtmin, user.rtmax and FileName). Finally the benchmark generation has to be repeated with this adapted target file.<br></p>
+<div id="how-check-the-benchmark" class="section level3">
+<h3>How check the benchmark</h3>
+<p>An overview over different benchmark key data is provided in the “View Benchmark” panel. The plots can be used in order to inspect different qualities of the data set. A molecule not being detected does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could happen if less than two isotopologues (full-filling strict criteria in abundance, peak shape correlation and number of points per peak) which is required for a given molecule to be kept in the given file. In order to get a better overview over picked peaks two csv files as well as instructions can be exported. Those can be used in order to generate a mirror image of the benchmark data set in the free software <a href="https://skyline.ms/project/home/software/Skyline/begin.view">Skyline</a>.</p>
 <p>When the benchmark is satisfactory it can be used for reliability assessment of non targeted data pre-processing as explained in the following chapter.</p>
 <p><span id="sNPP_readme"> </span></p>
 </div>
