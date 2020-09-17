@@ -159,7 +159,7 @@ aligned file: select the same xcms3xset.Rda file <br>
 <br>
 <u>MS-DIAL:</u> <br>
 unaligned files: Export -> Peak list result -> [Add all files] -> [set Export format to txt] <br>
-aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequat). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
+aligned file: When performing the alignment make sure to activate the isotope tracking option in the alignment step (for most cases selecting 13C and 15N as labeling elements will be adequate). Afterwards export via: Export -> Alignment result -> [check Raw data matrix Area] -> [set Export format to txt] <br>
 <br>
 <u>mzMine:</u> <br>
 unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export/Import -> Export to CSV file -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Peak name", "Peak height", "Peak area", "Peak RT start", "Peak RT end", "Peak RT", "Peak m/z", "Peak m/z min" and "Peak m/z max"] -> [set Filter rows to ALL] <br>

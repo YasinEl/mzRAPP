@@ -254,7 +254,7 @@ aligned file: select the same xcms3xset.Rda file <br> <br>
 \[Add all files\] -\> \[set Export format to txt\] <br> aligned file:
 When performing the alignment make sure to activate the isotope tracking
 option in the alignment step (for most cases selecting 13C and 15N as
-labeling elements will be adequat). Afterwards export via: Export -\>
+labeling elements will be adequate). Afterwards export via: Export -\>
 Alignment result -\> \[check Raw data matrix Area\] -\> \[set Export
 format to txt\] <br> <br> <u>mzMine:</u> <br> unaligned files: \[select
 all files generated in the chromatogram deconvolution step\] -\> Feature
