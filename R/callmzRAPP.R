@@ -548,7 +548,8 @@ callmzRAPP <- function(){
                            shiny::column(8,
                                          shiny::selectInput('graph_select_input',
                                                             'x-axis',
-                                                            choice_vector_comp
+                                                            choice_vector_comp,
+                                                            selected = 'peak_height_b'
                                          )
                            )
                          )

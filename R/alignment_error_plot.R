@@ -49,9 +49,10 @@ suppressWarnings(
     geom_tile(aes(fill = as.character(peak_status), width = 0.5, height = 0.5), color = "white") +
     coord_equal() +
     ggtitle(paste0("Alignment of ", mol, " ", add, " | Min. errors: ",ifelse(is.na(error_count), 0, error_count))) +
-    labs(x = "Samples", y = "Isotopologues") +
+    labs(x = "Samples", y = "Isotopologues", fill = "NPP feature ID") +
     #scale_fill_manual(values=c(`Lost_b.A` = "firebrick", `Lost_b.A` = "orange")) +
-    theme(legend.title = element_blank()) +
+
+    #theme(legend.title = element_text("NPP feature ID")) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   return(plotly::ggplotly(p))
