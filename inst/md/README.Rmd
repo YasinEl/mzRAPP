@@ -35,7 +35,7 @@ First install the most recent version of
 In case of R tools make sure you also follow the subsequent instructions described on the webpage. Afterwards you can install mzRAPP using:
 ```{r eval=FALSE} 
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
-devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE)
+devtools::install_github("YasinEl/mzRAPP", auth_token = "a68cf9e8dfef3eb4bd3974aca220f49ebf034309", dependencies = TRUE)
 
 ```
 
