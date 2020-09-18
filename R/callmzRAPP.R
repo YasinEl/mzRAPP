@@ -88,7 +88,7 @@ callmzRAPP <- function(){
     ),
     shinydashboard::dashboardBody(
       useShinyjs(),
-      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};'), #always start from top of panel
+      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};', functions = c("scrolltop")), #always start from top of panel
       shiny::tags$script(shiny::HTML("$('body').addClass('fixed');")),
       shiny::tags$script(shiny::HTML("
         var openTab = function(tabName){
