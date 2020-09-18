@@ -111,7 +111,8 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
     #scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
     #scale_fill_discrete(labels=c(`F` = "Found", `R` = "High NA", `S` ="Low NA", `L` = "feature missing", `NC` = "not confirmable")) +
     #scale_color_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
-    scale_fill_manual(values=c(`Found` = "blue", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
+    #scale_fill_manual(values=c(`Found` = "blue", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
+    scale_fill_manual(values=c(`Found` = "#82e0aa", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
     ggtitle("Missing values") +
     labs(x = "benchmark features", y = "samples") +
     theme(legend.title = element_blank(),

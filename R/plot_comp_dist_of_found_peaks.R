@@ -69,7 +69,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
           geom_col(data = f_nf_plot, aes(get(var), N, fill = f_nf_col),
                    position = position_dodge(preserve = "single")) +
           theme(legend.position = "none") +
-          scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
+          scale_fill_manual(values  = c(`FALSE` =  "#ccd1d1", `TRUE` = "#82e0aa")) +
           ggtitle("Distribution of found/not found peaks") +
       xlab(var) + ylab("peak count")
 
@@ -129,7 +129,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
                  orientation = "x") +
         theme_classic() +
         theme(legend.position = "none") +
-        scale_fill_manual(values  = c(`FALSE` =  "red", `TRUE` = "blue")) +
+        scale_fill_manual(values  = c(`FALSE` =  "#ccd1d1", `TRUE` = "#82e0aa")) +
         ggtitle("Distribution of found/not found peaks")
     )
     plot_dist <- t %>% plotly::add_trace(x=~var,

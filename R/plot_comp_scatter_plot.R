@@ -73,7 +73,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                             isoab = round(isoab_b, 2),
                                                             sample_name = sample_name_b,
                                                             key = comp_id_b),
-                   color = "blue", show.legend = T) +
+                   color = "#ccd1d1", show.legend = T) +
         theme_classic() +
 
         geom_point(data = f_nf_dt[NPP_status == 'Not Found'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
@@ -85,7 +85,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                                 isoab = round(isoab_b, 2),
                                                                 sample_name = sample_name_b,
                                                                 key = comp_id_b),
-                   color = "red", show.legend = T) +
+                   color = "#82e0aa", show.legend = T) +
 
         geom_point(data = f_nf_dt[NPP_status == 'Split'], aes(x = if(x != "peak_height_b" & x != "peak_area_b") {get(x)} else {log10(get(x))},
                                                             y = if(y != "peak_height_b" & y != "peak_area_b") {get(y)} else {log10(get(y))},

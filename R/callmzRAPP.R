@@ -90,8 +90,7 @@ callmzRAPP <- function() {
     ),
     shinydashboard::dashboardBody(
       useShinyjs(),
-      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};'),
-      #always start from top of panel
+      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};', functions = c("scrolltop")), #always start from top of panel
       shiny::tags$script(shiny::HTML("$('body').addClass('fixed');")),
       shiny::tags$script(
         shiny::HTML(
@@ -466,10 +465,93 @@ callmzRAPP <- function() {
                 )
               ),
 
-              shiny::fluidRow(
-                shiny::tags$style(
-                  shiny::HTML(
-                    "#select_bench_histo+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}"
+                shiny::fluidRow(
+                  shiny::column(7, offset = 1,
+                         shiny::h4(paste("In the following interactive scatter plot and histogram different benchmark peak variables can be explored. In order to have a look at the actual peaks you can ",
+                                  "click on the points in the scatter plot or export the benchmark to Skyline (button to the right) to get a more comprehensive overview. If you wish to adjust peak boundaries you have to repeat the benchmark ",
+                                  "with filled out 'user.rtmin', 'user.rtmax' (and 'FileName') columns as described in the Readme (click the link below to get there).")),
+                         shiny::a("Click here for more information on how to proceed if you are not satisfied with the current benchmark dataset.", onclick = "openTab('Readme')", href="#vBMID")
+                  ),
+                  shiny::column(3,
+                         shiny::checkboxInput(inputId = 'Sky_add', label = 'Export only main adduct', value = TRUE, width = NULL),
+                         shiny::checkboxInput(inputId = 'Sky_iso', label = 'Export only most abundant isotopologue', value = TRUE, width = NULL),
+                         shiny::actionButton(inputId = 'Skyline_export',
+                                      label = shiny::HTML('Export Skyline Transition list<br/>and peak boundaries'),
+                                      width = '100%')
+                  )),
+
+                shiny::fluidRow(
+                  shiny::column(6, offset = 1,
+                         shiny::fluidRow(
+                           shiny::column(1,
+                                  shinyWidgets::dropdownButton(shiny::br(""),
+                                                 tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                                                 circle = TRUE,
+                                                 width = 600,
+                                                 status = 'info',
+                                                 icon = shiny::icon('question-circle'),
+                                                 size = 'sm'
+                                  )
+                           )
+                         ),
+
+                         shiny::fluidRow(shiny::column(12, plotly::plotlyOutput('graph_area_bench_overview') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
+                         shiny::fluidRow(
+                           shiny::tags$style(shiny::HTML("#bench_overview_input_x+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                           shiny::tags$style(shiny::HTML("#bench_overview_input_y+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                           shiny::tags$style(shiny::HTML("#bench_overview_input_color+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                           shiny::column(3,
+                                  shiny::selectInput('bench_overview_input_x',
+                                              'x-axis',
+                                              choice_vector_bench,
+                                              selected = "ExpectedArea"
+                                  )
+                           ),
+                           shiny::column(3,
+                                  shiny::selectInput('bench_overview_input_y',
+                                              'y-axis',
+                                              choice_vector_bench,
+                                              selected = 'peaks.area'
+                                  )
+                           ),
+                           shiny::column(3,
+                                  shiny::selectInput('bench_overview_input_color',
+                                              'color-by',
+                                              choice_vector_bench,
+                                              selected = 'molecule'
+                                  )
+                           )
+
+                         )
+                  ),
+                  shiny::column(4,
+                         shiny::fluidRow(
+                           shiny::column(1,
+                                  shinyWidgets::dropdownButton(
+                                    shiny::br('1'),
+                                    tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                                    circle = TRUE,
+                                    width = 600,
+                                    status = 'info',
+                                    icon = shiny::icon('question-circle'),
+                                    size = 'sm'
+                                  )
+                           )
+                         ),
+
+                         shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_bench_histo') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
+                         shiny::fluidRow(
+                           shiny::tags$style(shiny::HTML("#select_bench_histo+ div>.selectize-dropdown {bottom: 100% !important;top:auto!important;}")),
+                           shiny::column(8,
+                                  shiny::selectInput('select_bench_histo',
+                                              'Peak variable',
+                                              choice_vector_bench,
+                                              selected = 'peaks.PpP'
+                                  )
+                           )
+                         )
                   )
                 ),
                 shiny::column(
@@ -837,126 +919,197 @@ callmzRAPP <- function() {
                   )
                 )
               ),
+        ),
 
-              shiny::fluidRow(
-                shiny::column(
-                  12,
-                  plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color =
-                                                                                          "#0dc5c1", type = 4)
-                )
-              ),
+        shinydashboard::tabItem(tabName = "vNPP_p",
+                shiny::h1('NPP assessment results'),
+                shiny::h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
+                         "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
+                shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#MetricsID"),
 
-              shiny::fluidRow(shiny::column(
-                8,
-                shiny::selectInput('graph_select_input',
-                                   'x-axis',
-                                   choice_vector_comp)
-              ))
-            )
-          ),
+                shiny::br(),
 
-          shiny::br(),
+                shiny::fluidRow(
+                  shinydashboard::infoBoxOutput("PP_info"),
+                  shinydashboard::infoBoxOutput("A_info"),
+                  shinydashboard::infoBoxOutput("F_info")
+                ),
 
-          shiny::fluidRow(shiny::column(
-            10,
-            offset = 1,
-            shiny::tags$hr(style = "border-color: darkgray;")
-          )),
+                shiny::br(),
 
-          shiny::br(),
+                shiny::fluidRow(
+                shiny::downloadButton("report", "Generate report"), align="center"
+                ),
+         #       shiny::fluidRow(
+         #         # A static infoBox
+         #         #shinydashboard::infoBox("New Orders", 10 * 2, icon = shiny::icon("credit-card")),
+         #         # Dynamic infoBoxes
+         #         shiny::column(4,
+         #                plotly::plotlyOutput('sunburst_pp') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         ),
+         #         shiny::column(4,
+         #                plotly::plotlyOutput('sunburst_al') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         ),
+         #         shiny::column(4,
+         #                plotly::plotlyOutput('sunburst_ft') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+         #         )
+         #       ),
+                shiny::h4(paste("For more details please check the interactive plots below.")),
 
-          shiny::column(
-            10,
-            offset = 1,
-            shiny::h2("Quality of reported NPP peak abundances")
-          ),
-          shiny::column(
-            8,
-            offset = 2,
-            shiny::h4(
-              paste0(
-                "The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
-                "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP.",
-                "In order to inspect peaks contributing to a ratio click on the plot edges."
-              )
-            ),
-            shiny::a(
-              "Click here for more information.",
-              onclick = "openTab('Readme')",
-              href = "#Peak_quality"
-            )
-          ),
-          shiny::br(),
-          shiny::column(
-            8,
-            offset = 2,
+                shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
 
-            shiny::fluidRow(shiny::column(
-              1,
-              shinyWidgets::dropdownButton(
-                '',
-                tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                circle = TRUE,
-                status = 'info',
-                icon = shiny::icon('question-circle'),
-                size = 'sm',
-                width = 600
-              )
-            )),
+                shiny::br(),
+                shiny::column(10, offset = 1, shiny::h2("Distribution of found/not found peaks")),
 
-            shiny::fluidRow(
-              shiny::column(
-                12,
-                plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color =
-                                                                                        "#0dc5c1", type = 4)
-              )
-            )
-          ),
+         shiny::fluidRow(
+           shiny::column(10, offset = 1,
+                         shiny::h4("In the following interactive scatter plot and histogram the distribution of", shiny::tags$span(style="color:blue", "found") ,"/", shiny::tags$span(style="color:red", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
+                                   "Points in the scatter plot can be clicked to inspect individual peaks. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut classifies peaks in aligned features."),
+                         shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
+                         )
+           ),
+         shiny::br(),
+         shiny::fluidRow(
+           shiny::fluidRow(
+               shiny::column(1, offset = 1,
+                             shinyWidgets::dropdownButton(
+                               shiny::br('1'),
+                               tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                               circle = TRUE,
+                               width = 600,
+                               status = 'info',
+                               icon = shiny::icon('question-circle'),
+                               size = 'sm'
+                             )
+               ),
+               shiny::column(8,
+                             shinyWidgets::prettySwitch(inputId = 'PP_al_switch_dist',
+                                                        label = 'after PeakPicking | Alignment',
+                                                        slim = TRUE,
+                                                        value = FALSE
+                             )
+               )
 
-          shiny::br(),
-          shiny::br(),
+           ),
+           shiny::column(6, offset = 1,
 
-          shiny::fluidRow(shiny::column(
-            10,
-            offset = 1,
-            shiny::tags$hr(style = "border-color: darkgray;")
-          )),
 
-          shiny::br(),
-          shiny::column(10, offset = 1, shiny::h2("The nature of missing values")),
+                         shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_3') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
 
-          shiny::column(
-            8,
-            offset = 2,
-            shiny::h4(
-              paste0(
-                "The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
-                "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC)."
-              )
-            ),
-            shiny::a(
-              "Click here for more information.",
-              onclick = "openTab('Readme')",
-              href = "#Missing_values"
-            )
-          ),
-          shiny::br(),
-          shiny::fluidRow(
-            shiny::column(
-              8,
-              offset = 2,
-              shiny::fluidRow(
-                shiny::column(
-                  1,
-                  shinyWidgets::dropdownButton(
-                    '',
-                    tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                    circle = TRUE,
-                    status = 'info',
-                    icon = shiny::icon('question-circle'),
-                    size = 'sm',
-                    width = 600
-                  ),
+                         shiny::fluidRow(
+                           shiny::column(8,
+                                         shiny::selectInput('graph_select_input',
+                                                            'x-axis',
+                                                            choice_vector_comp,
+                                                            selected = 'peak_height_b'
+                                         )
+                           )
+                         )
+           ),
+           shiny::column(4,
+                         plotly::plotlyOutput('sunburst_pp') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+         ),
+         shiny::br(),
+
+                shiny::fluidRow(
+                  shiny::column(10, offset = 1,
+                         shiny::fluidRow(
+                           shiny::column(1,
+                                  shinyWidgets::dropdownButton(shiny::br(""),
+                                                 tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                                                 circle = TRUE,
+                                                 width = 600,
+                                                 status = 'info',
+                                                 icon = shiny::icon('question-circle'),
+                                                 size = 'sm'
+                                  )
+                           ),
+                           shiny::column(11,
+                                  shinyWidgets::prettySwitch(inputId = 'PP_al_switch_ov',
+                                               label = 'after PeakPicking | Alignment',
+                                               slim = TRUE,
+                                               value = FALSE
+                                  )
+                           )
+                         ),
+
+                         shiny::fluidRow(shiny::column(12, plotly::plotlyOutput('overview_plot') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
+
+                         shiny::fluidRow(
+                           shiny::column(3,
+                                  shiny::selectInput('overview_plot_input_x',
+                                              'x-axis',
+                                              choice_vector_comp
+                                  )
+                           ),
+                           shiny::column(3,
+                                  shiny::selectInput('overview_plot_input_y',
+                                              'y-axis',
+                                              choice_vector_comp,
+                                              selected = 'peak_height_b'
+                                  )
+                           ),
+                           shiny::column(3,
+                                  shiny::selectInput('overview_plot_input_col',
+                                              'color-by',
+                                              c("F/NF", choice_vector_comp),
+                                              selected = 'F/NF'
+                                  )
+                           )
+
+                         )
+                  )
+
+                ),
+
+                shiny::br(),
+
+                shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
+
+                shiny::br(),
+
+                shiny::column(10, offset = 1, shiny::h2("Quality of reported NPP peak abundances")),
+                shiny::column(10, offset = 1,
+                       shiny::h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
+                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP. ",
+                                 "In order to inspect peaks contributing to a ratio click on the edges or center of the line plot. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut relates to aligned features.")),
+                       shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Peak_quality")
+                ),
+                shiny::br(),
+                shiny::column(10, offset = 1,
+
+                       shiny::fluidRow(
+                         shiny::column(1,
+                                shinyWidgets::dropdownButton('',
+                                               tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                                               circle = TRUE,
+                                               status = 'info',
+                                               icon = shiny::icon('question-circle'),
+                                               size = 'sm',
+                                               width = 600
+                                )
+                         )
+                       ),
+
+                       shiny::fluidRow(
+                         shiny::column(7,plotly::plotlyOutput('graph_area_2') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)),
+                         shiny::column(5,plotly::plotlyOutput('sunburst_pq') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+                         )
+                ),
+
+
+                shiny::br(),
+                shiny::br(),
+
+                shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
+
+                shiny::br(),
+                shiny::column(10, offset = 1, shiny::h2("The nature of missing values")),
+
+                shiny::column(8, offset = 2,
+                       shiny::h4(paste0("The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
+                                 "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC).")),
+                       shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Missing_values")
                 ),
                 shiny::column(
                   2,
@@ -976,96 +1129,61 @@ callmzRAPP <- function() {
                     value = FALSE
                   )
                 )
+                shiny::br(),
 
-              ),
-              shiny::fluidRow(
-                shiny::column(
-                  12,
-                  plotly::plotlyOutput('graph_area_1') %>% shinycssloaders::withSpinner(color =
-                                                                                          "#0dc5c1", type = 4)
-                )
-              )
-            ),
+                shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
 
-          ),
-
-          shiny::br(),
-
-          shiny::fluidRow(shiny::column(
-            10,
-            offset = 1,
-            shiny::tags$hr(style = "border-color: darkgray;")
-          )),
-
-          shiny::br(),
-          shiny::column(10, offset = 1, shiny::h2("Errors in alignment process")),
-          shiny::column(
-            10,
-            offset = 1,
-            shiny::h4(
-              paste0(
-                "The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting the minimum number ",
-                "of errors by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way ",
-                "alignment errors in the benchmark do not affect this count."
-              )
-            ),
-            shiny::a(
-              "Click here for more information.",
-              onclick = "openTab('Readme')",
-              href = "#Alignment_counting"
-            )
-          ),
-          shiny::br(),
-
-          shiny::fluidRow(
-            shiny::column(4),
-            shiny::column(
-              1,
-              shinyWidgets::dropdownButton(
-                '',
-                tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                circle = TRUE,
-                status = 'info',
-                icon = shiny::icon('question-circle'),
-                size = 'sm',
-                width = 600
-              )
-            )
-
-          ),
-
-          shiny::fluidRow(
-            shiny::column(
-              3,
-              offset = 1,
-              shiny::tableOutput('error_count'),
-              style = "overflow-y:scroll; height:464px"
-            ),
-            shiny::column(
-              7,
-
-              shiny::fluidRow(
-                shiny::column(
-                  12,
-                  plotly::plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color =
-                                                                                            "#0dc5c1", type = 4)
-                )
-              ),
-
-              shiny::fluidRow(
-                shiny::column(
-                  4,
-                  shinyWidgets::pickerInput('mol_a', 'Molecule', c(), options = list(`live-search` =
-                                                                                       TRUE))
+                shiny::br(),
+                shiny::column(10, offset = 1, shiny::h2("Errors in alignment process")),
+                shiny::column(10, offset = 1,
+                       shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
+                                 "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
+                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately.")),
+                       shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
-                shiny::column(
-                  3,
-                  shinyWidgets::pickerInput('add_a', 'Adduct', c(), options = list(`live-search` =
-                                                                                     TRUE))
-                )
-              )
-            )
-          )
+                shiny::br(),
+
+   #             shiny::fluidRow(
+   #               shiny::column(4),
+   #               shiny::column(1, shinyWidgets::dropdownButton('',
+   #                                        tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+   #                                        circle = TRUE,
+   #                                        status = 'info',
+   #                                        icon = shiny::icon('question-circle'),
+   #                                        size = 'sm',
+   #                                        width = 600
+   #               ))
+#
+ #               ),
+
+         shiny::fluidRow(
+           shiny::column(10, offset = 1,
+                         shiny::column(6, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:375px"),
+                         shiny::column(6, plotly::plotlyOutput('sunburst_al') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))
+                         )
+         ),
+
+
+                shiny::br(),
+
+
+
+                shiny::fluidRow(
+                  #shiny::column(3, offset = 1, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
+                  shiny::column(10, offset = 1,
+
+                         shiny::fluidRow(
+                           shiny::column(12,
+                                  plotly::plotlyOutput('graph_hm_split') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
+                           )),
+
+                         shiny::fluidRow(
+                           shiny::column(4, shinyWidgets::pickerInput('mol_a', 'Molecule', c(), options = list(`live-search`=TRUE))),
+                           shiny::column(3, shinyWidgets::pickerInput('add_a', 'Adduct', c(), options = list(`live-search`=TRUE)))
+                           )
+                         )
+                  )
+         )
         )
       )
     )
@@ -1076,10 +1194,11 @@ callmzRAPP <- function() {
 
 
   server <- function (input, output, session) {
-    observeEvent(input$sbmenu, {
-      #always start from top of panel
-      js$scrolltop()
-    })
+      observeEvent(input$sbmenu, { #always start from top of panel
+        if(input$sbmenu != "Readme"){
+          js$scrolltop()
+        }
+      })
 
     output$Readme_op <- renderUI({
       shiny::tags$iframe(
@@ -1361,14 +1480,9 @@ callmzRAPP <- function() {
         } else {
           grps <- fread(grps_file())
 
-          missing_cols <-
-            setdiff(c("sample_name", "sample_group"), colnames(grps))
-          if (length(missing_cols) > 0) {
-            stop(paste0(
-              "Sample_group table is lacking shiny::columns: ",
-              paste(missing_cols, collapse = ", ")
-            ))
-          }
+
+          missing_cols <- setdiff(c("sample_name", "sample_group"), colnames(grps))
+          if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", paste(missing_cols, collapse = ", ")))}
 
           if (nrow(grps[is.na(sample_name) |
                         is.na(sample_group)]) > 0) {
@@ -1385,24 +1499,9 @@ callmzRAPP <- function() {
         } else {
           targets <- fread(coi_file())
 
-          missing_cols <-
-            setdiff(
-              c(
-                "molecule",
-                "SumForm_c",
-                "adduct_c",
-                "StartTime.EIC",
-                "EndTime.EIC",
-                "main_adduct"
-              ),
-              colnames(targets)
-            )
-          if (length(missing_cols) > 0) {
-            stop(paste0(
-              "Target.table is lacking shiny::columns: ",
-              paste0(missing_cols, collapse = ", ")
-            ))
-          }
+
+          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC", "main_adduct"), colnames(targets))
+          if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
 
 
           if (!is.numeric(targets$StartTime.EIC) |
@@ -1587,6 +1686,7 @@ callmzRAPP <- function() {
           closeOnClickOutside = FALSE
         )
         print(error_message)
+        enable("generate_benchmark")
         return(NULL)
       })
     })
@@ -1843,7 +1943,7 @@ callmzRAPP <- function() {
           compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
 
-        comp_data <<- comparison_ug_g
+        #comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))
@@ -1851,19 +1951,13 @@ callmzRAPP <- function() {
 
 
         shinybusy::remove_modal_spinner()
-        Sys.sleep(0.2) # Otherwise remove modal overwirites error modal
-        shinyWidgets::sendSweetAlert(
-          session,
-          title = 'Assessment complete',
-          text = paste0(
-            'Assessment has been finished in ',
-            round(proc.time, 0),
-            ' seconds. An overview is provided in panel "View NPP assessment"!'
-          ),
-          type = 'success',
-          closeOnClickOutside = FALSE,
-          showCloseButton = TRUE
-        )
+        Sys.sleep(0.2) # Otherwise remove modal overwrites error modal
+        shinyWidgets::sendSweetAlert(session,
+                                     title = 'Assessment complete',
+                                     text = paste0('Assessment has been finished in ', round(proc.time, 0), ' seconds. An overview is provided in panel "View NPP assessment"!'),
+                                     type = 'success',
+                                     closeOnClickOutside = FALSE,
+                                     showCloseButton = TRUE)
 
 
         updateTabsetPanel(session, "sbmenu", selected = "vNPP_p")
@@ -1948,40 +2042,24 @@ callmzRAPP <- function() {
 
 
     #Scatter_plot
-    observeEvent({
-      comparison_data()
-      input$overview_plot_input_x
-      input$overview_plot_input_y
-      input$overview_plot_input_col
-      input$PP_al_switch_ov
-    }, {
-      #comparison_data <- isolate(comparison_data())
-      #print("start")
-      if (!is.null(comparison_data())) {
-        #print("in")
-        output$overview_plot <-
-          plotly::renderPlotly(
-            plot_comp_scatter_plot(
-              comparison_data(),
-              input$overview_plot_input_x,
-              input$overview_plot_input_y,
-              input$overview_plot_input_col,
-              choice_vector_comp,
-              post_alignment = input$PP_al_switch_ov
-            ) %>%
-              plotly::event_register('plotly_click')
-          )
+
+    observeEvent({comparison_data(); input$overview_plot_input_x; input$overview_plot_input_y; input$overview_plot_input_col; input$PP_al_switch_ov}, {
+      if(!is.null(comparison_data())){
+        output$overview_plot <- plotly::renderPlotly(plot_comp_scatter_plot(comparison_data(),
+                                                                            input$overview_plot_input_x,
+                                                                            input$overview_plot_input_y,
+                                                                            input$overview_plot_input_col,
+                                                                            choice_vector_comp,
+                                                                            post_alignment = input$PP_al_switch_ov) %>%
+                                                       plotly::event_register('plotly_click'))
 
       }
     })
 
 
 
-    suppressWarnings(observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
-      #      delay(expr =({
-      #Sys.time((0.1))
-      #        options(warn = storeWarn)
-      #      }) ,ms = 100)
+    suppressWarnings(
+    observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
 
       comparison_data <- comparison_data()
       CE_plot <-
@@ -2040,22 +2118,10 @@ callmzRAPP <- function() {
       }
     })
 
-    #Ditsribution of peaks plot
-    observeEvent({
-      comparison_data()
-      input$graph_select_input
-      input$PP_al_switch_dist
-    }, {
-      if (!is.null(comparison_data())) {
-        output$graph_area_3 <-
-          plotly::renderPlotly(
-            plot_comp_dist_of_found_peaks(
-              comparison_data(),
-              input$graph_select_input,
-              choice_vector_comp = choice_vector_comp,
-              post_alignment = input$PP_al_switch_dist
-            )
-          )
+    #Distribution of peaks plot
+    observeEvent({comparison_data(); input$graph_select_input; input$PP_al_switch_dist}, {
+      if(!is.null(comparison_data())){
+        output$graph_area_3 <- plotly::renderPlotly(plot_comp_dist_of_found_peaks(comparison_data(), input$graph_select_input, choice_vector_comp = choice_vector_comp, post_alignment = input$PP_al_switch_dist))
       }
     })
     #Isotopologe prediction error
@@ -2236,9 +2302,9 @@ callmzRAPP <- function() {
         })
 
 
-        #output$sunburst_pp <- plotly::renderPlotly(plot_sunburst_peaks(result_list, comparison_data))
-        #output$sunburst_al <- plotly::renderPlotly(plot_sunburst_peakQuality(result_list, comparison_data))
-        #output$sunburst_ft <- plotly::renderPlotly(plot_sunburst_alignment(result_list))
+        output$sunburst_pp <- plotly::renderPlotly(plot_sunburst_peaks(result_list, comparison_data))
+        output$sunburst_pq <- plotly::renderPlotly(plot_sunburst_peakQuality(result_list, comparison_data))
+        output$sunburst_al <- plotly::renderPlotly(plot_sunburst_alignment(result_list))
 
       }
     })
@@ -2313,17 +2379,15 @@ callmzRAPP <- function() {
 
 
     output$report <- downloadHandler(
+
       filename = "report.html",
       content = function(file) {
-        tempReport <-
-          file.path(
-            system.file(
-              "md",
-              "mzRAPP_report_template.Rmd",
-              package = "mzRAPP",
-              mustWork = TRUE
-            )
-          )
+
+        withProgress(message = 'Report is generated',
+                     detail = "This takes some seconds...", value = 0, {
+                       incProgress(4/15, detail = "This takes some seconds...")
+
+        tempReport <- file.path(system.file("md","mzRAPP_report_template.Rmd", package = "mzRAPP", mustWork = TRUE))
         file.copy("report.Rmd", tempReport, overwrite = TRUE)
 
         # Set up parameters to pass to Rmd document
@@ -2335,6 +2399,8 @@ callmzRAPP <- function() {
           params = params,
           envir = new.env(parent = globalenv())
         )
+        incProgress(15/15, detail = "Done.")
+        })
       }
     )
     options(warn = 0)
