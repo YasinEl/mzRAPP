@@ -921,7 +921,7 @@ shiny::br(),
           grps <- fread(grps_file())
 
           missing_cols <- setdiff(c("sample_name", "sample_group"), colnames(grps))
-          if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking shiny::columns: ", paste(missing_cols, collapse = ", ")))}
+          if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", paste(missing_cols, collapse = ", ")))}
 
           if(nrow(grps[is.na(sample_name) | is.na(sample_group)]) > 0){
             stop("Values in sample_group table must not be empty! If you have only one group please add the same sample_group value for each sample!")
@@ -936,7 +936,7 @@ shiny::br(),
           targets <- fread(coi_file())
 
           missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC", "main_adduct"), colnames(targets))
-          if(length(missing_cols) > 0){stop(paste0("Target.table is lacking shiny::columns: ", paste0(missing_cols, collapse = ", ")))}
+          if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
 
 
           if(!is.numeric(targets$StartTime.EIC) | !is.numeric(targets$EndTime.EIC)){
@@ -1070,6 +1070,7 @@ shiny::br(),
       error=function(error_message){
         shinyWidgets::sendSweetAlert(session, title = 'Error', text = geterrmessage(), type = 'error', closeOnClickOutside = FALSE)
         print(error_message)
+        enable("generate_benchmark")
         return(NULL)
       })
     })
