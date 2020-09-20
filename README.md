@@ -41,7 +41,7 @@ meaning that both types of data evaluation are often performed on the
 same same data set. Following this assumption mzRAPP can utilize user
 provided information on a set of molecules (at best \> 50) with known
 retention behavior. mzRAPP extracts and validates chromatographic peaks
-for which boundaries are provieded for all (envipat predicted)
+for which boundaries are provided for all (envipat predicted)
 isotopologues of those target molecules directly from mzML files. The
 resulting benchmark data set is used to extract different performance
 metrics for NPP performed on the same mzML files.
@@ -55,7 +55,13 @@ First install the most recent version of
 3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
 
 In case of R tools make sure you also follow the subsequent instructions
-described on the webpage. Afterwards you can install mzRAPP using:
+described on the webpage. <br>
+
+Afterwards it is time to install mzRAPP. It is possible to do that by
+pasting the following codes into the console of R Studio and press
+enter. If this fails it might help to close R Studio and submit the
+command into R directly (which has been downloaded from
+[R](https://cran.r-project.org/)).
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
@@ -152,6 +158,9 @@ adducts$Name
 be accepted. <br> <br> <b>SumForm\_c:</b> Molecular composition of the
 neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
 0 behind an element like behind the N in C12H8N0S2. <br> <br>
+<b>FileName:</b> (optional) Name of sample file with or without file
+extension. Using this allows to apply different values (like
+user.rtmin/user.rtmax) for different files. <br> <br>
 <b>StartTime.EIC:</b> Start time for chromatograms extracted for this
 molecule (seconds). Peaks are only detected from this time on. <br> <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this
@@ -161,11 +170,9 @@ also be narrowed to intesect with the extracted ion chromatogram at 10%
 peak height. It is also worth noting that peaks for which
 user.rtmin/user.rtmax are provided will still be rejected if the
 isotopic information is fitting. <br> <br> <b>user.rtmax:</b> End time
-of peak (seconds). <br> <br> <b>FileName:</b> (optional) Name of sample
-file with or without file extension. Using this different
-user.rtmin/user.rtmax values can be used for each sample. <br> <br>
-<b>Additional columns: </b> It is possible to add additional columns.
-Those will be kept for the final benchmark data set. <br> <br>
+of peak (seconds). <br> <br> <b>Additional columns: </b> It is possible
+to add additional columns. Those will be kept for the final benchmark
+data set. <br> <br>
 
 ### Select instrument and resolution
 
