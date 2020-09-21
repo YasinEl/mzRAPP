@@ -11,12 +11,16 @@ mzRAPP
       - [Setting parameters](#setting-parameters)
       - [Starting benchmark generation](#starting-benchmark-generation)
       - [How check the benchmark](#how-check-the-benchmark)
+      - [Generate a benchmark via
+        R-script](#generate-a-benchmark-via-r-script)
   - [Reliability assessment of non-targeted data
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
       - [Exporting NPP outputs from different
         tools](#exporting-npp-outputs-from-different-tools)
       - [Selecting a benchmark data set and starting
         assessment](#selecting-a-benchmark-data-set-and-starting-assessment)
+      - [Perform relyability assessment via
+        R-Script](#perform-relyability-assessment-via-r-script)
   - [Matching between BM and NPP output
     (background)](#matching-between-bm-and-npp-output-background)
   - [Generation and interpretation of NPP performance
@@ -231,6 +235,41 @@ When the benchmark is satisfactory it can be used for reliability
 assessment of non targeted data pre-processing as explained in the
 following chapter.
 
+### Generate a benchmark via R-script
+
+``` r
+#load packages
+library(mzRAPP)
+library(enviPat)
+
+#load resolution data & select instrument/resolution
+data("resolution_list") 
+res_list <- resolution_list[["OTFusion,QExactiveHF_120000@200"]]
+
+#calculate theoretic mz values and abundances for all isotopologues at the given mass resolution using enviPat
+Th_isos <- getMZtable(targets, #table with information on target molecules as described above
+                      instrumentRes = res_list
+                      )
+
+#find regions of interest (ROIs)/for theoretic isotopoplogues
+rois <- getROIsForEICs(files = files, #vector of mzML file names (including paths)
+                      Target.table = Th_isos,
+                      PrecisionMZtol = 5, #mass precision of the used mass spectrometer
+                      AccurateMZtol = 5 #mass accuracy of the used mass spectrometer
+                      )
+
+#Extract/evaluate peaks
+PCal <- findBenchPeaks(files = files, #vector of mzML file names (including paths) as described above
+                      Grps = grps, #table including information on group assignment of each provided mzML file as described above
+                      CompCol_all = rois,
+                      Min.PointsperPeak = 8, #minimum number of points expected from a given peak
+                      max.mz.diff_ppm = 5 #mass accuracy of the used mass spectrometer
+)
+
+#save the resulting benchmark to a csv file
+fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
+```
+
 <span id="sNPP_readme"> </span>
 
 ## Reliability assessment of non-targeted data pre-processing
@@ -325,6 +364,42 @@ can be clicked as an alternative. <br> <br> After performing those steps
 the assessment can be started via the blue “Start assessment button”.
 <br>
 
+### Perform relyability assessment via R-Script
+
+``` r
+
+#select the output format of which tool you would like to read in (exportable from the different tools as described above)
+#options: XCMS, El-Maven, OpenMS, msDial or mzMine
+algo = "XCMS"
+
+#load benchmark csv file
+benchmark <- import_benchmark(file = "Path_to_benchmark_csv_file.csv",
+                              algo = algo
+                              )
+
+
+#load non-targeted output
+NPP_output <- pick_algorithm(ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
+                             g_table_path = "Path_to_aligned_Output_csv_file.csv/.txt", 
+                             algo = algo
+                             )
+
+#compare benchmark with non-targeted output
+comparison <- compare_peaks(b_table = benchmark$b_table,
+                            ug_table = NPP_output$ug_table,
+                            g_table = NPP_output$g_table,
+                            algo = algo
+                            )
+
+#generate a list including different statistics of the comparison
+comp_stat <- generate_results_text(comparison)
+
+#generate different sunburst plots for overview
+plot_sunburst_peaks(comp_stat, comparison)
+plot_sunburst_peakQuality(comp_stat, comparison)
+plot_sunburst_alignment(comp_stat)
+```
+
 <span id="Matching_peaks"> </span>
 
 ## Matching between BM and NPP output (background)
@@ -353,9 +428,10 @@ overlapping with the core of a BP are not considered. In some cases
 there can be more than one match between a BP and NPs (Figure 1d). In
 those cases, BPs corresponding to the same molecule but other
 isotopologues (IT) are considered to choose the NP leading to the
-smallest relative IT ratio bias as compared to the predicted IT-ratio
-(Figure 1c). When more than two different IT are detected the ratio of
-each IT with the highest IT reported via NPP is considered.
+smallest relative IT ratio (calculated via reported peak abundances)
+bias as compared to the predicted IT-ratio (Figure 1c). When more than
+two different IT are detected the ratio of each IT with the highest IT
+reported via NPP is considered.
 
 <div class="figure">
 
