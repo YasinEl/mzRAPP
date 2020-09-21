@@ -345,23 +345,25 @@ Each benchmark peak (BP) is reported with the smallest and highest mz
 value contributing to the chromatographic peak. In order to be
 considered as possible match for a BP a NT peak (NP) has to come with an
 mz value between those two values. Matching rules considering retention
-time (RT) are depicted in Figure 1. A NP has to cover the whole core of
+time (RT) are depicted in Figure 1a. A NP has to cover the whole core of
 a BP while having a RT within the borders (RTmin, RTmax) of the BP. If
 only a part of the core is covered by a NP with its RT in the borders of
 the BP, the NP it is counted as a split peak. NPs which are not
-overlapping with the core of a BP are not considered. If there is more
-than one NP matching to a single BP, BPs corresponding to the same
-molecule but other isotopologues (IT) are considered to choose the NP
-leading to the smallest relative IT ratio bias (as compared to the
-predicted ratio; see figure 3) as compared to the predicted IT-ratio.
+overlapping with the core of a BP are not considered. In some cases
+there can be more than one match between a BP and NPs (Figure 1d). In
+those cases, BPs corresponding to the same molecule but other
+isotopologues (IT) are considered to choose the NP leading to the
+smallest relative IT ratio bias as compared to the predicted IT-ratio
+(Figure 1c). When more than two different IT are detected the ratio of
+each IT with the highest IT reported via NPP is considered.
 
 <div class="figure">
 
-<img src="inst/md/Peak_matching_graphic.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching rules of BP with NP" width="40%" height="50%" />
+<img src="inst/md/Matching.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching between BM and NPP output" width="100%" height="100%" />
 
 <p class="caption">
 
-<b>Figure 1 | </b> Matching rules of BP with NP
+<b>Figure 1 | </b> Matching between BM and NPP output
 
 </p>
 
@@ -371,12 +373,10 @@ predicted ratio; see figure 3) as compared to the predicted IT-ratio.
 <br> For a NT feature (NF) to be considered as match for a benchmark
 feature (BF) its reported mz and RT value have to lie between the
 lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the
-considered benchmark feature, respectively. In case of multiple NF
-matching to the same BF the NF leading to smallest relative mean
-isotopologue ratio bias (as compared to the predicted ratio; see figure
-3) over all NPs is selected (only NPs in samples which are also
-populated by a BP are considered for the IT ratio bias calculation).
-<br>
+considered benchmark feature, respectively (Figure 1b). In case of
+multiple matches for the same BF the same strategy as for NP is applied
+(Figure 1c and d). However, in case of features the mean area is
+calculated over all samples for which a BP is present. <br>
 
 <b>Matching of non-targeted peaks to non-targeted features:</b> <br> In
 order to count alignment errors (explained below) it is necessary to
@@ -423,8 +423,8 @@ above.<br>
 ### Split peaks
 
 The number of split peaks which have been found for all benchmark peaks.
-For a graphical explanation of a split peak please check figure 1. It is
-worth noting that there can be more than one split peak per benchmark
+For a graphical explanation of a split peak please check figure 1a. It
+is worth noting that there can be more than one split peak per benchmark
 peak. <br>
 
 <span id="Missing_values"> </span>

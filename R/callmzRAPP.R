@@ -23,8 +23,8 @@ callmzRAPP <- function(){
     'FW50M'= 'peaks.FW50M',
     'FW75M' = 'peaks.FW75M',
     'Zigzag index' = 'peaks.zigZag_IDX',
-    'Height' = 'peaks.height',
-    'Area' = 'peaks.area',
+    'log10(Height)' = 'peaks.height',
+    'log10(Area)' = 'peaks.area',
     'mz measured' = 'peaks.mz_accurate',
     'mz accuracy abs' = 'peaks.mz_accuracy_abs',
     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
@@ -53,8 +53,8 @@ callmzRAPP <- function(){
     'FW50M'= 'peaks.FW50M_b',
     'FW75M' = 'peaks.FW75M_b',
     'Zigzag index' = 'peaks.zigZag_IDX_b',
-    'Height' = 'peak_height_b',
-    'Area' = 'peak_area_b',
+    'log10(Height)' = 'peak_height_b',
+    'log10(Area)' = 'peak_area_b',
     'mz measured' = 'mz_b',
     'mz accuracy abs' = 'peaks.mz_accuracy_abs_b',
     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
@@ -700,7 +700,7 @@ callmzRAPP <- function(){
                 shiny::column(10, offset = 1,
                        shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
                                  "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately.")),
+                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately. Peaks which were be matched after peak picking but not found in the aligned output are also counted seperately.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 shiny::br(),
@@ -1511,7 +1511,7 @@ shiny::br(),
     observeEvent(comparison_data(),{
       if(!is.null(comparison_data())){
         error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0, Molecule]))
-        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors == 0 & Lost_b.A == 0 | BM.div == 0, Molecule]))
+        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors == 0 & Lost_b.A == 0 & BM.div == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         shinyWidgets::updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
@@ -1519,7 +1519,7 @@ shiny::br(),
     observeEvent({comparison_data();input$mol_a}, {
       if(!is.null(comparison_data())){
         error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors > 0 | Lost_b.A > 0 | BM.div > 0), Adduct])
-        no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 | BM.div == 0), Adduct])
+        no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 & BM.div == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         shinyWidgets::updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }
