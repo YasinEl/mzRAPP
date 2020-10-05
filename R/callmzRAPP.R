@@ -1016,6 +1016,7 @@ shiny::br(),
                                               Grps = grps,
                                               plan = input$plan_input,
                                               CompCol_all = rois,
+                                              Integration_baseL_factor = 0.05,
                                               Min.PointsperPeak = input$min_PpP_input,
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )

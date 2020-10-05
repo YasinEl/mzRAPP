@@ -9,7 +9,7 @@
 #' @export
 #'
 #'
-pick_algorithm <- function(ug_table_path, g_table_path, options_table, algo){
+pick_algorithm <- function(ug_table_path, g_table_path, options_table = 'generate', algo){
 
   if(is.list(options_table) == TRUE && is.data.table(options_table) == FALSE){
 

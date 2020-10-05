@@ -170,7 +170,7 @@ molecule (seconds). Peaks are only detected from this time on. <br> <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this
 molecule (seconds). Peaks are only detected up to this time. <br> <br>
 <b>user.rtmin:</b> Start time of peak (seconds). Peak boundaries will
-also be narrowed to intesect with the extracted ion chromatogram at 10%
+also be narrowed to intersect with the extracted ion chromatogram at 10%
 peak height. It is also worth noting that peaks for which
 user.rtmin/user.rtmax are provided will still be rejected if the
 isotopic information is fitting. <br> <br> <b>user.rtmax:</b> End time
@@ -575,6 +575,3 @@ the output of the NPP-assessment.
 </p>
 
 </div>
-
-<b>Overview plots:</b><br> <br> For explanations of the overview plots
-please click the blue question marks above the individual plots. <br>

@@ -97,7 +97,7 @@ adducts$Name
 <br>
 <b>EndTime.EIC:</b> End time for chromatograms extracted for this molecule (seconds). Peaks are only detected up to this time. <br>
 <br>
-<b>user.rtmin:</b> Start time of peak (seconds). Peak boundaries will also be narrowed to intesect with the extracted ion chromatogram at 10% peak height. It is also worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is fitting. <br>
+<b>user.rtmin:</b> Start time of peak (seconds). Peak boundaries will also be narrowed to intersect with the extracted ion chromatogram at 10% peak height. It is also worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is fitting. <br>
 <br>
 <b>user.rtmax:</b> End time of peak (seconds). <br>
 <br>
@@ -351,7 +351,3 @@ Benchmark-critical counting counts the minimum number of alignment errors withou
 ```{r figure5, out.width="80%", out.height="80%", echo=FALSE,fig.cap="\\label{fig:figure5}<b>Figure 5 | </b> Counting alignment errors"}
 knitr::include_graphics("Alignment_error_graphic.png")
 ```
-
-<b>Overview plots:</b><br>
-<br>
-For explanations of the overview plots please click the blue question marks above the individual plots. <br>
