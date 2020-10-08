@@ -27,8 +27,22 @@ getROIsForEICs <-
     if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
     if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
 
+    missing_cols <- setdiff(c("StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
+    if(length(missing_cols) > 0 && all(c("user.rtmin", "user.rtmax") %in% colnames(Target.table))){
+      maxrt <- max(Target.table$user.rtmax, na.rm = TRUE)
+      Target.table <- Target.table[, .(molecule = molecule,
+                                       adduct = adduct,
+                                       isoab = isoab,
+                                       StartTime.EIC = max(c(1, user.rtmin - (user.rtmax - user.rtmin) * 3)),
+                                       EndTime.EIC = min(c(user.rtmax + (user.rtmax - user.rtmin) * 3, maxrt+1))),
+                                   by = rownames(Target.table)][Target.table, on = .(molecule, adduct, isoab)]
+
+      Target.table <- Target.table[, !"rownames"]
+
+    }
+
     missing_cols <- setdiff(c("molecule", "adduct", "isoab", "mz_ex", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
-    if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", missing_cols))}
+    if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste(missing_cols, sep = ", ")))}
 
     if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
                                                                                 Please, make sure that names given in the column 'molecule' are unique or have different adducts

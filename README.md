@@ -62,9 +62,9 @@ In case of R tools make sure you also follow the subsequent instructions
 described on the webpage. <br>
 
 Afterwards it is time to install mzRAPP. It is possible to do that by
-pasting the following codes into the console of R Studio and press
-enter. If this fails it might help to close R Studio and submit the
-command into R directly (which has been downloaded from
+pasting the following code into the console of R Studio and press enter.
+If this fails it might help to close R Studio and submit the command
+into R cran directly (which has been downloaded from
 [R](https://cran.r-project.org/)).
 
 ``` r
@@ -162,21 +162,22 @@ adducts$Name
 be accepted. <br> <br> <b>SumForm\_c:</b> Molecular composition of the
 neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
 0 behind an element like behind the N in C12H8N0S2. <br> <br>
-<b>FileName:</b> (optional) Name of sample file with or without file
-extension. Using this allows to apply different values (like
-user.rtmin/user.rtmax) for different files. <br> <br>
-<b>StartTime.EIC:</b> Start time for chromatograms extracted for this
-molecule (seconds). Peaks are only detected from this time on. <br> <br>
-<b>EndTime.EIC:</b> End time for chromatograms extracted for this
-molecule (seconds). Peaks are only detected up to this time. <br> <br>
 <b>user.rtmin:</b> Start time of peak (seconds). Peak boundaries will
-also be narrowed to intersect with the extracted ion chromatogram at 10%
+also be narrowed to intersect with the extracted ion chromatogram at 5%
 peak height. It is also worth noting that peaks for which
 user.rtmin/user.rtmax are provided will still be rejected if the
 isotopic information is fitting. <br> <br> <b>user.rtmax:</b> End time
-of peak (seconds). <br> <br> <b>Additional columns: </b> It is possible
-to add additional columns. Those will be kept for the final benchmark
-data set. <br> <br>
+of peak (seconds). <br> <br> <b>StartTime.EIC:</b> (optional) Start time
+for chromatograms extracted for this molecule (seconds). Peaks are only
+detected from this time on. If not given StartTime.EIC and EndTime.EIC
+are calculated from user.rtmin and user.rtmax.<br> <br>
+<b>EndTime.EIC:</b> (optional) End time for chromatograms extracted for
+this molecule (seconds). Peaks are only detected up to this time. <br>
+<br> <b>FileName:</b> (optional) Name of sample file with or without
+file extension. Using this allows to apply different values (like
+user.rtmin/user.rtmax) for different files. <br> <br> <b>Additional
+columns: </b> It is possible to add additional columns. Those will be
+kept for the final benchmark data set. <br> <br>
 
 ### Select instrument and resolution
 
@@ -227,8 +228,8 @@ validate it. This could happen if less than two isotopologues
 number of points per peak) which is required for a given molecule to be
 kept in the given file. In order to get a better overview over picked
 peaks two csv files as well as instructions can be exported. Those can
-be used in order to generate a mirror image of the benchmark data set in
-the free software
+(but does not have to) be used in order to generate a mirror image of
+the benchmark data set in the free software
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
 
 When the benchmark is satisfactory it can be used for reliability
@@ -302,7 +303,7 @@ When performing the alignment make sure to activate the isotope tracking
 option in the alignment step (for most cases selecting 13C and 15N as
 labeling elements will be adequate). Afterwards export via: Export -\>
 Alignment result -\> \[check Raw data matrix Area\] -\> \[set Export
-format to txt\] <br> <br> <u>mzMine:</u> <br> unaligned files: \[select
+format to msp\] <br> <br> <u>mzMine:</u> <br> unaligned files: \[select
 all files generated in the chromatogram deconvolution step\] -\> Feature
 list methods -\> Export/Import -\> Export to CSV file -\> \[set Filename
 including pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -\>

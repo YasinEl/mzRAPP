@@ -106,10 +106,6 @@ findBenchPeaks <- function(files,
               for (adduct.run in c("main_adduct", "screen_adducts")) {
                 for (iso.run in c("MAiso", "LAisos")) {
 
-                  #print(adduct.run)
-                  #print(iso.run)
-
-
                   Bureau <- NULL
                   if(adduct.run == "main_adduct" & iso.run == "MAiso" | nrow(MA.Isos) > 0 & "peaks.PpP" %in% colnames(MA.Isos)){
                     .CompCol_xic <- Limit_Target_list(CompCol, MA.Isos, iso.run, adduct.run, files[file], Min.PointsperPeak)
@@ -117,7 +113,6 @@ findBenchPeaks <- function(files,
 
 
                   if(nrow(.CompCol_xic) > 0){
-                    #print("something")
                     ##################################
                     #extract EICs, add according file names and create empty list for storage of peak information
                     ##################################
@@ -348,21 +343,16 @@ findBenchPeaks <- function(files,
                                 Drawer_closed <- data.frame(Drawer_fill, stringsAsFactors = FALSE)
                                 return(Drawer_closed)
                               }
-#print(l.peaks)
 
                               if(manual_bound == FALSE || sum(EIC.dt[rt > l.peaks$StartTime & rt < l.peaks$EndTime]$int) > 0){
                               ##################################
                               #get information on mz peaks for each chromatographic peak
                               ##################################
-                                #print("mzs")
                               l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i], EIC.dt)
-#print("mze")
                               ##################################
                               #add additional variables for each chromatographic peak
                               ##################################
                               l.peaks <- Get_peak_vars(l.peaks, EIC.dt, CompCol_xic[i], l.peaks.mz_list, iso.run, adduct.run, manual_bound)
-#print("ve")
-#print(l.peaks)
                               }
                             } else {
                               l.peaks <- NULL
@@ -381,14 +371,7 @@ findBenchPeaks <- function(files,
                   #first combine peaks from all compounds into one table then peaks from all adducts and isotopologues into one table
                   ##################################
                   if (iso.run == "MAiso") {
-                    #print("here")
-                    #why <<- Bureau
-
                     MA.Isos <- rbindlist(Bureau, fill = TRUE, use.names = TRUE)
-
-                    #fwrite(MA.Isos, "maisos1.csv")
-#print("maisosstart")
-#print(colnames(MA.Isos))
                     if(!("peaks.PpP" %in% colnames(MA.Isos))){
                       MA.Isos[, peaks.PpP := 0]
                     }
@@ -425,19 +408,14 @@ findBenchPeaks <- function(files,
             }
 
   future::plan("sequential")
-#print("out")
 
 
   Result <- rbindlist(Output, fill = TRUE, use.names = TRUE)
-
-  #ttpp <<- Result
-  #get rid of double isos
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
   #get rid of double cross isos
   Result <- clean_peak_assignments(Result)
 
-  #Result <- Result[(!is.na(peaks.FW25M) | !is.na(peaks.unres.e) | !is.na(peaks.unres.s)) & !is.na(peaks.FW75M)]
 
   Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
 
@@ -511,9 +489,22 @@ findBenchPeaks <- function(files,
 
     Result <- Result[Results_ia100[, c("molecule", "adduct", "FileName", "peaks.M0.grp")], on =.(molecule, adduct, FileName, peaks.M0.grp), nomatch = NULL]
 
-  }
+    sort_vct <- intersect(colnames(Result),
+                          c("IDX",	"molecule",	"adduct",	"main_adduct",	"isoab",	"FileName",	"Grp",	"samples_per_group",
+                            "formula",	"charge",	"Iso_count",	"mz_ex",	"peaks.idx",	"peaks.rtmin",	"peaks.rtmax",
+                            "peaks.M0.grp",	"peaks.StartTime",	"peaks.EndTime",	"peaks.PpP",	"peaks.mz_accurate",
+                            "peaks.mz_accuracy_abs",	"peaks.mz_accuracy_ppm",	"peaks.mz_span_abs",	"peaks.mz_span_ppm",
+                            "peaks.mz_min",	"peaks.mz_max",	"peaks.FW25M",	"peaks.FW50M",	"peaks.FW75M",	"peaks.data_rate",
+                            "peaks.rt_raw",	"peaks.zigZag_IDX",	"peaks.sharpness",	"peaks.height",	"peaks.area",
+                            "peaks.cor_w_M0",	"peaks.cor_w_main_add",	"peaks.manual_int",	"ExpectedArea",	"ErrorRel_A",
+                            "ErrorAbs_A",	"ExpectedHeight",	"ErrorRel_H",	"ErrorAbs_H",	"isoab_ol",	"Intensities.v",	"RT.v")
+    )
 
-  #print(colnames(Result))
+    setcolorder(Result, c(sort_vct, setdiff(colnames(Result), sort_vct)))
+
+
+
+  }
 
   return(Result)
 

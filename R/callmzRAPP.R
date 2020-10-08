@@ -23,8 +23,8 @@ callmzRAPP <- function(){
     'FW50M'= 'peaks.FW50M',
     'FW75M' = 'peaks.FW75M',
     'Zigzag index' = 'peaks.zigZag_IDX',
-    'log10(Height)' = 'peaks.height',
-    'log10(Area)' = 'peaks.area',
+    'Height' = 'peaks.height',
+    'Area' = 'peaks.area',
     'mz measured' = 'peaks.mz_accurate',
     'mz accuracy abs' = 'peaks.mz_accuracy_abs',
     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm',
@@ -936,12 +936,12 @@ shiny::br(),
         } else {
           targets <- fread(coi_file())
 
-          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "StartTime.EIC", "EndTime.EIC", "main_adduct"), colnames(targets))
+          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "main_adduct"), colnames(targets))
           if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
 
 
-          if(!is.numeric(targets$StartTime.EIC) | !is.numeric(targets$EndTime.EIC)){
-            stop("Some values in your shiny::columns StartTime.EIC/EndTime.EIC are not numeric!")
+          if(all(c("StartTime.EIC", "EndTime.EIC") %in% colnames(targets)) && (!is.numeric(targets$StartTime.EIC) | !is.numeric(targets$EndTime.EIC))){
+            stop("Some values in your columns StartTime.EIC/EndTime.EIC are not numeric!")
 
             if(nrow(targets[StartTime.EIC < 0 | EndTime.EIC < 0 | EndTime.EIC < StartTime.EIC]) > 0){
               stop("Values for StartTime.EIC and EndTime.EIC cannot be lower than 0. Also values for StartTime.EIC have to be lower than those for EndTime.EIC!")
@@ -951,14 +951,14 @@ shiny::br(),
 
           if("user.rtmin" %in% colnames(targets) | "user.rtmax" %in% colnames(targets)){
             if(!all(c("user.rtmin", "user.rtmax") %in% colnames(targets))){
-              stop("Your target table includes only one of the shiny::columns user.rtmin/user.rtmax. If one is there you also need the other!")
+              stop("Your target table includes only one of the columns user.rtmin/user.rtmax. If one is there you also need the other!")
             }
 
             if(!is.numeric(targets$user.rtmin) | !is.numeric(targets$user.rtmax)){
-              stop("Some values in your shiny::columns user.rtmin/user.rtmax are not numeric!")
+              stop("Some values in your columns user.rtmin/user.rtmax are not numeric!")
             }
 
-            if(nrow(targets[user.rtmin < StartTime.EIC | user.rtmax > EndTime.EIC]) > 0){
+            if(all(c("StartTime.EIC", "EndTime.EIC") %in% colnames(targets)) && nrow(targets[user.rtmin < StartTime.EIC | user.rtmax > EndTime.EIC]) > 0){
               stop("Values for user.rtmin/user.rtmax cannot be lower/higher than values for StartTime.EIC/EndTime.EIC respectivly!")
             }
 

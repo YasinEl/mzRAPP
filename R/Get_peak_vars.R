@@ -105,11 +105,11 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
 
       FW25M = as.double(
         GetFWXM(
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$rt,
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$int,
           0,
           0.25,
@@ -119,11 +119,11 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
 
       FW50M = as.double(
         GetFWXM(
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$rt,
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$int,
           0,
           0.50,
@@ -133,11 +133,11 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
 
       FW75M = as.double(
         GetFWXM(
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$rt,
-          EIC.dt[rt >= StartTime &
-                   rt <= EndTime &
+          EIC.dt[rt >= StartTime - 2 &
+                   rt <= EndTime + 2 &
                    !is.na(int_wo_spikes)]$int,
           0,
           0.75,
