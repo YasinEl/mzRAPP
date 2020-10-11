@@ -1,4 +1,4 @@
-#' get_EIC_table
+#' get_EIMatches_BM_NPPpeaks
 #'
 #' @param rt rt
 #' @param int int
@@ -7,7 +7,7 @@
 #'
 #'
 #' @keywords internal
-get_EIC_table <- function(rt, int, Min.PpP) {
+get_EIMatches_BM_NPPpeaks <- function(rt, int, Min.PpP) {
   EIC.dt <- data.table(
     rt = rt,
     int = int,

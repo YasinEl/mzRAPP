@@ -13,11 +13,115 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 \item{g_table}{one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table}
 
-\item{algo}{tool output format of ug_table and g_table. Can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine.}
+\item{algo}{string of length 1. output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
 }
 \value{
 returns list containing different tables including data from different types of comparisons
 }
 \description{
-compare_peaks
+Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{import_benchmark}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+}
+\details{
+The output of this function is a list containing 9 different elements. In the following benchmark peaks are referred to as BM, non-targeted unaligned peaks as NP and NP which have been aligned across samples (features) as NF. In all
+following tables (provided as data.table objects) benchmark variables are labeled with a "_b", unaligned non-targeted peaks via "_ug" and aligned non-targeted peaks via "_g" suffix.
+
+\strong{BM_NPPoutput_size:} Gives peak and aligned feature counts for the used benchmark as well as non-targeted outputs
+
+nr_of_b_peaks: benchmark peak count
+
+nr_of_b_features: benchmark feature count
+
+nr_of_ug_peaks: NP count
+
+nr_of_g_peaks: number of peaks reported in the aligned output
+
+nr_of_g_features: NF count
+
+algorithm: non-targeted output format
+
+\strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule.
+
+molecule_b: molecule name
+
+Min.er: count of alignment errors as defined in the mzRAPP readme
+
+BM.div: count of alignment divergences as defined in the mzRAPP readme
+
+lost: count of NP for which no match among NaP was found (NP lost during alignment)
+
+R_pp: count of random (high) missing values in the unaligned non-targeted output as defined in mzRAPP readme
+
+S_pp: count of systematic (low) missing values in the unaligned non-targeted output as defined in mzRAPP readme
+
+R_ft: count of random (high) missing values in the aligned non-targeted output as defined in mzRAPP readme
+
+S_ft: count of systematic (low) missing values in the aligned non-targeted output as defined in mzRAPP readme
+
+IRb_ok_pp: count of isotopologue ratios calculated from NP classified as "good" as defined in the mzRAPP readme
+
+IRb_off_pp: count of isotopologue ratios calculated from NP classified as "bad" as defined in the mzRAPP readme
+
+IRb_ok_ft: count of isotopologue ratios calculated from NF classified as "good" as defined in the mzRAPP readme
+
+IRb_off_ft: count of isotopologue ratios calculated from NF classified as "bad" as defined in the mzRAPP readme
+
+Split_peaks: count of splitted peaks as defined in the mzRAPP readme
+
+Found_peaks_ft: count of BP for which a match among NF was detected. For details on the matching procedure see the mzRAPP readme
+
+Not_Found_peaks_ft: count of BP for which no match among NF was detected. For details on matching procedure see the mzRAPP readme
+
+Found_peaks_pp: count of BP for which a match among NP was detected. For details on matching procedure see the mzRAPP readme
+
+Not_Found_peaks_pp: count of BP for which no match among NP was detected. For details on matching procedure see the mzRAPP readme
+
+\strong{Matches_BM_NPPpeaks:} Extensive table allowing to inspect matches between the benchmark and the unaligned non-targeted output in detail.
+Unaligned non-targeted peaks are also matched to aligned non-targeted peaks via reported abundance values in order to count alignment errors.
+In order to allow the inspection of all input variables all variables available in benchmark and the non-targeted output are kept. It is worth noting that more than one match
+can occur per BP. For the best match (as defined in the mzRAPP readme) the variable main_peak equals TRUE.
+
+\strong{Unmatched_BM_NPPpeaks:} Benchmark peaks for which no match could be found.
+
+\strong{SplittedMatches_BM_NPPpeaks:} All splitted matches (as defined in the mzRAPP readme) are summarized in this table. Splitted matches for which also a full match exists in
+in the Matches_BM_NPPpeaks table have "present_in_found" = TRUE
+
+\strong{MissingPeak_classification:} Classifies the missing value status of peaks before and after alignment. This classification
+is made only correct alignment of the benchmark is in general agreement with the alignment of the non-targeted output per molecule (as described in mzRAPP readme). Peaks for which this was confirmed
+show "Connected" = TRUE. The MissingPeak status is done for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
+
+F (found): Peak is not missing
+
+NC (not confirmable): alignment could not be confirmed as described above
+
+L (lost): all peaks of the respective features were not found
+
+S (systematic): systematic (low) missing value as defined in mzRAPP readme
+
+\strong{IT_ratio_biases:} Table showing the status of calculated isotopologue ratio biases as compared to enviPat predicted ratios calculated from abundances reported
+from BP ("benchmark"), NP ("NPP_peak picking") and NF ("NPP_features"). Biases are classified for NP ("diffH20PP_pp") and NF ("diffH20PP_ft") into good ("Inc. < 20%p") or bad ("Inc. > 20%p")
+as defined in the mzRAPP readme.
+
+\strong{AlignmentErrors_per_moleculeAndAdduct:} Overview of alignment problems per molecule and adduct.
+
+Min.errors: count of alignment errors as defined in the mzRAPP readme
+
+BM.div: count of alignment divergences as defined in the mzRAPP readme
+
+Lost_b.A: count of NP for which no match among NaP was found (NP lost during alignment)
+
+\strong{Matches_BM_NPPpeaks_NPPfeatures:} Table containing matched non-targeted unaligned and aligned peaks for each BP with their respective reported abundances.
+
+min_mz_start: lowest mz allowed for matched NF to be considered (as described in mzRAPP readme)
+
+max_mz_end: highest mz allowed for matched NF to be considered (as described in mzRAPP readme)
+
+min_rt_start: lowest RT allowed for matched NF to be considered (as described in mzRAPP readme)
+
+max_rt_end: highest RT allowed for matched NF to be considered (as described in mzRAPP readme)
+
+peak_area_b: peak area as reported in benchmark
+
+peak_area_ug: peak area as reported in unaligned NP
+
+area_g: peak area as reported in NF
 }

@@ -1,16 +1,76 @@
 #' compare_peaks
 #'
+#' Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{import_benchmark}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+#'
 #' @param b_table output from \code{\link{import_benchmark}}
 #' @param ug_table one of the listed objects (ug_table) in output of \code{\link{pick_algorithm}}. e.g. pick_algo_output$ug_table
 #' @param g_table one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table
-#' @param algo tool output format of ug_table and g_table. Can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine.
+#' @param algo string of length 1. output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
 #'
 #' @return returns list containing different tables including data from different types of comparisons
+#'
+#' @details The output of this function is a list containing 9 different elements. In the following benchmark peaks are referred to as BM, non-targeted unaligned peaks as NP and NP which have been aligned across samples (features) as NF. In all
+#' following tables (provided as data.table objects) benchmark variables are labeled with a "_b", unaligned non-targeted peaks via "_ug" and aligned non-targeted peaks via "_g" suffix.
+#' @details \strong{BM_NPPoutput_size:} Gives peak and aligned feature counts for the used benchmark as well as non-targeted outputs
+#' @details nr_of_b_peaks: benchmark peak count
+#' @details nr_of_b_features: benchmark feature count
+#' @details nr_of_ug_peaks: NP count
+#' @details nr_of_g_peaks: number of peaks reported in the aligned output
+#' @details nr_of_g_features: NF count
+#' @details algorithm: non-targeted output format
+#' @details \strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule.
+#' @details molecule_b: molecule name
+#' @details Min.er: count of alignment errors as defined in the mzRAPP readme
+#' @details BM.div: count of alignment divergences as defined in the mzRAPP readme
+#' @details lost: count of NP for which no match among NaP was found (NP lost during alignment)
+#' @details R_pp: count of random (high) missing values in the unaligned non-targeted output as defined in mzRAPP readme
+#' @details S_pp: count of systematic (low) missing values in the unaligned non-targeted output as defined in mzRAPP readme
+#' @details R_ft: count of random (high) missing values in the aligned non-targeted output as defined in mzRAPP readme
+#' @details S_ft: count of systematic (low) missing values in the aligned non-targeted output as defined in mzRAPP readme
+#' @details IRb_ok_pp: count of isotopologue ratios calculated from NP classified as "good" as defined in the mzRAPP readme
+#' @details IRb_off_pp: count of isotopologue ratios calculated from NP classified as "bad" as defined in the mzRAPP readme
+#' @details IRb_ok_ft: count of isotopologue ratios calculated from NF classified as "good" as defined in the mzRAPP readme
+#' @details IRb_off_ft: count of isotopologue ratios calculated from NF classified as "bad" as defined in the mzRAPP readme
+#' @details Split_peaks: count of splitted peaks as defined in the mzRAPP readme
+#' @details Found_peaks_ft: count of BP for which a match among NF was detected. For details on the matching procedure see the mzRAPP readme
+#' @details Not_Found_peaks_ft: count of BP for which no match among NF was detected. For details on matching procedure see the mzRAPP readme
+#' @details Found_peaks_pp: count of BP for which a match among NP was detected. For details on matching procedure see the mzRAPP readme
+#' @details Not_Found_peaks_pp: count of BP for which no match among NP was detected. For details on matching procedure see the mzRAPP readme
+#' @details \strong{Matches_BM_NPPpeaks:} Extensive table allowing to inspect matches between the benchmark and the unaligned non-targeted output in detail.
+#' Unaligned non-targeted peaks are also matched to aligned non-targeted peaks via reported abundance values in order to count alignment errors.
+#' In order to allow the inspection of all input variables all variables available in benchmark and the non-targeted output are kept. It is worth noting that more than one match
+#' can occur per BP. For the best match (as defined in the mzRAPP readme) the variable main_peak equals TRUE.
+#' @details \strong{Unmatched_BM_NPPpeaks:} Benchmark peaks for which no match could be found.
+#' @details \strong{SplittedMatches_BM_NPPpeaks:} All splitted matches (as defined in the mzRAPP readme) are summarized in this table. Splitted matches for which also a full match exists in
+#' in the Matches_BM_NPPpeaks table have "present_in_found" = TRUE
+#' @details \strong{MissingPeak_classification:} Classifies the missing value status of peaks before and after alignment. This classification
+#' is made only correct alignment of the benchmark is in general agreement with the alignment of the non-targeted output per molecule (as described in mzRAPP readme). Peaks for which this was confirmed
+#' show "Connected" = TRUE. The MissingPeak status is done for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
+#' @details F (found): Peak is not missing
+#' @details NC (not confirmable): alignment could not be confirmed as described above
+#' @details L (lost): all peaks of the respective features were not found
+#' @deatils R (random): random (high) missing value as defined in mzRAPP readme
+#' @details S (systematic): systematic (low) missing value as defined in mzRAPP readme
+#' @details \strong{IT_ratio_biases:} Table showing the status of calculated isotopologue ratio biases as compared to enviPat predicted ratios calculated from abundances reported
+#' from BP ("benchmark"), NP ("NPP_peak picking") and NF ("NPP_features"). Biases are classified for NP ("diffH20PP_pp") and NF ("diffH20PP_ft") into good ("Inc. < 20%p") or bad ("Inc. > 20%p")
+#' as defined in the mzRAPP readme.
+#' @details \strong{AlignmentErrors_per_moleculeAndAdduct:} Overview of alignment problems per molecule and adduct.
+#' @details Min.errors: count of alignment errors as defined in the mzRAPP readme
+#' @details BM.div: count of alignment divergences as defined in the mzRAPP readme
+#' @details Lost_b.A: count of NP for which no match among NaP was found (NP lost during alignment)
+#' @details \strong{Matches_BM_NPPpeaks_NPPfeatures:} Table containing matched non-targeted unaligned and aligned peaks for each BP with their respective reported abundances.
+#' @details min_mz_start: lowest mz allowed for matched NF to be considered (as described in mzRAPP readme)
+#' @details max_mz_end: highest mz allowed for matched NF to be considered (as described in mzRAPP readme)
+#' @details min_rt_start: lowest RT allowed for matched NF to be considered (as described in mzRAPP readme)
+#' @details max_rt_end: highest RT allowed for matched NF to be considered (as described in mzRAPP readme)
+#' @details peak_area_b: peak area as reported in benchmark
+#' @details peak_area_ug: peak area as reported in unaligned NP
+#' @details area_g: peak area as reported in NF
 #' @export
 #'
 compare_peaks <- function(b_table, ug_table, g_table, algo){
 
-  info_list <- list()
+  BM_NPPoutput_size <- list()
 
   #If no g_table exists crate empty one
   if(is.null(g_table)){
@@ -70,7 +130,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ##############
   #Write relevant information to info list
   ##############
-  info_list <- append(info_list, list(nr_of_b_peaks = length(unique(b_table$comp_id_b)),
+  BM_NPPoutput_size <- append(BM_NPPoutput_size, list(nr_of_b_peaks = length(unique(b_table$comp_id_b)),
                                       nr_of_b_features = length(unique(b_table$feature_id_b)),
                                       nr_of_ug_peaks = length(unique(ug_table$comp_id_ug)),
                                       nr_of_g_peaks = length(unique(g_table$comp_id_g)),
@@ -132,7 +192,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #rt range must be larger on both sides than calculated peak limits,
   #mz must fall within mz start and end of benchmark
   ##############
-  c_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
+  Matches_BM_NPPpeaks <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
                                     new_rt_start_b_temp >= rt_start_ug_temp,
                                     new_rt_end_b_temp <= rt_end_ug_temp,
                                     mz_start_b_temp <= mz_ug_temp,
@@ -176,16 +236,16 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
   #Combine the split peak tables
-  split_table <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
+  SplittedMatches_BM_NPPpeaks <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
 
 
 
-  #print(paste('Before Main Peak Check: ', nrow(c_table)))
-  c_table <- pick_main_peak(c_table)
-  message(paste('Number of benchmark peaks with unaligned non-targeted peak matches: ', nrow(c_table[main_peak == TRUE])))
+  #print(paste('Before Main Peak Check: ', nrow(Matches_BM_NPPpeaks)))
+  Matches_BM_NPPpeaks <- pick_main_peak(Matches_BM_NPPpeaks)
+  message(paste('Number of benchmark peaks with unaligned non-targeted peak matches: ', nrow(Matches_BM_NPPpeaks[main_peak == TRUE])))
 
 
-  c_table <- c_table[main_peak == TRUE]
+  Matches_BM_NPPpeaks <- Matches_BM_NPPpeaks[main_peak == TRUE]
 
   ##############
   #Joining peaks from groupd file onto found areas of ungrouped
@@ -196,48 +256,49 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #Creating temp columns to prevent over-writing by join
   #If statement is solution for msdial
 
-  if ('peak_area_rounded_ug' %in% colnames(c_table)){
-    c_table[, peak_area_ug_temp := peak_area_rounded_ug]
-    c_table[, sample_id_b_temp := sample_id_b]
-    split_table[, peak_area_ug_temp := peak_area_rounded_ug]
+  if ('peak_area_rounded_ug' %in% colnames(Matches_BM_NPPpeaks)){
+    Matches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_rounded_ug]
+    Matches_BM_NPPpeaks[, sample_id_b_temp := sample_id_b]
+    SplittedMatches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_rounded_ug]
     g_table[, peak_area_g_temp := peak_area_g]
     g_table[, sample_id_g_temp := sample_id_g]
   } else {
-    c_table[, peak_area_ug_temp := peak_area_ug]
-    c_table[, sample_id_b_temp := sample_id_b]
-    split_table[, peak_area_ug_temp := peak_area_ug]
+    Matches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_ug]
+    Matches_BM_NPPpeaks[, sample_id_b_temp := sample_id_b]
+    SplittedMatches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_ug]
     g_table[, peak_area_g_temp := peak_area_g]
     g_table[, sample_id_g_temp := sample_id_g]
   }
 
   #Join
-  c_table <- g_table[c_table, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
+  Matches_BM_NPPpeaks <- g_table[Matches_BM_NPPpeaks, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
 
-  c_table[, N_fid := .N, by = .(molecule_b, adduct_b, isoab_b, feature_id_g)]
-  c_table <-  c_table[order(-rank(N_fid))]
-  c_table <- unique(c_table, by = c("molecule_b", "adduct_b", "isoab_b", "sample_id_b"))
+  #In case of duplicate area matches during ug - g match take the g-match which occurred most often for other peaks in the same BM feature
+  Matches_BM_NPPpeaks[, N_fid := .N, by = .(molecule_b, adduct_b, isoab_b, feature_id_g)]
+  Matches_BM_NPPpeaks <-  Matches_BM_NPPpeaks[order(-rank(N_fid))][, !"N_fid"]
+  Matches_BM_NPPpeaks <- unique(Matches_BM_NPPpeaks, by = c("molecule_b", "adduct_b", "isoab_b", "sample_id_b"))
 
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
-  #c_table <- c_table[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
+  #Matches_BM_NPPpeaks <- Matches_BM_NPPpeaks[, peak_area_g := ifelse(peak_area_g == 0, NA, peak_area_g)]
 
-  split_table <- g_table[split_table, on=.(peak_area_g_temp == peak_area_ug_temp),
+  SplittedMatches_BM_NPPpeaks <- g_table[SplittedMatches_BM_NPPpeaks, on=.(peak_area_g_temp == peak_area_ug_temp),
                      allow.cartesian = TRUE, nomatch=NA, mult='all']
 
   #Remove _temp Columns
-  c_table[,grep('_temp$', colnames(c_table)):=NULL]
+  Matches_BM_NPPpeaks[,grep('_temp$', colnames(Matches_BM_NPPpeaks)):=NULL]
   b_table[,grep('_temp$', colnames(b_table)):=NULL]
 
 
-  c_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
-  split_table[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
+  Matches_BM_NPPpeaks[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
+  SplittedMatches_BM_NPPpeaks[, id_b_ug := paste(comp_id_b, comp_id_ug, sep='_')]
 
-  split_table[, present_in_found := ifelse(id_b_ug %in% c_table$id_b_ug, 'TRUE', 'FALSE')]
+  SplittedMatches_BM_NPPpeaks[, present_in_found := ifelse(id_b_ug %in% Matches_BM_NPPpeaks$id_b_ug, 'TRUE', 'FALSE')]
 
 
   #Make sure main peaks only occure once
-  if (any(duplicated(c_table[main_peak==TRUE]))){
+  if (any(duplicated(Matches_BM_NPPpeaks[main_peak==TRUE]))){
     stop('Duplicate Peaks still present after analysis')
   }
 
@@ -247,13 +308,13 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ##############
 
   #Not found B Peaks
-  nf_b_table <- b_table[!b_table$comp_id_b %in% unique(c_table$comp_id_b)]
+  Unmatched_BM_NPPpeaks <- b_table[!b_table$comp_id_b %in% unique(Matches_BM_NPPpeaks$comp_id_b)]
 
   #Not found UG Peaks
-  nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(c_table$comp_id_ug)]
+  nf_ug_table <- ug_table[!ug_table$comp_id_ug %in% unique(Matches_BM_NPPpeaks$comp_id_ug)]
 
   #Not found G Peaks
-  nf_g_table <- g_table[!g_table$comp_id_g %in% unique(c_table$comp_id_g)]
+  nf_g_table <- g_table[!g_table$comp_id_g %in% unique(Matches_BM_NPPpeaks$comp_id_g)]
 
 
 
@@ -265,14 +326,14 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   if(nrow(g_table) > 0){
 
 
-  ali_error_table <-
-    rbindlist(list(c_table, nf_b_table), fill = TRUE)
+  AlignmentErrors_per_moleculeAndAdduct <-
+    rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
 
-  if('peak_area_rounded_ug' %in% colnames(ali_error_table)){
-    ali_error_table <- ali_error_table[, 'peak_area_ug' := peak_area_rounded_ug]
+  if('peak_area_rounded_ug' %in% colnames(AlignmentErrors_per_moleculeAndAdduct)){
+    AlignmentErrors_per_moleculeAndAdduct <- AlignmentErrors_per_moleculeAndAdduct[, 'peak_area_ug' := peak_area_rounded_ug]
   }
 
-  ali_error_table <- ali_error_table[, as.list(count_errors_max(.SD)), .SDcols=c('molecule_b',
+  AlignmentErrors_per_moleculeAndAdduct <- AlignmentErrors_per_moleculeAndAdduct[, as.list(count_errors_max(.SD)), .SDcols=c('molecule_b',
                                                     'adduct_b',
                                                     'main_peak',
                                                     'sample_id_b',
@@ -282,11 +343,11 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                     'peak_area_ug'),
                  by=.(molecule_b, adduct_b)]
 
-  ali_error_table <- setnames(ali_error_table, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
+  AlignmentErrors_per_moleculeAndAdduct <- setnames(AlignmentErrors_per_moleculeAndAdduct, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
 
   } else {
 
-    ali_error_table <- setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
+    AlignmentErrors_per_moleculeAndAdduct <- setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
 
   }
 
@@ -323,14 +384,14 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
 
-  tmp <- unique(data.table(sample_id_b = as.factor(c_table[["sample_id_b"]]),
-                           sample_name_b = c_table[["sample_name_b"]]))
-  feature_table <- dt_n[tmp, on = .(sample_id_b)]
+  tmp <- unique(data.table(sample_id_b = as.factor(Matches_BM_NPPpeaks[["sample_id_b"]]),
+                           sample_name_b = Matches_BM_NPPpeaks[["sample_name_b"]]))
+  Matches_BM_NPPpeaks_NPPfeatures <- dt_n[tmp, on = .(sample_id_b)]
 
-  ug_info <- rbindlist(list(c_table, nf_b_table), fill = TRUE, use.names = TRUE)
+  ug_info <- rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 
-  feature_table <-
-  feature_table[!is.na(area_b)][ug_info[, c("molecule_b",
+  Matches_BM_NPPpeaks_NPPfeatures <-
+  Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b)][ug_info[, c("molecule_b",
                                             "adduct_b",
                                             "isoab_b",
                                             "sample_name_b",
@@ -340,7 +401,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     } else {
 
-      feature_table <- setNames(data.table(matrix(nrow = 0, ncol = 15)), c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
+      Matches_BM_NPPpeaks_NPPfeatures <- setNames(data.table(matrix(nrow = 0, ncol = 15)), c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                                                                           "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
                                                                           "max_rt_end", "main_feature", "sample_id_b", "area_g", "area_b",
                                                                           "sample_name_b"))
@@ -350,49 +411,49 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   #Generate Random and systematic error DT
-  rs_table <- rbindlist(list(c_table, nf_b_table), fill = TRUE)
+  MissingPeak_classification <- rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
 
-  rs_table <- rs_table[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "peak_area_b", "peak_height_b",
+  MissingPeak_classification <- MissingPeak_classification[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "peak_area_b", "peak_height_b",
                            "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
   )]
 
   if(nrow(g_table) > 0){
 
- # feat_t <- melt_fftable(ff_table_dt, c_table)
+ # feat_t <- melt_fftable(ff_table_dt, Matches_BM_NPPpeaks)
 #tt <<- feat_t
-  rs_table <- feature_table[main_feature == TRUE & !is.na(area_b), c("molecule_b",
+  MissingPeak_classification <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE & !is.na(area_b), c("molecule_b",
                                                                      "adduct_b",
                                                                      "isoab_b",
                                                                      "sample_name_b",
-                                                                     "area_g")][rs_table,
+                                                                     "area_g")][MissingPeak_classification,
                        on =.(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
-#tt <<- rs_table
+#tt <<- MissingPeak_classification
 
 
 
-  rs_table[, peak_area_g := area_g]
+  MissingPeak_classification[, peak_area_g := area_g]
 
 
 
-  rs_table <- rs_table[!is.na(peak_area_b)]
-  rs_table <- rs_table[order(feature_id_g)]
+  MissingPeak_classification <- MissingPeak_classification[!is.na(peak_area_b)]
+  MissingPeak_classification <- MissingPeak_classification[order(feature_id_g)]
 
-   rs_table <-
-    rs_table[, Connected := File_con_test(
+   MissingPeak_classification <-
+    MissingPeak_classification[, Connected := File_con_test(
       sample_name_b,
       feature_id_g),
       by = .(molecule_b, adduct_b)]
 
-   colnames(rs_table) <- replace(colnames(rs_table), colnames(rs_table) == "area_g", "peak_area_g")
+   colnames(MissingPeak_classification) <- replace(colnames(MissingPeak_classification), colnames(MissingPeak_classification) == "area_g", "peak_area_g")
 
   } else {
 
-    rs_table[, Connected := TRUE]
+    MissingPeak_classification[, Connected := TRUE]
   }
 
-  rs_table <-
-    rs_table[, c("missing_peaks_ug", "missing_peaks_g") := .(find_r_s_error(
+  MissingPeak_classification <-
+    MissingPeak_classification[, c("missing_peaks_ug", "missing_peaks_g") := .(find_r_s_error(
       peak_area_b,
       peak_area_ug,
       peak_height_b,
@@ -406,11 +467,11 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
 
-  rs_table <- rs_table[!is.na(peak_area_b)]
+  MissingPeak_classification <- MissingPeak_classification[!is.na(peak_area_b)]
 
 
 
-  #rs_table[, missing_peaks := find_r_s_error(
+  #MissingPeak_classification[, missing_peaks := find_r_s_error(
   #  peak_area_b,
   #  peak_area_ug,
   #  peak_height_b
@@ -418,18 +479,18 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
 #Generate Isotopologe error dt
-c_table_t <- c_table
+Matches_BM_NPPpeaks_t <- Matches_BM_NPPpeaks
 if(nrow(g_table) > 0){
 
-  c_table_t$sample_id_b <- as.factor(c_table_t$sample_id_b)
-  iso_err_dt <- c_table_t[main_peak == TRUE,c("molecule_b",
+  Matches_BM_NPPpeaks_t$sample_id_b <- as.factor(Matches_BM_NPPpeaks_t$sample_id_b)
+  IT_ratio_biases <- Matches_BM_NPPpeaks_t[main_peak == TRUE,c("molecule_b",
                                    "adduct_b",
                                    "isoab_b",
                                    "sample_id_b",
                                    "peak_area_ug",
                                    "peak_area_b",
                                    "Grp_b",
-                                   "sample_name_b")][feature_table[main_feature == TRUE &
+                                   "sample_name_b")][Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
                                                             !is.na(area_b) &
                                                             !is.na(area_g),
                                                           c("molecule_b",
@@ -441,20 +502,20 @@ if(nrow(g_table) > 0){
                                                             "sample_name_b")],
                                                      on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
 
-  iso_err_dt[is.na(peak_area_b)]$peak_area_b <- iso_err_dt[is.na(peak_area_b)]$area_b
-  iso_err_dt[is.na(sample_name_b)]$sample_name_b <- iso_err_dt[is.na(sample_name_b)]$i.sample_name_b
+  IT_ratio_biases[is.na(peak_area_b)]$peak_area_b <- IT_ratio_biases[is.na(peak_area_b)]$area_b
+  IT_ratio_biases[is.na(sample_name_b)]$sample_name_b <- IT_ratio_biases[is.na(sample_name_b)]$i.sample_name_b
 
 
 } else {
-  c_table_t$sample_id_b <- as.factor(c_table_t$sample_id_b)
-  c_table_t[, area_g := as.numeric(NA)]
+  Matches_BM_NPPpeaks_t$sample_id_b <- as.factor(Matches_BM_NPPpeaks_t$sample_id_b)
+  Matches_BM_NPPpeaks_t[, area_g := as.numeric(NA)]
 
-  iso_err_dt <- c_table_t
+  IT_ratio_biases <- Matches_BM_NPPpeaks_t
 
 
 }
 
-  iso_err_dt <- iso_err_dt[isoab_b != 100][iso_err_dt[isoab_b == 100,
+  IT_ratio_biases <- IT_ratio_biases[isoab_b != 100][IT_ratio_biases[isoab_b == 100,
                                      c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug")],
                                 on=.(sample_id_b, molecule_b, adduct_b),
                                 nomatch = NA, allow.cartesian=TRUE][,c("benchmark",
@@ -464,31 +525,99 @@ if(nrow(g_table) > 0){
                                                                                             (area_g / ((i.area_g * isoab_b) / 100) - 1) * 100)]
 
 
-  iso_err_dt[, diffH20PP_pp := as.character(abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
+  IT_ratio_biases[, diffH20PP_pp := as.character(abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
                                         abs(`NPP_peak picking` - benchmark) > 20 &
                                         abs(`NPP_peak picking`) > 30)]
 
-  iso_err_dt[, diffH20PP_ft := as.character(abs(abs(benchmark) - abs(NPP_features)) > 10 &
+  IT_ratio_biases[, diffH20PP_ft := as.character(abs(abs(benchmark) - abs(NPP_features)) > 10 &
                                         abs(NPP_features - benchmark) > 20 &
                                         abs(NPP_features) > 30)]
 
 
-  iso_err_dt[diffH20PP_pp == "TRUE"]$diffH20PP_pp <- "Inc. > 20%p"
-  iso_err_dt[diffH20PP_pp == "FALSE"]$diffH20PP_pp <- "Inc. < 20%p"
+  IT_ratio_biases[diffH20PP_pp == "TRUE"]$diffH20PP_pp <- "Inc. > 20%p"
+  IT_ratio_biases[diffH20PP_pp == "FALSE"]$diffH20PP_pp <- "Inc. < 20%p"
 
-  iso_err_dt[diffH20PP_ft == "TRUE"]$diffH20PP_ft <- "Inc. > 20%p"
-  iso_err_dt[diffH20PP_ft == "FALSE"]$diffH20PP_ft <- "Inc. < 20%p"
+  IT_ratio_biases[diffH20PP_ft == "TRUE"]$diffH20PP_ft <- "Inc. > 20%p"
+  IT_ratio_biases[diffH20PP_ft == "FALSE"]$diffH20PP_ft <- "Inc. < 20%p"
 
-  iso_err_dt <- iso_err_dt[!is.na(peak_area_b)]
+  IT_ratio_biases <- IT_ratio_biases[!is.na(peak_area_b)]
+
+
+  #create overview table per compound
+
+
+  bm_tab <- rbindlist(list(Matches_BM_NPPpeaks[main_peak == TRUE], Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+  bm_tab[is.na(main_peak), main_peak := FALSE]
+
+
+  peaks_pp <- bm_tab[,.(Found_peaks_pp = sum(main_peak),
+                        Not_Found_peaks_pp = length(main_peak) - sum(main_peak)), by = .(molecule_b)]
+
+  peaks_ft <- Matches_BM_NPPpeaks_NPPfeatures[!is.na(peak_area_b) & !is.na(main_feature) && main_feature == TRUE, .(Found_peaks_ft = sum(!is.na(area_g)),
+                                                                                                                  Not_Found_peaks_ft = sum(is.na(area_g))),
+                                            by = .(molecule_b)]
+
+  IRb <- IT_ratio_biases[, c("molecule_b", "diffH20PP_pp", "diffH20PP_ft")][, .(IRb_ok_pp = sum(diffH20PP_pp == "Inc. < 20%p", na.rm = TRUE),
+                                                                                           IRb_off_pp = sum(diffH20PP_pp == "Inc. > 20%p", na.rm = TRUE),
+                                                                                           IRb_ok_ft = sum(diffH20PP_ft == "Inc. < 20%p", na.rm = TRUE),
+                                                                                           IRb_off_ft = sum(diffH20PP_ft == "Inc. > 20%p", na.rm = TRUE)),
+                                                                                       by = .(molecule_b)]
+
+
+
+  split_pp <- SplittedMatches_BM_NPPpeaks[,c("molecule_b")][,.( Split_peaks = .N), by = .(molecule_b)]
+
+  mw_tab <- MissingPeak_classification[, .(R_pp = sum(missing_peaks_ug == "R", na.rm = TRUE),
+                                         S_pp = sum(missing_peaks_ug == "S", na.rm = TRUE),
+                                         R_ft = sum(missing_peaks_g == "R", na.rm = TRUE),
+                                         S_ft = sum(missing_peaks_g == "S", na.rm = TRUE)),
+                                     by = .(molecule_b)]
+
+
+  ali_tab <- AlignmentErrors_per_moleculeAndAdduct[, .(Min.er = sum(Min.errors, na.rm = TRUE),
+                                                 BM.div = sum(BM.div, na.rm = TRUE),
+                                                 lost = sum(Lost_b.A, na.rm = TRUE)),
+                                             by = .(Molecule)]
+
+  colnames(ali_tab)[1] <- "molecule_b"
+
+
+
+  sum_tab <- unique(bm_tab[!is.na(molecule_b), "molecule_b"])
+  sum_tab <- peaks_pp[sum_tab, on = .(molecule_b)]
+  sum_tab <- peaks_ft[sum_tab, on = .(molecule_b)]
+  sum_tab <- split_pp[sum_tab, on = .(molecule_b)]
+  sum_tab <- IRb[sum_tab, on = .(molecule_b)]
+  sum_tab <- mw_tab[sum_tab, on = .(molecule_b)]
+  sum_tab <- ali_tab[sum_tab, on = .(molecule_b)]
+
+
+
+  setnafill(sum_tab, fill=0, cols = colnames(sum_tab)[-1])
+
+
+
+
+
+  #############################
+
+
+
 
 
   ##############
   #Return the found and 3 notfoundtables in a list
   ##############
 
-  return_list <- list('c_table' = c_table, 'nf_b_table' = nf_b_table, 'nf_ug_table' = nf_ug_table, 'nf_g_table' = nf_g_table, 'info_list' = info_list,
-                      'split_table' = split_table, 'ff_table' = ff_table_dt, 'rs_table'= rs_table, 'iso_err_dt' = iso_err_dt, 'ali_error_table' = ali_error_table,
-                      'feature_table' = feature_table)
+  return_list <- list('BM_NPPoutput_size' = BM_NPPoutput_size,
+                      'Overview_per_molecule' = sum_tab,
+                      'Matches_BM_NPPpeaks' = Matches_BM_NPPpeaks,
+                      'Unmatched_BM_NPPpeaks' = Unmatched_BM_NPPpeaks,
+                      'SplittedMatches_BM_NPPpeaks' = SplittedMatches_BM_NPPpeaks,
+                      'MissingPeak_classification'= MissingPeak_classification,
+                      'IT_ratio_biases' = IT_ratio_biases,
+                      'AlignmentErrors_per_moleculeAndAdduct' = AlignmentErrors_per_moleculeAndAdduct,
+                      'Matches_BM_NPPpeaks_NPPfeatures' = Matches_BM_NPPpeaks_NPPfeatures)
 
   message('Successful comparison!')
 

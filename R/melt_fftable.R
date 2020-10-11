@@ -4,7 +4,7 @@
 #'
 #'
 #' @keywords internal
-melt_fftable <- function(ff_table, c_table){
+melt_fftable <- function(ff_table, Matches_BM_NPPpeaks){
 
   dt <-  ff_table
   #dt <- fftable
@@ -35,8 +35,8 @@ melt_fftable <- function(ff_table, c_table){
 
   dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
 
-  tmp <- unique(data.table(sample_id_b = as.factor(c_table$sample_id_b),
-                           sample_name_b = c_table$sample_name_b))
+  tmp <- unique(data.table(sample_id_b = as.factor(Matches_BM_NPPpeaks$sample_id_b),
+                           sample_name_b = Matches_BM_NPPpeaks$sample_name_b))
   dt_n <- dt_n[tmp, on = .(sample_id_b)]
 
 

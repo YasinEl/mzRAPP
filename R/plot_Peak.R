@@ -150,7 +150,7 @@ plot_Peak_per_mol  <- function(PC_object, mol, ia = 100, add = "M+H"){
 UT_comp = FALSE
 
 if(is.list(PC_object) == TRUE && is.data.table == FALSE){
-  PC_object <- rbindlist(list(PC_object$c_table, PC_object$nf_b_table), fill = TRUE, use.names = TRUE)
+  PC_object <- rbindlist(list(PC_object$c_table, PC_object$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 }
 
 

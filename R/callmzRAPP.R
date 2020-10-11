@@ -1280,21 +1280,21 @@ shiny::br(),
     observeEvent(comparison_data(),{
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'mol_c', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
       }
     })
     observeEvent(input$mol_c, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
       }
     })
     observeEvent({input$mol_c; input$add_c}, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'ia_c', choices = sort(round_woe(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoab_b), 2), decreasing = TRUE))
       }
     })
@@ -1327,7 +1327,7 @@ shiny::br(),
     observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
 
       comparison_data <- comparison_data()
-      CE_plot <-  rbindlist(list(comparison_data$c_table[, Split_peak := FALSE], comparison_data$split_table[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$nf_b_table[, Split_peak := FALSE]), fill = TRUE)
+      CE_plot <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
       CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
 
@@ -1373,7 +1373,7 @@ shiny::br(),
     observeEvent(plotly_click_wo_warnings(sc = "IRbias"), {
 
       comparison_data <- comparison_data()
-      CE_plot <-  rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+      CE_plot <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
       event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
       #print(event.data)
       showModal(modalDialog(
@@ -1496,7 +1496,7 @@ shiny::br(),
     observeEvent(comparison_data(), {
       #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
-        output$error_count <- renderTable(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
+        output$error_count <- renderTable(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
       }
       #delay(expr =({
       #  options(warn = storeWarn)
@@ -1511,16 +1511,16 @@ shiny::br(),
     #Alignment error plot
     observeEvent(comparison_data(),{
       if(!is.null(comparison_data())){
-        error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0, Molecule]))
-        no_error_molecules <- unique(as.character(comparison_data()$ali_error_table[Min.errors == 0 & Lost_b.A == 0 & BM.div == 0, Molecule]))
+        error_molecules <- unique(as.character(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0, Molecule]))
+        no_error_molecules <- unique(as.character(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[Min.errors == 0 & Lost_b.A == 0 & BM.div == 0, Molecule]))
         choices <- list('Errors:' = as.list(error_molecules), 'No errors:' = as.list(no_error_molecules))
         shinyWidgets::updatePickerInput(session = session, inputId = 'mol_a', choices = choices)
       }
     })
     observeEvent({comparison_data();input$mol_a}, {
       if(!is.null(comparison_data())){
-        error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors > 0 | Lost_b.A > 0 | BM.div > 0), Adduct])
-        no_error_adducts <- as.character(comparison_data()$ali_error_table[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 & BM.div == 0), Adduct])
+        error_adducts <- as.character(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[(Molecule == input$mol_a) & (Min.errors > 0 | Lost_b.A > 0 | BM.div > 0), Adduct])
+        no_error_adducts <- as.character(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[(Molecule == input$mol_a) & (Min.errors == 0 & Lost_b.A == 0 & BM.div == 0), Adduct])
         choices <- list('Errors:' = as.list(error_adducts), 'No errors:' = as.list(no_error_adducts))
         shinyWidgets::updatePickerInput(session = session, inputId = 'add_a', choices = choices)
       }

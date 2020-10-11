@@ -88,7 +88,7 @@ plot_sunburst_alignment <- function(result_txt){
 #'
 plot_sunburst_peaks <- function(result_txt, comparison_object){
 
-  summary_tab <- comparison_object[["feature_table"]]
+  summary_tab <- comparison_object[["Matches_BM_NPPpeaks_NPPfeatures"]]
 
 
   dt <- data.table(BM = c("peaks<br>not found", "peaks<br>not found", "peaks<br>found", "peaks<br>found"),
@@ -148,11 +148,11 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
   bm <- rbindlist(list(comparison_object$c_table,
-                       comparison_object$nf_b_table),
+                       comparison_object$Unmatched_BM_NPPpeaks),
                   fill = TRUE,
                   use.names = TRUE)
 
-  ratios <- comparison_object$iso_err_dt
+  ratios <- comparison_object$IT_ratio_biases
 
 
   dt <- data.table(BM = c("IR bias<br>< 20%", "IR bias<br>< 20%", "IR bias<br>< 20%", "IR bias<br>> 20%", "IR bias<br>> 20%", "IR bias<br>> 20%", "Missing peak", "Missing peak", "Missing peak"),

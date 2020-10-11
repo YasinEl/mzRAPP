@@ -36,7 +36,7 @@ findBenchPeaks(
 
 \item{Min.Res}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks}
 
-\item{plan}{see \code{\link{plan}}}
+\item{plan}{see \code{\link{future::plan}}}
 
 \item{Min.cor.w.main_adduct}{Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be retained}
 
@@ -48,11 +48,100 @@ findBenchPeaks(
 
 \item{max.rt.diff_sec}{maximum difference between user.rt in position of peak maximum in seconds}
 
-\item{max.mz.diff_ppm}{maximum difference between intensity weighted mz of a peak and the calculated mz of the expeted ion species in ppm}
+\item{max.mz.diff_ppm}{maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm}
 }
 \value{
 data table with peak variables extracted from found peaks.
 }
 \description{
 Takes a the output of \code{\link{getROIsForEICs}} and detects and filters peak candidates.
+}
+\details{
+\strong{molecule:} name of molecule
+
+\strong{adduct:} adduct type
+
+\strong{isoab:} theoretic relative abundance as predicted via enviPat
+
+\strong{FileName:} sample name
+
+\strong{eic_mzmin:} lowest mz value in extracted ROI
+
+\strong{eic_mzmax:} highest mz value in extracted ROI
+
+\strong{formula:} molecular formula
+
+\strong{charge:} ion charge
+
+\strong{mz_ex:} exact mass as predicted via enviPat
+
+\strong{Grp:} sample group
+
+\strong{peaks.rtmin:} peak start time (s)
+
+\strong{peaks.rtmax:} peak end time (s)
+
+\strong{peaks.PpP:} scans per peak
+
+\strong{peaks.mz_accurate:} peak mz calculated as intensity weighted average
+
+\strong{peaks.mz_accuracy_abs:} absolute mz accuracy as compared to mz_ex
+
+\strong{peaks.mz_accuracy_ppm:} relative mz accuracy as compared to mz_ex
+
+\strong{peaks.mz_span_abs:} absolute difference between the highest and lowest mz value recorded over chromatographic peak
+
+\strong{peaks.mz_span_ppm:} relative difference between the highest and lowest mz value recorded over chromatographic peak
+
+\strong{peaks.mz_min:} lowest mz value recorded over chromatographic peak
+
+\strong{peaks.mz_max:} highest mz value recorded over chromatographic peak
+
+\strong{peaks.FW25M:} chromatographic peak width at 25% of the maximum (s)
+
+\strong{peaks.FW50M:} chromatographic peak width at 50% of the maximum (s)
+
+\strong{peaks.FW75M:} chromatographic peak width at 75% of the maximum (s)
+
+\strong{peaks.data_rate:} mean differences between scans (s)
+
+\strong{peaks.rt_raw:} position of the highest intensity (s)
+
+\strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+
+\strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+
+\strong{peaks.height:} highest intensity of the peak
+
+\strong{peaks.area:} chromatographic peak area
+
+\strong{peaks.cor_w_M0:} pearson correlation coefficient between most abundant isotopologue (isoab = 100) and lower isotopologues
+
+\strong{peaks.cor_w_main_add:} pearson correlation coefficient between most abundant isotopologue of main_adduct (isoab = 100) and most abundant isotopologues of other adducts of the same compound
+
+\strong{peaks.manual_int:} True if user.rtmin and user.rtmax were provided
+
+\strong{Intensities.v:} intensity vector of extracted chromatogram
+
+\strong{RT.v:} retention time vector of extracted chromatogram
+
+\strong{ExpectedArea:} Predicted chromatrographic peak area for lower isotopologues as calculated from most abundant isotopologue of the same molecule and adduct
+
+\strong{ErrorRel_A:} relative difference between ExpectedArea and peaks.area
+
+\strong{ErrorAbs_A:} absolute difference between ExpectedArea and peaks.area
+
+\strong{ExpectedHeight:} predicted chromatrographic peak height for lower isotopologues as calculated from most abundant isotopologue of the same molecule and adduct
+
+\strong{ErrorRel_H:} relative difference between ExpectedHeight and peaks.height
+
+\strong{ErrorAbs_H:} absolute difference between ExpectedHeight and peaks.height
+
+\strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to preducted isoab
+
+\strong{Iso_count:} isotopologue count per molecule and adduct
+
+\strong{samples_per_group:} number of samples per group
+
+\strong{iso_id:} id for specific isotopologue
 }

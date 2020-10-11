@@ -4,7 +4,7 @@
 \alias{melt_fftable}
 \title{melt_fftable}
 \usage{
-melt_fftable(ff_table, c_table)
+melt_fftable(ff_table, Matches_BM_NPPpeaks)
 }
 \arguments{
 \item{fftable}{fftable}

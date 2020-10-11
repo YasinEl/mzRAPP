@@ -8,16 +8,63 @@
 #' @param Min.PointsperPeak minimum number of points per peak for a peak to be considered
 #' @param peak.spotting.factor this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. Relative height to the highest point of the EIC above which points should be considered during peak detection process. e.g. 0.001 corresponds to 0.1\% of the maximum.
 #' @param Integration_baseL_factor relative peak height factor upon which points should be considered to be part of the peak. 0.1 would correspond to 10\% of the peak maximum.
-#' @param plan see \code{\link{plan}}
+#' @param plan see \code{\link{future::plan}}
 #' @param Min.cor.w.main_adduct Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be retained
 #' @param Min.cor.w.M0 Minimum pearson correlation coefficient between highest isotopologues and lower isotopologues for lower isotopologues to be retained.
 #' @param Min.iso.count Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.
 #' @param return_unsuc_searches Should unsuccsessfull searches be returned (TRUE/FALSE)
 #' @param Min.Res this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks
 #' @param max.rt.diff_sec maximum difference between user.rt in position of peak maximum in seconds
-#' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expeted ion species in ppm
+#' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm
 #'
 #' @return data table with peak variables extracted from found peaks.
+#'
+#' @details \strong{molecule:} name of molecule
+#' @details \strong{adduct:} adduct type
+#' @details \strong{isoab:} theoretic relative abundance as predicted via enviPat
+#' @details \strong{FileName:} sample name
+#' @details \strong{eic_mzmin:} lowest mz value in extracted ROI
+#' @details \strong{eic_mzmax:} highest mz value in extracted ROI
+#' @details \strong{formula:} molecular formula
+#' @details \strong{charge:} ion charge
+#' @details \strong{mz_ex:} exact mass as predicted via enviPat
+#' @details \strong{Grp:} sample group
+#' @details \strong{peaks.rtmin:} peak start time (s)
+#' @details \strong{peaks.rtmax:} peak end time (s)
+#' @details \strong{peaks.PpP:} scans per peak
+#' @details \strong{peaks.mz_accurate:} peak mz calculated as intensity weighted average
+#' @details \strong{peaks.mz_accuracy_abs:} absolute mz accuracy as compared to mz_ex
+#' @details \strong{peaks.mz_accuracy_ppm:} relative mz accuracy as compared to mz_ex
+#' @details \strong{peaks.mz_span_abs:} absolute difference between the highest and lowest mz value recorded over chromatographic peak
+#' @details \strong{peaks.mz_span_ppm:} relative difference between the highest and lowest mz value recorded over chromatographic peak
+#' @details \strong{peaks.mz_min:} lowest mz value recorded over chromatographic peak
+#' @details \strong{peaks.mz_max:} highest mz value recorded over chromatographic peak
+#' @details \strong{peaks.FW25M:} chromatographic peak width at 25% of the maximum (s)
+#' @details \strong{peaks.FW50M:} chromatographic peak width at 50% of the maximum (s)
+#' @details \strong{peaks.FW75M:} chromatographic peak width at 75% of the maximum (s)
+#' @details \strong{peaks.data_rate:} mean differences between scans (s)
+#' @details \strong{peaks.rt_raw:} position of the highest intensity (s)
+#' @details \strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+#' @details \strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+#' @details \strong{peaks.height:} highest intensity of the peak
+#' @details \strong{peaks.area:} chromatographic peak area
+#' @details \strong{peaks.cor_w_M0:} pearson correlation coefficient between most abundant isotopologue (isoab = 100) and lower isotopologues
+#' @details \strong{peaks.cor_w_main_add:} pearson correlation coefficient between most abundant isotopologue of main_adduct (isoab = 100) and most abundant isotopologues of other adducts of the same compound
+#' @details \strong{peaks.manual_int:} True if user.rtmin and user.rtmax were provided
+#' @details \strong{Intensities.v:} intensity vector of extracted chromatogram
+#' @details \strong{RT.v:} retention time vector of extracted chromatogram
+#' @details \strong{ExpectedArea:} Predicted chromatrographic peak area for lower isotopologues as calculated from most abundant isotopologue of the same molecule and adduct
+#' @details \strong{ErrorRel_A:} relative difference between ExpectedArea and peaks.area
+#' @details \strong{ErrorAbs_A:} absolute difference between ExpectedArea and peaks.area
+#' @details \strong{ExpectedHeight:} predicted chromatrographic peak height for lower isotopologues as calculated from most abundant isotopologue of the same molecule and adduct
+#' @details \strong{ErrorRel_H:} relative difference between ExpectedHeight and peaks.height
+#' @details \strong{ErrorAbs_H:} absolute difference between ExpectedHeight and peaks.height
+#' @details \strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to preducted isoab
+#' @details \strong{Iso_count:} isotopologue count per molecule and adduct
+#' @details \strong{samples_per_group:} number of samples per group
+#' @details \strong{iso_id:} id for specific isotopologue
+
+#'
 #' @export
 
 findBenchPeaks <- function(files,
@@ -183,7 +230,7 @@ findBenchPeaks <- function(files,
                         ##################################
                         #prepare table with smoothed and spike depleted EICs
                         ##################################
-                        EIC.dt <- get_EIC_table(rt = unname(ChromData[[i]]@rtime),
+                        EIC.dt <- get_EIMatches_BM_NPPpeaks(rt = unname(ChromData[[i]]@rtime),
                                                             int = unname(ChromData[[i]]@intensity),
                                                             Min.PpP = Min.PointsperPeak)
 

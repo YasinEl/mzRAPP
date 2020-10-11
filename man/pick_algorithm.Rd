@@ -4,7 +4,7 @@
 \alias{pick_algorithm}
 \title{pick_algorithm}
 \usage{
-pick_algorithm(ug_table_path, g_table_path, options_table, algo)
+pick_algorithm(ug_table_path, g_table_path, options_table = "generate", algo)
 }
 \arguments{
 \item{ug_table_path}{path to unaligned table(s)}

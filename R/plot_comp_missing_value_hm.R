@@ -11,7 +11,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
 
   if(missing (comparison_data) | disable_plot == TRUE) return(plotly::ggplotly(ggplot() + ggtitle("Disabeled")))
 
-  hm_dt <- comparison_data$rs_table
+  hm_dt <- comparison_data$MissingPeak_classification
   hm_dt <- hm_dt[, missing_peaks := missing_peaks_ug]
 
   if(post_alignment == FALSE){
@@ -22,7 +22,7 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
     #dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
     #feat_t <- melt_fftable(comparison_data)
 
-    #BM_bu <- rbindlist(list(comparison_data$c_table, comparison_data$nf_b_table), fill = TRUE)
+    #BM_bu <- rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
 
     #BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
 
@@ -56,8 +56,8 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
 #        Connected
 #      ), by = .(molecule_b, adduct_b, isoab_b)]
 #    hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
-    #tmp <- unique(data.table(sample_id_b = as.factor(ev_return_list[["c_table"]][["sample_id_b"]]),
-    #                         sample_name_b = ev_return_list[["c_table"]][["sample_name_b"]]))
+    #tmp <- unique(data.table(sample_id_b = as.factor(ev_return_list[["Matches_BM_NPPpeaks"]][["sample_id_b"]]),
+    #                         sample_name_b = ev_return_list[["Matches_BM_NPPpeaks"]][["sample_name_b"]]))
     #hm_dt <- hm_dt[tmp, on = .(sample_id_b)]
 
 

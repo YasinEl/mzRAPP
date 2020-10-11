@@ -16,35 +16,35 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
  # dt <- dt[main_feature == TRUE]
 
- # iso_err_dt <- na.omit(dt, cols = c('area_g'))
+ # IT_ratio_biases <- na.omit(dt, cols = c('area_g'))
 
- # iso_err_dt <- na.omit(iso_err_dt, cols = c("area_b", "area_g"))
+ # IT_ratio_biases <- na.omit(IT_ratio_biases, cols = c("area_b", "area_g"))
 
-  #iso_err_dt <- iso_err_dt[main_peak == TRUE]
+  #IT_ratio_biases <- IT_ratio_biases[main_peak == TRUE]
 
-#  iso_err_dt$id <- seq(1:nrow(iso_err_dt))
+#  IT_ratio_biases$id <- seq(1:nrow(IT_ratio_biases))
 
- # DT_tmp <- iso_err_dt[isoab_b != 100][iso_err_dt[isoab_b == 100],
+ # DT_tmp <- IT_ratio_biases[isoab_b != 100][IT_ratio_biases[isoab_b == 100],
 #                                        on=.(sample_name_b, molecule_b, adduct_b),
 #                                        nomatch = 0L, allow.cartesian=TRUE][,c("benchmark", "non_targeted") := .((area_b / ((i.area_b * isoab_b) / 100) - 1) * 100,
  #                                                                                                                (area_g / ((i.area_g * isoab_b) / 100) - 1) * 100)]
 
 
-#  iso_err_dt <- merge(iso_err_dt, DT_tmp[,.(id, benchmark, non_targeted)], by = 'id', all.x = TRUE, allow.cartesian = TRUE)
+#  IT_ratio_biases <- merge(IT_ratio_biases, DT_tmp[,.(id, benchmark, non_targeted)], by = 'id', all.x = TRUE, allow.cartesian = TRUE)
 
 
-#  iso_err_dt[, diffH20PP := as.character(abs(abs(benchmark) - abs(non_targeted)) > 10 &
+#  IT_ratio_biases[, diffH20PP := as.character(abs(abs(benchmark) - abs(non_targeted)) > 10 &
 #                                           abs(non_targeted - benchmark) > 20 &
 #                                           abs(non_targeted) > 30)]
 
-#  iso_err_dt[diffH20PP == "TRUE"]$diffH20PP <- "Inc. > 20%p"
-#  iso_err_dt[diffH20PP == "FALSE"]$diffH20PP <- "Inc. < 20%p"
+#  IT_ratio_biases[diffH20PP == "TRUE"]$diffH20PP <- "Inc. > 20%p"
+#  IT_ratio_biases[diffH20PP == "FALSE"]$diffH20PP <- "Inc. < 20%p"
 
-#  whatsin <<- iso_err_dt
+#  whatsin <<- IT_ratio_biases
 
-#  iso_err_dt <-
+#  IT_ratio_biases <-
 #    melt(
-#      iso_err_dt,
+#      IT_ratio_biases,
 #      id.vars = c('molecule_b', 'adduct_b', 'isoab_b', 'sample_name_b', 'diffH20PP'),
 #      measure.vars = c("benchmark", "non_targeted"),
 #      variable.name = 'data_type',
@@ -52,9 +52,9 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 #    )
 
 
- # iso_err_dt[, grp_col := paste0(molecule_b, adduct_b, isoab_b, sample_name_b)]
+ # IT_ratio_biases[, grp_col := paste0(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
-#  iso_err_dt <- na.omit(iso_err_dt, cols = "diffH20PP")
+#  IT_ratio_biases <- na.omit(IT_ratio_biases, cols = "diffH20PP")
 
 
 
@@ -62,24 +62,24 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
 #} else if(post_alignment == FALSE){
 
-  iso_err_dt <- comparison_data$iso_err_dt
+  IT_ratio_biases <- comparison_data$IT_ratio_biases
 
-  if(nrow(iso_err_dt[!is.na(NPP_features)]) == 0) {
+  if(nrow(IT_ratio_biases[!is.na(NPP_features)]) == 0) {
     BMvsPPvsAl <- FALSE
     }
 
-  #iso_err_dt[diffH20PP_pp == "TRUE" , diffH20PP := "Inc. > 20%p"]
-  #iso_err_dt[diffH20PP_pp == "FALSE" , diffH20PP := "Inc. < 20%p"]
-  #iso_err_dt[diffH20PP_pp == "TRUE"]$diffH20PP <- "Inc. > 20%p"
-  #iso_err_dt[diffH20PP_pp == "FALSE"]$diffH20PP <- "Inc. < 20%p"
+  #IT_ratio_biases[diffH20PP_pp == "TRUE" , diffH20PP := "Inc. > 20%p"]
+  #IT_ratio_biases[diffH20PP_pp == "FALSE" , diffH20PP := "Inc. < 20%p"]
+  #IT_ratio_biases[diffH20PP_pp == "TRUE"]$diffH20PP <- "Inc. > 20%p"
+  #IT_ratio_biases[diffH20PP_pp == "FALSE"]$diffH20PP <- "Inc. < 20%p"
   if(BMvsPPvsAl == FALSE){
 
   if(post_alignment == FALSE){
-    iso_err_dt$diffH20PP <- iso_err_dt$diffH20PP_pp
+    IT_ratio_biases$diffH20PP <- IT_ratio_biases$diffH20PP_pp
 
-    iso_err_dt <-
+    IT_ratio_biases <-
       melt(
-        iso_err_dt,
+        IT_ratio_biases,
         id.vars = c('molecule_b', 'adduct_b', 'Grp_b', 'isoab_b', 'sample_name_b', 'diffH20PP'),
         measure.vars = c("benchmark", "NPP_peak picking"),
         variable.name = 'data_type',
@@ -88,11 +88,11 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
 
   } else if(post_alignment == TRUE) {
-    iso_err_dt$diffH20PP <- iso_err_dt$diffH20PP_ft
+    IT_ratio_biases$diffH20PP <- IT_ratio_biases$diffH20PP_ft
 
-    iso_err_dt <-
+    IT_ratio_biases <-
       melt(
-        iso_err_dt,
+        IT_ratio_biases,
         id.vars = c('molecule_b', 'adduct_b', 'Grp_b', 'isoab_b', 'sample_name_b', 'diffH20PP'),
         measure.vars = c("benchmark", "NPP_features"),
         variable.name = 'data_type',
@@ -104,14 +104,14 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
   }else if(BMvsPPvsAl == TRUE){
 
-    iso_err_dt$diffH20PP <- iso_err_dt$diffH20PP_ft
-    iso_err_dt[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
-    #iso_err_dt[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
+    IT_ratio_biases$diffH20PP <- IT_ratio_biases$diffH20PP_ft
+    IT_ratio_biases[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
+    #IT_ratio_biases[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
 
 
-    iso_err_dt <-
+    IT_ratio_biases <-
       melt(
-        iso_err_dt,
+        IT_ratio_biases,
         id.vars = c('molecule_b', 'adduct_b', 'isoab_b', 'sample_name_b', 'diffH20PP'),
         measure.vars = c("benchmark", "NPP_peak picking", "NPP_features"),
         variable.name = 'data_type',
@@ -122,13 +122,13 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
   }
 
-  iso_err_dt[, grp_col := paste(molecule_b, adduct_b, isoab_b, sample_name_b, sep = "_;_")]
+  IT_ratio_biases[, grp_col := paste(molecule_b, adduct_b, isoab_b, sample_name_b, sep = "_;_")]
 
-  iso_err_dt <- na.omit(iso_err_dt, cols = "Pred_error")
+  IT_ratio_biases <- na.omit(IT_ratio_biases, cols = "Pred_error")
 
 #} else {stop("Argument post_alignment must be TRUE or FALSE!")}
 
-  p <- ggplot(iso_err_dt[isoab_b < 100]) +
+  p <- ggplot(IT_ratio_biases[isoab_b < 100]) +
     suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,
                                                       y = Pred_error,
                                                       group = paste(grp_col, diffH20PP),
