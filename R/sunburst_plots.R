@@ -147,7 +147,7 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 #'
 plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
-  bm <- rbindlist(list(comparison_object$c_table,
+  bm <- rbindlist(list(comparison_object$Matches_BM_NPPpeaks,
                        comparison_object$Unmatched_BM_NPPpeaks),
                   fill = TRUE,
                   use.names = TRUE)
