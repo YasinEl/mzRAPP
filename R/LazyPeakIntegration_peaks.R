@@ -1,10 +1,10 @@
-#' findBenchPeaks
+#' find_bench_peaks
 #'
-#' @description Takes a the output of \code{\link{getROIsForEICs}} and detects and filters peak candidates.
+#' @description Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candidates.
 #'
 #' @param files vector with file paths
 #' @param Grps data frame with two columns: one for filenames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).
-#' @param CompCol_all output from function \code{\link{getROIsForEICs}}
+#' @param CompCol_all output from function \code{\link{get_ROIs}}
 #' @param Min.PointsperPeak minimum number of points per peak for a peak to be considered
 #' @param peak.spotting.factor this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. Relative height to the highest point of the EIC above which points should be considered during peak detection process. e.g. 0.001 corresponds to 0.1\% of the maximum.
 #' @param Integration_baseL_factor relative peak height factor upon which points should be considered to be part of the peak. 0.1 would correspond to 10\% of the peak maximum.
@@ -67,7 +67,7 @@
 #'
 #' @export
 
-findBenchPeaks <- function(files,
+find_bench_peaks <- function(files,
                            Grps,
                            CompCol_all,
                            Min.PointsperPeak = 10,

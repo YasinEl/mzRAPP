@@ -7,7 +7,7 @@
 plot_bench_overview(benchmark_data, x, y, colb, choice_vector_bench)
 }
 \arguments{
-\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+\item{benchmark_data}{output from \code{\link{find_bench_peaks}}}
 
 \item{x}{variable (column name) to be plotted on x axis}
 

@@ -4,7 +4,8 @@
 #' @param CondPeaks CondPeaks
 #' @param iso.run iso.run
 #' @param file file
-#'
+#' @param adduct.run adduct.run
+#' @param Min.PointsperPeak PpP
 #'
 #' @keywords internal
 Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min.PointsperPeak){

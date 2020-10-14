@@ -1,11 +1,11 @@
-#' getROIsForEICs
+#' get_ROIs
 #'
-#' @description Takes a the output of \code{\link{getMZtable}} and adds columns with information on regions of interest (ROI).
+#' @description Takes a the output of \code{\link{get_mz_table}} and adds columns with information on regions of interest (ROI).
 #'
 #' @param files vector containing all mzML file paths
-#' @param Target.table output of function \code{\link{getMZtable}}
+#' @param Target.table output of function \code{\link{get_mz_table}}
 #' @param minCentroids minimum number of consecutive scans > 0 for a ROI to be picked up
-#' @param AccurateMZtol mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{getMZtable}}
+#' @param AccurateMZtol mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{get_mz_table}}
 #' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)
 #' @param plan see \code{\link{plan}}
 #'
@@ -15,7 +15,7 @@
 #'
 #'
 
-getROIsForEICs <-
+get_ROIs <-
   function(files,
            Target.table,
            minCentroids = 4,

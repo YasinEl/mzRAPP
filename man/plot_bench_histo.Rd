@@ -14,7 +14,7 @@ plot_bench_histo(
 )
 }
 \arguments{
-\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+\item{benchmark_data}{output from \code{\link{find_bench_peaks}}}
 
 \item{var}{variable name to be plotted}
 

@@ -20,7 +20,11 @@ Limit_Target_list(
 
 \item{iso.run}{iso.run}
 
+\item{adduct.run}{adduct.run}
+
 \item{file}{file}
+
+\item{Min.PointsperPeak}{PpP}
 }
 \description{
 Limit_Target_list

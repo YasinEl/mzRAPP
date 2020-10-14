@@ -7,7 +7,7 @@
 plot_Peak(PC, IndexNumber)
 }
 \arguments{
-\item{PC}{output from \code{\link{findBenchPeaks}}}
+\item{PC}{output from \code{\link{find_bench_peaks}}}
 
 \item{IndexNumber}{IDX number of peak to be plotted}
 }

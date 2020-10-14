@@ -13,7 +13,7 @@ predict_Iso(
 )
 }
 \arguments{
-\item{DTT}{output of \code{\link{findBenchPeaks}}}
+\item{DTT}{output of \code{\link{find_bench_peaks}}}
 
 \item{SampleIdentifier_col}{name of column(s) with file names}
 
@@ -24,7 +24,7 @@ predict_Iso(
 \item{flag_extremes}{whether outliers should be flagged (more than 30\% of in area or more than 30\% of in area but with area and height being in agreement within 30\%)}
 }
 \description{
-Takes the output of \code{\link{findBenchPeaks}} predicts peak areas as well as peak heights for lower abundant isotopologues
+Takes the output of \code{\link{find_bench_peaks}} predicts peak areas as well as peak heights for lower abundant isotopologues
 from the most abundant isotopologue
 }
 \keyword{internal}

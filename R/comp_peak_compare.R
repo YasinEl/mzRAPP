@@ -1,10 +1,10 @@
 #' compare_peaks
 #'
-#' Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{import_benchmark}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+#' Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
 #'
-#' @param b_table output from \code{\link{import_benchmark}}
-#' @param ug_table one of the listed objects (ug_table) in output of \code{\link{pick_algorithm}}. e.g. pick_algo_output$ug_table
-#' @param g_table one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table
+#' @param b_table output from \code{\link{check_benchmark_input}}
+#' @param ug_table one of the listed objects (ug_table) in output of \code{\link{check_nonTargeted_input}}. e.g. check_nonTargeted_input_output$ug_table
+#' @param g_table one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table
 #' @param algo string of length 1. output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
 #'
 #' @return returns list containing different tables including data from different types of comparisons
@@ -49,7 +49,7 @@
 #' @details F (found): Peak is not missing
 #' @details NC (not confirmable): alignment could not be confirmed as described above
 #' @details L (lost): all peaks of the respective features were not found
-#' @deatils R (random): random (high) missing value as defined in mzRAPP readme
+#' @details R (random): random (high) missing value as defined in mzRAPP readme
 #' @details S (systematic): systematic (low) missing value as defined in mzRAPP readme
 #' @details \strong{IT_ratio_biases:} Table showing the status of calculated isotopologue ratio biases as compared to enviPat predicted ratios calculated from abundances reported
 #' from BP ("benchmark"), NP ("NPP_peak picking") and NF ("NPP_features"). Biases are classified for NP ("diffH20PP_pp") and NF ("diffH20PP_ft") into good ("Inc. < 20%p") or bad ("Inc. > 20%p")

@@ -7,7 +7,7 @@
 plot_Peak_with_predicted_peak(PC_object, IndexNumber)
 }
 \arguments{
-\item{PC_object}{output from \code{\link{findBenchPeaks}}}
+\item{PC_object}{output from \code{\link{find_bench_peaks}}}
 
 \item{IndexNumber}{IDX number of peak to be plotted}
 }

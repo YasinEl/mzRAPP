@@ -7,7 +7,7 @@
 plot_sunburst_alignment(result_txt)
 }
 \arguments{
-\item{result_txt}{output from \code{\link{generate_results_text}}}
+\item{result_txt}{output from \code{\link{derive_performance_metrics}}}
 }
 \value{
 plotly object

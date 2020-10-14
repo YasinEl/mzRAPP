@@ -1,7 +1,7 @@
 
 #' plot_bench_histo
 #'
-#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param benchmark_data output from \code{\link{find_bench_peaks}}
 #' @param var variable name to be plotted
 #' @param choice_vector_bench named vector including variable to be plotted as element
 #' @param color color of histogram

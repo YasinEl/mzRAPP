@@ -7,7 +7,7 @@
 plot_bench_peak_overview(benchmark_data, molecule, adduct, ia)
 }
 \arguments{
-\item{benchmark_data}{output from \code{\link{findBenchPeaks}}}
+\item{benchmark_data}{output from \code{\link{find_bench_peaks}}}
 
 \item{molecule}{molecule}
 

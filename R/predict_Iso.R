@@ -1,9 +1,9 @@
 #' predict_Iso
 #'
-#' @description Takes the output of \code{\link{findBenchPeaks}} predicts peak areas as well as peak heights for lower abundant isotopologues
+#' @description Takes the output of \code{\link{find_bench_peaks}} predicts peak areas as well as peak heights for lower abundant isotopologues
 #' from the most abundant isotopologue
 #'
-#' @param DTT output of \code{\link{findBenchPeaks}}
+#' @param DTT output of \code{\link{find_bench_peaks}}
 #' @param SampleIdentifier_col name of column(s) with file names
 #' @param Molecule_Adduct_col name of column(s) with molecule and adduct identifiers
 #' @param isoab_col name of column with isotopic abundance information

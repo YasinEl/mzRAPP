@@ -7,12 +7,12 @@
 SkylineTransitionList(BM)
 }
 \arguments{
-\item{BM}{output of \code{\link{findBenchPeaks}}}
+\item{BM}{output of \code{\link{find_bench_peaks}}}
 }
 \value{
 Skyline Transtion List
 }
 \description{
-Takes a the output of \code{\link{findBenchPeaks}} and generates a Skyline Transition list which can then be imported to Skyline via
+Takes a the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list which can then be imported to Skyline via
 Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 }

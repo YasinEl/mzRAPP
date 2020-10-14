@@ -989,7 +989,7 @@ shiny::br(),
                        ###################################################
                        message("Predicting isotopologues using enviPat")
 
-                       MassTraces <- getMZtable(targets,
+                       MassTraces <- get_mz_table(targets,
                                                 instrumentRes = resolution_df,
                                                 RelInt_threshold = input$RelInt_Thresh_input,
                                                 stick_method = "intensoid"
@@ -1000,7 +1000,7 @@ shiny::br(),
 
                        message("Finding regions of interest using xcms")
 
-                       rois <- getROIsForEICs(files = files,
+                       rois <- get_ROIs(files = files,
                                               Target.table = MassTraces,
                                               PrecisionMZtol = input$percision_mz_tol_input,
                                               plan = input$plan_input,
@@ -1012,7 +1012,7 @@ shiny::br(),
                        incProgress(3/15, detail = "detecting peaks...")
                        message("Evaluating peaks in extracted ion chromatograms")
 
-                       PCal <- findBenchPeaks(files = files,
+                       PCal <- find_bench_peaks(files = files,
                                               Grps = grps,
                                               plan = input$plan_input,
                                               CompCol_all = rois,
@@ -1221,16 +1221,16 @@ shiny::br(),
           options_path <- options_file()
         }
         if (input$use_generated_benchmark == TRUE) {
-          b_o_tables <- import_benchmark(benchmark_data()$PCal, options_path, from_csv = FALSE, input$algorithm_input)
+          b_o_tables <- check_benchmark_input(benchmark_data()$PCal, options_path, from_csv = FALSE, input$algorithm_input)
           b_table = b_o_tables$b_table
           options_table <- b_o_tables$options_table
         } else {
-          b_o_tables <- import_benchmark(benchmark_file(), options_path, from_csv = TRUE, input$algorithm_input)
+          b_o_tables <- check_benchmark_input(benchmark_file(), options_path, from_csv = TRUE, input$algorithm_input)
           b_table = b_o_tables$b_table
           options_table <- b_o_tables$options_table
         }
 
-        import_results <- pick_algorithm(ug_files(), g_file(), options_table, input$algorithm_input)
+        import_results <- check_nonTargeted_input(ug_files(), g_file(), options_table, input$algorithm_input)
         ug_table <- import_results$ug_table
         g_table <- import_results$g_table
         req(import_results)
@@ -1395,7 +1395,7 @@ shiny::br(),
       comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data)){
 
-        result_list <- generate_results_text(comparison_data)
+        result_list <- derive_performance_metrics(comparison_data)
 
         output$PP_info <- shinydashboard::renderInfoBox({
           shinydashboard::infoBox(shiny::tags$p(style = "font-weight: bold; font-size: 110%","Peak picking step"),

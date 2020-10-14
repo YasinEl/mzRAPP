@@ -1,6 +1,6 @@
 #' plot_bench_peak_overview
 #'
-#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param benchmark_data output from \code{\link{find_bench_peaks}}
 #' @param molecule molecule
 #' @param adduct adduct
 #' @param ia isotopic abundance rounded to 2 digits

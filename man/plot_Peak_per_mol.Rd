@@ -7,7 +7,7 @@
 plot_Peak_per_mol(PC_object, mol, ia = 100, add = "M+H")
 }
 \arguments{
-\item{PC_object}{output from \code{\link{compare_peaks}} or output from \code{\link{findBenchPeaks}}}
+\item{PC_object}{output from \code{\link{compare_peaks}} or output from \code{\link{find_bench_peaks}}}
 
 \item{mol}{molecule}
 

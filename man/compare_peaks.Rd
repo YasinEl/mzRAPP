@@ -7,11 +7,11 @@
 compare_peaks(b_table, ug_table, g_table, algo)
 }
 \arguments{
-\item{b_table}{output from \code{\link{import_benchmark}}}
+\item{b_table}{output from \code{\link{check_benchmark_input}}}
 
-\item{ug_table}{one of the listed objects (ug_table) in output of \code{\link{pick_algorithm}}. e.g. pick_algo_output$ug_table}
+\item{ug_table}{one of the listed objects (ug_table) in output of \code{\link{check_nonTargeted_input}}. e.g. check_nonTargeted_input_output$ug_table}
 
-\item{g_table}{one of the listed objects (g_table) in output of \code{\link{pick_algorithm}}.  e.g. pick_algo_output$g_table}
+\item{g_table}{one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table}
 
 \item{algo}{string of length 1. output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
 }
@@ -19,7 +19,7 @@ compare_peaks(b_table, ug_table, g_table, algo)
 returns list containing different tables including data from different types of comparisons
 }
 \description{
-Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{import_benchmark}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
 }
 \details{
 The output of this function is a list containing 9 different elements. In the following benchmark peaks are referred to as BM, non-targeted unaligned peaks as NP and NP which have been aligned across samples (features) as NF. In all
@@ -94,6 +94,8 @@ F (found): Peak is not missing
 NC (not confirmable): alignment could not be confirmed as described above
 
 L (lost): all peaks of the respective features were not found
+
+R (random): random (high) missing value as defined in mzRAPP readme
 
 S (systematic): systematic (low) missing value as defined in mzRAPP readme
 

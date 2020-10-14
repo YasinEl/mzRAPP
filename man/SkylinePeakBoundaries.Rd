@@ -7,12 +7,12 @@
 SkylinePeakBoundaries(BM)
 }
 \arguments{
-\item{BM}{output of \code{\link{findBenchPeaks}}}
+\item{BM}{output of \code{\link{find_bench_peaks}}}
 }
 \value{
 Skyline peak boundaries
 }
 \description{
-Takes a the output of \code{\link{findBenchPeaks}} and generates a Peak boundaries which can then be imported to Skyline via
+Takes a the output of \code{\link{find_bench_peaks}} and generates a Peak boundaries which can then be imported to Skyline via
 Skyline -> File -> Import -> Peak Boundaries...
 }

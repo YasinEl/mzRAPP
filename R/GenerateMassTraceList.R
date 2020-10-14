@@ -1,4 +1,4 @@
-#' @title getMZtable
+#' @title get_mz_table
 #'
 #' @description This is basically a wrapper-function around the enviPat package. It takes a table with columns "molecule", "SumForm_c" and
 #' "adduct_c" and calculates theoretical m/z values and abundances for isotopologues down to a user-defined abundance threshold.
@@ -19,7 +19,7 @@
 #' @export
 #'
 
-getMZtable <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method = "intensoid", adducts, isotopes)
+get_mz_table <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_method = "intensoid", adducts, isotopes)
 {
 
   if(!isTRUE(is.data.frame(DT))){stop(paste0("DT has to be a data frame!"))}

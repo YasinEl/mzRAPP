@@ -1,6 +1,6 @@
 #' plot_sunburst_alignment
 #'
-#' @param result_txt output from \code{\link{generate_results_text}}
+#' @param result_txt output from \code{\link{derive_performance_metrics}}
 #'
 #' @return plotly object
 #' @export
@@ -80,7 +80,7 @@ plot_sunburst_alignment <- function(result_txt){
 
 #' plot_sunburst_peaks
 #'
-#' @param result_txt output from \code{\link{generate_results_text}}
+#' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}
 #'
 #' @return plotly object
@@ -139,7 +139,7 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 
 #' plot_sunburst_peakQuality
 #'
-#' @param result_txt output from \code{\link{generate_results_text}}
+#' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}
 #'
 #' @return plotly object

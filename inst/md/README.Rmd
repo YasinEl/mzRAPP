@@ -146,19 +146,19 @@ data("resolution_list")
 res_list <- resolution_list[["OTFusion,QExactiveHF_120000@200"]]
 
 #calculate theoretic mz values and abundances for all isotopologues at the given mass resolution using enviPat
-Th_isos <- getMZtable(targets, #table with information on target molecules as described above
+Th_isos <- get_mz_table(targets, #table with information on target molecules as described above
                       instrumentRes = res_list
                       )
 
 #find regions of interest (ROIs)/for theoretic isotopoplogues
-rois <- getROIsForEICs(files = files, #vector of mzML file names (including paths)
+rois <- get_ROIs(files = files, #vector of mzML file names (including paths)
                       Target.table = Th_isos,
                       PrecisionMZtol = 5, #mass precision of the used mass spectrometer
                       AccurateMZtol = 5 #mass accuracy of the used mass spectrometer
                       )
 
 #Extract/evaluate peaks
-PCal <- findBenchPeaks(files = files, #vector of mzML file names (including paths) as described above
+PCal <- find_bench_peaks(files = files, #vector of mzML file names (including paths) as described above
                       Grps = grps, #table including information on group assignment of each provided mzML file as described above
                       CompCol_all = rois,
                       Min.PointsperPeak = 8, #minimum number of points expected from a given peak
@@ -250,13 +250,13 @@ After performing those steps the assessment can be started via the blue "Start a
 algo = "XCMS"
 
 #load benchmark csv file
-benchmark <- import_benchmark(file = "Path_to_benchmark_csv_file.csv",
+benchmark <- check_benchmark_input(file = "Path_to_benchmark_csv_file.csv",
                               algo = algo
                               )
 
 
 #load non-targeted output
-NPP_output <- pick_algorithm(ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
+NPP_output <- check_nonTargeted_input(ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
                              g_table_path = "Path_to_aligned_Output_csv_file.csv/.txt", 
                              algo = algo
                              )
@@ -269,7 +269,7 @@ comparison <- compare_peaks(b_table = benchmark$b_table,
                             )
 
 #generate a list including different statistics of the comparison
-comp_stat <- generate_results_text(comparison)
+comp_stat <- derive_performance_metrics(comparison)
 
 #generate different sunburst plots for overview
 plot_sunburst_peaks(comp_stat, comparison)

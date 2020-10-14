@@ -1,4 +1,4 @@
-#' generate_results_text
+#' derive_performance_metrics
 #'
 #'
 #'
@@ -11,7 +11,7 @@
 #' @return returns a list containing containing different performance metrics of non-targeted data pre-processing.
 #' @export
 #'
-generate_results_text <- function(comparison_data){
+derive_performance_metrics <- function(comparison_data){
 
   UT_peaks <-
     nrow(rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))

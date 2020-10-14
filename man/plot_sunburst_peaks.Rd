@@ -7,7 +7,7 @@
 plot_sunburst_peaks(result_txt, comparison_object)
 }
 \arguments{
-\item{result_txt}{output from \code{\link{generate_results_text}}}
+\item{result_txt}{output from \code{\link{derive_performance_metrics}}}
 
 \item{comparison_object}{output from \code{\link{compare_peaks}}}
 }

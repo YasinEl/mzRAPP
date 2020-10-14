@@ -1,6 +1,6 @@
 #' plot_bench_overview
 #'
-#' @param benchmark_data output from \code{\link{findBenchPeaks}}
+#' @param benchmark_data output from \code{\link{find_bench_peaks}}
 #' @param x variable (column name) to be plotted on x axis
 #' @param y variable (column name) to be plotted on y axis
 #' @param colb variable (column name) to color by

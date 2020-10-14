@@ -1,6 +1,6 @@
 #' plot_Peak
 #'
-#' @param PC output from \code{\link{findBenchPeaks}}
+#' @param PC output from \code{\link{find_bench_peaks}}
 #' @param IndexNumber IDX number of peak to be plotted
 #'
 #' @return plotly object
@@ -75,7 +75,7 @@ plot_Peak  <- function(PC, IndexNumber){
 
 #' plot_Peak_with_predicted_peak
 #'
-#' @param PC_object output from \code{\link{findBenchPeaks}}
+#' @param PC_object output from \code{\link{find_bench_peaks}}
 #' @param IndexNumber IDX number of peak to be plotted
 #'
 #'
@@ -138,7 +138,7 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
 #' plot_Peak_per_mol
 #'
-#' @param PC_object output from \code{\link{compare_peaks}} or output from \code{\link{findBenchPeaks}}
+#' @param PC_object output from \code{\link{compare_peaks}} or output from \code{\link{find_bench_peaks}}
 #' @param mol molecule
 #' @param ia isotopic abundance rounded to 2 digits
 #' @param add adduct
