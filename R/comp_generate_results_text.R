@@ -13,6 +13,8 @@
 #'
 derive_performance_metrics <- function(comparison_data){
 
+  set.seed(12987)
+
   UT_peaks <-
     nrow(rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))
 
@@ -109,7 +111,11 @@ derive_performance_metrics <- function(comparison_data){
                                            CI = boot::boot.ci(boot::boot(sum_tab,
                                                                          function(data, indices){
                                                                            dt<-data[indices,]
-                                                                           round(sum(dt$Min.er, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                           ret <- round(sum(dt$Min.er, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                           if(is.nan(ret)){
+                                                                             return(0)
+                                                                           } else return(ret)
+
                                                                          },
                                                                          R = 1000),
                                                               index=1,
@@ -118,8 +124,11 @@ derive_performance_metrics <- function(comparison_data){
                                                CI = boot::boot.ci(boot::boot(sum_tab,
                                                                              function(data, indices){
                                                                                dt<-data[indices,]
-                                                                               round(sum(dt$BM.div, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
-                                                                             },
+                                                                               ret <- round(sum(dt$BM.div, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                               if(is.nan(ret)){
+                                                                                 return(0)
+                                                                                 } else return(ret)
+                                                                               },
                                                                              R = 1000),
                                                                   index=1,
                                                                   type='basic')$basic),

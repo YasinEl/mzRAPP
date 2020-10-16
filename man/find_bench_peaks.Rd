@@ -36,7 +36,7 @@ find_bench_peaks(
 
 \item{Min.Res}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks}
 
-\item{plan}{see \code{\link{future::plan}}}
+\item{plan}{see \code{\link{plan}}}
 
 \item{Min.cor.w.main_adduct}{Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be retained}
 
