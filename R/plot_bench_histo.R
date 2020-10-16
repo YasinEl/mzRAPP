@@ -18,10 +18,11 @@ plot_bench_histo <- function(benchmark_data, var, choice_vector_bench, color = "
       benchmark_data <- benchmark_data$PCal
     }
   } else if (post_comp == TRUE){
+    dtf <- benchmark_data$Matches_BM_NPPpeaks_NPPfeatures
     benchmark_data <- rbindlist(list(benchmark_data$Matches_BM_NPPpeaks, benchmark_data$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
     benchmark_data <- benchmark_data[main_peak == TRUE |
                                        is.na(peak_area_ug)]
-    dtf <- comp_data$Matches_BM_NPPpeaks_NPPfeatures
+    #dtf <- comp_data$Matches_BM_NPPpeaks_NPPfeatures
 
     benchmark_data <- dtf[!is.na(area_b)][benchmark_data, on = .(molecule_b, adduct_b, isoab_b, sample_name_b), nomatch = NA]
 
