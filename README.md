@@ -63,9 +63,10 @@ described on the webpage. <br>
 
 Afterwards it is time to install mzRAPP. It is possible to do that by
 pasting the following code into the console of R Studio and press enter.
-If this fails it might help to close R Studio and submit the command
-into R cran directly (which has been downloaded from
-[R](https://cran.r-project.org/)).
+Sometimes you are asked if you want to update packages before installing
+mzRAPP. In that case select the option “None” since this often leads to
+problems with the installation. If you want to update the packages just
+do so before or after installing mzRAPP.
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}

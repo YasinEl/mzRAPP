@@ -22,6 +22,12 @@ feature_compare <- function(b_table, g_table){
   b_table <- dcast(b_table, feature_id_b + molecule_b + isoab_b + adduct_b + total_area_b + min_mz_start + max_mz_end + min_rt_start + max_rt_end + present_samples_b ~ sample_id_b_suf, value.var=c('peak_area_b'))
 
 
+  b_table[, min_mz_start_temp := min_mz_start]
+  b_table[, max_mz_end_temp := max_mz_end]
+  b_table[, min_rt_start_temp := min_rt_start]
+  b_table[, max_rt_end_temp := max_rt_end]
+
+
   #Calculate total area of g feature
   g_table <- g_table[, ':=' (total_area_g= sum(peak_area_g),
                              present_samples_g = paste(.SD$sample_id_g, collapse = ','),
@@ -32,10 +38,12 @@ feature_compare <- function(b_table, g_table){
 
 
   #Merge
-  cf_table <- b_table[g_table, on=.(min_mz_start < mz_g,
-                                    max_mz_end > mz_g,
-                                    min_rt_start < rt_g,
-                                    max_rt_end > rt_g), allow.cartesian=TRUE, nomatch=NULL, mult='all']
+  cf_table <- b_table[g_table, on=.(min_mz_start_temp <= mz_g,
+                                    max_mz_end_temp >= mz_g,
+                                    min_rt_start_temp <= rt_g,
+                                    max_rt_end_temp >= rt_g), allow.cartesian=TRUE, nomatch=NULL, mult='all']
+
+  cf_table <- cf_table[, !c("min_mz_start_temp", "max_mz_end_temp", "min_rt_start_temp", "max_rt_end_temp")]
 
   cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
   #cf_table$samples_to_compare <- sapply(split(cf_table, row(cf_table)),function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))}, simplify = FALSE)

@@ -104,7 +104,7 @@ if (window.hljs) {
 <li><a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>. <br></li>
 </ol>
 <p>In case of R tools make sure you also follow the subsequent instructions described on the webpage. <br></p>
-<p>Afterwards it is time to install mzRAPP. It is possible to do that by pasting the following code into the console of R Studio and press enter. If this fails it might help to close R Studio and submit the command into R cran directly (which has been downloaded from <a href="https://cran.r-project.org/">R</a>).</p>
+<p>Afterwards it is time to install mzRAPP. It is possible to do that by pasting the following code into the console of R Studio and press enter. Sometimes you are asked if you want to update packages before installing mzRAPP. In that case select the option “None” since this often leads to problems with the installation. If you want to update the packages just do so before or after installing mzRAPP.</p>
 <pre class="r"><code>if(&quot;devtools&quot; %in% rownames(installed.packages()) == FALSE) {install.packages(&quot;devtools&quot;)}
 devtools::install_github(&quot;YasinEl/mzRAPP&quot;, auth_token = &quot;a68cf9e8dfef3eb4bd3974aca220f49ebf034309&quot;, dependencies = TRUE)
 </code></pre>

@@ -113,9 +113,9 @@ callmzRAPP <- function(){
 
                 shiny::fluidRow(
                   shiny::column(5,
-                         shiny::strong("1. Select necessary files", style = "font-size:30px")#,
-                         #shiny::p("(please note that dialog boxes to select files might not be directly visible as they tend to open behind the R console. Try to minimize your windows if dialog boxes do not appear after clicking.)"),
-                         #shiny::a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
+                         shiny::strong("1. Select necessary files", style = "font-size:30px"),
+                         shiny::p("(If dialog boxes do not appear after clicking please check behind the R console)"),
+                         shiny::a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
 
                   )
                 ),
@@ -1242,7 +1242,7 @@ shiny::br(),
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
 
-        #comp_data <<- comparison_ug_g
+        comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))

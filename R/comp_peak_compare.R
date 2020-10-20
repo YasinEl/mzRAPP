@@ -356,9 +356,19 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     if(nrow(g_table) > 0){
 
+
+      b_table <- b_table
+      g_table <- g_table
+
       ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
 
+      ff_table_dt <- ff_table_dt
+
+
+
   dt <- ff_table_dt[main_feature == TRUE]
+  dt[, dpl := duplicated(dt, by = c("feature_id_b"))]
+  dt <- dt[dpl != TRUE][, !"dpl"]
 
   id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
