@@ -197,13 +197,13 @@ find_bench_peaks <- function(files,
                         ##################################
                         #prepare list for collecting information on peaks of one extracted ion chromatogram
                         ##################################
-                        Drawer_fill <- as.list(rep(NA, 9))
+                        Drawer_fill <- as.list(rep(NA, 8))
                         names(Drawer_fill) <-
                           c(
                             "molecule",
                             "adduct",
                             "isoab",
-                            "user.rt",
+                            #"user.rt",
                             "FileName",
                             "Grp",
                             "peaks",
@@ -219,7 +219,7 @@ find_bench_peaks <- function(files,
                         Drawer_fill[["adduct"]] <-  CompCol_xic[i]$adduct
                         Drawer_fill[["isoab"]] <- CompCol_xic[i]$isoab
 
-                        Drawer_fill[["user.rt"]] <- if("user.rt" %in% colnames(CompCol_xic)){CompCol_xic[i]$user.rt}else{NA}
+                        #Drawer_fill[["user.rt"]] <- if("user.rt" %in% colnames(CompCol_xic)){CompCol_xic[i]$user.rt}else{NA}
 
                         Drawer_fill[["FileName"]] <- raw_data@phenoData@data[["sample_name"]]
                         Drawer_fill[["Grp"]] <- raw_data@phenoData@data[["sample_group"]]
@@ -460,11 +460,14 @@ find_bench_peaks <- function(files,
   Result <- rbindlist(Output, fill = TRUE, use.names = TRUE)
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
+
+  if(!("peaks.FW50M" %in% colnames(Result))){stop("No peaks were confirmed for benchmark!")}
+
   #get rid of double cross isos
   Result <- clean_peak_assignments(Result)
 
 
-  Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
+  #Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
 
   Result$IDX <- seq.int(nrow(Result))
 

@@ -30,12 +30,10 @@ get_ROIs <-
     missing_cols <- setdiff(c("StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
     if(length(missing_cols) > 0 && all(c("user.rtmin", "user.rtmax") %in% colnames(Target.table))){
       maxrt <- max(Target.table$user.rtmax, na.rm = TRUE)
-      Target.table <- Target.table[, .(molecule = molecule,
-                                       adduct = adduct,
-                                       isoab = isoab,
-                                       StartTime.EIC = max(c(1, user.rtmin - (user.rtmax - user.rtmin) * 3)),
+      Target.table[, rownames := rownames(Target.table)]
+      Target.table <- Target.table[, .(StartTime.EIC = max(c(1, user.rtmin - (user.rtmax - user.rtmin) * 3)),
                                        EndTime.EIC = min(c(user.rtmax + (user.rtmax - user.rtmin) * 3, maxrt+1))),
-                                   by = rownames(Target.table)][Target.table, on = .(molecule, adduct, isoab)]
+                                   by = rownames(Target.table)][Target.table, on = .(rownames)]
 
       Target.table <- Target.table[, !"rownames"]
 
