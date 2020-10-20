@@ -1242,7 +1242,7 @@ shiny::br(),
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
 
-        comp_data <<- comparison_ug_g
+        #comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))
