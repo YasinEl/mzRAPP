@@ -163,15 +163,15 @@ adducts$Name
 be accepted. <br> <br> <b>SumForm\_c:</b> Molecular composition of the
 neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
 0 behind an element like behind the N in C12H8N0S2. <br> <br>
-<b>user.rtmin:</b> Start time of peak (seconds). Peak boundaries will
-also be narrowed to intersect with the extracted ion chromatogram at 5%
-peak height. It is also worth noting that peaks for which
-user.rtmin/user.rtmax are provided will still be rejected if the
-isotopic information is fitting. <br> <br> <b>user.rtmax:</b> End time
-of peak (seconds). <br> <br> <b>StartTime.EIC:</b> (optional) Start time
-for chromatograms extracted for this molecule (seconds). Peaks are only
-detected from this time on. If not given StartTime.EIC and EndTime.EIC
-are calculated from user.rtmin and user.rtmax.<br> <br>
+<b>user.rtmin:</b> Start time of peak (seconds). If possible mzRAPP will
+narrow peak boundaries to intersect with the extracted ion chromatogram
+at 5% of the maximum peak height. It is also worth noting that peaks for
+which user.rtmin/user.rtmax are provided will still be rejected if the
+isotopic information is not fitting. <br> <br> <b>user.rtmax:</b> End
+time of peak (seconds). <br> <br> <b>StartTime.EIC:</b> (optional) Start
+time for chromatograms extracted for this molecule (seconds). Peaks are
+only detected from this time on. If not given StartTime.EIC and
+EndTime.EIC are calculated from user.rtmin and user.rtmax.<br> <br>
 <b>EndTime.EIC:</b> (optional) End time for chromatograms extracted for
 this molecule (seconds). Peaks are only detected up to this time. <br>
 <br> <b>FileName:</b> (optional) Name of sample file with or without
