@@ -13,5 +13,58 @@ derive_performance_metrics(comparison_data)
 returns a list containing containing different performance metrics of non-targeted data pre-processing.
 }
 \description{
-in order to estimate confidence intervals boots trapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic".
+Returns a list with counts, statistics and performance metrics. For each metric a count and for some also a confidence interval (CI)
+as estimated via bootstrapping is reported. CIs are reported for percentages which should not only be true for the benchmark but also be an estimate for non-targeted
+processing results. For more information please check the details section below.
+}
+\details{
+Bootstrapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic" which returns a vector of
+length = 5. The last two numbers of this vectors correspond to the upper and lower boundaries of the CI. For more information please check \code{\link{boot.ci}}.
+
+\strong{Benchmark:} information on the used benchmark (BM)
+
+BM_peaks: number of BM peaks
+
+Features: number of aligned BM features
+
+\strong{Before_alignment:} Information on the non-targeted peak picking step. Ideas behind the different metrics are explained in the mzRAPP readme.
+
+NT_peaks: NA
+
+Found_peaks$count: Number of BM peaks for which a match was found in unaligned results.
+
+Found_peaks$CI: CI for percentage of BM peaks for which a match was found.
+
+Split_peaks$count: Number of split-peaks detected (as defined in mzRAPP readme)
+
+Split_peaks$CI: CI for percentage of split-peaks from all matches (Found_peaks$count + Split_peaks$count)
+
+Missing_peaks$Systematic: count of low missing peaks (as defined in mzRAPP readme)
+
+Missing_peaks$Random$count: count of high missing peaks
+
+Missing_peaks$Random$CI: CI for percentage of high missing peaks from all classifiable missing peaks (Missing_peaks$Systematic + Missing_peaks$Random$count)
+
+IR_quality$Error_inc_below20pp: count for isotopologue ratios biases which did not increase by more than 20 %p. (as defined in mzRAPP readme)
+
+IR_quality$Error_inc_above20pp$count: count for isotopologue ratios biases which did increase by more than 20 %p.
+
+IR_quality$Error_inc_above20pp$CI: CI for percentage of all isotopologue ratios derivable from matched non-targeted peaks which did increase by more than 20 %p.
+
+\strong{Alignment:} Information on the non-targeted alignment step. Ideas behind the different metrics are explained in the mzRAPP readme.
+
+Min.Errors$count: Count of alignment errors
+
+Min.Errors$CI: CI for percentage of alignment errors from all matched peaks (Found_peaks$count)
+
+BM_divergences$count: count of divergences in alignment between the BM and the non-targeted output. (Min.Errors$count is a subgroup of this)
+
+BM_divergences$CI: CI for percentage of benchmark divergences from all matched peaks (Found_peaks$count)
+
+Lost_b.A$count: count of matched non-targeted peaks (Found_peaks$count) which were present in the unaligned, but not the aligned output.
+
+Lost_b.A$CI: CI for percentage of not-found matched peaks from all matched peaks (Found_peaks$count)
+
+\strong{After_alignment:} The same metrics calculated before alignment are also calculated here (with the exception of Split_peaks
+which can not be derived from aligned results)
 }

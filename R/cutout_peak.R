@@ -60,31 +60,31 @@ cutout_peaks <-
     ##################################
     #check each potential peak on whether multiple peaks can be resolved from it
     ##################################
-    double.peak.borders <- mapply(
-      detect_double_peaks2,
-      l = pot.peak.ranges$s,
-      r = pot.peak.ranges$e,
-      MoreArgs = list(
-        pot.doubleP.v = as.numeric(int),
-        Min.PpP = Min.PpP,
-        Min.Res = Min.Res.
-      ),
-      SIMPLIFY = FALSE
-    )
-    double.peak.borders <-
-      rbindlist(double.peak.borders, use.names = TRUE)
-    if (nrow(double.peak.borders) > 0) {
-      ##################################
-      #insert double peak borders into potential peak ranges
-      ##################################
-      l.peaks <- double.peak.borders[pot.peak.ranges,
-                                     assemble_peaks(idx, s, e, x.breakP),
-                                     on = .(breakP > s, breakP < e),
-                                     by = .EACHI][,-(1:2)][, c("unres.s", "unres.e", "idx") := .(!is.na(match(s, double.peak.borders$breakP)),
-                                                                                                 !is.na(match(e, double.peak.borders$breakP)),
-                                                                                                 seq(1:length(s)))][]
-    }
-
+#    double.peak.borders <- mapply(
+#      detect_double_peaks2,
+#      l = pot.peak.ranges$s,
+#      r = pot.peak.ranges$e,
+#      MoreArgs = list(
+#        pot.doubleP.v = as.numeric(int),
+#        Min.PpP = Min.PpP,
+#        Min.Res = Min.Res.
+#      ),
+#      SIMPLIFY = FALSE
+#    )
+#    double.peak.borders <-
+#      rbindlist(double.peak.borders, use.names = TRUE)
+#    if (nrow(double.peak.borders) > 0) {
+#      ##################################
+#      #insert double peak borders into potential peak ranges
+#      ##################################
+#      l.peaks <- double.peak.borders[pot.peak.ranges,
+#                                     assemble_peaks(idx, s, e, x.breakP),
+#                                     on = .(breakP > s, breakP < e),
+#                                     by = .EACHI][,-(1:2)][, c("unres.s", "unres.e", "idx") := .(!is.na(match(s, double.peak.borders$breakP)),
+#                                                                                                 !is.na(match(e, double.peak.borders$breakP)),
+#                                                                                                 seq(1:length(s)))][]
+#    }
+#
 
     ##################################
     #add different variables per peak
