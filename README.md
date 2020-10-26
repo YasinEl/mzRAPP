@@ -28,7 +28,7 @@ mzRAPP
     metrics](#generation-and-interpretation-of-npp-performance-metrics)
       - [Found peaks](#found-peaks)
       - [Split peaks](#split-peaks)
-      - [Missing peaks (high/(high+low))](#missing-peaks-highhighlow)
+      - [Missing peaks](#missing-peaks)
       - [Degenerated IR](#degenerated-ir)
       - [Alignment errors](#alignment-errors)
 
@@ -524,23 +524,23 @@ split peaks found over all benchmark peaks) (confidence interval)</i>
 
 <span id="Missing_values"> </span>
 
-### Missing peaks (high/(high+low))
+### Missing peaks
 
-The classification of not found peaks (NAs, as defined in figure 2) into
-high and low is done for each benchmark feature individually. Since we
-do not want to solely rely on the benchmark alignment to be correct we
-only classify missing values if alignment of the benchmark is in
-agreement with the alignment performed by NPP in at least one
-isotopologue (as also described in figure 5). Classification is based on
-the lowest benchmark peak present in the respective feature which has
-been found by the non-targeted algorithm. All benchmark peaks in this
-feature which have a benchmark area which is more than 1.5 times higher
-than the lowest benchmark peak found via the non-targeted approach are
-considered high. Otherwise they are considered as low. Additionally
-there is the class of lost peaks. This classification means that no peak
-has been found over the whole feature. <br> <br> <i>Number of high
-missing values / (Number of high missing values + Number of low missing
-values) (confidence interval)</i>
+The classification of not found peaks (Not found peaks, as defined in
+figure 2) into high and low is done for each benchmark feature
+individually. Since we do not want to solely rely on the benchmark
+alignment to be correct we only classify missing values if alignment of
+the benchmark is in agreement with the alignment performed by NPP in at
+least one isotopologue (as also described in figure 5). Classification
+is based on the lowest benchmark peak present in the respective feature
+which has been found by the non-targeted algorithm. All benchmark peaks
+in this feature which have a benchmark area which is more than 1.5 times
+higher than the lowest benchmark peak found via the non-targeted
+approach are considered high. Otherwise they are considered as low.
+Additionally there is the class of lost peaks. This classification means
+that no peak has been found over the whole feature. <br> <br> <i>Number
+of high missing values / (Number of high missing values + Number of low
+missing values) (confidence interval)</i>
 
 <div class="figure">
 
