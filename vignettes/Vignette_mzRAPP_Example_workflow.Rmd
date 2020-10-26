@@ -1,0 +1,128 @@
+---
+title: "mzRAPP - Example workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mzRAPP - Example workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP) in the realm of liquid chromatography high resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based on the increasing popularity of merging non-targeted with targeted metabolomics meaning that both types of data evaluation are often performed on the same same data set. Following this assumption mzRAPP can utilize user provided information on a set of molecules (at best > 50) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for which boundaries are provided for all (envipat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark data set is used to extract different performance metrics for NPP performed on the same mzML files.  
+
+## Example
+
+In order to to run an example you first need to download some exemplary files: 
+
+1. Download all 30 mzML files (at least 5 if you don't want to process that many) ending on "_POS.mzML" from the repository MTBLS267 on [metabolights](https://www.ebi.ac.uk/metabolights/MTBLS267/files).
+2. Download the csv files "SampleGrp_RBC_pos.csv" and "TargetFile_RBC_POS_BordersPerFile.csv" from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe) for benchmark generation.
+3. (optional) Download the already prepared benchmark "RBC_benchmark.csv" if you do not want to do benchmark generation part of the example from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe)
+4. Download the XCMS-output files "XCMS_RBCpos_unaligned.csv", "XCMS_RBCpos_aligned_withFillPeaks.csv" and "XCMS_RBCpos_aligned_withoutFillPeaks.csv" from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe). Alternatively, you can also process the mzML files downloaded before by yourself. You do make sure to follow the instructions given in the readme section "Exporting NPP outputs from different tools".
+5. If you haven't installed mzRAPP yet please follow the instructions in the mzRAPP readme (e.g. on [GitHub](https://github.com/YasinEl/mzRAPP)) to do so.
+
+You can now start mzRAPP using:
+
+```{r setup, eval=FALSE}
+library(mzRAPP)
+callmzRAPP()
+```
+
+### Benchmark generation
+
+In the <i>Generate Benchmark</i> tab you have to select all necessary files and set the instrument/resolution used.
+
+1. Select mzML files: downloaded mzML files
+2. Select sample-group file: SampleGrp_RBC_pos.csv
+3. Select target file: TargetFile_RBC_POS_BordersPerFile.csv
+4. Select instrument & resolution: OrbitrapXL,Velos,VelosPro_R60000\@400
+
+Afterwards the number of parameters have to be set:
+
+1. Lowest isotopologue to be considered: 0.05
+2. Min. # of scans per peak: 6
+3. mz precision [ppm]: 6
+4. mz accuracy [ppm]: 5
+5. Processing plan: according to your computational resources. (generally multiprocess will be faster)
+
+After that benchmark generation can be started by clicking the blue button at the bottom of the page. Please note that this can take up to an hour if you selected all files. <br>
+
+When mzRAPP is done it will automatically export the finished benchmark as csv file to your working directory and switch to the <i>View Benchmark</i> tab where you get key metrics as well as two interactive plots on the generated benchmark:
+
+1. If you processed all 30 mzML files you should have generated a benchmark containing 49 different molecules with 166 different features (including all adducts and isotopologues) resulting in 2758 peaks in total.
+
+2. In the provided histogram you can choose to plot the log10(height) of detected benchmark peaks. This shows you that your benchmark peaks span several orders of magnitude. Sufficient quality of low peaks was ensured by removing isotopologues which do not satisfy criteria in peak shape (peak shape correlation with most abundant isotopologue) and abundance (Isotopologue ratio bias < 30\% )
+
+3. (optional) You can inspect the benchmark in greater detail by exporting it to Skyline which you can download from [here](https://skyline.ms/project/home/software/Skyline/begin.view). To do this click the button <i>Export Skyline Transition list and peak boundaries</i>. Afterwards follow the instructions in the exported txt file exported to your working directory.
+
+### Non-targeted data pre-processing assement
+
+Going forward the generated benchmark (BM) can be used to assess non-targeted data pre-processing (NPP) outputs. To do this go to the <i>Setup NPP assessment</i> tab. You can then assess the performance of NPP runs we have performed via XCMS:
+
+
+#### Performance check 1
+
+1. Non-targeted tool used: XCMS
+2. Select unaligned file(s): XCMS_unaligned_run1.csv
+3. Select aligned file: XCMS_aligned_run1.csv
+4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
+
+Afterwards assessment can be started by pressing the blue button on the bottom of the page.
+
+When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
+
+
+1. It makes always sense to first check the final output in the <i>Post Alignment</i> box (If the final output looks good we generally do not need to waste time on understanding if the intermediate steps worked well). There we can see that about 71-90% of peaks have been detected, which is not really perfect (especially if we consider that we also used a fill gaps algorithm). The isotopologue ratio (IR)-metric reports 20-40% degenerated IR, which we would consider to be quite a lot. Hence we need to look at the other steps.
+
+2. The <i>Peak Picking</i> box shows that 2323/2758 peaks have been found, which should correspond to about 80-87% of all peaks in the raw data. This is in the same range as the final output (we would consider that to be not so problematic since the fill gaps algorithm should be able to improve that at least in part). The IR-metric looks quite good with only up to 4% of IR being degenerated. However, up to 11% of matches led to split peaks which is quite a lot. This is problematic since they tend to cause problems for downstream alignment processes. More specifically they are often in competition with more "properly" picked peaks during the alignment process and also "sabotage" the fill gaps algorithm.
+
+3. In the <i>Alignment</i> box 20-36% of peaks matched from peak picking are reported to not appear anymore in the aligned file. This can happen when the alignment algorithm only selects one peak per time unit and file but discards all other peaks within the same time unit. We consider 20-36% to be quite much. As mentioned above this could be due to the high number of split peaks.
+
+<b>We consider the high number of degenerated IR in the aligned output as not acceptable. As mentioned the the peak picking step might have been problematic. We will therefore try to improve it.</b>
+
+#### Performance check 2
+
+1. Non-targeted tool used: XCMS
+2. Select unaligned file(s): XCMS_unaligned_run2.csv
+3. Select aligned file: XCMS_aligned_run2.csv
+4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
+
+Afterwards assessment can be started by pressing the blue button on the bottom of the page.
+
+When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
+
+
+1. Looking at the final output in <i>Post Alignment</i> we see that the Found peaks-metric did not really change a lot. The IR-metric improved a little bit but not much.
+
+2. Also in the <i>Peak Picking</i> box both of those metrics did not change much. However, we have a lot less split peaks now (1-3%) which is going into the right direction.
+
+3. The <i>Alignment Step</i> improved a little bit but also not too much. 
+
+<b>Since the final output did not improve much we will try to work on the alignment process and fill gaps now.</b>
+
+
+
+#### Performance check 3
+
+1. Non-targeted tool used: XCMS
+2. Select unaligned file(s): XCMS_unaligned_run3.csv
+3. Select aligned file: XCMS_aligned_run3.csv
+4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
+
+Afterwards assessment can be started by pressing the blue button on the bottom of the page.
+
+When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
+
+
+1. In the <i>Post Alignment</i> box we see that now about 89-97% of peaks have been detected. Which is quite some improvement. Also the proportion of degenerated IR decreased to 6-14%. The Missing peaks classification shows that no classification was possible which is most likely because whole features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
+
+2. We did not change anything about the peak picking step so everything stayed the same there.
+
+3. The alignment improved quite a bit to about 3-9% lost peaks.
+
+<b>Although this was much better than Example 1 there is definitely still room for improvement. If you want you can try to do better using XCMS or another tool (all tools listed in the readme on [GitHub](https://github.com/YasinEl/mzRAPP) are supported by mzRAPP).</b>
+

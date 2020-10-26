@@ -429,15 +429,36 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   if(nrow(g_table) > 0){
 
- # feat_t <- melt_fftable(ff_table_dt, Matches_BM_NPPpeaks)
-#tt <<- feat_t
-  MissingPeak_classification <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE & !is.na(area_b), c("molecule_b",
-                                                                     "adduct_b",
-                                                                     "isoab_b",
-                                                                     "sample_name_b",
-                                                                     "area_g")][MissingPeak_classification,
-                       on =.(molecule_b, adduct_b, isoab_b, sample_name_b)]
+    join_vct <- c("molecule_b",
+                  "adduct_b",
+                  "isoab_b",
+                  "sample_name_b")
 
+    join_on_dt <- unique(rbind(MissingPeak_classification[, ..join_vct],
+                               Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
+                                                                 !is.na(area_b),
+                                                               ..join_vct]))
+
+
+    MissingPeak_classification <- MissingPeak_classification[join_on_dt, on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
+
+    MissingPeak_classification <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
+                                                                    !is.na(area_b), c("molecule_b",
+                                                                                      "adduct_b",
+                                                                                      "isoab_b",
+                                                                                      "sample_name_b",
+                                                                                      "area_g")][MissingPeak_classification,
+                                                                                                 on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
+
+
+
+#  MissingPeak_classification <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE & !is.na(area_b), c("molecule_b",
+#                                                                     "adduct_b",
+#                                                                     "isoab_b",
+#                                                                     "sample_name_b",
+#                                                                     "area_g")][MissingPeak_classification,
+#                       on =.(molecule_b, adduct_b, isoab_b, sample_name_b)]
+#
 #tt <<- MissingPeak_classification
 
 
@@ -493,24 +514,62 @@ Matches_BM_NPPpeaks_t <- Matches_BM_NPPpeaks
 if(nrow(g_table) > 0){
 
   Matches_BM_NPPpeaks_t$sample_id_b <- as.factor(Matches_BM_NPPpeaks_t$sample_id_b)
-  IT_ratio_biases <- Matches_BM_NPPpeaks_t[main_peak == TRUE,c("molecule_b",
-                                   "adduct_b",
-                                   "isoab_b",
-                                   "sample_id_b",
-                                   "peak_area_ug",
-                                   "peak_area_b",
-                                   "Grp_b",
-                                   "sample_name_b")][Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
-                                                            !is.na(area_b) &
-                                                            !is.na(area_g),
-                                                          c("molecule_b",
-                                                            "adduct_b",
-                                                            "isoab_b",
-                                                            "sample_id_b",
-                                                            "area_b",
-                                                            "area_g",
-                                                            "sample_name_b")],
-                                                     on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
+
+  join_vct <- c("molecule_b",
+                "adduct_b",
+                "isoab_b",
+                "sample_id_b",
+                "sample_name_b")
+
+  join_on_dt <- unique(rbind(Matches_BM_NPPpeaks_t[main_peak == TRUE, ..join_vct],
+                             Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
+                                                               !is.na(area_b) &
+                                                               !is.na(area_g),
+                                                             ..join_vct]))
+
+  IT_ratio_biases <- Matches_BM_NPPpeaks_t[main_peak == TRUE, c("molecule_b",
+                                                                "adduct_b",
+                                                                "isoab_b",
+                                                                "sample_id_b",
+                                                                "peak_area_ug",
+                                                                "peak_area_b",
+                                                                "Grp_b",
+                                                                "sample_name_b")][join_on_dt,
+                                                              on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
+
+  IT_ratio_biases <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
+                                                       !is.na(area_b) &
+                                                       !is.na(area_g),
+                                                     c("molecule_b",
+                                                       "adduct_b",
+                                                       "isoab_b",
+                                                       "sample_id_b",
+                                                       "area_b",
+                                                       "area_g",
+                                                       "sample_name_b")][IT_ratio_biases, on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
+
+
+
+
+
+#  IT_ratio_biases <- Matches_BM_NPPpeaks_t[main_peak == TRUE,c("molecule_b",
+#                                   "adduct_b",
+#                                   "isoab_b",
+#                                   "sample_id_b",
+#                                   "peak_area_ug",
+#                                   "peak_area_b",
+#                                   "Grp_b",
+#                                   "sample_name_b")][Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
+#                                                            !is.na(area_b) &
+#                                                            !is.na(area_g),
+#                                                          c("molecule_b",
+#                                                            "adduct_b",
+#                                                            "isoab_b",
+#                                                            "sample_id_b",
+#                                                            "area_b",
+#                                                            "area_g",
+#                                                            "sample_name_b")],
+#                                                     on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
 
   IT_ratio_biases[is.na(peak_area_b)]$peak_area_b <- IT_ratio_biases[is.na(peak_area_b)]$area_b
   IT_ratio_biases[is.na(sample_name_b)]$sample_name_b <- IT_ratio_biases[is.na(sample_name_b)]$i.sample_name_b

@@ -4,11 +4,13 @@
 #'
 #' @param files vector containing all mzML file paths
 #' @param Target.table output of function \code{\link{get_mz_table}}
-#' @param minCentroids minimum number of consecutive scans > 0 for a ROI to be picked up
-#' @param AccurateMZtol mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{get_mz_table}}
-#' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)
+#' @param minCentroids minimum number of consecutive scans > 0 for a ROI to be picked up (eq. to minCentroids argument in xcms:::findmzROI function)
+#' @param AccurateMZtol mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{get_mz_table}}. If multiple ROIs fit the same benchmark peak they are combined.
+#' @param PrecisionMZtol mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument * 1e-6 in xcms:::findmzROI)
 #' @param plan see \code{\link{plan}}
 #'
+#' @details \strong{eic_mzmin:} lowest mz value detected in respective ROI
+#' @details \strong{eic_mzmax:} highest mz value detected in respective ROI
 #'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export
@@ -39,7 +41,7 @@ get_ROIs <-
 
     }
 
-    missing_cols <- setdiff(c("molecule", "adduct", "isoab", "mz_ex", "StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
+    missing_cols <- setdiff(c("molecule", "adduct", "isoab", "mz_ex", "StartTime.EIC", "EndTime.EIC", "user.rtmin", "user.rtmax"), colnames(Target.table))
     if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste(missing_cols, sep = ", ")))}
 
     if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
@@ -119,8 +121,8 @@ get_ROIs <-
       ##################################
       .xr <- suppressWarnings(xcms::xcmsRaw(files[which(tools::file_path_sans_ext(basename(files)) == tools::file_path_sans_ext(basename(file)))], profstep=0))
       Target.table.wk <- Target.table[FileName == file]
-      .Target.table.wk <- Target.table.wk[Target.table.wk[isoab == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(StartTime.EIC))),
-                                                                           EndXICScan = which.min(abs(.xr@scantime - max(EndTime.EIC)))),
+      .Target.table.wk <- Target.table.wk[Target.table.wk[isoab == 100, .(StartXICScan = which.min(abs(.xr@scantime - min(user.rtmin))),
+                                                                           EndXICScan = which.min(abs(.xr@scantime - max(user.rtmax)))),
                                                           by=.(molecule)],
                                           on = .(molecule)]
 
@@ -184,7 +186,7 @@ get_ROIs <-
                                              #roi_scmin = min(scmin),
                                              #roi_scmax = max(scmax),
                                              #roi_int = sum(abs(intensity)),
-                                             #roi_count = .N),
+                                             #roi_count = .N),#,
                                           by=.(molecule, adduct, isoab, FileName)]
 
             ##################################

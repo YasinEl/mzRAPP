@@ -191,7 +191,7 @@ data.table::fwrite(xcms::peakTable(xcmsSet_object), "blabla_aligned_file.csv")
 
 <br>
 <u>XCMS online:</u> <br>
-Download all results from XCMS online via the button "Download Results". Afterwards extract all Results from the zipped folder. <br>
+When starting a run on XCMS online make sure that retention times are always given in seconds. After processing download all results from XCMS online via the button "Download Results". Afterwards extract all Results from the zipped folder. <br>
 unaligned file: select the xcms3xset.Rda file <br>
 aligned file: select the same xcms3xset.Rda file <br>
 <br>

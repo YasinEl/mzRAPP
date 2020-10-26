@@ -22,28 +22,32 @@ plot_bench_histo <- function(benchmark_data, var, choice_vector_bench, color = "
     benchmark_data <- rbindlist(list(benchmark_data$Matches_BM_NPPpeaks, benchmark_data$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
     benchmark_data <- benchmark_data[main_peak == TRUE |
                                        is.na(peak_area_ug)]
-    #dtf <- comp_data$Matches_BM_NPPpeaks_NPPfeatures
 
     benchmark_data <- dtf[!is.na(area_b)][benchmark_data, on = .(molecule_b, adduct_b, isoab_b, sample_name_b), nomatch = NA]
-
-    #benchmark_data[is.na(main_peak), main_peak := FALSE]
-    #benchmark_data <- benchmark_data[order(main_peak)]
-
     benchmark_data[, peak_found := FALSE]
     benchmark_data[!is.na(area_g), peak_found := TRUE]
-
-    #df$Private <- relevel(df$Private, "Yes")
-    #benchmark_data[, main_peak := as.logical(main_peak)]
-    #benchmark_data <- benchmark_data[relevel(as.factor(main_peak), TRUE)]
-    #return(benchmark_data)
   }
 
   suppressWarnings(
     if(!(var %in% c("molecule", "FileName", "Grp", "adduct", "molecule_b", "sample_name_b", "Grp_b", "adduct_b"))){
 
-      if(var == "peak_height_b" | var == "peak_area_b"){
+      if(var == "peak_height_b" |
+         var == "peak_area_b" |
+         var == "peaks.area" |
+         var == "peaks.height" |
+         var == "ExpectedArea" |
+         var == "ExpectedArea_b" |
+         var == "ExpectedHeight" |
+         var == "ErrorAbs_A" |
+         var == "ErrorAbs_H" |
+         var == "ErrorAbs_A_b" |
+         var == "ErrorAbs_H_b" |
+         var == "ExpectedHeight_b"){
         benchmark_data[, eval(quote(var)) := log10(get(var))]
-      }
+        if(var != "peak_height_b" & var != "peak_area_b"){
+          names(choice_vector_bench)[choice_vector_bench == var] <- paste0("log10(",names(choice_vector_bench)[choice_vector_bench == var], ")")
+        }
+        }
 
       p <- ggplot(data = benchmark_data[!is.na(get(var))], aes(get(var), fill = if(post_comp == TRUE){as.factor(peak_found)}else{color})) +
         geom_histogram(position = "dodge",

@@ -18,11 +18,11 @@ get_ROIs(
 
 \item{Target.table}{output of function \code{\link{get_mz_table}}}
 
-\item{minCentroids}{minimum number of consecutive scans > 0 for a ROI to be picked up}
+\item{minCentroids}{minimum number of consecutive scans > 0 for a ROI to be picked up (eq. to minCentroids argument in xcms:::findmzROI function)}
 
-\item{AccurateMZtol}{mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{get_mz_table}}}
+\item{AccurateMZtol}{mass accuracy (systematic error tolerance) in +/- ppm; this value is used to recognize detected ROIs as the expected mz values calculated in \code{\link{get_mz_table}}. If multiple ROIs fit the same benchmark peak they are combined.}
 
-\item{PrecisionMZtol}{mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument in  xcms:::findmzROI)}
+\item{PrecisionMZtol}{mass precision (random error tolerance) in +/- ppm; this value is used as for setting the maximum spread of scans within one ROI (equ. to "dev" argument * 1e-6 in xcms:::findmzROI)}
 
 \item{plan}{see \code{\link{plan}}}
 }
@@ -31,4 +31,9 @@ data.table object with information on ROIs for each row in Target.table. additio
 }
 \description{
 Takes a the output of \code{\link{get_mz_table}} and adds columns with information on regions of interest (ROI).
+}
+\details{
+\strong{eic_mzmin:} lowest mz value detected in respective ROI
+
+\strong{eic_mzmax:} highest mz value detected in respective ROI
 }

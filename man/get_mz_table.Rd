@@ -35,6 +35,5 @@ This is basically a wrapper-function around the enviPat package. It takes a tabl
 }
 \details{
 Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
-
 never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
 }
