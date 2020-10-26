@@ -5,6 +5,7 @@
 #'
 #'
 
+
 callmzRAPP <- function(){
 
 
@@ -652,7 +653,7 @@ callmzRAPP <- function(){
                 shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
 
                 shiny::br(),
-                shiny::column(10, offset = 1, shiny::h2("The nature of missing values")),
+                shiny::column(10, offset = 1, shiny::h2("Missing value classification")),
 
                 shiny::column(8, offset = 2,
                        shiny::h4(paste0("The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
@@ -696,11 +697,11 @@ callmzRAPP <- function(){
                 shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
 
                 shiny::br(),
-                shiny::column(10, offset = 1, shiny::h2("Errors in alignment process")),
+                shiny::column(10, offset = 1, shiny::h2("Errors in the alignment process")),
                 shiny::column(10, offset = 1,
                        shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
                                  "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately. Peaks which were be matched after peak picking but not found in the aligned output are also counted seperately.")),
+                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately (BM.div). Peaks which were be matched after peak picking but not found in the aligned output are also counted seperately (Lost).")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 shiny::br(),
@@ -1057,8 +1058,7 @@ shiny::br(),
         shinyWidgets::sendSweetAlert(session,
                        title = 'Benchmark generated',
                        text = paste0('Benchmark geneneration has been finished in ', round(proc.time, 0), ' min. The output has been saved to your
-                                  working directory as ', getwd(), '/Peak_list.csv. It can be inspected by importing it to Skyline with the instructions
-                                     printed in the R console or directly used for reliability assessment of a no-targeted processing run in the section
+                                  working directory as ', getwd(), '/Peak_list.csv. It can be used for reliability assessment of a no-targeted processing run in the section
                                      "Setup NPP assessment"'),
                        type = 'success',
                        closeOnClickOutside = FALSE,
@@ -1407,7 +1407,7 @@ shiny::br(),
                                             " (", round_woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", round_woe(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)",
                                             shiny::br(),
-                                            "Missing peaks (high): ",
+                                            "Missing peaks (high/(low+high)): ",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
                                             "/",
                                             result_list[["Before_alignment"]][["Missing_peaks"]][["Systematic"]] + result_list[["Before_alignment"]][["Missing_peaks"]][["Random"]][["count"]],
@@ -1418,7 +1418,7 @@ shiny::br(),
                                             "Split peaks: ",
                                             result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
                                             "/",
-                                            result_list[["Benchmark"]][["BM_peaks"]] + result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
+                                            result_list[["Before_alignment"]][["Found_peaks"]][["count"]] + result_list[["Before_alignment"]][["Split_peaks"]][["count"]],
                                             "(", round_woe(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][4], 1), " - ", round_woe(result_list[["Before_alignment"]][["Split_peaks"]][["CI"]][5], 1),
                                             "%)",
                                             shiny::br(),
@@ -1440,14 +1440,17 @@ shiny::br(),
           shinydashboard::infoBox(shiny::tags$p(style = "font-weight: bold; font-size: 110%","Alignment step"),
                   value = shiny::tags$p(style = "font-weight: normal; font-size: 100%;",
                                  shiny::HTML(paste("Min. errors: ", result_list[["Alignmnet"]][["Min.Errors"]][["count"]],
+                                                   " / ", result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
                                             " (", round_woe(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
                                             round_woe(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)",
                                             shiny::br(),
                                             "BM divergences: ", result_list[["Alignmnet"]][["BM_divergences"]][["count"]],
+                                            " / ", result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
                                             " (", round_woe(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
                                             round_woe(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)",
                                             shiny::br(),
                                             "Lost peaks: ", result_list[["Alignmnet"]][["Lost_b.A"]][["count"]],
+                                            " / ", result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
                                             " (", round_woe(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
                                             round_woe(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"
                                  ))), color = "blue", fill = TRUE)
@@ -1465,7 +1468,7 @@ shiny::br(),
                                             round_woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", round_woe(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)",
                                             shiny::br(),
-                                            "Missing peaks (high): ",
+                                            "Missing peaks (high/(low+high)): ",
                                             result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],
                                             "/",
                                             result_list[["After_alignmnet"]][["Missing_peaks"]][["Systematic"]] + result_list[["After_alignmnet"]][["Missing_peaks"]][["Random"]][["count"]],

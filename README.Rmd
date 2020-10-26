@@ -315,11 +315,13 @@ In order to count alignment errors (explained below) it is necessary to trace no
  
 ## Generation and interpretation of NPP performance metrics 
 
-Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface the following performance metrics are given at the top of the panel: <br>
+Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface different performance metrics are given at the top of the panel. All metrics are given with an empirical confidence interval (alpha = 0.95) in percent which is supposed to be representative for the entirety of (unknown) peaks in the provided raw data (mzML files). It is calculated by summing up different metrics (which are described below) per molecule and then bootstrapping molecules (R = 1000).
 <br>
 
 ### Found peaks
 The number of benchmark peaks for which a match was found among the unaligned/aligned NPP results vs all peaks present in benchmark (as shown in figure 2). For explanations on how the matching of benchmark peaks with non-targeted peaks is performed please read the section "Matching of benchmark peaks with NT peaks before alignment" above.<br>
+<br>
+<i>Number of benchmark peaks with at least one NPP match / Number of benchmark peaks (confidence interval)</i>
 
 ```{r figure2, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure2}<b>Figure 2 | </b> Overview of different peak populations"}
 knitr::include_graphics("inst/md/Peak_subsets.PNG")
@@ -327,11 +329,15 @@ knitr::include_graphics("inst/md/Peak_subsets.PNG")
 
 ### Split peaks
 The number of split peaks which have been found for all benchmark peaks. For a graphical explanation of a split peak please check figure 1a. It is worth noting that there can be more than one split peak per benchmark peak. <br>
+<br>
+<i>Number of split peaks found over all benchmark peaks / (Number of benchmark peaks with at least one NPP match + Number of split peaks found over all benchmark peaks) (confidence interval)</i> <br>
 
 <span id="Missing_values"> </span>
 
 ### Missing peaks (high/(high+low))
-The classification of not found peaks (NAs, as defined in figure 2) into high and low is done for each benchmark feature individually. It is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest benchmark peak found via the non-targeted approach are considered high. Otherwise they are considered as low. 
+The classification of not found peaks (NAs, as defined in figure 2) into high and low is done for each benchmark feature individually. Since we do not want to solely rely on the benchmark alignment to be correct we only classify missing values if alignment of the benchmark is in agreement with the alignment performed by NPP in at least one isotopologue (as also described in figure 5). Classification is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest benchmark peak found via the non-targeted approach are considered high. Otherwise they are considered as low. Additionally there is the class of lost peaks. This classification means that no peak has been found over the whole feature. <br>
+<br>
+<i>Number of high missing values / (Number of high missing values + Number of low missing values) (confidence interval)</i>
 
 ```{r figure3, out.width="30%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure3}<b>Figure 3 | </b> Diffentiation between classes of missing peaks/values"}
 knitr::include_graphics("inst/md/Missing_value_graphic.PNG")
@@ -340,7 +346,9 @@ knitr::include_graphics("inst/md/Missing_value_graphic.PNG")
 <span id="Peak_quality"> </span>
 
 ### Degenerated IR
-Isotopologue abundance rations (IR) are calculated relative to the highest isotopologue of each molecule. If the relative bias of an IR calculated using NPP-abundances is exceeding the tolerance (outlined in figure 4) it is reflected in this variable. 
+Isotopologue abundance rations (IR) are calculated relative to the highest isotopologue of each molecule. If the relative bias of an IR bias calculated using NPP-abundances is exceeding the tolerance (outlined in figure 4) it is reflected in this variable. <br>
+<br>
+<i>Number of isotopologue ratio exceeding tolerance / Number of isotopologue ratios which can be calculated using reported NPP abundances (confidence interval)</i>
 
 ```{r figure4, out.width="50%", out.height="50%", echo=FALSE,fig.cap="\\label{fig:figure4}<b>Figure 4 | </b> Calculation of NPP abundance bias tolerance"}
 knitr::include_graphics("inst/md/IR_tolerance.PNG")
@@ -349,7 +357,9 @@ knitr::include_graphics("inst/md/IR_tolerance.PNG")
 <span id="Alignment_counting"> </span>
 
 ### Alignment errors
-Benchmark-critical counting counts the minimum number of alignment errors without relying on correct alignment of the benchmark data set itself. Figure 5 shows three isotopologues (IT) of the same benchmark molecule detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP algorithm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry are counted as errors. Counting  benchmark divergences as errors, assumes correct alignment of the benchmark data set. This kind of counting should only be done after visual inspection of the benchmark data set. Both counts are given in the output of the NPP-assessment.
+We use a form of benchmark-critical error counting which counts the minimum number of alignment errors without relying on correct alignment of the benchmark data set itself. Figure 5 shows three isotopologues (IT) of the same benchmark molecule detected in 5 samples. The color coding indicates the feature the peak has been assigned to by the NPP algorithm. Whenever there is an asymmetry in the assignment of the different IT the minimum number of steps to reverse that asymmetry are counted as errors. Counting  benchmark divergences as errors, assumes correct alignment of the benchmark data set. Finally lost peaks correspond to the peaks which have been matched from the peak detection step but which are not present anymore after the alignment step. All those counts are given in the output of the NPP-assessment. <br>
+<br>
+<i>Number of one of three error-types / Number of benchmark peaks for which an NPP-match has been found (confidence interval)</i>
 
 ```{r figure5, out.width="80%", out.height="80%", echo=FALSE,fig.cap="\\label{fig:figure5}<b>Figure 5 | </b> Counting alignment errors"}
 knitr::include_graphics("inst/md/Alignment_error_graphic.png")
