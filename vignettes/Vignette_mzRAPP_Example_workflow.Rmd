@@ -61,7 +61,7 @@ When mzRAPP is done it will automatically export the finished benchmark as csv f
 
 ### Non-targeted data pre-processing assement
 
-Going forward the generated benchmark (BM) can be used to assess non-targeted data pre-processing (NPP) outputs. To do this go to the <i>Setup NPP assessment</i> tab. You can then assess the performance of NPP runs we have performed via XCMS:
+Going forward the generated benchmark (BM) can be used to assess non-targeted data pre-processing (NPP) outputs. To do this go to the <i>Setup NPP assessment</i> tab. You can then assess the performance of NPP runs we have performed via XCMS (script for their generation is available on [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe)):
 
 
 #### Performance check 1
@@ -93,9 +93,6 @@ When assessment is done mzRAPP will automatically switch to the <i>View NPP asse
 
 Afterwards assessment can be started by pressing the blue button on the bottom of the page.
 
-When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
-
-
 1. Looking at the final output in <i>Post Alignment</i> we see that the Found peaks-metric did not really change a lot. The IR-metric improved a little bit but not much.
 
 2. Also in the <i>Peak Picking</i> box both of those metrics did not change much. However, we have a lot less split peaks now (1-3%) which is going into the right direction.
@@ -114,9 +111,6 @@ When assessment is done mzRAPP will automatically switch to the <i>View NPP asse
 4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
 
 Afterwards assessment can be started by pressing the blue button on the bottom of the page.
-
-When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
-
 
 1. In the <i>Post Alignment</i> box we see that now about 89-97% of peaks have been detected. Which is quite some improvement. Also the proportion of degenerated IR decreased to 6-14%. The Missing peaks classification shows that no classification was possible which is most likely because whole features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
 
