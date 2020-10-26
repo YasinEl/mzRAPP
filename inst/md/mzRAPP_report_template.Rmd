@@ -40,12 +40,12 @@ dt_peak_presence <- data.table(metrics = c("Found_peaks_pp", "Found_peaks_al"),
                                             " (", round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", 
                                           round(result_list[["Before_alignment"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)"),
-                                          paste0(result_list[["After_alignmnet"]][["Found_peaks"]][["count"]],
+                                          paste0(result_list[["After_alignment"]][["Found_peaks"]][["count"]],
                                             "/",
                                             result_list[["Benchmark"]][["BM_peaks"]],
                                             " (",
-                                            round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][4],1), " - ", 
-                                          round(result_list[["After_alignmnet"]][["Found_peaks"]][["CI"]][5],1),
+                                            round(result_list[["After_alignment"]][["Found_peaks"]][["CI"]][4],1), " - ", 
+                                          round(result_list[["After_alignment"]][["Found_peaks"]][["CI"]][5],1),
                                             "%)"))
                                )
 
@@ -80,14 +80,14 @@ dt_peakQual <- data.table(metrics = c("IR_bias>20%_pp", "IR_bias>20%_al"),
                                            1), " - ",
                                      round(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 
                                            1), "%)"),
-                                     paste0(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
+                                     paste0(result_list[["After_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
                                             "/",
-                                            result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + 
-                                       result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_below20pp"]],
+                                            result_list[["After_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]] + 
+                                       result_list[["After_alignment"]][["IR_quality"]][["Error_inc_below20pp"]],
                                             " (",
-                                     round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 
+                                     round(result_list[["After_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 
                                            1), " - ",
-                                     round(result_list[["After_alignmnet"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 
+                                     round(result_list[["After_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 
                                            1), "%)")
                                      )
                           )
@@ -115,15 +115,15 @@ The alignment process is responsible for assembling peaks of different samples i
 [Click here](https://github.com/YasinEl/mzRAPP) for more details.
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 dt_alignment <- data.table(metrics = c("Lost_peaks", "Min._errors", "BM divergences"),
-                           values = c(paste0(result_list[["Alignmnet"]][["Lost_b.A"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Lost_b.A"]][["CI"]][5],1), "%)"),
-                                      paste0(result_list[["Alignmnet"]][["Min.Errors"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["Min.Errors"]][["CI"]][5],1), "%)"),
-                                      paste0(result_list[["Alignmnet"]][["BM_divergences"]][["count"]],
-                                            " (", round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][4],1), " - ",
-                                            round(result_list[["Alignmnet"]][["BM_divergences"]][["CI"]][5],1), "%)")
+                           values = c(paste0(result_list[["Alignment"]][["Lost_b.A"]][["count"]],
+                                            " (", round(result_list[["Alignment"]][["Lost_b.A"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignment"]][["Lost_b.A"]][["CI"]][5],1), "%)"),
+                                      paste0(result_list[["Alignment"]][["Min.Errors"]][["count"]],
+                                            " (", round(result_list[["Alignment"]][["Min.Errors"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignment"]][["Min.Errors"]][["CI"]][5],1), "%)"),
+                                      paste0(result_list[["Alignment"]][["BM_divergences"]][["count"]],
+                                            " (", round(result_list[["Alignment"]][["BM_divergences"]][["CI"]][4],1), " - ",
+                                            round(result_list[["Alignment"]][["BM_divergences"]][["CI"]][5],1), "%)")
                                       )
                            )
 

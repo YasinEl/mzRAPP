@@ -82,4 +82,24 @@ round_woe <- function(x, stellen){
 
 
 
+#' top_to_x
+#'
+#' @param number numeric(1)
+#' @param x roof to this number
+#'
+#' @return
+#' @keywords internal
+#'
+top_to_x <- function(number, x = 0){
+
+  if(!is.na(number) && is.numeric(number) & number < 0){return(0)} else {return(number)}
+
+}
+
+
+
+
+
+
+
 

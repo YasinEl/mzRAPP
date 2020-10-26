@@ -315,7 +315,7 @@ In order to count alignment errors (explained below) it is necessary to trace no
  
 ## Generation and interpretation of NPP performance metrics 
 
-Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface different performance metrics are given at the top of the panel. All metrics are given with an empirical confidence interval (alpha = 0.95) in percent which is supposed to be representative for the entirety of (unknown) peaks in the provided raw data (mzML files). It is calculated by summing up different metrics (which are described below) per molecule and then bootstrapping molecules (R = 1000). <br>
+Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface different performance metrics are given at the top of the panel. All metrics are given with an empirical confidence interval (alpha = 0.95) in percent which is supposed to be representative for the entirety of (unknown) peaks in the provided raw data (mzML files). It is calculated by summing up different metrics (which are described below) per molecule and then bootstrapping molecules (R = 1000). Confidence intervals with values < 0 are round up to 0.<br>
 <br>
 
 ### Found peaks

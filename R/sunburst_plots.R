@@ -24,16 +24,16 @@ plot_sunburst_alignment <- function(result_txt){
                    result_txt[["Benchmark"]][["BM_peaks"]] - #not found peaks
                      result_txt[["Before_alignment"]][["Found_peaks"]][["count"]],
                    result_txt[["Before_alignment"]][["Found_peaks"]][["count"]], #found peaks
-                   result_txt[["Alignmnet"]][["Lost_b.A"]][["count"]], #lost
+                   result_txt[["Alignment"]][["Lost_b.A"]][["count"]], #lost
                    result_txt[["Before_alignment"]][["Found_peaks"]][["count"]] - #not lost
-                     result_txt[["Alignmnet"]][["Lost_b.A"]][["count"]],
+                     result_txt[["Alignment"]][["Lost_b.A"]][["count"]],
                    result_txt[["Before_alignment"]][["Found_peaks"]][["count"]] - #no errors
-                     result_txt[["Alignmnet"]][["Lost_b.A"]][["count"]] -
-                     result_txt[["Alignmnet"]][["BM_divergences"]][["count"]],
-                   result_txt[["Alignmnet"]][["BM_divergences"]][["count"]], #errors
-                   result_txt[["Alignmnet"]][["BM_divergences"]][["count"]] -
-                     result_txt[["Alignmnet"]][["Min.Errors"]][["count"]], #BM div
-                   result_txt[["Alignmnet"]][["Min.Errors"]][["count"]] #Min errors
+                     result_txt[["Alignment"]][["Lost_b.A"]][["count"]] -
+                     result_txt[["Alignment"]][["BM_divergences"]][["count"]],
+                   result_txt[["Alignment"]][["BM_divergences"]][["count"]], #errors
+                   result_txt[["Alignment"]][["BM_divergences"]][["count"]] -
+                     result_txt[["Alignment"]][["Min.Errors"]][["count"]], #BM div
+                   result_txt[["Alignment"]][["Min.Errors"]][["count"]] #Min errors
   )
   ]
 

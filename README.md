@@ -488,7 +488,8 @@ interval (alpha = 0.95) in percent which is supposed to be
 representative for the entirety of (unknown) peaks in the provided raw
 data (mzML files). It is calculated by summing up different metrics
 (which are described below) per molecule and then bootstrapping
-molecules (R = 1000). <br>
+molecules (R = 1000). Confidence intervals with values \< 0 are round up
+to 0. <br> <br>
 
 ### Found peaks
 

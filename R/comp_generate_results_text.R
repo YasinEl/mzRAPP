@@ -108,7 +108,7 @@ derive_performance_metrics <- function(comparison_data){
                            )
                          )
                        ),
-                       Alignmnet = list(
+                       Alignment = list(
                          Min.Errors = list(count = sum(sum_tab$Min.er, na.rm = TRUE),
                                            CI = boot::boot.ci(boot::boot(sum_tab,
                                                                          function(data, indices){
@@ -147,7 +147,7 @@ derive_performance_metrics <- function(comparison_data){
                                                             index=1,
                                                             type='basic')$basic)
                        ),
-                       After_alignmnet = list(
+                       After_alignment = list(
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_ft, na.rm = TRUE),
                                             CI =  boot::boot.ci(boot::boot(sum_tab,
                                                                            function(data, indices){
