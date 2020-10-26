@@ -2,6 +2,7 @@ mzRAPP
 ================
 
   - [Installation](#installation)
+  - [Use examples](#use-examples)
   - [Benchmark data set generation](#benchmark-data-set-generation)
       - [Select mzML files](#select-mzml-files)
       - [Select sample-group file](#select-sample-group-file)
@@ -81,6 +82,12 @@ callmzRAPP()
 ```
 
 or use mzRAPP without shiny interface as described below.
+
+## Use examples
+
+If you want to go through some use examples please download according
+instructions from
+[ucloud](https://ucloud.univie.ac.at/index.php/s/t1teDZ7JEyBwTc1).
 
 <span id="sBM_readme"> </span>
 
