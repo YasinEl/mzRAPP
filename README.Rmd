@@ -238,7 +238,7 @@ Next the benchmark file has to be selected. If a benchmark has been created duri
 <br>
 After performing those steps the assessment can be started via the blue "Start assessment button". <br>
 
-### Perform relyability assessment via R-Script
+### Perform reliability assessment via R-Script
 
 ```{r eval=FALSE} 
 

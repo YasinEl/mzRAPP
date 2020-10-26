@@ -19,8 +19,8 @@ mzRAPP
         tools](#exporting-npp-outputs-from-different-tools)
       - [Selecting a benchmark data set and starting
         assessment](#selecting-a-benchmark-data-set-and-starting-assessment)
-      - [Perform relyability assessment via
-        R-Script](#perform-relyability-assessment-via-r-script)
+      - [Perform reliability assessment via
+        R-Script](#perform-reliability-assessment-via-r-script)
   - [Matching between BM and NPP output
     (background)](#matching-between-bm-and-npp-output-background)
   - [Generation and interpretation of NPP performance
@@ -367,7 +367,7 @@ can be clicked as an alternative. <br> <br> After performing those steps
 the assessment can be started via the blue “Start assessment button”.
 <br>
 
-### Perform relyability assessment via R-Script
+### Perform reliability assessment via R-Script
 
 ``` r
 

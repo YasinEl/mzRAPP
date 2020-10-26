@@ -78,7 +78,7 @@ if (window.hljs) {
 <li><a href="#reliability-assessment-of-non-targeted-data-pre-processing">Reliability assessment of non-targeted data pre-processing</a><ul>
 <li><a href="#exporting-npp-outputs-from-different-tools">Exporting NPP outputs from different tools</a></li>
 <li><a href="#selecting-a-benchmark-data-set-and-starting-assessment">Selecting a benchmark data set and starting assessment</a></li>
-<li><a href="#perform-relyability-assessment-via-r-script">Perform relyability assessment via R-Script</a></li>
+<li><a href="#perform-reliability-assessment-via-r-script">Perform reliability assessment via R-Script</a></li>
 </ul></li>
 <li><a href="#matching-between-bm-and-npp-output-background">Matching between BM and NPP output (background)</a></li>
 <li><a href="#generation-and-interpretation-of-npp-performance-metrics">Generation and interpretation of NPP performance metrics</a><ul>
@@ -233,8 +233,8 @@ data.table::fwrite(xcms::peakTable(xcmsSet_object), &quot;blabla_aligned_file.cs
 <h3>Selecting a benchmark data set and starting assessment</h3>
 <p>Next the benchmark file has to be selected. If a benchmark has been created during this shiny session (the benchmark is still visible in the panel benchmark overview) the switch button “Use generated benchmark” can be clicked as an alternative. <br> <br> After performing those steps the assessment can be started via the blue “Start assessment button”. <br></p>
 </div>
-<div id="perform-relyability-assessment-via-r-script" class="section level3">
-<h3>Perform relyability assessment via R-Script</h3>
+<div id="perform-reliability-assessment-via-r-script" class="section level3">
+<h3>Perform reliability assessment via R-Script</h3>
 <pre class="r"><code>
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
 #options: XCMS, El-Maven, OpenMS, msDial or mzMine
