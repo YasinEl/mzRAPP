@@ -105,10 +105,12 @@ callmzRAPP <- function(){
 
       shinydashboard::tabItems(
         shinydashboard::tabItem(tabName = "Readme",
-                shiny::tags$div(
-                  class = "rmd-class",
-                  shiny::includeHTML(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
-                )
+                                #shiny::column(12,
+                                  shiny::tags$div(
+                                    class = "rmd-class",
+                                    shiny::includeHTML(system.file("md","README.html", package = "mzRAPP", mustWork = TRUE))
+                                  )
+                                #)
         ),
         shinydashboard::tabItem(tabName = "gBM_p",
 
