@@ -50,7 +50,9 @@ retention behavior. mzRAPP extracts and validates chromatographic peaks
 for which boundaries are provided for all (envipat predicted)
 isotopologues of those target molecules directly from mzML files. The
 resulting benchmark data set is used to extract different performance
-metrics for NPP performed on the same mzML files.
+metrics for NPP performed on the same mzML files. An overview over
+mzRAPP capabilities is given in this \< 3 min [youtube
+video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be).
 
 ## Installation
 
@@ -86,9 +88,9 @@ or use mzRAPP without shiny interface as described below.
 
 ## Use examples
 
-If you want to go through some use examples please download according
-instructions from
-[ucloud](https://ucloud.univie.ac.at/index.php/s/5jdqnqEHzwn5uTX).
+If you want to go through some use examples on how to use mzRAPP please
+download [this
+pdf](https://ucloud.univie.ac.at/index.php/s/5jdqnqEHzwn5uTX).
 
 <span id="sBM_readme"> </span>
 
@@ -349,9 +351,10 @@ Intensity”, “Area”, “Study File ID”, “Left RT \[min\]”, “Right R
 click any row\] -\> Export -\> As plain text… <br> aligned file:
 currently it is not possible to use aligned files from Compound
 Discoverer <br> <br> <u>PatRoon:</u> <br> patRoon is not supported
-directly but can still be loaded since it allows to generate xcmsSet
-objects internally. Hence, it has to be loaded into mzRAPP as “XCMS”
-output which has to be stated as such in the “Setup NPP assessment tab”.
+directly but can still be loaded since it allows to generate
+<i>xcmsSet</i> objects internally. Hence, it has to be loaded into
+mzRAPP as “XCMS” output which has to be stated as such in the “Setup NPP
+assessment tab”.
 
 ``` r
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
