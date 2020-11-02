@@ -19,5 +19,6 @@ check_benchmark_input(file, options_path = "generate", from_csv = TRUE, algo)
 returns a list including the benchmark in a format readable by \code{\link{compare_peaks}}.
 }
 \description{
-check_benchmark_input
+Checks the benchmark dataset and brings it into a format readable by \code{\link{compare_peaks}}. All molecules for which the most abundant isotopolgue is not present,
+or less than 2 isotopologues are present are deleted. Moreover, isotopologues which appear in only one file are deleted.
 }

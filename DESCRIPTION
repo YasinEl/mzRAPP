@@ -4,7 +4,7 @@ Title: Benchmark Dataset Generation
 Version: 0.2.0
 Author: Yasin El Abiead <yasin.el.abiead@univie.ac.at>, Maximilian Milford <max@mmilford.com>
 Maintainer: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
-Description: Generation and evaluation of LC-HRMS benchmark datasets and assessment of non-targeted data pre-processing.
+Description: mzRAPP is a package for the generation and evaluation of LC-HRMS benchmark datasets and assessment of non-targeted data pre-processing.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

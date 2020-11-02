@@ -1,5 +1,8 @@
 #' check_benchmark_input
 #'
+#' Checks the benchmark dataset and brings it into a format readable by \code{\link{compare_peaks}}. All molecules for which the most abundant isotopolgue is not present,
+#' or less than 2 isotopologues are present are deleted. Moreover, isotopologues which appear in only one file are deleted.
+#'
 #' @param file output of \code{\link{find_bench_peaks}}. Can be path to csv file or a data table  object (meaning that is.data.table(file) returns TRUE).
 #' @param options_path can be a string "generate" in order to use default column names for chosen algo. In the future we might include a possibility to allow the user to choose column names.
 #' @param from_csv TRUE or FALSE depending on file being a data.table object or a path to a csv
@@ -59,12 +62,26 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(b_table, by=c('peak_area')))){
     #fwrite(b_table[(duplicated(b_table, by=c('peak_area'))|duplicated(b_table, by=c('peak_area'), fromLast = TRUE))], 'dup_debug.csv')
-    b_table <- b_table[!duplicated(b_table, by='peak_area')]
-    warning('Duplicate peaks present in raw benchmark file')
+    b_table <- b_table[!duplicated(b_table, by=c('peak_area', 'rt_b'))]
+    warning('Duplicate peaks removed from raw benchmark file')
   }
 
   #Generate feature ID to quickly detect features later
   b_table <- b_table[, feature_id := .GRP, by = c('molecule', 'adduct', 'isoab')]
+
+  #Remove Features if only observed in one sample (if more than one sample is present in benchmark)
+  if(length(unique(b_table$sample_name)) > 1){
+    b_table[, ft_count := .N, by = .(feature_id)]
+    b_table <- b_table[ft_count > 1, !c("ft_count")]
+  }
+
+  #Remove molecules for which only one isotopologue is present
+  b_table[, iso_count2 := .N, by =.(molecule, adduct, sample_name)]
+  b_table <- b_table[iso_count2 > 1, !c("iso_count2")]
+
+  #Remove molecules if most abundant isotopologue is not present
+  b_table[, maIso := any(isoab == "100"), by =.(molecule, adduct, sample_name)]
+  b_table <- b_table[maIso == TRUE, !c("maIso")]
 
   #Generate id for each peak
   b_table$comp_id <- seq.int(nrow(b_table))

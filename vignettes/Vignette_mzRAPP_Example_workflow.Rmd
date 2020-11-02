@@ -76,9 +76,9 @@ Afterwards assessment can be started by pressing the blue button on the bottom o
 When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
 
 
-1. It makes always sense to first check the final output in the <i>Post Alignment</i> box (If the final output looks good we generally do not need to waste time on understanding if the intermediate steps worked well). There we can see that about 71-90% of peaks have been detected, which is not really perfect (especially if we consider that we also used a fill gaps algorithm). The isotopologue ratio (IR)-metric reports 20-40% degenerated IR, which we would consider to be quite a lot. Hence we need to look at the other steps.
+1. It makes always sense to first check the final output in the <i>Post Alignment</i> box (If the final output looks good we generally do not need to waste time on understanding if the intermediate steps worked well). There we can see that about 71-88% of peaks have been detected, which is not really perfect (especially if we consider that we also used a fill gaps algorithm). The isotopologue ratio (IR)-metric reports 19-40% degenerated IR, which we would consider to be quite a lot. Hence we need to look at the other steps.
 
-2. The <i>Peak Picking</i> box shows that 2323/2758 peaks have been found, which should correspond to about 80-87% of all peaks in the raw data. This is in the same range as the final output (we would consider that to be not so problematic since the fill gaps algorithm should be able to improve that at least in part). The IR-metric looks quite good with only up to 4% of IR being degenerated. However, up to 11% of matches led to split peaks which is quite a lot. This is problematic since they tend to cause problems for downstream alignment processes. More specifically they are often in competition with more "properly" picked peaks during the alignment process and also "sabotage" the fill gaps algorithm.
+2. The <i>Peak Picking</i> box shows that 2323/2736 peaks have been found, which should correspond to about 82-89% of all peaks in the raw data. This is in the same range as the final output (we would consider that to be not so problematic since the fill gaps algorithm should be able to improve that at least in part). The IR-metric looks quite good with only up to 4% of IR being degenerated. However, up to 11% of matches led to split peaks which is quite a lot. This is problematic since they tend to cause problems for downstream alignment processes. More specifically they are often in competition with more "properly" picked peaks during the alignment process and also "sabotage" the fill gaps algorithm.
 
 3. In the <i>Alignment</i> box 20-36% of peaks matched from peak picking are reported to not appear anymore in the aligned file. This can happen when the alignment algorithm only selects one peak per time unit and file but discards all other peaks within the same time unit. We consider 20-36% to be quite much. As mentioned above this could be due to the high number of split peaks.
 
@@ -112,11 +112,11 @@ Afterwards assessment can be started by pressing the blue button on the bottom o
 
 Afterwards assessment can be started by pressing the blue button on the bottom of the page.
 
-1. In the <i>Post Alignment</i> box we see that now about 89-97% of peaks have been detected. Which is quite some improvement. Also the proportion of degenerated IR decreased to 6-14%. The Missing peaks classification shows that no classification was possible which is most likely because whole features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
+1. In the <i>Post Alignment</i> box we see that now about 91-98% of peaks have been detected. Which is quite some improvement. Also the proportion of degenerated IR decreased to 6-14%. The Missing peaks classification shows that no classification was possible which is most likely because whole features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
 
 2. We did not change anything about the peak picking step so everything stayed the same there.
 
-3. The alignment improved quite a bit to about 3-9% lost peaks.
+3. The alignment improved quite a bit to about 4-9% lost peaks.
 
 <b>Although this was much better than Example 1 there is definitely still room for improvement. If you want you can try to do better using XCMS or another tool (all tools listed in the readme on [GitHub](https://github.com/YasinEl/mzRAPP) are supported by mzRAPP).</b>
 
