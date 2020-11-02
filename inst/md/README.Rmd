@@ -356,7 +356,7 @@ We use a form of benchmark-critical error counting which counts the minimum numb
 knitr::include_graphics("Alignment_error_graphic.png")
 ```
 
-## Resources
+## References
 
-mzRAPP is based on many other R packages. Specifically it depends on (<b>data.table, ggplot2, shinyjs and dplyr</b>) and imports (<b>shinybusy, shinydashboard, shiny, shinyWidgets, doFuture, plotly, tcltk, hutils, DT, tools, retistruct, xcms, multtest, enviPat, stats, parallel, doBy, shinycssloaders, BiocParallel, doParallel, MSnbase, DescTools, signal, intervals, future.apply, foreach, S4Vectors, V8, boot, future, bit64, htmltools, kableExtra, shinythemes and knitr <b/>) packages from R Cran and Bioconductor. 
+mzRAPP is based on many other R packages. Specifically it depends on (<b>data.table, ggplot2, shinyjs and dplyr</b>) and imports (<b>shinybusy, shinydashboard, shiny, shinyWidgets, doFuture, plotly, tcltk, hutils, DT, tools, retistruct, xcms, multtest, enviPat, stats, parallel, doBy, shinycssloaders, BiocParallel, doParallel, MSnbase, DescTools, signal, intervals, future.apply, foreach, S4Vectors, V8, boot, future, bit64, htmltools, kableExtra, shinythemes and knitr </b>) packages from R Cran and Bioconductor. 
 Moreover, we implemented code from two different Stackoverflow contributions (<b>https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1 and https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram</b>)

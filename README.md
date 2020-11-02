@@ -31,7 +31,7 @@ mzRAPP
       - [Missing peaks](#missing-peaks)
       - [Degenerated IR](#degenerated-ir)
       - [Alignment errors](#alignment-errors)
-  - [Resources](#resources)
+  - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -617,7 +617,7 @@ which an NPP-match has been found (confidence interval)</i>
 
 </div>
 
-## Resources
+## References
 
 mzRAPP is based on many other R packages. Specifically it depends on
 (<b>data.table, ggplot2, shinyjs and dplyr</b>) and imports
@@ -625,7 +625,7 @@ mzRAPP is based on many other R packages. Specifically it depends on
 tcltk, hutils, DT, tools, retistruct, xcms, multtest, enviPat, stats,
 parallel, doBy, shinycssloaders, BiocParallel, doParallel, MSnbase,
 DescTools, signal, intervals, future.apply, foreach, S4Vectors, V8,
-boot, future, bit64, htmltools, kableExtra, shinythemes and knitr <b/>)
+boot, future, bit64, htmltools, kableExtra, shinythemes and knitr </b>)
 packages from R Cran and Bioconductor. Moreover, we implemented code
 from two different Stackoverflow contributions
 (<b><https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1>
