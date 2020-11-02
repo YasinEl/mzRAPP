@@ -31,6 +31,7 @@ mzRAPP
       - [Missing peaks](#missing-peaks)
       - [Degenerated IR](#degenerated-ir)
       - [Alignment errors](#alignment-errors)
+  - [Resources](#resources)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -124,7 +125,7 @@ to mzML as well as centroiding can be done by Proteowizards
 This csv file should contain two columns:
 
 <b>sample\_name:</b> names of all mzML files from which peaks should be
-extracted (with our without file extension (.mzML)) <br> <br>
+extracted (with our without file extension (.mzML)) <br>
 <b>sample\_group:</b> group labels of the respective samples
 (e.g. treated, untreated,..). If there is only one group this still
 needs to be filled out. <br> <br>
@@ -137,10 +138,10 @@ This csv file should contain information on the target molecules/peaks
 and include the following columns:
 
 <b>molecule:</b> names of target molecules (should be unique
-identifiers) <br> <br> <b>adduct\_c:</b> adducts that should be
-evaluated (e.g. M+H or M+Na; without brackets). If more than one adduct
-is to be investigated another line with the same molecule name should be
-added. All adducts enabled in the enviPat package are allowed:
+identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
+(e.g. M+H or M+Na; without brackets). If more than one adduct is to be
+investigated another line with the same molecule name should be added.
+All adducts enabled in the enviPat package are allowed:
 
 ``` r
 library(enviPat)
@@ -167,25 +168,25 @@ adducts$Name
 
 <b>main\_adduct:</b> One main adduct has to be defined for each molecule
 (e.g. M+H). If the main\_adduct is not detected also other adducts wont
-be accepted. <br> <br> <b>SumForm\_c:</b> Molecular composition of the
+be accepted. <br> <b>SumForm\_c:</b> Molecular composition of the
 neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
-0 behind an element like behind the N in C12H8N0S2. <br> <br>
+0 behind an element like behind the N in C12H8N0S2. <br>
 <b>user.rtmin:</b> Start time of peak (seconds). If possible mzRAPP will
 narrow peak boundaries to intersect with the extracted ion chromatogram
 at 5% of the maximum peak height. It is also worth noting that peaks for
 which user.rtmin/user.rtmax are provided will still be rejected if the
-isotopic information is not fitting. <br> <br> <b>user.rtmax:</b> End
-time of peak (seconds). <br> <br> <b>StartTime.EIC:</b> (optional) Start
-time for chromatograms extracted for this molecule (seconds). Peaks are
-only detected from this time on. If not given StartTime.EIC and
-EndTime.EIC are calculated from user.rtmin and user.rtmax.<br> <br>
-<b>EndTime.EIC:</b> (optional) End time for chromatograms extracted for
-this molecule (seconds). Peaks are only detected up to this time. <br>
-<br> <b>FileName:</b> (optional) Name of sample file with or without
-file extension. Using this allows to apply different values (like
-user.rtmin/user.rtmax) for different files. <br> <br> <b>Additional
-columns: </b> It is possible to add additional columns. Those will be
-kept for the final benchmark data set. <br> <br>
+isotopic information is not fitting. <br> <b>user.rtmax:</b> End time of
+peak (seconds). <br> <b>StartTime.EIC:</b> (optional) Start time for
+chromatograms extracted for this molecule (seconds). Peaks are only
+detected from this time on. If not given StartTime.EIC and EndTime.EIC
+are calculated from user.rtmin and user.rtmax.<br> <b>EndTime.EIC:</b>
+(optional) End time for chromatograms extracted for this molecule
+(seconds). Peaks are only detected up to this time. <br>
+<b>FileName:</b> (optional) Name of sample file with or without file
+extension. Using this allows to apply different values (like
+user.rtmin/user.rtmax) for different files. <br> <b>Additional columns:
+</b> It is possible to add additional columns. Those will be kept for
+the final benchmark data set. <br> <br>
 
 ### Select instrument and resolution
 
@@ -287,7 +288,10 @@ Reliability assessment of NPP can be set up in the panel “Setup NPP
 assessment”. First the tool to be evaluated has to be set. Afterwards
 the unaligned and aligned output files of the tools to be assessed have
 to be selected. The way those files can be exported from different tools
-are lined out in the following. <br> <br>
+are lined out in the following. In case of all those outputs it should
+be noted that mzRAPP is heavily depending on all isotopologues being
+reported in the output feature tables. For that reason they must not be
+filtered out for mzRAPP to work properly.<br>
 
 ### Exporting NPP outputs from different tools
 
@@ -609,3 +613,18 @@ which an NPP-match has been found (confidence interval)</i>
 </p>
 
 </div>
+
+## Resources
+
+mzRAPP is based on many other R packages. Specifically it depends on
+(<b>data.table, ggplot2, shinyjs and dplyr</b>) and imports
+(<b>shinybusy, shinydashboard, shiny, shinyWidgets, doFuture, plotly,
+tcltk, hutils, DT, tools, retistruct, xcms, multtest, enviPat, stats,
+parallel, doBy, shinycssloaders, BiocParallel, doParallel, MSnbase,
+DescTools, signal, intervals, future.apply, foreach, S4Vectors, V8,
+boot, future, bit64, htmltools, kableExtra, shinythemes and knitr <b/>)
+packages from R Cran and Bioconductor. Moreover, we implemented code
+from two different Stackoverflow contributions
+(<b><https://stackoverflow.com/questions/37169039/direct-link-to-tabitem-with-r-shiny-dashboard?rq=1>
+and
+<https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram></b>)
