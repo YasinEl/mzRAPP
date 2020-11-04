@@ -51,7 +51,7 @@ or use mzRAPP without shiny interface as described below.
 
 ## Use examples
 
-If you want to go through some use examples on how to use mzRAPP please download [this pdf](https://ucloud.univie.ac.at/index.php/s/6Inxburjw03Wub5).
+If you want to go through some use examples on how to use mzRAPP please download [this pdf](https://ucloud.univie.ac.at/index.php/s/ZCtGKBBdjjELicE).
 
 
 <span id="sBM_readme"> </span>
@@ -88,7 +88,7 @@ library(enviPat)
 data(adducts)
 adducts$Name
 ```
-<b>main_adduct:</b> One main adduct has to be defined for each molecule (e.g. M+H). If the main_adduct is not detected also other adducts wont be accepted. <br>
+<b>main_adduct:</b> One main adduct has to be defined for each molecule (e.g. M+H). If the main_adduct is not detected also other adducts wont be accepted. Therefore it makes sense to select the most trusted adduct (generally M+H or M-H) as main adduct. <br>
 <b>SumForm_c:</b> Molecular composition of the neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a 0 behind an element like behind the N in C12H8N0S2. <br>
 <b>user.rtmin:</b> Start time of peak (seconds). If possible mzRAPP will narrow peak boundaries to intersect with the extracted ion chromatogram at 5% of the maximum peak height. It is also worth noting that peaks for which user.rtmin/user.rtmax are provided will still be rejected if the isotopic information is not fitting. <br>
 <b>user.rtmax:</b> End time of peak (seconds). <br>
@@ -124,7 +124,7 @@ Benchmark generation can be started using the blue Start button. The necessary t
 <span id="vBMID"> </span>
  
 ### How check the benchmark
-An overview over different benchmark key data is provided in the "View Benchmark" panel. The plots can be used in order to inspect different qualities of the data set. A molecule not being detected does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could happen if less than two isotopologues (full-filling strict criteria in abundance, peak shape correlation and number of points per peak) which is required for a given molecule to be kept in the given file. In order to get a better overview over picked peaks two csv files as well as instructions can be exported. Those can (but does not have to) be used in order to generate a mirror image of the benchmark data set in the free software [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view). 
+An overview over different benchmark key data is provided in the "View Benchmark" panel. The plots can be used in order to inspect different qualities of the data set. A molecule not being detected does not necessarily mean that there is no peak, but that mzRAPP was not able to validate it. This could happen since at least two isotopolpgues, fulfilling strict criteria regarding abundance, peak shape correlation and number of points per peak are required for a give molecule to be retained in the benchmark. In order to get a better overview over picked peaks two csv files as well as instructions can be exported. Those can (but do not have to) be used in order to generate a mirror image of the benchmark data set in the free software [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view). 
 
 When the benchmark is satisfactory it can be used for reliability assessment of non targeted data pre-processing as explained in the following chapter.
 
@@ -284,7 +284,7 @@ Before any NPP-performance metrics can be generated mzRAPP is matching the non-t
 <h3>Comparison of benchmark with non-targeted output</h3>
 
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
-Each benchmark peak (BP) is reported with the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP a NT peak (NP) has to come with an mz value between those two values. Matching rules considering retention time (RT) are depicted in Figure 1a. A NP has to cover the whole core of a BP while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. In some cases there can be more than one match between a BP and NPs (Figure 1d). In those cases, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smallest relative IT ratio (calculated via reported peak abundances) bias as compared to the predicted IT-ratio (Figure 1c). When more than two different IT are detected the ratio of each IT with the highest IT reported via NPP is considered.
+Each benchmark peak (BP) is reported with the smallest and highest mz value contributing to the chromatographic peak. In order to be considered as possible match for a BP the mz value of a NT peak (NP) has to fall within these two values. Matching rules considering retention time (RT) are depicted in Figure 1a. A NP has to cover the whole core of a BP (refered to as "peak core" in the following) while having a RT within the borders (RTmin, RTmax) of the BP. If only a part of the peak core is covered by a NP with its RT in the borders of the BP, the NP it is counted as a split peak. NPs which are not overlapping with the core of a BP are not considered. In some cases there can be more than one match between a BP and NPs (Figure 1d). In those cases, BPs corresponding to the same molecule but other isotopologues (IT) are considered to choose the NP leading to the smallest relative IT ratio (calculated via reported peak abundances) bias as compared to the predicted IT-ratio (Figure 1c). When more than two different IT are detected the ratio of each IT with the highest IT reported via NPP is considered.
 
 ```{r figure1, out.width="100%", out.height="100%", echo=FALSE,fig.cap="\\label{fig:figure1}<b>Figure 1 | </b> Matching between BM and NPP output"}
 knitr::include_graphics("Matching.png")
@@ -306,7 +306,7 @@ In order to count alignment errors (explained below) it is necessary to trace no
  
 ## Generation and interpretation of NPP performance metrics 
 
-Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface different performance metrics are given at the top of the panel. All metrics are given with an empirical confidence interval (alpha = 0.95) in percent which is supposed to be representative for the entirety of (unknown) peaks in the provided raw data (mzML files). It is calculated by summing up different metrics (which are described below) per molecule and then bootstrapping molecules (R = 1000). Confidence intervals with values < 0 are round up to 0.<br>
+Reliability assessment results can be inspected in the panel "View NPP assessment" or can be generated using R-functions (shown below). Using the shiny user interface, different performance metrics are displayed at the top of the panel. All metrics are given with an empirical confidence interval (alpha = 0.95) in percent which is supposed to be representative for the entirety of (unknown) peaks in the provided raw data (mzML files). It is calculated by summing up different metrics (which are described below) per molecule and then bootstrapping molecules (R = 1000). Confidence intervals with values < 0 are round up to 0.<br>
 <br>
 
 ### Found peaks
@@ -326,7 +326,7 @@ The number of split peaks which have been found for all benchmark peaks. For a g
 <span id="Missing_values"> </span>
 
 ### Missing peaks
-The classification of not found peaks (Not found peaks, as defined in figure 2) into high and low is done for each benchmark feature individually. Since we do not want to solely rely on the benchmark alignment to be correct we only classify missing values if alignment of the benchmark is in agreement with the alignment performed by NPP in at least one isotopologue (as also described in figure 5). Classification is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest benchmark peak found via the non-targeted approach are considered high. Otherwise they are considered as low. Additionally there is the class of lost peaks. This classification means that no peak has been found over the whole feature. <br>
+The classification of not found peaks (Not found peaks, as defined in figure 2) into high and low is done for each benchmark feature individually. Since we do not want to solely rely on the benchmark alignment to be correct we only classify missing values if alignment of the benchmark is in agreement with the alignment performed by NPP in at least one isotopologue (as also described in figure 5). Classification is based on the lowest benchmark peak present in the respective feature which has been found by the non-targeted algorithm. All benchmark peaks in this feature which have a benchmark area which is more than 1.5 times higher than the lowest benchmark peak found via the non-targeted approach are considered high. Otherwise they are considered as low. Additionally, if no peak has been found over the whole benchmark feature all corresponding peaks will be classified as lost peaks <br>
 <br>
 <i>Number of high missing values / (Number of high missing values + Number of low missing values) (confidence interval)</i>
 

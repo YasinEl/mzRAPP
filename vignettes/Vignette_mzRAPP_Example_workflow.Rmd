@@ -20,9 +20,9 @@ The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-p
 In order to to run an example you first need to download some exemplary files: 
 
 1. Download all 30 mzML files (at least 5 if you don't want to process that many) ending on "_POS.mzML" from the repository MTBLS267 on [metabolights](https://www.ebi.ac.uk/metabolights/MTBLS267/files).
-2. Download the csv files "SampleGrp_RBC_pos.csv" and "TargetFile_RBC_POS_BordersPerFile.csv" from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe) for benchmark generation.
-3. (optional) Download the already prepared benchmark "RBC_benchmark.csv" if you do not want to do benchmark generation part of the example from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe)
-4. Download the XCMS-output files "XCMS_RBCpos_unaligned.csv", "XCMS_RBCpos_aligned_withFillPeaks.csv" and "XCMS_RBCpos_aligned_withoutFillPeaks.csv" from [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe). Alternatively, you can also process the mzML files downloaded before by yourself. You do make sure to follow the instructions given in the readme section "Exporting NPP outputs from different tools".
+2. Download the csv files "SampleGroups_MTBLS267.csv" and "Target_File_MTBLS267.csv" from [ucloud](https://ucloud.univie.ac.at/index.php/s/hmSZHtH9v0G0T0c) for benchmark generation.
+3. (optional) Download the already prepared benchmark "Benchmark.csv" if you do not want to do benchmark generation part of the example from [ucloud](https://ucloud.univie.ac.at/index.php/s/JFcVukwxKBLSRsC)
+4. Download the XCMS-output files "XCMS_aligned_run.csv" and "XCMS_unaligned_run.csv" files from [ucloud](https://ucloud.univie.ac.at/index.php/s/BjF24f7q4jeFJH3). Alternatively, you can also process the mzML files downloaded before by yourself. If you do so make sure to follow the instructions given in the readme section "Exporting NPP outputs from different tools".
 5. If you haven't installed mzRAPP yet please follow the instructions in the mzRAPP readme (e.g. on [GitHub](https://github.com/YasinEl/mzRAPP)) to do so.
 
 You can now start mzRAPP using:
@@ -53,7 +53,7 @@ After that benchmark generation can be started by clicking the blue button at th
 
 When mzRAPP is done it will automatically export the finished benchmark as csv file to your working directory and switch to the <i>View Benchmark</i> tab where you get key metrics as well as two interactive plots on the generated benchmark:
 
-1. If you processed all 30 mzML files you should have generated a benchmark containing 49 different molecules with 166 different features (including all adducts and isotopologues) resulting in 2758 peaks in total.
+1. If you processed all 30 mzML files you should have generated a benchmark containing 48 different molecules with 145 different features (including all adducts and isotopologues) resulting in 2736 peaks in total.
 
 2. In the provided histogram you can choose to plot the log10(height) of detected benchmark peaks. This shows you that your benchmark peaks span several orders of magnitude. Sufficient quality of low peaks was ensured by removing isotopologues which do not satisfy criteria in peak shape (peak shape correlation with most abundant isotopologue) and abundance (Isotopologue ratio bias < 30\% )
 
@@ -89,7 +89,7 @@ When assessment is done mzRAPP will automatically switch to the <i>View NPP asse
 1. Non-targeted tool used: XCMS
 2. Select unaligned file(s): XCMS_unaligned_run2.csv
 3. Select aligned file: XCMS_aligned_run2.csv
-4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
+4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/JFcVukwxKBLSRsC))
 
 Afterwards assessment can be started by pressing the blue button on the bottom of the page.
 
@@ -108,7 +108,7 @@ Afterwards assessment can be started by pressing the blue button on the bottom o
 1. Non-targeted tool used: XCMS
 2. Select unaligned file(s): XCMS_unaligned_run3.csv
 3. Select aligned file: XCMS_aligned_run3.csv
-4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe))
+4. Select benchmark file: the exported benchmark as csv (if you did not process all 30 files or skipped the benchmark generation step please use the benchmark provided in [ucloud](https://ucloud.univie.ac.at/index.php/s/JFcVukwxKBLSRsC))
 
 Afterwards assessment can be started by pressing the blue button on the bottom of the page.
 

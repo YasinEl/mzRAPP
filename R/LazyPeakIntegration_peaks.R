@@ -526,6 +526,27 @@ find_bench_peaks <- function(files,
 
   Result[, iso_id := paste(round(mz_ex, 4), round(isoab, 2), sep = "_")]
 
+
+
+  #Remove Features if only observed in one sample (if more than one sample is present in benchmark)
+  if(length(unique(Result$FileName)) > 1){
+    Result <- Result[, feature_id := .GRP, by = c('molecule', 'adduct', 'isoab')]
+    Result[, ft_count := .N, by = .(feature_id)]
+    Result <- Result[ft_count > 1, !c("ft_count", "feature_id")]
+  }
+
+  #Remove molecules for which only one isotopologue is present
+  Result[, iso_count2 := .N, by =.(molecule, adduct, FileName)]
+  Result <- Result[iso_count2 > 1, !c("iso_count2")]
+
+  #Remove molecules if most abundant isotopologue is not present
+  Result[, maIso := any(isoab == "100"), by =.(molecule, adduct, FileName)]
+  Result <- Result[maIso == TRUE, !c("maIso")]
+
+
+
+
+
   Result$IDX <- seq.int(nrow(Result))
 
 
