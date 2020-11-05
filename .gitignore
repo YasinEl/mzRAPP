@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 *.csv
+*.Rmd
 RObject.rds
 inst/doc
 doc
