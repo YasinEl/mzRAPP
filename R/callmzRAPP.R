@@ -268,14 +268,14 @@ callmzRAPP <- function(){
                   shiny::column(6, offset = 1,
                          shiny::fluidRow(
                            shiny::column(1,
-                                  shinyWidgets::dropdownButton(shiny::br(""),
-                                                 tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                                                 circle = TRUE,
-                                                 width = 600,
-                                                 status = 'info',
-                                                 icon = shiny::icon('question-circle'),
-                                                 size = 'sm'
-                                  )
+                                  #shinyWidgets::dropdownButton(shiny::br(""),
+                                  #               tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                                  #               circle = TRUE,
+                                  #               width = 600,
+                                  #               status = 'info',
+                                  ##               icon = shiny::icon('question-circle'),
+                                   #              size = 'sm'
+                                  #)
                            )
                          ),
 
@@ -311,17 +311,17 @@ callmzRAPP <- function(){
                   ),
                   shiny::column(4,
                          shiny::fluidRow(
-                           shiny::column(1,
-                                  shinyWidgets::dropdownButton(
-                                    shiny::br('1'),
-                                    tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                                    circle = TRUE,
-                                    width = 600,
-                                    status = 'info',
-                                    icon = shiny::icon('question-circle'),
-                                    size = 'sm'
-                                  )
-                           )
+                        #  shiny::column(1,
+                        #         shinyWidgets::dropdownButton(
+                        #            shiny::br('1'),
+                        #            tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                        #            circle = TRUE,
+                        #            width = 600,
+                        #            status = 'info',
+                        #            icon = shiny::icon('question-circle'),
+                        #            size = 'sm'
+                        #          )
+                        #  )
                          ),
 
                          shiny::fluidRow(shiny::column(12,plotly::plotlyOutput('graph_area_bench_histo') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4))),
@@ -509,15 +509,15 @@ callmzRAPP <- function(){
          shiny::fluidRow(
            shiny::fluidRow(
                shiny::column(1, offset = 1,
-                             shinyWidgets::dropdownButton(
-                               shiny::br('1'),
-                               tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                               circle = TRUE,
-                               width = 600,
-                               status = 'info',
-                               icon = shiny::icon('question-circle'),
-                               size = 'sm'
-                             )
+                             #shinyWidgets::dropdownButton(
+                             #  shiny::br('1'),
+                            #   tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                            #   circle = TRUE,
+                            #   width = 600,
+                            #   status = 'info',
+                            #   icon = shiny::icon('question-circle'),
+                            #   size = 'sm'
+                            # )
                ),
                shiny::column(8,
                              shinyWidgets::prettySwitch(inputId = 'PP_al_switch_dist',
@@ -552,7 +552,7 @@ callmzRAPP <- function(){
                   shiny::column(10, offset = 1,
                          shiny::fluidRow(
                            shiny::column(1,
-                                  shinyWidgets::dropdownButton(shiny::br(""),
+                                  shinyWidgets::dropdownButton(shiny::br("Orange point refer to split peaks.\nPlotted NPP peak boundaries (after clicking on one of the points) refer to the peak picking step."),
                                                  tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
                                                  circle = TRUE,
                                                  width = 600,
@@ -617,7 +617,7 @@ callmzRAPP <- function(){
 
                        shiny::fluidRow(
                          shiny::column(1,
-                                shinyWidgets::dropdownButton('',
+                                shinyWidgets::dropdownButton(shiny::br('Please note that plotted NPP-integration boundries always correspond to boundaries from the peak picking step.\nInc.>20%p corresponds to isotopologue ratio biases which increased by more than 20 percentage points.\nInc.<20%p to IR which increased by less than 20%p. \nFeature Inc.>20%p means that the increase was <20%p at the peak picking step but increased then to >20%p after feature processing.'),
                                                tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
                                                circle = TRUE,
                                                status = 'info',
@@ -652,16 +652,16 @@ callmzRAPP <- function(){
                 shiny::fluidRow(
                   shiny::column(8, offset = 2,
                          shiny::fluidRow(
-                           shiny::column(1,
-                                  shinyWidgets::dropdownButton('',
-                                                 tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-                                                 circle = TRUE,
-                                                 status = 'info',
-                                                 icon = shiny::icon('question-circle'),
-                                                 size = 'sm',
-                                                 width = 600
-                                  ),
-                           ),
+                           #shiny::column(1,
+                           #       shinyWidgets::dropdownButton(shiny::br(""),
+                           #                      tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
+                           #                      circle = TRUE,
+                           #                      status = 'info',
+                           #                      icon = shiny::icon('question-circle'),
+                           #                      size = 'sm',
+                           #                      width = 600
+                           #       ),
+                           #),
                            shiny::column(2,
                                   shinyWidgets::prettySwitch(inputId = 'PP_al_switch_hm',
                                                label = 'after PeakPicking | Alignment',

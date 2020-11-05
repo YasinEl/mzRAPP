@@ -343,7 +343,7 @@ plot_IR_peaks  <- function(PC, plotly_key){
                                                      PC[isoab_b == 100, sample_name_b]),
                                               '<br>',
                                               '<sup>',
-                                              "Chromatogram plotted as extracted in benchmark. NPP borders reported from peak picking.",
+                                              "Chromatogram plotted as extracted in benchmark.",
                                               '</sup>')),
                    margin=list(t = 90))
 

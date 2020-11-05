@@ -74,7 +74,7 @@ do so before or after installing mzRAPP.
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
-devtools::install_github("YasinEl/mzRAPP", auth_token = "a68cf9e8dfef3eb4bd3974aca220f49ebf034309", dependencies = TRUE)
+devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE)
 ```
 
 Afterwards you can run mzRAPP using:
