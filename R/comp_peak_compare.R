@@ -108,8 +108,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
     stop('Columns not present in benchmark dataset: ', paste0(cols_not_found, sep = " - "))
   }
 
-  #UG table check
-  #ug_req_cols <- c('comp_id_ug', 'sample_id_ug', 'rt_start_ug', 'rt_end_ug', 'rt_ug', 'mz_ug', 'sample_name_ug', 'peak_area_ug', 'peak_height_ug')
   ug_req_cols <- c('comp_id_ug', 'sample_id_ug', 'rt_start_ug', 'rt_end_ug', 'rt_ug', 'mz_ug', 'sample_name_ug', 'peak_area_ug')
 
 
