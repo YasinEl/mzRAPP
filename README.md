@@ -52,7 +52,8 @@ isotopologues of those target molecules directly from mzML files. The
 resulting benchmark data set is used to extract different performance
 metrics for NPP performed on the same mzML files. An overview over
 mzRAPP capabilities is given in this \< 3 min [youtube
-video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be).
+video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be),
+which was formerly recorded for the Metabolomics2020 conference..
 
 ## Installation
 
