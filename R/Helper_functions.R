@@ -11,9 +11,6 @@ plotly_click_wo_warnings <- function(sc){
   options(warn = -1)
   event <- plotly::event_data("plotly_click", source = sc, priority = "event")
 
-
-  #options(warn = storeWarn)
-
   return(event)
 
 }

@@ -85,8 +85,6 @@ plot_Peak  <- function(PC, IndexNumber){
 plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
 
-  #if(is.null(nrow(PC_object[IDX == IndexNumber, molecule]))){return(NULL)}
-
   mol <- as.character(PC_object[IDX == IndexNumber, molecule])
 
 
@@ -96,9 +94,6 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
   add <- as.character(PC_object[IDX == IndexNumber, adduct])
 
   m0.grp <- as.character(PC_object[IDX == IndexNumber, peaks.M0.grp])
-
-  #return(paste0(nrow(PC_object[molecule == mol & FileName == fil & adduct == add & isoab == 100]), mol, add))
-
 
   IDXM0 <- as.character(PC_object[molecule == mol & FileName == fil & adduct == add & isoab == 100 & peaks.M0.grp == m0.grp][1]$IDX)
 
@@ -113,14 +108,12 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
   p <- ggplot() +
     geom_line(data = plot.table.MX, aes(x = rt, y = int), color = "black") +
     geom_point(data = plot.table.MX, aes(x = rt, y = int), color = "black") +
-    #geom_hline(yintercept = PC_object[IDX == IndexNumber, peaks.baseL], color = "blue") +
     geom_vline(xintercept = PC_object[IDX == IndexNumber, peaks.StartTime], color = "red") +
     geom_vline(xintercept = PC_object[IDX == IndexNumber, peaks.EndTime], color = "red") +
 
 
     geom_line(data = plot.table.M0, aes(x = rt, y = int), color = "grey") +
     geom_point(data = plot.table.M0, aes(x = rt, y = int), color = "grey") +
-    #geom_hline(yintercept = PC_object[IDX == IDXM0, peaks.baseL] * iso / 100, color = "grey") +
     geom_vline(xintercept = PC_object[IDX == IDXM0, peaks.StartTime], color = "grey") +
     geom_vline(xintercept = PC_object[IDX == IDXM0, peaks.EndTime], color = "grey") +
 
@@ -319,19 +312,9 @@ plot_IR_peaks  <- function(PC, plotly_key){
          title = paste0(PC[isoab_b == 100, molecule_b], " | ",
                         PC[isoab_b == 100, adduct_b], " | ",
                         PC[isoab_b == 100, sample_name_b])) +
-    #annotate("text",
-    #         x = min(plot.table_hi$rt) + (max(plot.table_hi$rt) - min(plot.table_hi$rt)) * 0.8,
-    #         y = max(plot.table_hi$int),
-    #         label = "Benchmark",
-    #         color="red") +
     geom_vline(xintercept = PC[isoab_b == 100, rt_start_ug], color = "blue", linetype='dashed') +
     geom_vline(xintercept = PC[isoab_b == 100, rt_end_ug], color = "blue", linetype='dashed') +
     facet_wrap(~lab)
-  #annotate("text",
-  #         x = min(plot.table_hi$rt) + (max(plot.table_hi$rt) - min(plot.table_hi$rt)) * 0.8,
-  #         y = 0.9*max(plot.table_hi$int),
-  #         label = "Non-targeted",
-  #         color="blue")
 
   p_li <- ggplot(plot.table_li, aes(x=rt, y=int)) +
     theme_classic() +
@@ -360,7 +343,7 @@ plot_IR_peaks  <- function(PC, plotly_key){
                                                      PC[isoab_b == 100, sample_name_b]),
                                               '<br>',
                                               '<sup>',
-                                              "Chromatogram plotted as extracted in benchmark.",
+                                              "Chromatogram plotted as extracted in benchmark. NPP borders reported from peak picking.",
                                               '</sup>')),
                    margin=list(t = 90))
 

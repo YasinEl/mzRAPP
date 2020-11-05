@@ -39,8 +39,6 @@ check_nonTargeted_input <- function(ug_table_path, g_table_path, options_table =
       g_table = NULL
     },
     'mzMine' = {
-      #import_tables <- import_ungrouped_mzmine(ug_table_path, options_table)
-      #print(import_tables)
       ug_table <-import_ungrouped_mzmine(ug_table_path, options_table)
       g_table <- import_grouped_mzmine(g_table_path, options_table)
     },

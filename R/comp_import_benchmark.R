@@ -61,7 +61,6 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
 
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(b_table, by=c('peak_area')))){
-    #fwrite(b_table[(duplicated(b_table, by=c('peak_area'))|duplicated(b_table, by=c('peak_area'), fromLast = TRUE))], 'dup_debug.csv')
     b_table <- b_table[!duplicated(b_table, by=c('peak_area', 'rt_b'))]
     warning('Duplicate peaks removed from raw benchmark file')
   }

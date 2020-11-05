@@ -34,7 +34,6 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
   main_peak <- dt[v == TRUE & l == max(dt[v == TRUE]$l)]$idx[1]
   IntSec1 <- NA
   IntSec2 <- NA
-  #print(dt)
   if(v[1] == FALSE & v[length(v)] == FALSE & length(v) > 1 | peak_borders == TRUE){
 
 
@@ -42,9 +41,6 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
       fs <- 1
       if(length(l) > 4 & peak_borders == TRUE){
-
-        #main_peak <- dt[v == TRUE & l == max(dt[v == TRUE]$l)]$idx[1]
-
 
         dt_before <- dt[idx < main_peak]
 
@@ -67,16 +63,10 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
       IntSec1 <- retistruct::line.line.intersection(P1, P2, P3, P4, interior.only = TRUE)
     } else {IntSec1 <- c(min(RT_vect))}
 
-    #print(paste0("IntSec1: ", IntSec1))
-
     if(peak_borders == FALSE | peak_borders == TRUE & v[length(v)] == FALSE){
-      #u <- sum(l) - l[length(l)] + 1
-
 
       fs <- length(l)
       if(length(l) > 4 & peak_borders == TRUE){
-
-        #main_peak <- dt[v == TRUE & l == max(dt[v == TRUE]$l)]$idx[1]
 
         dt_after <- dt[idx > main_peak]
 
@@ -96,8 +86,6 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
 
       IntSec2 <- retistruct::line.line.intersection(P1, P2, P3, P4, interior.only = TRUE)
     } else {IntSec2 <- c(max(RT_vect))}
-
-    #IntSec2[1] - IntSec1[1]
 
     if(return_diff == FALSE) { return(as.double(c(IntSec1[1], IntSec2[1]))) } else {
 

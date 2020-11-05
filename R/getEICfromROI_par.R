@@ -54,41 +54,6 @@ get_ROIs <-
 
     if(length(files[!file.exists(files)] > 0)) stop(paste0("It seems like some of your mzML files do not exist, cannot be accessed or contain spelling errors! Specificly:", files[!file.exists(files)]))
 
-
-
-#    if(dplyr::intersect(sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files), ))
-
-    #if(length(files) < 2){stop("Please provide more than 1 mzML file.")}
-
-    #if("user.rt" %in% colnames(Target.table)){
-
-    # filter_table <- Target.table
-
-    #  filter_table$mz <- round(filter_table$mz, 2)
-
-    #   filter_table$user.rt <- round(filter_table$user.rt, 0)
-
-    #  filter_table <- setorder(filter_table, "isoab")
-
-    #  filter_table$dpl_mz <- duplicated(filter_table, by = c("user.rt", "mz"))
-
-    #   checkk <<- filter_table
-
-    #  if(nrow(filter_table[dpl_mz == TRUE & isoab == 100]) > 0) {
-
-    #  warning(paste0("It seems like some of your target molecules are actually isotopologues of some of your other target molecules!
-    #                 In order to resolve this issue some target molecules(", length(unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule)),
-    #                 ")have been removed. Specificly: ",
-    #                 paste(unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule), collapse = ", ")))
-
-    #  Target.table <- Target.table[!(molecule %in% unique(filter_table[dpl_mz == TRUE & isoab == 100]$molecule))]
-
-    #  }
-    #
-    # }
-
-
-
     if(!is.character(Target.table$molecule)) {Target.table$molecule <- as.character(Target.table$molecule)}
 
     ##################################
@@ -140,15 +105,11 @@ get_ROIs <-
                                            dev = PrecisionMZtol * 1E-6,
                                            minCentroids = minCentroids,
                                            scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
-                                           #mzrange = c(Target.table.wk[molecule == molec]$mz_ex[1] - 10, Target.table.wk[molecule == molec]$mz_ex[1] + 10),
                                            prefilter = c(minCentroids,0),
                                            noise = 0)
             )})
 
           ROI.dt <- rbindlist(ROI.list)
-          #if(molec == "Glutathione, reduced"){
-          #roit <<- ROI.dt
-          #}
           ROI.dt[, roi_id := 1:nrow(ROI.dt)]
           ROI.dt <- ROI.dt[, `:=` (rtmin = xr@scantime[scmin],
                                    rtmax = xr@scantime[scmax],
@@ -170,23 +131,18 @@ get_ROIs <-
 
           if(nrow(mz.overlap) != 0){
 
-            #mol_tab <<- mz.overlap
-            #if(any(duplicated(mz.overlap, by = c("adduct", "roi_id")))){stop(paste("Some ROIs are matching to more than one of your mass traces. ",
-            #                                                                       "Please lower your mz accuracy/precision and/or check if you set the correct instrument resolution when generating your Target.table."))}
-
-
             ##################################
             #combine isolated ROIs if they were falling within the same the boundaries of the same expected EIC
             ##################################
             matches_summary <- mz.overlap[,.(eic_mzmin = as.double(min(mzmin)),
-                                             eic_mzmax = as.double(max(mzmax))),#,
+                                             eic_mzmax = as.double(max(mzmax))),
                                              #mz_acc = as.double(mean(mz)),
                                              #roi_rtmin = as.numeric(min(rtmin)),
                                              #roi_rtmax = as.numeric(max(rtmax)),
                                              #roi_scmin = min(scmin),
                                              #roi_scmax = max(scmax),
                                              #roi_int = sum(abs(intensity)),
-                                             #roi_count = .N),#,
+                                             #roi_count = .N),
                                           by=.(molecule, adduct, isoab, FileName)]
 
             ##################################

@@ -99,8 +99,6 @@ import_grouped_msdial <- function(file_path, options_dt){
   #Import text file
   #Make skip variable
 
-  #options(datatable.verbose = TRU)
-
   g_table <- fread(file_path, skip=4, integer64 = "double", verbose = FALSE)
 
 

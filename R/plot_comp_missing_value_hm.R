@@ -19,53 +19,8 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
 
   } else if(post_alignment == TRUE){
     hm_dt <- hm_dt[, missing_peaks := missing_peaks_g]
-    #dt <-  rbindlist(list(comparison_data$ff_table), fill = TRUE)
-    #feat_t <- melt_fftable(comparison_data)
-
-    #BM_bu <- rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
-
-    #BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
-
-    #feat_t <- feat_t[main_feature == TRUE]
-
-
-    #feat_t <- feat_t[!is.na(area_b) &
-    #                      main_feature == TRUE][unique(na.omit(BM_bu[,c("molecule_b",
-    #                                                                "isoab_b",
-    #                                                                "adduct_b",
-    #                                                                "sample_id_b",
-    #                                                                "peak_area_b")])), on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
-#
-
-
-
-    #test_feat <<- feat_t
- #   feat_t <-
- #     feat_t[, Connected := File_con_test(
- #       sample_id_b,
- #       feature_id_g),
- #       by = .(molecule_b, adduct_b)]
-
-
-    #feat_t <- feat_t[!is.na(area_b)]
-#    hm_dt <-
-#      feat_t[, missing_peaks := find_r_s_error(
-#        peak_area_b,
-#        area_g,
-#        peak_area_b,
-#        Connected
-#      ), by = .(molecule_b, adduct_b, isoab_b)]
-#    hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
-    #tmp <- unique(data.table(sample_id_b = as.factor(ev_return_list[["Matches_BM_NPPpeaks"]][["sample_id_b"]]),
-    #                         sample_name_b = ev_return_list[["Matches_BM_NPPpeaks"]][["sample_name_b"]]))
-    #hm_dt <- hm_dt[tmp, on = .(sample_id_b)]
-
 
   } else {stop("Argument post_alignment must be TRUE or FALSE!")}
-
-
-
-  #hm_dt <- hm_dt[, overgroup := paste0(molecule_b, adduct_b)]
 
   hm_dt <- hm_dt[, if (any(missing_peaks != 'F')) .SD, by = .(molecule_b, adduct_b, isoab_b)]
   if(nrow(hm_dt) == 0) {return(plotly::ggplotly(ggplot() + ggtitle("No missing peaks present")))}
@@ -76,7 +31,6 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
 
   hm_dt$ord <- as.integer(hm_dt$sample_id_b)
   hm_dt$sample_id_b <- as.integer(hm_dt$sample_id_b)
-#hm_dt_test <<- hm_dt
   hm_dt <- hm_dt[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "plot_group", "sample_id_b", "missing_peaks", "nr", "ord")]
 
   if(post_alignment == TRUE){
@@ -107,11 +61,6 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
     ) +
     theme_classic() +
     geom_tile() +
-    #scale_fill_manual(values=c(`F` = "forestgreen", `L` = "firebrick", `R` = "royalblue4", `S` ="mediumpurple1", `NC` = "orange")) +
-    #scale_fill_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
-    #scale_fill_discrete(labels=c(`F` = "Found", `R` = "High NA", `S` ="Low NA", `L` = "feature missing", `NC` = "not confirmable")) +
-    #scale_color_manual(values=c(`F` = "blue", `R` = "red", `S` ="goldenrod2", `L` = "lightpink2", `NC` = "grey76")) +
-    #scale_fill_manual(values=c(`Found` = "blue", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
     scale_fill_manual(values=c(`Found` = "#82e0aa", `High NA` = "red", `Low NA` ="goldenrod2", `feature missing` = "lightpink2", `not confirmable` = "grey76")) +
     ggtitle("Missing values") +
     labs(x = "benchmark features", y = "samples") +

@@ -46,7 +46,6 @@ feature_compare <- function(b_table, g_table){
   cf_table <- cf_table[, !c("min_mz_start_temp", "max_mz_end_temp", "min_rt_start_temp", "max_rt_end_temp")]
 
   cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
-  #cf_table$samples_to_compare <- sapply(split(cf_table, row(cf_table)),function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))}, simplify = FALSE)
 
   return(cf_table)
 }

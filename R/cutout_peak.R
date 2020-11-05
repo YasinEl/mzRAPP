@@ -31,9 +31,6 @@ cutout_peaks <-
     ##################################
     #limit peak-detection to specific rt-region
     ##################################
-    #if(is.na(l) | is.null(l)) l = 1
-    #if(is.na(r) | is.null(l)) l = length(int)
-
     vl <- length(int)
     int <- int[l:r]
     rt <- rt[l:r]
@@ -94,8 +91,6 @@ cutout_peaks <-
       l.peaks[l.peaks[, .(
         res.s = as.double(ifelse(unres.s == TRUE, 100 * int[s] / max(int[s:e]), NA)),
         res.e = as.double(ifelse(unres.e == TRUE, 100 * int[e] / max(int[s:e]), NA)),
-        #rt = rt[s + which.max(int[s:e]) - 1],
-        #rt.w = weighted.mean(rt[s:e], int[s:e]),
         rtmin = rt[s],
         rtmax = rt[e],
         baseL = min(int[s:e]) + (max(int[s:e]) - min(int[s:e])) * Integration_baseL_factor.

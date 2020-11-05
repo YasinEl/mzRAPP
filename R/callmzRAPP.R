@@ -491,20 +491,6 @@ callmzRAPP <- function(){
                 shiny::fluidRow(
                 shiny::downloadButton("report", "Generate report"), align="center"
                 ),
-         #       shiny::fluidRow(
-         #         # A static infoBox
-         #         #shinydashboard::infoBox("New Orders", 10 * 2, icon = shiny::icon("credit-card")),
-         #         # Dynamic infoBoxes
-         #         shiny::column(4,
-         #                plotly::plotlyOutput('sunburst_pp') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
-         #         ),
-         #         shiny::column(4,
-         #                plotly::plotlyOutput('sunburst_al') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
-         #         ),
-         #         shiny::column(4,
-         #                plotly::plotlyOutput('sunburst_ft') %>% shinycssloaders::withSpinner(color="#0dc5c1", type = 4)
-         #         )
-         #       ),
                 shiny::h4(paste("For more details please check the interactive plots below.")),
 
                 shiny::fluidRow(shiny::column(10, offset = 1, shiny::tags$hr(style="border-color: darkgray;"))),
@@ -708,19 +694,6 @@ callmzRAPP <- function(){
                 ),
                 shiny::br(),
 
-   #             shiny::fluidRow(
-   #               shiny::column(4),
-   #               shiny::column(1, shinyWidgets::dropdownButton('',
-   #                                        tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
-   #                                        circle = TRUE,
-   #                                        status = 'info',
-   #                                        icon = shiny::icon('question-circle'),
-   #                                        size = 'sm',
-   #                                        width = 600
-   #               ))
-#
- #               ),
-
          shiny::fluidRow(
            shiny::column(10, offset = 1,
                          shiny::column(6, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:375px"),
@@ -728,12 +701,12 @@ callmzRAPP <- function(){
                          )
          ),
 
-shiny::br(),
+
+         shiny::br(),
 
 
 
                 shiny::fluidRow(
-                  #shiny::column(3, offset = 1, shiny::tableOutput('error_count'), style="overflow-y:scroll; height:464px"),
                   shiny::column(10, offset = 1,
 
                          shiny::fluidRow(
@@ -773,7 +746,7 @@ shiny::br(),
     comparison_data <- reactiveVal(NULL)
 
 
-    ##File Filters for choice cialogues
+    ##File Filters for choice dialogues
     mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
     csv_filter <- matrix(c('Files (*.csv, *.txt, *.Rda)', '*.csv;*.txt;*.Rda'), nrow = 1, ncol = 2)
 
@@ -1024,22 +997,6 @@ shiny::br(),
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
-                  #     if(any(duplicated(PCbp[, c("molecule", "isoab", "adduct", "FileName")]))){
-                  #       warning("Duplicated peaks present")
-                  #       fwrite(PCbp, "pcbp.csv")
-                  #       #####################################################
-                  #       incProgress(10/15, detail = "aligning peaks over samples...")
-                  #       print('Start peak alignment')
-#
-##                         PCal <- align_PC(PCbp[Iso_count > 1],
- #                                         add = "main_adduct",
- #                                         plan = input$plan_input,
- #                                         pick_best = "rt_match"
- #                        )
-#
-#                       } else {
-                        # PCal <- PCbp
-#                       }
                        #####################################################
                        fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
                        message(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
@@ -1144,49 +1101,6 @@ shiny::br(),
       }
     })
 
-    #Benchmark heatmap plot
-    #observeEvent({benchmark_data()}, {
-    #  benchmark_data <- isolate(benchmark_data())
-    #  if(!is.null(benchmark_data)){
-    #    plot_and_text <- plot_bench_heatmap(benchmark_data)
-    #    output$graph_area_bench_hm <- plotly::renderPlotly(plot_and_text$p)
-    #    output$results_text_b <- renderText(plot_and_text$t)
-    #  }
-    #})
-
-
-    #Benchmark peak overview plot
-    #observeEvent(benchmark_data(),{
-    #  benchmark_data<-isolate(benchmark_data())
-    #  if(!is.null(benchmark_data)){
-    #    benchmark_data <- benchmark_data$PCal
-    #    updateSelectInput(session, 'mol', choices = as.character(unique(benchmark_data$molecule)), selected = as.character(unique(benchmark_data$molecule)[1]))
-    #  }
-    #})
-    #observeEvent(input$mol, {
-    #  benchmark_data<-isolate(benchmark_data())
-    #  if(!is.null(benchmark_data)){
-    #    benchmark_data <- benchmark_data$PCal
-    #    updateSelectInput(session, 'add', choices = unique(benchmark_data[molecule == input$mol]$adduct))
-    #  }
-    #})
-
-    #observeEvent({input$mol; input$add}, {
-    #  benchmark_data<-isolate(benchmark_data())
-    #  if(!is.null(benchmark_data)){
-    #    benchmark_data <- benchmark_data$PCal
-    #    updateSelectInput(session, 'ia', choices = sort(round_woe(unique(benchmark_data[molecule == input$mol & adduct == input$add]$isoab), 2), decreasing = TRUE))
-    #  }
-    #})
-
-    #observeEvent({benchmark_data(); input$mol; input$add; input$ia}, {
-    #  benchmark_data<-isolate(benchmark_data())
-    #  if(!is.null(benchmark_data)){
-    #    output$graph_area_bench_peak_overview <- plotly::renderPlotly(plot_bench_peak_overview(benchmark_data, input$mol, input$add, input$ia)%>%
-    #                                                                    plotly::event_register('plotly_click'))
-    #  }
-    #})
-
 
     observeEvent({plotly_click_wo_warnings(sc = "bench_scatter")}, {
 
@@ -1243,8 +1157,6 @@ shiny::br(),
         #####################
         comparison_ug_g <- compare_peaks(b_table, ug_table, g_table, input$algorithm_input)
         comparison_data(comparison_ug_g)
-
-        #comp_data <<- comparison_ug_g
 
         endtime <- Sys.time()
         proc.time <- diff(c(starttime, endtime))
@@ -1377,7 +1289,6 @@ shiny::br(),
       comparison_data <- comparison_data()
       CE_plot <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
       event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
-      #print(event.data)
       showModal(modalDialog(
         plotly::renderPlotly({
           plot_IR_peaks(CE_plot, plotly_key = event.data$key)
@@ -1431,8 +1342,6 @@ shiny::br(),
                                             " (",
                                             top_to_x(round_woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][4], 1)), " - ",
                                             round_woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["CI"]][5], 1),
-                                            #round_woe(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]] /
-                                            # (result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]] + result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_below20pp"]]) *100,1),
                                             "%)"
                                  ))), color = "navy", fill = TRUE)
         })
@@ -1499,13 +1408,9 @@ shiny::br(),
     })
     #Alignment table
     observeEvent(comparison_data(), {
-      #comparison_data <- isolate(comparison_data())
       if(!is.null(comparison_data())){
         output$error_count <- renderTable(comparison_data()$AlignmentErrors_per_moleculeAndAdduct[Min.errors > 0 | Lost_b.A > 0 | BM.div > 0])
       }
-      #delay(expr =({
-      #  options(warn = storeWarn)
-      #}) ,ms = 100)
     })
 
 

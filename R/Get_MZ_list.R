@@ -29,7 +29,6 @@ Get_MZ_list <- function(l.peaks, raw_data, CompCol_xic, EIC.dt){
     suppressWarnings(
       raw_data_lim1 <- raw_data_lim %>%
         xcms::filterRt(rt = unlist(unname(l.peaks[nc, c("StartTime", "EndTime")]))) #%>%
-      #filterMz(mz = c(CompCol_xic[i]$eic_mzmin - 0.0001, CompCol_xic[i]$eic_mzmax + 0.0001))
     )
 
     suppressWarnings(

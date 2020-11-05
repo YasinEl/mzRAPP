@@ -136,7 +136,6 @@ import_grouped_mzmine <- function(file_path, options_table){
 
 
   #Add feature_id for each row
-  #g_table$feature_id <- seq.int(nrow(g_table))
   g_table[, feature_id := seq.int(nrow(g_table))]
 
 

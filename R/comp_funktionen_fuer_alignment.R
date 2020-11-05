@@ -73,96 +73,47 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "both"){
     if(length(DT) < 3 | is.na(main_UTgroups[[1]][1])){return(c(errors = 0L, Lost_b.A = lba_e, diff_BM = 0L))}
 
     #going through isotopologues which are necessary to cover all samples!
-  error_list <- lapply(main_UTgroups[[1]], function(x) {
 
+    error_list <- lapply(main_UTgroups[[1]], function(x) {
     entrustedGrp <- main_UTgroups[[2]][x] #isotopologue for this round
-#print(paste0("entrustedGrp: ", entrustedGrp))
     DTsub <- DT[DT[[entrustedGrp]] == main_UTgroups[[3]][x]] #samples for which this isotopologues can be used
-    #print(paste0("DT_sub: "))
-    #print(DTsub)
     if(x>1){
-
       for(i in seq(x-1)){
-
         already_testedGrp <- main_UTgroups[[2]][i]
-        #print(paste0("alreadyTestedGRP: ", already_testedGrp))
-
         DTsub <- DTsub[DTsub[[already_testedGrp]] != main_UTgroups[[3]][i]]
-
       }
-
     }
-    #print(paste0("DT_sub: "))
-    #print(DTsub)
 
     DT <- DT[DT[[entrustedGrp]] == main_UTgroups[[3]][x]]
-    #print(paste0("DT: "))
-    #print(DT)
-
     isos_to_test <- list(seq(length(DTsub[, !c("sample_id_b", ..entrustedGrp)])), #all isotopologues which should now be checked via the one used in this round
                          colnames(DTsub[, !c("sample_id_b", ..entrustedGrp)]))
 
-    #print("Isos to test:")
-#print(isos_to_test)
 
     errors <- lapply(isos_to_test[[1]], function(y){
 
       iso_to_test <- isos_to_test[[2]][y] #iso checked in this round
 
-
-      #print("Iso to test:")
-      #print(iso_to_test)
-
-
       yDTsub <- unname(unlist(DTsub[, ..iso_to_test]))
       yDTall <- unname(unlist(DT[, ..iso_to_test]))
-      #print(paste0("ydtsub: "))
-      #print(yDTsub)
-      #print(paste0("ydtall: "))
-      #print(yDTall)
       best_UTgrp <- names(which.max(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA, "")])))
-
-      #print("Best table: ")
-      #print(table(yDTall[!yDTall %in% c("Lost_b.PP", "Lost_b.A", NA, "")]))
-      #print(best_UTgrp)
 
       if(!is.null(best_UTgrp)){
 
         alignment_splits_vector.all <- !yDTall %in% best_UTgrp
         alignment_splits_vector.sub <- !yDTsub %in% best_UTgrp
 
-        #print(alignment_splits_vector.all)
-        #print(alignment_splits_vector.all)
-
         if(length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "FALSE"]) > 0 &
            length(as.character(alignment_splits_vector.all)[as.character(alignment_splits_vector.all) == "TRUE"]) > 0){
 
           problematic_joins <- yDTsub[alignment_splits_vector.sub][!yDTsub[alignment_splits_vector.sub] %in% c("Lost_b.A", "Lost_b.PP", NA, "")]
-#print(paste0("problematic joins: "))
-#print(problematic_joins)
-
-#print("end of Iso to test succ:")
-#print(iso_to_test)
           return(length(problematic_joins))
-
-
         }
       }
-
-     # print("Iso to testto test unsuc:")
-    #  print(iso_to_test)
     })
 
     errors <- unlist(errors)
-
-
   })
 
- # lba <- as.data.table(table(unlist(DT)))
- # if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
- #   lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
-#  } else {lba_e <- 0L}
-#
   if(method == "self-critical"){
     return(c(errors = as.integer(sum(unlist(error_list))), Lost_b.A = as.integer(sum(lba_e)), diff_BM = as.integer(NA)))
   }

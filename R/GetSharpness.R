@@ -1,5 +1,9 @@
 #' GetSharpness
 #'
+#' As described in:
+#' Zhang,W. and Zhao,P.X. (2014) Quality evaluation of extracted ion chromatograms and chromatographic peaks in
+#' liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics, 15, 1–13.
+#'
 #' @param int int
 #'
 #'

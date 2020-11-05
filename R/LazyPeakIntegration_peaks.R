@@ -172,7 +172,6 @@ find_bench_peaks <- function(files,
                       missing = 0,
                       msLevel = 1L,
                       aggregationFun = "max"#,
-                      #BPPARAM = SnowParam(detectCores()-1)
                     ))
 
 
@@ -320,7 +319,6 @@ find_bench_peaks <- function(files,
                                 which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
                               }),
                               M0.grp = M0_peaks$peaks.M0.grp, #ifelse(iso.run == "LAisos", paste0(M0_peaks$peaks.M0.grp), NA),
-                              #main_adduct.grp = NA, #ifelse(iso.run == "MAiso", M0_peaks$peaks.main_adduct.grp, NA),
                               MoreArgs = list(
                                 int = EIC.dt[!is.na(int_wo_spikes)]$int,
                                 rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
@@ -376,11 +374,6 @@ find_bench_peaks <- function(files,
                                    Integration_baseL_factor_set,
                                    peak_borders = TRUE
                                  )[2]), by = .(idx)], on = .(idx)]
-
-
-                              #l.peaks[, StartTime := ifelse(is.na(StartTime), as.double(rtmin), as.double(StartTime))]
-                              #l.peaks[, EndTime := ifelse(is.na(EndTime), as.double(rtmax), as.double(EndTime))]
-
 
                               l.peaks <- l.peaks[!is.na(StartTime) & !is.na(EndTime)]
 
@@ -465,12 +458,7 @@ find_bench_peaks <- function(files,
 
   #get rid of double cross isos
   Result <- clean_peak_assignments(Result)
-
-
-  #Result <- Result[peaks.FW50M > 1.5 * peaks.data_rate]
-
   Result$IDX <- seq.int(nrow(Result))
-
   Result <- predict_Iso(Result,
                         "FileName",
                         c("molecule", "adduct", "peaks.M0.grp"),
@@ -488,9 +476,6 @@ find_bench_peaks <- function(files,
            on = .(molecule, adduct, FileName, peaks.M0.grp)]
 
   Result <- Result[Iso_count >= Min.iso.count]
-
-
-
 
 
 

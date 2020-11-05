@@ -7,7 +7,7 @@
 #' @keywords internal
 import_ungrouped_xcms <- function(file, options_dt){
 
-  message('Starting xcms unlaigned import')
+  message('Starting xcms unaligned import')
 
   if(is.null(file)){
     stop('No ungrouped file selected')

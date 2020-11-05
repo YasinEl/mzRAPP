@@ -5,7 +5,7 @@
 #'
 #' @keywords internal
 import_options <- function (file_path) {
-  #print(file_path)
+
   if(is.null(file_path)){
     stop('No options file selected')
   }
@@ -21,8 +21,9 @@ import_options <- function (file_path) {
 }
 
 
-#Renames the columns of dt by replacing all names defined in vector old_columns by vector new_columns
 #' rename_columns_from_options
+#'
+#' Renames the columns of dt by replacing all names defined in vector old_columns by vector new_columns
 #'
 #' @param dt dt
 #' @param options_table options_table
@@ -50,7 +51,6 @@ remove_identical_peaks <- function(dt, grouped = FALSE){
   if (grouped == FALSE){
     dt <- dt[!duplicated(dt, by=c('peak_area', 'peak_height', 'mz', 'mz_start', 'mz_end', 'rt', 'rt_start', 'rt_end'))]
   } else {
-    #print( dt[duplicated(dt, by=c('peak_area', 'mz', 'rt')) | duplicated(dt, by=c('peak_area', 'mz', 'rt'), fromLast = TRUE)])
     dt <- dt[!duplicated(dt, by=c('peak_area', 'mz', 'rt'))]
   }
   peaks_removed <- peaks_before-nrow(dt)

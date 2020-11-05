@@ -59,8 +59,6 @@ get_mz_table <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_metho
   wrong_adducts <- setdiff(unique(DT$adduct_c), adducts$Name)
   if(length(wrong_adducts) > 0){stop(paste0("Some of your adducts are not valid: ", wrong_adducts, " Please only use adducts enabled in the envipat package. namely: ", adducts$Name))}
 
-
-
   #data("resolution_list", envir = environment())
   #df <- resolution_list$`OTFusion,QExactiveHF_120000@200`
 

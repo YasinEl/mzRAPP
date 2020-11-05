@@ -22,9 +22,6 @@ generate_options <- function(raw_b_table, algo){
                                                  'ug_columns' = c('maxo', 'into', 'sample', 'rtmin', 'rtmax', 'rt', 'mz', 'mzmin', 'mzmax')),
                           all.x = TRUE, by=c('internal_columns'))
       #Add g columns
-#      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt_start', 'rt_end', 'rt', 'mz'),
-#                                                 'g_columns' = c('rtmin', 'rtmax', 'rt', 'mz')),
-#                          all.x = TRUE, by=c('internal_columns'))
             columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
                                                        'g_columns' = c('rt', 'mz')),
                                 all.x = TRUE, by=c('internal_columns'))
@@ -40,9 +37,6 @@ generate_options <- function(raw_b_table, algo){
                                              'ug_columns' = c('Apex Intensity', 'Area', 'Study File ID', 'Left RT [min]', 'Right RT [min]', 'Apex RT [min]', 'Apex mz')),
                       all.x = TRUE, by=c('internal_columns'))
   #Add g columns
-  #      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt_start', 'rt_end', 'rt', 'mz'),
-  #                                                 'g_columns' = c('rtmin', 'rtmax', 'rt', 'mz')),
-  #                          all.x = TRUE, by=c('internal_columns'))
   columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
                                              'g_columns' = c('rt', 'mz')),
                       all.x = TRUE, by=c('internal_columns'))

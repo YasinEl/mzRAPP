@@ -38,9 +38,7 @@ predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, isoab_co
   if(flag_extremes == TRUE){
 
     Output$isoab_ol <- TRUE
-    #Output[abs(ErrorRel_A) < 20 | (abs(ErrorRel_A) < 35 & abs(ErrorRel_H - ErrorRel_A) < 20) | isoab == 100]$isoab_ol <- FALSE
     Output[(abs(ErrorRel_A) < 35 & abs(ErrorRel_H - ErrorRel_A) < 30) | isoab == 100]$isoab_ol <- FALSE
-    #Output[abs(ErrorRel_A) < 35 | isoab == 100]$isoab_ol <- FALSE
 
   }
   Output

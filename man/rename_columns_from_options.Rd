@@ -16,6 +16,6 @@ rename_columns_from_options(dt, options_dt, old_columns, new_columns)
 \item{old_column}{old_column}
 }
 \description{
-rename_columns_from_options
+Renames the columns of dt by replacing all names defined in vector old_columns by vector new_columns
 }
 \keyword{internal}

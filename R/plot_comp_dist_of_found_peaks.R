@@ -118,11 +118,13 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
       df_bin <- df_bin[order(rank(var))]
       df_bin$var <- round(unlist(lapply(unique(df_bin_vct), function(x){return(c(round(x,5),round(x,5)))})),5)
     # Get "no" share within each bin
-    df_sum <- df_bin %>%
+
+      df_sum <- df_bin %>%
       group_by(var) %>%
       summarize(no_pct = 100 * sum(n * (f_nf_col == "TRUE")) / sum(n))
 
-    t <- plotly::ggplotly(
+
+      t <- plotly::ggplotly(
       ggplot() +
         geom_col(data = df_bin, aes(var, n, fill = f_nf_col),
                  position = position_dodge(preserve = "single"),

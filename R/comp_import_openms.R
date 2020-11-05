@@ -20,11 +20,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
 
 
   doFuture::registerDoFuture()
-  #for(zeit in c("multiprocess", "sequential")){
-
   future::plan("sequential")
-  #future::plan(list("sequential", "multiprocess"))
-  #future::plan(multiprocess(workers = 40))
 
   t <- Sys.time()
   `%dopar%` <- foreach::`%dopar%`
@@ -39,8 +35,6 @@ import_ungrouped_openms <- function(file_list, options_dt){
                   file_name <- tools::file_path_sans_ext(basename(file_path))
 
               #Check if ug_table exists, if not: create
-              #ug_table <- fread(file_path, integer64 = "numeric", fill = TRUE, comment.char = "")
-
 
                     cols <- max(count.fields(file_path, sep = ","))
 
@@ -67,62 +61,6 @@ import_ungrouped_openms <- function(file_list, options_dt){
 
   ug_table <- rbindlist(Output, fill = TRUE, use.names = TRUE)
 
-  #}
-
-  #Add files to ut dt if name is in options ug_samples
-#  for (i in 1:length(file_list)){
-#    file_path <- file_list[i]
-#    file_name <- tools::file_path_sans_ext(basename(file_path))
-
-    #Check if ug_table exists, if not: create
-#    if(!exists("ug_table")){
-      #ug_table <- fread(file_path, integer64 = "numeric", fill = TRUE, comment.char = "")
-
-
-#      cols <- max(count.fields(file_path, sep = ","))
-
-#      suppressWarnings(
-#      ug_table <- read.table(file_path,
-#                   col.names = paste("V", seq(cols)),
-#                   fill = TRUE,
-#                   sep = ",",
-#                   comment.char = "",
-##                   row.names = NULL,
- #                  colClasses = "character")
- #     )
-
-#      ug_table <- as.data.table(ug_table)
-#      colnames(ug_table)[1:2] <- c("V.1", "rpl")
-#      if(!("#FEATURE" %in% unlist(ug_table[,"V.1"]))) {stop(paste("There is no information on FEATURES in " , file_path))}
-#      ug_table <- ug_table[V.1 == "#FEATURE" | V.1 == "FEATURE"]
-#      ug_table <- ug_table[,1:length(as.character(ug_table[1,])[as.character(ug_table[1,]) != ""])]
-#      colnames(ug_table) <- as.character(unlist(unname(ug_table[V.1 == "#FEATURE"])))
-#      ug_table <- ug_table[!1 ,!1]
-#      ug_table <- ug_table[, sample_name := file_name]
-#    } else if (exists("ug_table")){
-      #temp_data <- fread(file_path, integer64 = "numeric", fill = TRUE, comment.char = "")
-
-#      cols <- max(count.fields(file_path, sep = ","))
-#      suppressWarnings(
-#      temp_data <- read.table(file_path,
-##                             col.names = paste("V", seq(cols)),
- #                            fill = TRUE,
- #                            sep = ",",
- #                            comment.char = "",
- #                            row.names = NULL,
-#                             colClasses = "character")
-#      )
-#      colnames(temp_data)[1:2] <- c("V.1", "rpl")
-##      temp_data <- as.data.table(temp_data)
- #     if(!("#FEATURE" %in% unlist(temp_data[,"V.1"]))) {stop(paste("There is no information on FEATURES in " , file_path))}
- #     temp_data <- temp_data[V.1 == "#FEATURE" | V.1 == "FEATURE"]
-#      temp_data <- temp_data[,1:length(as.character(temp_data[1,])[as.character(temp_data[1,]) != ""])]
-#      colnames(temp_data) <- as.character(unname(unlist(temp_data[V.1 == "#FEATURE"])))
- ##     temp_data <- temp_data[!1 ,!1]
- #     temp_data <- temp_data[, sample_name := file_name]
- #     ug_table <- rbind(ug_table, temp_data)
- #   }
- # }
 
   #Check if all columns defined in optionsframe are present
   ug_req_cols <- na.omit(options_dt$ug_columns)
@@ -138,11 +76,6 @@ import_ungrouped_openms <- function(file_list, options_dt){
   ug_table <- ug_table[options_dt, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
 
   #convert factors to numeric
-  #ug_table <- ug_table[, 'peak_area' := as.numeric(levels(peak_area))[peak_area]]
-  #ug_table <- ug_table[, 'mz' := as.numeric(levels(mz))[mz]]
-  #ug_table <- ug_table[, 'rt' := as.numeric(levels(rt))[rt]]
-  #ug_table <- ug_table[, 'rt_start' := as.numeric(levels(rt_start))[rt_start]]
-  #ug_table <- ug_table[, 'rt_end' := as.numeric(levels(rt_end))[rt_end]]
   ug_table <- ug_table[, 'peak_area' := as.numeric(peak_area)]
   ug_table <- ug_table[, 'mz' := as.numeric(mz)]
   ug_table <- ug_table[, 'rt' := as.numeric(rt)]
@@ -235,7 +168,6 @@ import_grouped_openms <- function(file_path, options_table){
 
 
   #Add feature_id for each row
-  #g_table$feature_id <- seq.int(nrow(g_table))
   g_table[, feature_id := seq.int(nrow(g_table))]
 
   #transforming table from wide to long format, creating 1 peak-per-row format
