@@ -53,7 +53,7 @@ resulting benchmark data set is used to extract different performance
 metrics for NPP performed on the same mzML files. An overview over
 mzRAPP capabilities is given in this \< 3 min [youtube
 video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be),
-which was formerly recorded for the Metabolomics2020 conference..
+which was formerly recorded for the Metabolomics2020 conference.
 
 ## Installation
 
@@ -513,18 +513,17 @@ unaligned/aligned NPP results vs all peaks present in benchmark (as
 shown in figure 2). For explanations on how the matching of benchmark
 peaks with non-targeted peaks is performed please read the section
 “Matching of benchmark peaks with NT peaks before alignment”
-above.<br> <br> <b>What can be taken from that:</b><br> This allows to
-draw conclusions on the percentage of peaks found/not found via
-non-targeted data pre-processing before and after peak picking and after
-feature processing. It is worth noting that peaks not detected during
-peak detection might be added via fill-gaps algorithms or alignment of
-split peaks (or other peaks). Peaks which detected during peak detection
-but not recovered after feature processing could be explained by
-alignment errors (would be visible in the number of alignment errors or
-peaks lost during alignment which is detailed below). <br> <br>
-<b>Displayed in results as:</b> <br> <i>Number of benchmark peaks with
-at least one NPP match / Number of benchmark peaks (confidence
-interval)</i>
+above.<br> <br> <b>Interpretation:</b><br> This allows to draw
+conclusions on the percentage of peaks found/not found via non-targeted
+data pre-processing before and after peak picking and after feature
+processing. It is worth noting that peaks not detected during peak
+detection might be added via fill-gaps algorithms or alignment of split
+peaks (or other peaks). Peaks which detected during peak detection but
+not recovered after feature processing could be explained by alignment
+errors (would be visible in the number of alignment errors or peaks lost
+during alignment which is detailed below). <br> <br> <b>Displayed in
+results as:</b> <br> <i>Number of benchmark peaks with at least one NPP
+match / Number of benchmark peaks (confidence interval)</i>
 
 <div class="figure">
 
@@ -543,14 +542,14 @@ interval)</i>
 The number of split peaks which have been found for all benchmark peaks.
 For a graphical explanation of a split peak please check figure 1a. It
 is worth noting that there can be more than one split peak per benchmark
-peak. <br> <br> <b>What can be taken from that:</b><br> Split peaks
-account for peaks with very poorly set integration boundaries. A high
-number of split peaks can inherit problems to the alignment process as
-well as produce a high number of artificial noise features. <br> <br>
-<b>Displayed in results as:</b><br> <i>Number of split peaks found over
-all benchmark peaks / (Number of benchmark peaks with at least one NPP
-match + Number of split peaks found over all benchmark peaks)
-(confidence interval)</i> <br>
+peak. <br> <br> <b>Interpretation:</b><br> Split peaks account for peaks
+with very poorly set integration boundaries. A high number of split
+peaks can inherit problems to the alignment process as well as produce a
+high number of artificial noise features. <br> <br> <b>Displayed in
+results as:</b><br> <i>Number of split peaks found over all benchmark
+peaks / (Number of benchmark peaks with at least one NPP match + Number
+of split peaks found over all benchmark peaks) (confidence interval)</i>
+<br>
 
 <span id="Missing_values"> </span>
 
@@ -569,17 +568,17 @@ higher than the lowest benchmark peak found via the non-targeted
 approach are considered high. Otherwise they are considered as low.
 Additionally, if no peak has been found over the whole benchmark feature
 all corresponding peaks will be classified as lost peaks <br> <br>
-<b>What can be taken from that:</b><br> It is important to know if
-missing values are generally due to low peaks or if there is high risk
-that a higher peaks has been missed. This is especially true when
-missing value imputation methods are used which are often based on one
-of those assumptions. A high number of high missing peaks at the peak
-picking step is common in features in which a majority of peaks express
-a poor signal to noise ratio. After alignment this can also be explained
-by problems in the peak alignment (would be visible in the number of
-alignment errors as detailed below). <br> <br> <b>Displayed in results
-as:</b><br> <i>Number of high missing values / (Number of high missing
-values + Number of low missing values) (confidence interval)</i>
+<b>Interpretation:</b><br> It is important to know if missing values are
+generally due to low peaks or if there is high risk that a higher peaks
+has been missed. This is especially true when missing value imputation
+methods are used which are often based on one of those assumptions. A
+high number of high missing peaks at the peak picking step is common in
+features in which a majority of peaks express a poor signal to noise
+ratio. After alignment this can also be explained by problems in the
+peak alignment (would be visible in the number of alignment errors as
+detailed below). <br> <br> <b>Displayed in results as:</b><br> <i>Number
+of high missing values / (Number of high missing values + Number of low
+missing values) (confidence interval)</i>
 
 <div class="figure">
 
@@ -601,20 +600,20 @@ Isotopologue abundance rations (IR) are calculated relative to the
 highest isotopologue of each molecule. If the relative bias of an IR
 bias calculated using NPP-abundances is exceeding the tolerance
 (outlined in figure 4) it is reflected in this variable. <br> <br>
-<b>What can be taken from that:</b><br> IR are used to make a judgment
-on the quality of reported peak abundances. Since IRs can be predicted
-from molecular formulas and are confirmed during the benchmark dataset
-generation they can be considered as reliable reference point for
-non-targeted data pre-processing assessment. A high number of
-degenerated IR at the peak detection step could be explained by problems
-in setting integration boundaries or by problems in the extraction of
-chromatograms (e.g. to wide or to narrow binning of mz-values). After
-the feature processing step it could also be explained by alignment
-errors (would be visible in the number of alignment errors as detailed
-below) or problems in the fill-gaps process.<br> <br> <b>Displayed in
-results as:</b><br> <i>Number of isotopologue ratio exceeding tolerance
-/ Number of isotopologue ratios which can be calculated using reported
-NPP abundances (confidence interval)</i>
+<b>Interpretation:</b><br> IR are used to make a judgment on the quality
+of reported peak abundances. Since IRs can be predicted from molecular
+formulas and are confirmed during the benchmark dataset generation they
+can be considered as reliable reference point for non-targeted data
+pre-processing assessment. A high number of degenerated IR at the peak
+detection step could be explained by problems in setting integration
+boundaries or by problems in the extraction of chromatograms (e.g. to
+wide or to narrow binning of mz-values). After the feature processing
+step it could also be explained by alignment errors (would be visible in
+the number of alignment errors as detailed below) or problems in the
+fill-gaps process.<br> <br> <b>Displayed in results as:</b><br>
+<i>Number of isotopologue ratio exceeding tolerance / Number of
+isotopologue ratios which can be calculated using reported NPP
+abundances (confidence interval)</i>
 
 <div class="figure">
 
@@ -643,16 +642,15 @@ correct alignment of the benchmark data set. Finally lost peaks
 correspond to the peaks which have been matched from the peak detection
 step but which are not present anymore after the alignment step. All
 those counts are given in the output of the NPP-assessment. <br> <br>
-<b>What can be taken from that:</b><br> High number of alignment errors
-can be partly due to a high number of split peaks (discussed above) or
-too wide/narrow search width in mz or RT dimension by the non-targeted
-algorithm. Lost peaks can occur when aligned features with which are
-populated in too view samples are removed by the non-targeted algorithm
-or when peak areas are adapted in the feature processing step. If this
-adaptation is intended by an algorithm the lost peak-metric is not
-reliable anymore. <br> <br> <b>Displayed in results as:</b><br>
-<i>Number of one of three error-types / Number of benchmark peaks for
-which an NPP-match has been found (confidence interval)</i>
+<b>Interpretation:</b><br> High number of alignment errors can be partly
+due to a high number of split peaks (discussed above) or too wide/narrow
+search width in mz or RT dimension by the non-targeted algorithm. Lost
+peaks can often be attributed to NPP alignment settings which delete
+features if they are not populated by enough peaks or when peak areas
+are adapted in the feature processing step. <br> <br> <b>Displayed in
+results as:</b><br> <i>Number of one of three error-types / Number of
+benchmark peaks for which an NPP-match has been found (confidence
+interval)</i>
 
 <div class="figure">
 
