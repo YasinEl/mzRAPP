@@ -124,7 +124,9 @@ to mzML as well as centroiding can be done by Proteowizards
 
 ### Select sample-group file
 
-This csv file should contain two columns:
+This csv file ([click here for an
+example](https://ucloud.univie.ac.at/index.php/s/DSXWBACtFk41f9u))
+should contain two columns:
 
 <b>sample\_name:</b> names of all mzML files from which peaks should be
 extracted (with our without file extension (.mzML)) <br>
@@ -137,7 +139,9 @@ needs to be filled out. <br> <br>
 ### Select target file
 
 This csv file should contain information on the target molecules/peaks
-and include the following columns:
+([click here for an
+example](https://ucloud.univie.ac.at/index.php/s/NW4fGXpSeuIBVvc)) and
+include the following columns:
 
 <b>molecule:</b> names of target molecules (should be unique
 identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
@@ -170,25 +174,26 @@ adducts$Name
 
 <b>main\_adduct:</b> One main adduct has to be defined for each molecule
 (e.g. M+H). If the main\_adduct is not detected also other adducts wont
-be accepted. <br> <b>SumForm\_c:</b> Molecular composition of the
-neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
-0 behind an element like behind the N in C12H8N0S2. <br>
-<b>user.rtmin:</b> Start time of peak (seconds). If possible mzRAPP will
-narrow peak boundaries to intersect with the extracted ion chromatogram
-at 5% of the maximum peak height. It is also worth noting that peaks for
-which user.rtmin/user.rtmax are provided will still be rejected if the
-isotopic information is not fitting. <br> <b>user.rtmax:</b> End time of
-peak (seconds). <br> <b>StartTime.EIC:</b> (optional) Start time for
-chromatograms extracted for this molecule (seconds). Peaks are only
-detected from this time on. If not given StartTime.EIC and EndTime.EIC
-are calculated from user.rtmin and user.rtmax.<br> <b>EndTime.EIC:</b>
-(optional) End time for chromatograms extracted for this molecule
-(seconds). Peaks are only detected up to this time. <br>
-<b>FileName:</b> (optional) Name of sample file with or without file
-extension. Using this allows to apply different values (like
-user.rtmin/user.rtmax) for different files. <br> <b>Additional columns:
-</b> It is possible to add additional columns. Those will be kept for
-the final benchmark data set. <br> <br>
+be accepted. Therefore it makes sense to select the most trusted adduct
+(generally M+H or M-H) as main adduct. <br> <b>SumForm\_c:</b> Molecular
+composition of the neutral molecule (e.g. C10H15N5O10P2). Please make
+sure there is never a 0 behind an element like behind the N in
+C12H8N0S2. <br> <b>user.rtmin:</b> Start time of peak (seconds). If
+possible mzRAPP will narrow peak boundaries to intersect with the
+extracted ion chromatogram at 5% of the maximum peak height. It is also
+worth noting that peaks for which user.rtmin/user.rtmax are provided
+will still be rejected if the isotopic information is not fitting. <br>
+<b>user.rtmax:</b> End time of peak (seconds). <br>
+<b>StartTime.EIC:</b> (optional) Start time for chromatograms extracted
+for this molecule (seconds). Peaks are only detected from this time on.
+If not given StartTime.EIC and EndTime.EIC are calculated from
+user.rtmin and user.rtmax.<br> <b>EndTime.EIC:</b> (optional) End time
+for chromatograms extracted for this molecule (seconds). Peaks are only
+detected up to this time. <br> <b>FileName:</b> (optional) Name of
+sample file with or without file extension. Using this allows to apply
+different values (like user.rtmin/user.rtmax) for different files. <br>
+<b>Additional columns: </b> It is possible to add additional columns.
+Those will be kept for the final benchmark data set. <br> <br>
 
 ### Select instrument and resolution
 
@@ -234,13 +239,13 @@ An overview over different benchmark key data is provided in the “View
 Benchmark” panel. The plots can be used in order to inspect different
 qualities of the data set. A molecule not being detected does not
 necessarily mean that there is no peak, but that mzRAPP was not able to
-validate it. This could happen if less than two isotopologues
-(full-filling strict criteria in abundance, peak shape correlation and
-number of points per peak) which is required for a given molecule to be
-kept in the given file. In order to get a better overview over picked
+validate it. This could happen since at least two isotopolpgues,
+fulfilling strict criteria regarding abundance, peak shape correlation
+and number of points per peak are required for a give molecule to be
+retained in the benchmark. In order to get a better overview over picked
 peaks two csv files as well as instructions can be exported. Those can
-(but does not have to) be used in order to generate a mirror image of
-the benchmark data set in the free software
+(but do not have to) be used in order to generate a mirror image of the
+benchmark data set in the free software
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
 
 When the benchmark is satisfactory it can be used for reliability
@@ -293,7 +298,7 @@ to be selected. The way those files can be exported from different tools
 are lined out in the following. In case of all those outputs it should
 be noted that mzRAPP is heavily depending on all isotopologues being
 reported in the output feature tables. For that reason they must not be
-filtered out for mzRAPP to work properly.<br>
+filtered out for mzRAPP to work properly. <br> <br>
 
 ### Exporting NPP outputs from different tools
 
@@ -301,10 +306,10 @@ filtered out for mzRAPP to work properly.<br>
 
 ``` r
 #unaligned file:
-data.table::fwrite(xcms::peaks(xcmsSet_object), "blabla_unaligned_file.csv")
+data.table::fwrite(xcms::peaks(xcmsSet_object), "unaligned_file.csv")
 
 #aligned file:
-data.table::fwrite(xcms::peakTable(xcmsSet_object), "blabla_aligned_file.csv")
+data.table::fwrite(xcms::peakTable(xcmsSet_object), "aligned_file.csv")
 ```
 
 <br> <u>XCMS online:</u> <br> When starting a run on XCMS online make
@@ -360,10 +365,10 @@ assessment tab”.
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
 
 #unaligned file:
-data.table::fwrite(xcms::peaks(xcmsSet_object), "blabla_unaligned_file.csv")
+data.table::fwrite(xcms::peaks(xcmsSet_object), "unaligned_file.csv")
 
 #aligned file:
-data.table::fwrite(xcms::peakTable(xcmsSet_object), "blabla_aligned_file.csv")
+data.table::fwrite(xcms::peakTable(xcmsSet_object), "aligned_file.csv")
 ```
 
 <br> <u>any other tool:</u> <br> It is also possible to use the outputs
@@ -435,20 +440,21 @@ Comparison of benchmark with non-targeted output
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
 Each benchmark peak (BP) is reported with the smallest and highest mz
 value contributing to the chromatographic peak. In order to be
-considered as possible match for a BP a NT peak (NP) has to come with an
-mz value between those two values. Matching rules considering retention
+considered as possible match for a BP the mz value of a NT peak (NP) has
+to fall within these two values. Matching rules considering retention
 time (RT) are depicted in Figure 1a. A NP has to cover the whole core of
-a BP while having a RT within the borders (RTmin, RTmax) of the BP. If
-only a part of the core is covered by a NP with its RT in the borders of
-the BP, the NP it is counted as a split peak. NPs which are not
-overlapping with the core of a BP are not considered. In some cases
-there can be more than one match between a BP and NPs (Figure 1d). In
-those cases, BPs corresponding to the same molecule but other
-isotopologues (IT) are considered to choose the NP leading to the
-smallest relative IT ratio (calculated via reported peak abundances)
-bias as compared to the predicted IT-ratio (Figure 1c). When more than
-two different IT are detected the ratio of each IT with the highest IT
-reported via NPP is considered.
+a BP (refered to as “peak core” in the following) while having a RT
+within the borders (RTmin, RTmax) of the BP. If only a part of the peak
+core is covered by a NP with its RT in the borders of the BP, the NP it
+is counted as a split peak. NPs which are not overlapping with the core
+of a BP are not considered. In some cases there can be more than one
+match between a BP and NPs (Figure 1d). In those cases, BPs
+corresponding to the same molecule but other isotopologues (IT) are
+considered to choose the NP leading to the smallest relative IT ratio
+(calculated via reported peak abundances) bias as compared to the
+predicted IT-ratio (Figure 1c). When more than two different IT are
+detected the ratio of each IT with the highest IT reported via NPP is
+considered.
 
 <div class="figure">
 
@@ -477,11 +483,12 @@ trace non-targeted peaks (NP) reported before alignment in the
 non-targeted features (NF) of the aligned file. This is done by matching
 the exact area reported in an unaligned file on the same area in the
 aligned file. This generally works since areas usually do not change
-during alignment process. In rare exceptions (MS-DIAL) areas have to be
-rounded before comparison. If a peak can not be detected in the aligned
+during alignment process. If a peak can not be detected in the aligned
 file but was detected in the unaligned file it is considered as being
 lost during the alignment process which is reported in one of the
-performance metrics (see below).
+performance metrics (see below). In case of multiple area matches the
+match which is pointing towards the aligned feature with the most other
+matches (in other files) is selected.
 
 <span id="MetricsID"> </span>
 
@@ -489,14 +496,14 @@ performance metrics (see below).
 
 Reliability assessment results can be inspected in the panel “View NPP
 assessment” or can be generated using R-functions (shown below). Using
-the shiny user interface different performance metrics are given at the
-top of the panel. All metrics are given with an empirical confidence
+the shiny user interface, different performance metrics are displayed at
+the top of the panel. All metrics are given with an empirical confidence
 interval (alpha = 0.95) in percent which is supposed to be
 representative for the entirety of (unknown) peaks in the provided raw
 data (mzML files). It is calculated by summing up different metrics
 (which are described below) per molecule and then bootstrapping
 molecules (R = 1000). Confidence intervals with values \< 0 are round up
-to 0. <br> <br>
+to 0.<br> <br>
 
 ### Found peaks
 
@@ -505,8 +512,18 @@ unaligned/aligned NPP results vs all peaks present in benchmark (as
 shown in figure 2). For explanations on how the matching of benchmark
 peaks with non-targeted peaks is performed please read the section
 “Matching of benchmark peaks with NT peaks before alignment”
-above.<br> <br> <i>Number of benchmark peaks with at least one NPP match
-/ Number of benchmark peaks (confidence interval)</i>
+above.<br> <br> <b>What can be taken from that:</b><br> This allows to
+draw conclusions on the percentage of peaks found/not found via
+non-targeted data pre-processing before and after peak picking and after
+feature processing. It is worth noting that peaks not detected during
+peak detection might be added via fill-gaps algorithms or alignment of
+split peaks (or other peaks). Peaks which detected during peak detection
+but not recovered after feature processing could be explained by
+alignment errors (would be visible in the number of alignment errors or
+peaks lost during alignment which is detailed below). <br> <br>
+<b>Displayed in results as:</b> <br> <i>Number of benchmark peaks with
+at least one NPP match / Number of benchmark peaks (confidence
+interval)</i>
 
 <div class="figure">
 
@@ -525,10 +542,14 @@ above.<br> <br> <i>Number of benchmark peaks with at least one NPP match
 The number of split peaks which have been found for all benchmark peaks.
 For a graphical explanation of a split peak please check figure 1a. It
 is worth noting that there can be more than one split peak per benchmark
-peak. <br> <br> <i>Number of split peaks found over all benchmark peaks
-/ (Number of benchmark peaks with at least one NPP match + Number of
-split peaks found over all benchmark peaks) (confidence interval)</i>
-<br>
+peak. <br> <br> <b>What can be taken from that:</b><br> Split peaks
+account for peaks with very poorly set integration boundaries. A high
+number of split peaks can inherit problems to the alignment process as
+well as produce a high number of artificial noise features. <br> <br>
+<b>Displayed in results as:</b><br> <i>Number of split peaks found over
+all benchmark peaks / (Number of benchmark peaks with at least one NPP
+match + Number of split peaks found over all benchmark peaks)
+(confidence interval)</i> <br>
 
 <span id="Missing_values"> </span>
 
@@ -545,10 +566,19 @@ which has been found by the non-targeted algorithm. All benchmark peaks
 in this feature which have a benchmark area which is more than 1.5 times
 higher than the lowest benchmark peak found via the non-targeted
 approach are considered high. Otherwise they are considered as low.
-Additionally there is the class of lost peaks. This classification means
-that no peak has been found over the whole feature. <br> <br> <i>Number
-of high missing values / (Number of high missing values + Number of low
-missing values) (confidence interval)</i>
+Additionally, if no peak has been found over the whole benchmark feature
+all corresponding peaks will be classified as lost peaks <br> <br>
+<b>What can be taken from that:</b><br> It is important to know if
+missing values are generally due to low peaks or if there is high risk
+that a higher peaks has been missed. This is especially true when
+missing value imputation methods are used which are often based on one
+of those assumptions. A high number of high missing peaks at the peak
+picking step is common in features in which a majority of peaks express
+a poor signal to noise ratio. After alignment this can also be explained
+by problems in the peak alignment (would be visible in the number of
+alignment errors as detailed below). <br> <br> <b>Displayed in results
+as:</b><br> <i>Number of high missing values / (Number of high missing
+values + Number of low missing values) (confidence interval)</i>
 
 <div class="figure">
 
@@ -570,9 +600,20 @@ Isotopologue abundance rations (IR) are calculated relative to the
 highest isotopologue of each molecule. If the relative bias of an IR
 bias calculated using NPP-abundances is exceeding the tolerance
 (outlined in figure 4) it is reflected in this variable. <br> <br>
-<i>Number of isotopologue ratio exceeding tolerance / Number of
-isotopologue ratios which can be calculated using reported NPP
-abundances (confidence interval)</i>
+<b>What can be taken from that:</b><br> IR are used to make a judgment
+on the quality of reported peak abundances. Since IRs can be predicted
+from molecular formulas and are confirmed during the benchmark dataset
+generation they can be considered as reliable reference point for
+non-targeted data pre-processing assessment. A high number of
+degenerated IR at the peak detection step could be explained by problems
+in setting integration boundaries or by problems in the extraction of
+chromatograms (e.g. to wide or to narrow binning of mz-values). After
+the feature processing step it could also be explained by alignment
+errors (would be visible in the number of alignment errors as detailed
+below) or problems in the fill-gaps process.<br> <br> <b>Displayed in
+results as:</b><br> <i>Number of isotopologue ratio exceeding tolerance
+/ Number of isotopologue ratios which can be calculated using reported
+NPP abundances (confidence interval)</i>
 
 <div class="figure">
 
@@ -590,18 +631,25 @@ abundances (confidence interval)</i>
 
 ### Alignment errors
 
-We use a form of benchmark-critical error counting which counts the
-minimum number of alignment errors without relying on correct alignment
-of the benchmark data set itself. Figure 5 shows three isotopologues
-(IT) of the same benchmark molecule detected in 5 samples. The color
-coding indicates the feature the peak has been assigned to by the NPP
-algorithm. Whenever there is an asymmetry in the assignment of the
-different IT the minimum number of steps to reverse that asymmetry are
-counted as errors. Counting benchmark divergences as errors, assumes
+We use a form of error counting which does not rely on the correct
+alignment of the benchmark data set itself. Figure 5 shows three
+isotopologues (IT) of the same benchmark molecule detected in 5 samples.
+The color coding indicates the feature the peak has been assigned to by
+the NPP algorithm. Whenever there is an asymmetry in the assignment of
+the different IT the minimum number of steps to reverse that asymmetry
+are counted as errors. Counting benchmark divergences as errors, assumes
 correct alignment of the benchmark data set. Finally lost peaks
 correspond to the peaks which have been matched from the peak detection
 step but which are not present anymore after the alignment step. All
 those counts are given in the output of the NPP-assessment. <br> <br>
+<b>What can be taken from that:</b><br> High number of alignment errors
+can be partly due to a high number of split peaks (discussed above) or
+too wide/narrow search width in mz or RT dimension by the non-targeted
+algorithm. Lost peaks can occur when aligned features with which are
+populated in too view samples are removed by the non-targeted algorithm
+or when peak areas are adapted in the feature processing step. If this
+adaptation is intended by an algorithm the lost peak-metric is not
+reliable anymore. <br> <br> <b>Displayed in results as:</b><br>
 <i>Number of one of three error-types / Number of benchmark peaks for
 which an NPP-match has been found (confidence interval)</i>
 
