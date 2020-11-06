@@ -10,9 +10,9 @@ SkylineTransitionList(BM)
 \item{BM}{output of \code{\link{find_bench_peaks}}}
 }
 \value{
-Skyline Transtion List
+Skyline Transition List
 }
 \description{
-Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list which can then be imported to Skyline via
+Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list (automatically exported to working directory) which can then be imported to Skyline via
 Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 }

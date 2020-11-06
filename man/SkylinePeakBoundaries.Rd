@@ -13,6 +13,6 @@ SkylinePeakBoundaries(BM)
 Skyline peak boundaries
 }
 \description{
-Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline peak-boundaries file which can then be imported to Skyline via
+Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline peak-boundaries file (automatically exported to working directory) which can then be imported to Skyline via
 Skyline -> File -> Import -> Peak Boundaries...
 }
