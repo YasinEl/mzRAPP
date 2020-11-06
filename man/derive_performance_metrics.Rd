@@ -10,7 +10,7 @@ derive_performance_metrics(comparison_data)
 \item{comparison_data}{output from \code{\link{compare_peaks}}}
 }
 \value{
-returns a list containing containing different performance metrics of non-targeted data pre-processing.
+returns a list containing different performance metrics of non-targeted data pre-processing.
 }
 \description{
 Returns a list with counts, statistics and performance metrics. For each metric a count and for some also a confidence interval (CI)

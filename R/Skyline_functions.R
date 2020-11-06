@@ -1,6 +1,6 @@
 #' SkylineTransitionList
 #'
-#' @description Takes a the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list which can then be imported to Skyline via
+#' @description Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list which can then be imported to Skyline via
 #' Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}
@@ -40,7 +40,7 @@ SkylineTransitionList <-
 
 
 #' SkylinePeakBoundaries
-#' @description Takes a the output of \code{\link{find_bench_peaks}} and generates a Peak boundaries which can then be imported to Skyline via
+#' @description Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline peak-boundaries file which can then be imported to Skyline via
 #' Skyline -> File -> Import -> Peak Boundaries...
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}

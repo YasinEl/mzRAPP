@@ -37,7 +37,7 @@
 #' @details \strong{After_alignment:} The same metrics calculated before alignment are also calculated here (with the exception of Split_peaks
 #' which can not be derived from aligned results)
 #'
-#' @return returns a list containing containing different performance metrics of non-targeted data pre-processing.
+#' @return returns a list containing different performance metrics of non-targeted data pre-processing.
 #' @export
 #'
 derive_performance_metrics <- function(comparison_data){

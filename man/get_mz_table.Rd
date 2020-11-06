@@ -34,6 +34,5 @@ This is basically a wrapper-function around the enviPat package. It takes a tabl
 "adduct_c" and calculates theoretical m/z values and abundances for isotopologues down to a user-defined abundance threshold.
 }
 \details{
-Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
-never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
+Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise, the function might never complete. Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
 }

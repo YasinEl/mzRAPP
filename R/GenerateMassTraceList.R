@@ -11,8 +11,7 @@
 #' @param adducts data frame containing adducts (see \code{\link{adducts}})
 #' @param isotopes data frame containing isotopes (see \code{\link{isotopes}})
 #'
-#' @details Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise function, might
-#' never finish! Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
+#' @details Make sure that molecular formulas in column "SumForm_c" only contain valid molecular formulas as described in \code{\link{check_chemform}}. Otherwise, the function might never complete. Additional columns in DT will be retained in the output of the function. However, the column names "adduct", "isoab", "formula", "charge" and "mz" are reserved.
 #'
 #'
 #' @return data.table with columns "molecule", "formula", "adduct", "charge", "m/z" and "abundance"

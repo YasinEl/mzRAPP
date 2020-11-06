@@ -11,7 +11,6 @@ find_bench_peaks(
   Min.PointsperPeak = 10,
   peak.spotting.factor = 0.001,
   Integration_baseL_factor = 0.1,
-  Min.Res = 60,
   plan = "multiprocess",
   Min.cor.w.main_adduct = 0.8,
   Min.cor.w.M0 = 0.75,
@@ -33,8 +32,6 @@ find_bench_peaks(
 \item{peak.spotting.factor}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. Relative height to the highest point of the EIC above which points should be considered during peak detection process. e.g. 0.001 corresponds to 0.1\% of the maximum.}
 
 \item{Integration_baseL_factor}{relative peak height factor upon which points should be considered to be part of the peak. 0.1 would correspond to 10\% of the peak maximum.}
-
-\item{Min.Res}{this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks}
 
 \item{plan}{see \code{\link{plan}}}
 

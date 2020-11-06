@@ -5,7 +5,7 @@
 #' @param b_table output from \code{\link{check_benchmark_input}}
 #' @param ug_table one of the listed objects (ug_table) in output of \code{\link{check_nonTargeted_input}}. e.g. check_nonTargeted_input_output$ug_table
 #' @param g_table one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table
-#' @param algo string of length 1. output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
+#' @param algo output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
 #'
 #' @return returns list containing different tables including data from different types of comparisons
 #'

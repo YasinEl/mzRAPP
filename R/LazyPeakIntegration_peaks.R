@@ -13,7 +13,6 @@
 #' @param Min.cor.w.M0 Minimum pearson correlation coefficient between highest isotopologues and lower isotopologues for lower isotopologues to be retained.
 #' @param Min.iso.count Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.
 #' @param return_unsuc_searches Should unsuccsessfull searches be returned (TRUE/FALSE)
-#' @param Min.Res this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. At which maximum height (percentage; measured relative to the lower peaks maximum) should to chromatographic peaks be resolved for them to be considered as separate peaks
 #' @param max.rt.diff_sec maximum difference between user.rt in position of peak maximum in seconds
 #' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm
 #'
@@ -73,7 +72,7 @@ find_bench_peaks <- function(files,
                            Min.PointsperPeak = 10,
                            peak.spotting.factor = 0.001,
                            Integration_baseL_factor = 0.1,
-                           Min.Res = 60,
+                           #Min.Res = 60,
                            plan = "multiprocess",
                            Min.cor.w.main_adduct = 0.8,
                            Min.cor.w.M0 = 0.75,
@@ -295,7 +294,7 @@ find_bench_peaks <- function(files,
                                 Min.PpP = Min.PointsperPeak,
                                 peak.spotting.factor. = peak.spotting.factor,
                                 Integration_baseL_factor. = Integration_baseL_factor,
-                                Min.Res. = Min.Res,
+                                Min.Res. = 1,#Min.Res,
                                 l = if(is.null(CompCol_xic[i]$user.rtmin)){1} else{if(!is.na(as.numeric(CompCol_xic[i]$user.rtmin))){
                                   which.min(abs(CompCol_xic[i]$user.rtmin - EIC.dt[!is.na(as.numeric(int_wo_spikes))]$rt))}else {1}},
                                 r = if(is.null(CompCol_xic[i]$user.rtmax)){length(EIC.dt[!is.na(int_wo_spikes)]$rt)} else{
@@ -325,7 +324,7 @@ find_bench_peaks <- function(files,
                                 Min.PpP = Min.PointsperPeak,
                                 peak.spotting.factor. = peak.spotting.factor,
                                 Integration_baseL_factor. = Integration_baseL_factor,
-                                Min.Res. = Min.Res
+                                Min.Res. = 1#Min.Res
                               ),
                               SIMPLIFY = FALSE
                             )
