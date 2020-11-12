@@ -13,5 +13,7 @@ plot_sunburst_alignment(result_txt)
 plotly object
 }
 \description{
-plot_sunburst_alignment
+Generates a sunburst plot visualizing non-targeted data pre-processing alignment errors.
+From inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type. For
+more information please check the mzRAPP readme.
 }

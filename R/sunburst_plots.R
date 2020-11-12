@@ -1,5 +1,9 @@
 #' plot_sunburst_alignment
 #'
+#' Generates a sunburst plot visualizing non-targeted data pre-processing alignment errors.
+#' From inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type. For
+#' more information please check the mzRAPP readme.
+#'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
 #'
 #' @return plotly object
@@ -80,6 +84,11 @@ plot_sunburst_alignment <- function(result_txt){
 
 #' plot_sunburst_peaks
 #'
+#' Generates a sunburst plot visualizing the proportions of found/not found peaks in order to assess non-targeted data pre-processing.
+#' From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
+#' more information please check the mzRAPP readme.
+#'
+#'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}
 #'
@@ -138,6 +147,15 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 
 
 #' plot_sunburst_peakQuality
+#'
+#'
+#'
+#' Generates a sunburst plot visualizing the proportions of well recovered isotopologue ratios in order to assess non-targeted data pre-processing.
+#' From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
+#' more information please check the mzRAPP readme.
+#'
+#'
+#'
 #'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}

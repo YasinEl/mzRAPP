@@ -689,7 +689,9 @@ callmzRAPP <- function(){
                 shiny::column(10, offset = 1,
                        shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
                                  "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted seperately (BM.div). Peaks which were be matched after peak picking but not found in the aligned output are also counted seperately (Lost).")),
+                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted ",
+                                 "seperately (BM.div). Peaks which were matched from the peak picking step but not found in the aligned output are also counted seperately (Lost/Lost_b.A)",
+                                 "Regarding the sunburst plot, from inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 shiny::br(),

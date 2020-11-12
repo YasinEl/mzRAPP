@@ -15,5 +15,7 @@ plot_sunburst_peaks(result_txt, comparison_object)
 plotly object
 }
 \description{
-plot_sunburst_peaks
+Generates a sunburst plot visualizing the proportions of found/not found peaks in order to assess non-targeted data pre-processing.
+From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
+more information please check the mzRAPP readme.
 }

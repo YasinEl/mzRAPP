@@ -11,15 +11,15 @@ mzRAPP
         resolution](#select-instrument-and-resolution)
       - [Setting parameters](#setting-parameters)
       - [Starting benchmark generation](#starting-benchmark-generation)
-      - [How check the benchmark](#how-check-the-benchmark)
+      - [How to check the benchmark](#how-to-check-the-benchmark)
       - [Generate a benchmark via
         R-script](#generate-a-benchmark-via-r-script)
   - [Reliability assessment of non-targeted data
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
       - [Exporting NPP outputs from different
         tools](#exporting-npp-outputs-from-different-tools)
-      - [Selecting a benchmark data set and starting
-        assessment](#selecting-a-benchmark-data-set-and-starting-assessment)
+      - [Selecting a benchmark data set and starting an
+        assessment](#selecting-a-benchmark-data-set-and-starting-an-assessment)
       - [Perform reliability assessment via
         R-Script](#perform-reliability-assessment-via-r-script)
   - [Matching between BM and NPP output
@@ -40,36 +40,36 @@ mzRAPP
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted
-data pre-processing (NPP) in the realm of liquid chromatography high
-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based on the
-increasing popularity of merging non-targeted with targeted metabolomics
-meaning that both types of data evaluation are often performed on the
-same same data set. Following this assumption mzRAPP can utilize user
-provided information on a set of molecules (at best \> 50) with known
-retention behavior. mzRAPP extracts and validates chromatographic peaks
-for which boundaries are provided for all (envipat predicted)
-isotopologues of those target molecules directly from mzML files. The
-resulting benchmark data set is used to extract different performance
-metrics for NPP performed on the same mzML files. An overview over
-mzRAPP capabilities is given in this \< 3 min [youtube
+data pre-processing (NPP) in the realm of liquid chromatography
+high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based
+on the increasing popularity of merging non-targeted with targeted
+metabolomics meaning that both types of data evaluation are often
+performed on the same data set. Following this assumption mzRAPP can
+utilize user-provided information on a set of molecules (at best \> 50)
+with known retention behavior. mzRAPP extracts and validates
+chromatographic peaks for which boundaries are provided for all (enviPat
+predicted) isotopologues of those target molecules directly from mzML
+files. The resulting benchmark dataset is used to extract different
+performance metrics for NPP performed on the same mzML files. An
+overview of mzRAPP capabilities is given in this \< 3 min [youtube
 video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be),
 which was formerly recorded for the Metabolomics2020 conference.
 
 ## Installation
 
-First install the most recent version of
+First, install the most recent version of
 
 1.  [R](https://cran.r-project.org/)
 2.  [R Studio](https://rstudio.com/products/rstudio/download/) and
 3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
 
-In case of R tools make sure you also follow the subsequent instructions
-described on the webpage. <br>
+In the case of Rtools make sure you also follow the subsequent
+instructions described on the webpage. <br>
 
-Afterwards it is time to install mzRAPP. It is possible to do that by
+Afterward, it is time to install mzRAPP. It is possible to do that by
 pasting the following code into the console of R Studio and press enter.
 Sometimes you are asked if you want to update packages before installing
-mzRAPP. In that case select the option “None” since this often leads to
+mzRAPP. In that case, select the option “None” since this often leads to
 problems with the installation. If you want to update the packages just
 do so before or after installing mzRAPP.
 
@@ -85,31 +85,32 @@ library(mzRAPP)
 callmzRAPP()
 ```
 
-or use mzRAPP without shiny interface as described below.
+or use mzRAPP without the shiny interface as described below. Please
+note that mzRAPP is primarily intended for use via the shiny user
+interface.
 
 ## Use examples
 
-If you want to go through some use examples on how to use mzRAPP please
-download [this
+If you want to go through some useful examples on how to use mzRAPP
+please download [this
 pdf](https://ucloud.univie.ac.at/index.php/s/ZCtGKBBdjjELicE).
 
 <span id="sBM_readme"> </span>
 
 ## Benchmark data set generation
 
-In order to get started it is necessary to know retention times for a
-minimum of 50 compounds with known molecular formulas. mzRAPP applies
-this knowledge for the generation of a benchmark data set from mzML
-files. This benchmark data set is supposed to include a subset of all
-true peaks in those mzML files. All benchmark peak abundances are
+To get started it is necessary to know retention times for a minimum of
+50 compounds with known molecular formulas. mzRAPP applies this
+knowledge for the generation of a benchmark data set from mzML files.
+This benchmark data set is supposed to include a subset of all true
+peaks in those mzML files. All benchmark peak abundances are
 automatically validated via isotopic pattern (in peak area and height)
 and only compounds with at least two observed isotopologues are kept.
 Since start- and end-time has to be provided for each compound it is
 advisable to set those boundaries using a tool for manual peak curation
-from which peak boundaries can be exported. One example for this would
-be
+from which peak boundaries can be exported. One example of this would be
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
-Boundaries can be provided per compound or per file and compound as
+Boundaries can be provided per compound or file and compound as
 described below.
 
 <br>
@@ -227,30 +228,31 @@ core; often slow but does not use much RAM) or <u>multiprocess</u>
 
 Benchmark generation can be started using the blue Start button. The
 necessary time for the generation depends on the number of mzML files,
-the number of target compounds and of course computational resources.
-Typically this process takes minutes to hours. Afterwards the generated
+the number of target compounds, and of course computational resources.
+Typically this process takes minutes to hours. Afterward, the generated
 benchmark data set is automatically exported to the working directory as
 csv file.<br> <br>
 
 <span id="vBMID"> </span>
 
-### How check the benchmark
+### How to check the benchmark
 
-An overview over different benchmark key data is provided in the “View
-Benchmark” panel. The plots can be used in order to inspect different
-qualities of the data set. A molecule not being detected does not
-necessarily mean that there is no peak, but that mzRAPP was not able to
-validate it. This could happen since at least two isotopolpgues,
-fulfilling strict criteria regarding abundance, peak shape correlation
-and number of points per peak are required for a give molecule to be
-retained in the benchmark. In order to get a better overview over picked
-peaks two csv files as well as instructions can be exported. Those can
-(but do not have to) be used in order to generate a mirror image of the
-benchmark data set in the free software
+An overview of different benchmark key data is provided in the “View
+Benchmark” panel. The plots can be used to inspect different qualities
+of the data set. A molecule not being detected does not necessarily mean
+that there is no peak, but that mzRAPP was not able to validate it. This
+could happen since at least two isotopologues, fulfilling strict
+criteria regarding abundance, peak shape correlation, and the number of
+points per peak is required for a given molecule to be retained in the
+benchmark. To get a better overview of picked peaks two csv files as
+well as instructions for their application in Skyline can be exported.
+Those can (but do not have to) be used to generate a mirror image of the
+benchmark data set in the free software,
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
+<br>
 
 When the benchmark is satisfactory it can be used for reliability
-assessment of non targeted data pre-processing as explained in the
+assessment of non-targeted data pre-processing as explained in the
 following chapter.
 
 ### Generate a benchmark via R-script
@@ -293,13 +295,13 @@ fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
 ## Reliability assessment of non-targeted data pre-processing
 
 Reliability assessment of NPP can be set up in the panel “Setup NPP
-assessment”. First the tool to be evaluated has to be set. Afterwards
+assessment”. First, the tool to be evaluated has to be set. Afterward,
 the unaligned and aligned output files of the tools to be assessed have
 to be selected. The way those files can be exported from different tools
-are lined out in the following. In case of all those outputs it should
-be noted that mzRAPP is heavily depending on all isotopologues being
-reported in the output feature tables. For that reason they must not be
-filtered out for mzRAPP to work properly. <br> <br>
+is lined out in the following. In the case of all those outputs, it
+should be noted that mzRAPP is heavily dependent on all isotopologues
+being reported in the output feature tables. For that reason, they must
+not be filtered out for mzRAPP to work properly. <br> <br>
 
 ### Exporting NPP outputs from different tools
 
@@ -348,19 +350,11 @@ TextExporter node with separator set to ‘,’ directly to the
 FeatureFinderMetabo node\] -\> \[connect TextExporter to Output Folder\]
 <br> aligned file: \[Connect a TextExporter node with separator set to
 ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\> \[connect
-TextExporter to Output Folder\] <br> <br> <u>Compound Discoverer:</u>
-<br> unaligned file: \[go to panel “Features”\] -\> \[click in any row\]
--\> \[click “Show related Tables” on the bottom of the screen\] -\> \[go
-to panel “Chromatogram Peaks”\] -\> \[make sure the columns “Apex
-Intensity”, “Area”, “Study File ID”, “Left RT \[min\]”, “Right RT
-\[min\]” “Apex RT \[min\]” and “Apex m/z” are visible\] -\> \[right
-click any row\] -\> Export -\> As plain text… <br> aligned file:
-currently it is not possible to use aligned files from Compound
-Discoverer <br> <br> <u>PatRoon:</u> <br> patRoon is not supported
-directly but can still be loaded since it allows to generate
-<i>xcmsSet</i> objects internally. Hence, it has to be loaded into
-mzRAPP as “XCMS” output which has to be stated as such in the “Setup NPP
-assessment tab”.
+TextExporter to Output Folder\] <br> <br> <u>PatRoon:</u> <br> patRoon
+is not supported directly but can still be loaded since it allows to
+generate <i>xcmsSet</i> objects internally. Hence, it has to be loaded
+into mzRAPP as “XCMS” output which has to be stated as such in the
+“Setup NPP assessment tab”.
 
 ``` r
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
@@ -373,14 +367,14 @@ data.table::fwrite(xcms::peakTable(xcmsSet_object), "aligned_file.csv")
 ```
 
 <br> <u>any other tool:</u> <br> It is also possible to use the outputs
-of other tools. However, they have to be adapted in a way that they
-resemble the output of one of the tools listed above. If this is not
-possible for some cases but important to you please contact me at
+of other tools. However, they have to be adapted so that they resemble
+the output of one of the tools listed above. If this is not possible for
+some cases but important to you please contact me at
 <yasin.el.abiead@univie.ac.at> <br>
 
-### Selecting a benchmark data set and starting assessment
+### Selecting a benchmark data set and starting an assessment
 
-Next the benchmark file has to be selected. If a benchmark has been
+Next, the benchmark file has to be selected. If a benchmark has been
 created during this shiny session (the benchmark is still visible in the
 panel benchmark overview) the switch button “Use generated benchmark”
 can be clicked as an alternative. <br> <br> After performing those steps
@@ -429,8 +423,7 @@ plot_sunburst_alignment(comp_stat)
 
 Before any NPP-performance metrics can be generated mzRAPP is matching
 the non-targeted data pre-processing (NPP) output files against the
-benchmark (BM). The ways in which this is done are explained in the
-following.
+benchmark (BM). How this is done is explained in the following.
 
 <h3>
 
@@ -440,22 +433,21 @@ Comparison of benchmark with non-targeted output
 
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
 Each benchmark peak (BP) is reported with the smallest and highest mz
-value contributing to the chromatographic peak. In order to be
-considered as possible match for a BP the mz value of a NT peak (NP) has
-to fall within these two values. Matching rules considering retention
-time (RT) are depicted in Figure 1a. A NP has to cover the whole core of
-a BP (refered to as “peak core” in the following) while having a RT
-within the borders (RTmin, RTmax) of the BP. If only a part of the peak
-core is covered by a NP with its RT in the borders of the BP, the NP it
-is counted as a split peak. NPs which are not overlapping with the core
-of a BP are not considered. In some cases there can be more than one
-match between a BP and NPs (Figure 1d). In those cases, BPs
-corresponding to the same molecule but other isotopologues (IT) are
-considered to choose the NP leading to the smallest relative IT ratio
-(calculated via reported peak abundances) bias as compared to the
-predicted IT-ratio (Figure 1c). When more than two different IT are
-detected the ratio of each IT with the highest IT reported via NPP is
-considered.
+value contributing to the chromatographic peak. To be considered as a
+possible match for a BP, the mz value of an NT peak (NP) has to fall
+within these two values. Matching rules considering retention time (RT)
+are depicted in Figure 1a. An NP has to cover the whole core of a BP
+(referred to as “peak core” in the following) while having an RT within
+the borders (RTmin, RTmax) of the BP. If only a part of the peak core is
+covered by an NP with its RT in the borders of the BP, the NP it is
+counted as a split peak. NPs which are not overlapping with the core of
+a BP is not considered. In some cases, there can be more than one match
+between a BP and NPs (Figure 1d). In those cases, BPs corresponding to
+the same molecule but other isotopologues (IT) are considered to choose
+the NP leading to the smallest relative IT ratio (calculated via
+reported peak abundances) bias as compared to the predicted IT-ratio
+(Figure 1c). When more than two different IT is detected the ratio of
+each IT with the highest IT reported via NPP is considered.
 
 <div class="figure">
 
@@ -470,26 +462,30 @@ considered.
 </div>
 
 <br> <b>Matching of benchmark features with non-targeted features:</b>
-<br> For a NT feature (NF) to be considered as match for a benchmark
+<br> For an NT feature (NF) to be considered as a match for a benchmark
 feature (BF) its reported mz and RT value have to lie between the
 lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the
-considered benchmark feature, respectively (Figure 1b). In case of
-multiple matches for the same BF the same strategy as for NP is applied
-(Figure 1c and d). However, in case of features the mean area is
+considered benchmark feature, respectively (Figure 1b). In the case of
+multiple matches for the same BF, the same strategy as for NP is applied
+(Figure 1c and d). However, in the case of features, the mean area is
 calculated over all samples for which a BP is present. <br>
 
-<b>Matching of non-targeted peaks to non-targeted features:</b> <br> In
-order to count alignment errors (explained below) it is necessary to
-trace non-targeted peaks (NP) reported before alignment in the
-non-targeted features (NF) of the aligned file. This is done by matching
-the exact area reported in an unaligned file on the same area in the
-aligned file. This generally works since areas usually do not change
-during alignment process. If a peak can not be detected in the aligned
+<b>Matching of non-targeted peaks to non-targeted features:</b> <br> To
+count alignment errors (explained below) it is necessary to trace
+non-targeted peaks (NP) reported before alignment in the non-targeted
+features (NF) of the aligned file. This is done by matching the exact
+area reported in an unaligned file on the same area in the aligned file.
+This generally works since areas usually do not change during the
+alignment process. In the case of multiple area-matches, the match which
+is pointing towards the aligned feature with the most other matches (in
+other files) is selected. If a peak can not be detected in the aligned
 file but was detected in the unaligned file it is considered as being
 lost during the alignment process which is reported in one of the
-performance metrics (see below). In case of multiple area matches the
-match which is pointing towards the aligned feature with the most other
-matches (in other files) is selected.
+performance metrics (see below). This implies that when areas are
+willfully changed after the peak picking step (other than adding missing
+peaks via some version of a fill-gaps algorithm) the number of missed
+peaks will not be reliable anymore. However, other alignment error
+counts (detailed below) could still be reliable.
 
 <span id="MetricsID"> </span>
 
@@ -509,21 +505,21 @@ to 0.<br> <br>
 ### Found peaks
 
 The number of benchmark peaks for which a match was found among the
-unaligned/aligned NPP results vs all peaks present in benchmark (as
+unaligned/aligned NPP results vs all peaks present in the benchmark (as
 shown in figure 2). For explanations on how the matching of benchmark
 peaks with non-targeted peaks is performed please read the section
 “Matching of benchmark peaks with NT peaks before alignment”
-above.<br> <br> <b>Interpretation:</b><br> This allows to draw
-conclusions on the percentage of peaks found/not found via non-targeted
-data pre-processing before and after peak picking and after feature
-processing. It is worth noting that peaks not detected during peak
-detection might be added via fill-gaps algorithms or alignment of split
-peaks (or other peaks). Peaks which detected during peak detection but
-not recovered after feature processing could be explained by alignment
-errors (would be visible in the number of alignment errors or peaks lost
-during alignment which is detailed below). <br> <br> <b>Displayed in
-results as:</b> <br> <i>Number of benchmark peaks with at least one NPP
-match / Number of benchmark peaks (confidence interval)</i>
+above.<br> <br> <b>Interpretation:</b><br> This allows to conclude the
+percentage of peaks found/not found via non-targeted data pre-processing
+before and after peak picking and after feature processing. It is worth
+noting that peaks not detected during peak detection might be added via
+fill-gaps algorithms or misalignment of split peaks (or other peaks).
+Peaks that were detected during peak detection but not recovered after
+feature processing could be explained by alignment errors (would be
+visible in the number of alignment errors or peaks lost during alignment
+which is detailed below). <br> <br> <b>Displayed in results as:</b> <br>
+<i>Number of benchmark peaks with at least one NPP match / Number of
+benchmark peaks (confidence interval)</i>
 
 <div class="figure">
 
@@ -539,7 +535,7 @@ match / Number of benchmark peaks (confidence interval)</i>
 
 ### Split peaks
 
-The number of split peaks which have been found for all benchmark peaks.
+The number of split peaks that have been found for all benchmark peaks.
 For a graphical explanation of a split peak please check figure 1a. It
 is worth noting that there can be more than one split peak per benchmark
 peak. <br> <br> <b>Interpretation:</b><br> Split peaks account for peaks
@@ -558,27 +554,27 @@ of split peaks found over all benchmark peaks) (confidence interval)</i>
 The classification of not found peaks (Not found peaks, as defined in
 figure 2) into high and low is done for each benchmark feature
 individually. Since we do not want to solely rely on the benchmark
-alignment to be correct we only classify missing values if alignment of
-the benchmark is in agreement with the alignment performed by NPP in at
-least one isotopologue (as also described in figure 5). Classification
-is based on the lowest benchmark peak present in the respective feature
-which has been found by the non-targeted algorithm. All benchmark peaks
-in this feature which have a benchmark area which is more than 1.5 times
-higher than the lowest benchmark peak found via the non-targeted
-approach are considered high. Otherwise they are considered as low.
-Additionally, if no peak has been found over the whole benchmark feature
-all corresponding peaks will be classified as lost peaks <br> <br>
-<b>Interpretation:</b><br> It is important to know if missing values are
-generally due to low peaks or if there is high risk that a higher peaks
-has been missed. This is especially true when missing value imputation
-methods are used which are often based on one of those assumptions. A
-high number of high missing peaks at the peak picking step is common in
-features in which a majority of peaks express a poor signal to noise
-ratio. After alignment this can also be explained by problems in the
-peak alignment (would be visible in the number of alignment errors as
-detailed below). <br> <br> <b>Displayed in results as:</b><br> <i>Number
-of high missing values / (Number of high missing values + Number of low
-missing values) (confidence interval)</i>
+alignment to be correct we only classify missing values if the alignment
+of the benchmark is in agreement with the alignment performed by NPP in
+at least one isotopologue (as also described in figure 5).
+Classification is based on the lowest benchmark peak present in the
+respective feature which has been found by the non-targeted algorithm.
+All benchmark peaks in this feature that have a benchmark area which is
+more than 1.5 times higher than the lowest benchmark peak found via the
+non-targeted approach are considered high. Otherwise, they are
+considered as low. Additionally, if no peak has been found over the
+whole benchmark feature all corresponding peaks will be classified as
+lost peaks <br> <br> <b>Interpretation:</b><br> It is important to know
+if missing values are generally due to low peaks or if there is a high
+risk that a higher peak has been missed. This is especially true when
+missing value imputation methods are used which are often based on one
+of those assumptions. A high number of high missing peaks at the peak
+picking step is common in features in which a majority of peaks express
+a poor signal to noise ratio. After alignment, this can also be
+explained by problems in the peak alignment (would be visible in the
+number of alignment errors as detailed below). <br> <br> <b>Displayed in
+results as:</b><br> <i>Number of high missing values / (Number of high
+missing values + Number of low missing values) (confidence interval)</i>
 
 <div class="figure">
 
@@ -596,24 +592,24 @@ missing values) (confidence interval)</i>
 
 ### Degenerated IR
 
-Isotopologue abundance rations (IR) are calculated relative to the
+Isotopologue abundance ratios (IR) are calculated relative to the
 highest isotopologue of each molecule. If the relative bias of an IR
 bias calculated using NPP-abundances is exceeding the tolerance
 (outlined in figure 4) it is reflected in this variable. <br> <br>
-<b>Interpretation:</b><br> IR are used to make a judgment on the quality
-of reported peak abundances. Since IRs can be predicted from molecular
-formulas and are confirmed during the benchmark dataset generation they
-can be considered as reliable reference point for non-targeted data
-pre-processing assessment. A high number of degenerated IR at the peak
-detection step could be explained by problems in setting integration
-boundaries or by problems in the extraction of chromatograms (e.g. to
-wide or to narrow binning of mz-values). After the feature processing
-step it could also be explained by alignment errors (would be visible in
-the number of alignment errors as detailed below) or problems in the
-fill-gaps process.<br> <br> <b>Displayed in results as:</b><br>
-<i>Number of isotopologue ratio exceeding tolerance / Number of
-isotopologue ratios which can be calculated using reported NPP
-abundances (confidence interval)</i>
+<b>Interpretation:</b><br> IRs are used to make a judgment on the
+quality of reported peak abundances. Since IRs can be predicted from
+molecular formulas and are confirmed during the benchmark dataset
+generation they can be considered as a reliable reference point for
+non-targeted data pre-processing assessment. A high number of
+degenerated IR at the peak detection step could be explained by problems
+in setting integration boundaries or by problems in the extraction of
+chromatograms (e.g. too wide or too narrow binning of mz-values). After
+the feature processing step it could also be explained by alignment
+errors (would be visible in the number of alignment errors as detailed
+below) or problems in the fill-gaps process.<br> <br> <b>Displayed in
+results as:</b><br> <i>Number of isotopologue ratio exceeding tolerance
+/ Number of isotopologue ratios which can be calculated using reported
+NPP abundances (confidence interval)</i>
 
 <div class="figure">
 
@@ -634,23 +630,23 @@ abundances (confidence interval)</i>
 We use a form of error counting which does not rely on the correct
 alignment of the benchmark data set itself. Figure 5 shows three
 isotopologues (IT) of the same benchmark molecule detected in 5 samples.
-The color coding indicates the feature the peak has been assigned to by
+The color-coding indicates the feature the peak has been assigned to by
 the NPP algorithm. Whenever there is an asymmetry in the assignment of
 the different IT the minimum number of steps to reverse that asymmetry
-are counted as errors. Counting benchmark divergences as errors, assumes
-correct alignment of the benchmark data set. Finally lost peaks
-correspond to the peaks which have been matched from the peak detection
-step but which are not present anymore after the alignment step. All
-those counts are given in the output of the NPP-assessment. <br> <br>
-<b>Interpretation:</b><br> High number of alignment errors can be partly
-due to a high number of split peaks (discussed above) or too wide/narrow
-search width in mz or RT dimension by the non-targeted algorithm. Lost
+are counted as errors. Counting benchmark divergences as errors, on the
+other hand, assumes correct alignment of the benchmark data set. Finally
+lost peaks correspond to the peaks which have been matched from the peak
+detection step but which are not present anymore after the alignment
+step. All those counts are given in the output of the NPP-assessment.
+<br> <br> <b>Interpretation:</b><br> A high number of alignment errors
+can be partly due to a high number of split peaks (discussed above) or
+too wide/narrow search width in the mz or RT dimension by NPP. Lost
 peaks can often be attributed to NPP alignment settings which delete
 features if they are not populated by enough peaks or when peak areas
-are adapted in the feature processing step. <br> <br> <b>Displayed in
-results as:</b><br> <i>Number of one of three error-types / Number of
-benchmark peaks for which an NPP-match has been found (confidence
-interval)</i>
+are adapted in the feature processing step, in which case the number of
+lost peaks becomes unreliable. <br> <br> <b>Displayed in results
+as:</b><br> <i>Number of one of three error-types / Number of benchmark
+peaks for which an NPP-match has been found (confidence interval)</i>
 
 <div class="figure">
 
@@ -666,7 +662,7 @@ interval)</i>
 
 ## References
 
-mzRAPP is based on many other R packages. Specifically it depends on
+mzRAPP is based on many other R packages. Specifically, it depends on
 (<b>data.table, ggplot2, shinyjs and dplyr</b>) and imports
 (<b>shinybusy, shinydashboard, shiny, shinyWidgets, doFuture, plotly,
 tcltk, hutils, DT, tools, retistruct, xcms, multtest, enviPat, stats,
