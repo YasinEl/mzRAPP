@@ -474,8 +474,7 @@ callmzRAPP <- function(){
 
         shinydashboard::tabItem(tabName = "vNPP_p",
                 shiny::h1('NPP assessment results'),
-                shiny::h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confindence intervals (alpha = 0.95) of calculated percentages are given in brackets",
-                         "(estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the original mzRAPP puplication or readme.")),
+                shiny::h4(paste("Key performance measures are given for different stages of the NPP workflow. Empirical confidence intervals (alpha = 0.95) of calculated percentages are given in brackets (estimated via bootstrapping with R = 1000). For details on how individual performance measures are calculated please check the readme.")),
                 shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#MetricsID"),
 
                 shiny::br(),
@@ -501,7 +500,7 @@ callmzRAPP <- function(){
          shiny::fluidRow(
            shiny::column(10, offset = 1,
                          shiny::h4("In the following interactive scatter plot and histogram the distribution of", shiny::tags$span(style="color:#82e0aa", "found") ,"/", shiny::tags$span(style="color:#ccd1d1", "not found"), "peaks can be investigated as a function of different benchmark peak variables.",
-                                   "Points in the scatter plot can be clicked to inspect individual peaks. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut classifies peaks in aligned features."),
+                                   "Points in the scatter plot can be clicked to inspect individual peaks. Regarding the sunburst plot, the inner donut corresponds to picked peaks while the outer donut classifies peaks in aligned features."),
                          shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Matching_peaks")
                          )
            ),
@@ -607,9 +606,7 @@ callmzRAPP <- function(){
 
                 shiny::column(10, offset = 1, shiny::h2("Quality of reported NPP peak abundances")),
                 shiny::column(10, offset = 1,
-                       shiny::h4(paste0("The quality of reported peak abundances is important in order to determine molecular compositions via isotopologue ratios or compare abundances between ",
-                                 "samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP. ",
-                                 "In order to inspect peaks contributing to a ratio click on the edges or center of the line plot. Regarding the sunburst plot the inner donut corresponds to picked peaks while the outer donut relates to aligned features.")),
+                       shiny::h4(paste0("The quality of reported peak abundances is important to determine molecular compositions via isotopologue ratios or compare abundances between samples. Since the former can be predicted when the molecular formula is known it can be used to estimate the quality of peak abundances reported by NPP. To inspect peaks contributing to a ratio click on the edges or center of the line plot. Regarding the sunburst plot, the inner donut corresponds to picked peaks while the outer donut relates to aligned features.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Peak_quality")
                 ),
                 shiny::br(),
@@ -644,7 +641,7 @@ callmzRAPP <- function(){
                 shiny::column(10, offset = 1, shiny::h2("Missing value classification")),
 
                 shiny::column(8, offset = 2,
-                       shiny::h4(paste0("The nature of missing values is of outmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
+                       shiny::h4(paste0("The nature of missing values is of utmost importance for the choice of a fitting missing value imputation method. Since features defined in the benchmark could ",
                                  "be aligned incorrectly only benchmark peaks for which the alignment was confirmed via NPP are considered. Others are labeled as 'not confirmable' (NC).")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Missing_values")
                 ),
@@ -687,11 +684,7 @@ callmzRAPP <- function(){
                 shiny::br(),
                 shiny::column(10, offset = 1, shiny::h2("Errors in the alignment process")),
                 shiny::column(10, offset = 1,
-                       shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes ",
-                                 "by checking whether alignment is performed symmetrically over different isotopologues of the same compound. This way ",
-                                 "alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted ",
-                                 "seperately (BM.div). Peaks which were matched from the peak picking step but not found in the aligned output are also counted seperately (Lost/Lost_b.A)",
-                                 "Regarding the sunburst plot, from inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type.")),
+                       shiny::h4(paste0("The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in the alignment processes by checking whether the alignment is performed symmetrically over different isotopologues of the same compound. This way alignment errors in the benchmark do not affect this count. Divergences from the benchmark which can not be confirmed as errors as described are counted separately (BM.div). Peaks which were matched from the peak picking step but not found in the aligned output are also counted separately (Lost/Lost_b.A)Regarding the sunburst plot, from inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type.")),
                        shiny::a("Click here for more information.", onclick = "openTab('Readme')", href="#Alignment_counting")
                 ),
                 shiny::br(),
