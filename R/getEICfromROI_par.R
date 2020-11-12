@@ -110,6 +110,7 @@ get_ROIs <-
             )})
 
           ROI.dt <- rbindlist(ROI.list)
+          if(nrow(ROI.dt) == 0) return(NULL)
           ROI.dt[, roi_id := 1:nrow(ROI.dt)]
           ROI.dt <- ROI.dt[, `:=` (rtmin = xr@scantime[scmin],
                                    rtmax = xr@scantime[scmax],
