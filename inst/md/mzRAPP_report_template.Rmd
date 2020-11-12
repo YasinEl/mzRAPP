@@ -17,12 +17,12 @@ trash <- capture.output({
 })
 ```
 
-Assessment of non targeted data pre-processing (NPP) was performed via mzRAPP (version 1.0). mzRAPP is based on user provided manually curated information on a number of chromatographic peaks with known molecular composition which is then automatically checked and extended in order to generate a benchmark data set (BM). This BM is then applied as reference to the NPP output in order to extract a number of performance metrics for the overall NPP output as well as individual steps. Additional information on the underlying processes are provided [here](https://github.com/YasinEl/mzRAPP).
+Assessment of non targeted data pre-processing (NPP) was performed via mzRAPP (version 1.0). mzRAPP is based on user-provided manually curated information on several chromatographic peaks with a known molecular composition which is then automatically checked and extended to generate a benchmark data set (BM). This BM is then applied as a reference to the NPP output to extract some performance metrics for the overall NPP output as well as individual steps. Additional information on the underlying processes is provided [here](https://github.com/YasinEl/mzRAPP).
 <br>
 <br>
 
 # NPP performance metrics
-Different NPP performance metrics are assessed automatically via mzRAPP. During the evaluation process mzRAPP is considering a multitude of orthogonal information for benchmark generation as well as for determination of NPP performance metrics. This is done in order to avoid relying completely on user provided or mzRAPP-generated information. 
+Different NPP performance metrics are assessed automatically via mzRAPP. During the evaluation process, mzRAPP is considering a multitude of orthogonal information for benchmark generation as well as for the determination of NPP performance metrics. This is done to avoid relying completely on user-provided or mzRAPP-generated information. 
 
 <div class = "row">
 <div class = "col-md-6">
