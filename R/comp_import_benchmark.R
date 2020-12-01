@@ -50,7 +50,7 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
     stop('Columns defined in options but not present in raw benchmark dataset: ', paste0(cols_not_found, sep = " - "))
   }
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   b_table <- rename_columns_from_options(b_table, options_table, 'b_columns', 'internal_columns')
 
   #Remove peaks where height and area are below 0
@@ -59,9 +59,10 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
   #Add a sample_id and grp_id column based on the sample_names in options_table
   b_table <- b_table[options_table, ':=' (sample_id = i.sample_id), on=c(sample_name = 'b_samples')]
 
+
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(b_table, by=c('peak_area')))){
-    b_table <- b_table[!duplicated(b_table, by=c('peak_area', 'rt_b'))]
+    b_table <- b_table[!duplicated(b_table, by=c('peak_area', 'rt'))]
     warning('Duplicate peaks removed from raw benchmark file')
   }
 
