@@ -40,6 +40,11 @@ get_mz_table <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_metho
 
   }
 
+  if(any(duplicated(DT, by = c("molecule", "adduct_c")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exist more than once per FileName)!
+                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adducts
+                                                                                in the column 'adduct'!" ))
+
+
 
   if(!isTRUE(is.data.frame(instrumentRes))){stop(paste0("instrumentRes has to be a data frame!"))}
   if(!isTRUE(is.data.table(instrumentRes))){instrumentRes <- as.data.table(instrumentRes)}

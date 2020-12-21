@@ -44,10 +44,6 @@ get_ROIs <-
     missing_cols <- setdiff(c("molecule", "adduct", "isoab", "mz_ex", "StartTime.EIC", "EndTime.EIC", "user.rtmin", "user.rtmax"), colnames(Target.table))
     if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste(missing_cols, sep = ", ")))}
 
-    if(any(duplicated(Target.table, cols = c("molecule", "adduct")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exceist more than once)!
-                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adducts
-                                                                                in the column 'adduct'!" ))
-
     conflicting_cols <- intersect(c("eic_mzmin", "eic_mzmax", "mz_acc", "roi_rtmin", "roi_rtmax", "roi_scmin", "roi_scmax",
                                     "ROI_count", "roi_overlaps_max", "roi_overlaps_max_sc"), colnames(Target.table))
     if(length(conflicting_cols > 0)) stop(paste0("Target.table includes reserved column names! Specificly:", conflicting_cols))
@@ -71,6 +67,11 @@ get_ROIs <-
       if(nrow(Target.table) == 0){stop("It appears there are no user.rtmin and user.rtmax provided for the mzML files provided!")}
 
     }
+
+
+    if(any(duplicated(Target.table, by = c("molecule", "adduct", "isoab", "FileName")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exist more than once per FileName)!
+                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adducts
+                                                                                in the column 'adduct'!" ))
 
     ##################################
     #initiate parallel processing
