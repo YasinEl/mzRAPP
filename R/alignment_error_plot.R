@@ -36,7 +36,7 @@ Alignment_error_plot <- function(comparison_data, mol, add){
 
   dt <- dt[, peak_status := ifelse(is.na(peak_area_g) & is.na(peak_area_ug), "Lost_b.PP",
                                    ifelse(is.na(peak_area_g) & !is.na(peak_area_ug), 'Lost_b.A',
-                                          ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, -3, feature_id_g)))]
+                                          ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, feature_id_g, feature_id_g)))] #repl -3
 
   dt_for_error_count <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
