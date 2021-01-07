@@ -16,7 +16,7 @@ count_errors_max <- function(dt){
   ## -3 = Different Peak in g and ug
   dt <- dt[, peak_status := ifelse((is.na(peak_area_g)) & (is.na(peak_area_ug)), "Lost_b.PP",
                                    ifelse((is.na(peak_area_g)) & (!is.na(peak_area_ug)), 'Lost_b.A',
-                                          ifelse((!is.na(peak_area_g)) & (!is.na(peak_area_ug)) & (peak_area_g != peak_area_ug), -3, feature_id_g)))] # put -3 here
+                                          ifelse((!is.na(peak_area_g)) & (!is.na(peak_area_ug)) & (peak_area_g != peak_area_ug), feature_id_g, feature_id_g)))] # put -3 here
 
 
   dt <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
