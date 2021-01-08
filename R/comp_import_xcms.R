@@ -94,6 +94,7 @@ import_grouped_xcms <- function (file, options_dt) {
 
   #Check if all columns defined in optionsframe are present
   g_req_cols <- na.omit(options_dt$g_columns)
+  colnames(g_table) <- tools::file_path_sans_ext(colnames(g_table))
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns defined in options but not present in aligned XCMS output: ', paste0(cols_not_found, sep = " - "))

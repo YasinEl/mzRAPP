@@ -62,7 +62,7 @@ derive_performance_metrics <- function(comparison_data){
                                             CI = boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
-                                                                            round(sum(dt$Found_peaks_pp, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                            round(sum(dt$Found_peaks_pp, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                           },
                                                                           R = 1000),
                                                                index=1,
@@ -72,7 +72,7 @@ derive_performance_metrics <- function(comparison_data){
                                             CI = boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
-                                                                            round(sum(dt$Split_peaks, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Split_peaks, na.rm = TRUE))*100,0)
+                                                                            round(sum(dt$Split_peaks, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Split_peaks, na.rm = TRUE))*100,2)
                                                                           },
                                                                           R = 1000),
                                                                index=1,
@@ -84,7 +84,7 @@ derive_performance_metrics <- function(comparison_data){
                                           CI = if(sum(sum_tab$R_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
-                                                                          ret <- round(sum(dt$R_pp, na.rm = TRUE)/(sum(dt$R_pp, na.rm = TRUE) + sum(dt$S_pp, na.rm = TRUE))*100,0)
+                                                                          ret <- round(sum(dt$R_pp, na.rm = TRUE)/(sum(dt$R_pp, na.rm = TRUE) + sum(dt$S_pp, na.rm = TRUE))*100,2)
                                                                           if(is.nan(ret)){
                                                                             return(0)
                                                                           } else return(ret)
@@ -100,7 +100,7 @@ derive_performance_metrics <- function(comparison_data){
                                                       CI = boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
-                                                                                      round(sum(dt$IRb_off_pp, na.rm = TRUE)/(sum(dt$IRb_off_pp, na.rm = TRUE) + sum(dt$IRb_ok_pp, na.rm = TRUE))*100,0)
+                                                                                      round(sum(dt$IRb_off_pp, na.rm = TRUE)/(sum(dt$IRb_off_pp, na.rm = TRUE) + sum(dt$IRb_ok_pp, na.rm = TRUE))*100,2)
                                                                                     },
                                                                                     R = 1000),
                                                                          index=1,
@@ -110,10 +110,10 @@ derive_performance_metrics <- function(comparison_data){
                        ),
                        Alignment = list(
                          Min.Errors = list(count = sum(sum_tab$Min.er, na.rm = TRUE),
-                                           CI = boot::boot.ci(boot::boot(sum_tab,
+                                           CI = if(sum(sum_tab$Min.er, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                          function(data, indices){
                                                                            dt<-data[indices,]
-                                                                           ret <- round(sum(dt$Min.er, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                           ret <- round(sum(dt$Min.er, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                            if(is.nan(ret)){
                                                                              return(0)
                                                                            } else return(ret)
@@ -121,38 +121,41 @@ derive_performance_metrics <- function(comparison_data){
                                                                          },
                                                                          R = 1000),
                                                               index=1,
-                                                              type='basic')$basic),
+                                                              type='basic')$basic} else rep(0,5)
+                                           ),
                          BM_divergences = list(count = sum(sum_tab$BM.div, na.rm = TRUE),
-                                               CI = boot::boot.ci(boot::boot(sum_tab,
+                                               CI = if(sum(sum_tab$BM.div, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                              function(data, indices){
                                                                                dt<-data[indices,]
-                                                                               ret <- round(sum(dt$BM.div, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                               ret <- round(sum(dt$BM.div, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                                if(is.nan(ret)){
                                                                                  return(0)
                                                                                  } else return(ret)
                                                                                },
                                                                              R = 1000),
                                                                   index=1,
-                                                                  type='basic')$basic),
+                                                                  type='basic')$basic} else rep(0,5)
+                                               ),
                          Lost_b.A = list(count = sum(sum_tab$lost, na.rm = TRUE),
-                                         CI = boot::boot.ci(boot::boot(sum_tab,
+                                         CI = if(sum(sum_tab$lost, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                        function(data, indices){
                                                                          dt<-data[indices,]
-                                                                         ret <- round(sum(dt$lost, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                         ret <- round(sum(dt$lost, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                          if(is.nan(ret)){
                                                                            return(0)
                                                                          } else return(ret)
                                                                          },
                                                                        R = 1000),
                                                             index=1,
-                                                            type='basic')$basic)
+                                                            type='basic')$basic} else rep(0,5)
+                                         )
                        ),
                        After_alignment = list(
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_ft, na.rm = TRUE),
                                             CI =  boot::boot.ci(boot::boot(sum_tab,
                                                                            function(data, indices){
                                                                              dt<-data[indices,]
-                                                                             round(sum(dt$Found_peaks_ft, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,0)
+                                                                             round(sum(dt$Found_peaks_ft, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                            },
                                                                            R = 1000),
                                                                 index=1,
@@ -168,7 +171,7 @@ derive_performance_metrics <- function(comparison_data){
                                           CI = if(sum(sum_tab$R_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                         function(data, indices){
                                                                           dt<-data[indices,]
-                                                                          ret <- round(sum(dt$R_ft, na.rm = TRUE)/(sum(dt$R_ft, na.rm = TRUE) + sum(dt$S_ft, na.rm = TRUE))*100,0)
+                                                                          ret <- round(sum(dt$R_ft, na.rm = TRUE)/(sum(dt$R_ft, na.rm = TRUE) + sum(dt$S_ft, na.rm = TRUE))*100,2)
                                                                           if(is.nan(ret)){
                                                                             return(0)
                                                                           } else return(ret)
@@ -184,7 +187,7 @@ derive_performance_metrics <- function(comparison_data){
                                                       CI = boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
-                                                                                      ret <- round(sum(dt$IRb_off_ft, na.rm = TRUE)/(sum(dt$IRb_off_ft, na.rm = TRUE) + sum(dt$IRb_ok_ft, na.rm = TRUE))*100,0)
+                                                                                      ret <- round(sum(dt$IRb_off_ft, na.rm = TRUE)/(sum(dt$IRb_off_ft, na.rm = TRUE) + sum(dt$IRb_ok_ft, na.rm = TRUE))*100,2)
                                                                                       if(is.nan(ret)){
                                                                                         return(0)
                                                                                       } else return(ret)

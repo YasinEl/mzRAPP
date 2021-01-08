@@ -61,7 +61,9 @@ First, install the most recent version of
 
 1.  [R](https://cran.r-project.org/)
 2.  [R Studio](https://rstudio.com/products/rstudio/download/) and
-3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/). <br>
+3.  [Rtools](https://cran.r-project.org/bin/windows/Rtools/) (only
+    necessary for the generation of reports, not the use of mzRAPP).
+    <br>
 
 In the case of Rtools make sure you also follow the subsequent
 instructions described on the webpage. <br>
@@ -313,6 +315,22 @@ data.table::fwrite(xcms::peaks(xcmsSet_object), "unaligned_file.csv")
 
 #aligned file:
 data.table::fwrite(xcms::peakTable(xcmsSet_object), "aligned_file.csv")
+```
+
+<br> <u>XCMS3 (R-version):</u>
+
+``` r
+#unaligned file:
+data.table::fwrite(xcms::chromPeaks(XCMSnExp_object), "unaligned_file.csv")
+
+#aligned file:
+feature_defs <- featureDefinitions(XCMSnExp_object)
+feature_areas <- featureValues(XCMSnExp_object, value = "into")
+
+df <- merge(featuresDef, featuresIntensities, by=0, all=TRUE)
+df <- dataTable[,!(names(dataTable) %in% c("peakidx"))]
+
+data.table::fwrite(xcms::peakTable(df), "aligned_file.csv")
 ```
 
 <br> <u>XCMS online:</u> <br> When starting a run on XCMS online make

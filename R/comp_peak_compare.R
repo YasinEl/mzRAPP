@@ -5,7 +5,7 @@
 #' @param b_table output from \code{\link{check_benchmark_input}}
 #' @param ug_table one of the listed objects (ug_table) in output of \code{\link{check_nonTargeted_input}}. e.g. check_nonTargeted_input_output$ug_table
 #' @param g_table one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table
-#' @param algo output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
+#' @param algo output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
 #'
 #' @return returns list containing different tables including data from different types of comparisons
 #'
@@ -229,7 +229,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
 
-  #print(paste('Before Main Peak Check: ', nrow(Matches_BM_NPPpeaks)))
   Matches_BM_NPPpeaks <- pick_main_peak(Matches_BM_NPPpeaks)
   message(paste('Number of benchmark peaks with unaligned non-targeted peak matches: ', nrow(Matches_BM_NPPpeaks[main_peak == TRUE])))
 
@@ -252,10 +251,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
     g_table[, peak_area_g_temp := peak_area_g]
     g_table[, sample_id_g_temp := sample_id_g]
   } else {
-    Matches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_ug]
+    Matches_BM_NPPpeaks[, peak_area_ug_temp := round(peak_area_ug,2)]
     Matches_BM_NPPpeaks[, sample_id_b_temp := sample_id_b]
-    SplittedMatches_BM_NPPpeaks[, peak_area_ug_temp := peak_area_ug]
-    g_table[, peak_area_g_temp := peak_area_g]
+    SplittedMatches_BM_NPPpeaks[, peak_area_ug_temp := round(peak_area_ug,2)]
+    g_table[, peak_area_g_temp := round(peak_area_g,2)]
     g_table[, sample_id_g_temp := sample_id_g]
   }
 
