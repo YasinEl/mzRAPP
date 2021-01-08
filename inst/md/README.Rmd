@@ -193,7 +193,7 @@ feature_defs <- featureDefinitions(XCMSnExp_object)
 feature_areas <- featureValues(XCMSnExp_object, value = "into")
 
 df <- merge(featuresDef, featuresIntensities, by=0, all=TRUE)
-df <- dataTable[,!(names(dataTable) %in% c("peakidx"))]
+df <- df[,!(names(df) %in% c("peakidx"))]
 
 data.table::fwrite(xcms::peakTable(df), "aligned_file.csv")
 ```
