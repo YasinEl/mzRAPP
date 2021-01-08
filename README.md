@@ -3,7 +3,7 @@ mzRAPP
 
   - [Installation](#installation)
   - [Use examples](#use-examples)
-  - [Benchmark data set generation](#benchmark-data-set-generation)
+  - [Benchmark dataset generation](#benchmark-dataset-generation)
       - [Select mzML files](#select-mzml-files)
       - [Select sample-group file](#select-sample-group-file)
       - [Select target file](#select-target-file)
@@ -18,8 +18,8 @@ mzRAPP
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
       - [Exporting NPP outputs from different
         tools](#exporting-npp-outputs-from-different-tools)
-      - [Selecting a benchmark data set and starting an
-        assessment](#selecting-a-benchmark-data-set-and-starting-an-assessment)
+      - [Selecting a benchmark dataset and starting an
+        assessment](#selecting-a-benchmark-dataset-and-starting-an-assessment)
       - [Perform reliability assessment via
         R-Script](#perform-reliability-assessment-via-r-script)
   - [Matching between BM and NPP output
@@ -44,7 +44,7 @@ data pre-processing (NPP) in the realm of liquid chromatography
 high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based
 on the increasing popularity of merging non-targeted with targeted
 metabolomics meaning that both types of data evaluation are often
-performed on the same data set. Following this assumption mzRAPP can
+performed on the same dataset. Following this assumption mzRAPP can
 utilize user-provided information on a set of molecules (at best \> 50)
 with known retention behavior. mzRAPP extracts and validates
 chromatographic peaks for which boundaries are provided for all (enviPat
@@ -99,18 +99,18 @@ pdf](https://ucloud.univie.ac.at/index.php/s/ZCtGKBBdjjELicE).
 
 <span id="sBM_readme"> </span>
 
-## Benchmark data set generation
+## Benchmark dataset generation
 
 To get started it is necessary to know retention times for a minimum of
 50 compounds with known molecular formulas. mzRAPP applies this
-knowledge for the generation of a benchmark data set from mzML files.
-This benchmark data set is supposed to include a subset of all true
-peaks in those mzML files. All benchmark peak abundances are
-automatically validated via isotopic pattern (in peak area and height)
-and only compounds with at least two observed isotopologues are kept.
-Since start- and end-time has to be provided for each compound it is
-advisable to set those boundaries using a tool for manual peak curation
-from which peak boundaries can be exported. One example of this would be
+knowledge for the generation of a benchmark dataset from mzML files.
+This benchmark dataset is supposed to include a subset of all true peaks
+in those mzML files. All benchmark peak abundances are automatically
+validated via isotopic pattern (in peak area and height) and only
+compounds with at least two observed isotopologues are kept. Since
+start- and end-time has to be provided for each compound it is advisable
+to set those boundaries using a tool for manual peak curation from which
+peak boundaries can be exported. One example of this would be
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
 Boundaries can be provided per compound or file and compound as
 described below.
@@ -197,7 +197,7 @@ detected up to this time. <br> <b>FileName:</b> (optional) Name of
 sample file with or without file extension. Using this allows to apply
 different values (like user.rtmin/user.rtmax) for different files. <br>
 <b>Additional columns: </b> It is possible to add additional columns.
-Those will be kept for the final benchmark data set. <br> <br>
+Those will be kept for the final benchmark dataset. <br> <br>
 
 ### Select instrument and resolution
 
@@ -232,7 +232,7 @@ Benchmark generation can be started using the blue Start button. The
 necessary time for the generation depends on the number of mzML files,
 the number of target compounds, and of course computational resources.
 Typically this process takes minutes to hours. Afterward, the generated
-benchmark data set is automatically exported to the working directory as
+benchmark dataset is automatically exported to the working directory as
 csv file.<br> <br>
 
 <span id="vBMID"> </span>
@@ -241,7 +241,7 @@ csv file.<br> <br>
 
 An overview of different benchmark key data is provided in the “View
 Benchmark” panel. The plots can be used to inspect different qualities
-of the data set. A molecule not being detected does not necessarily mean
+of the dataset. A molecule not being detected does not necessarily mean
 that there is no peak, but that mzRAPP was not able to validate it. This
 could happen since at least two isotopologues, fulfilling strict
 criteria regarding abundance, peak shape correlation, and the number of
@@ -249,7 +249,7 @@ points per peak is required for a given molecule to be retained in the
 benchmark. To get a better overview of picked peaks two csv files as
 well as instructions for their application in Skyline can be exported.
 Those can (but do not have to) be used to generate a mirror image of the
-benchmark data set in the free software,
+benchmark dataset in the free software,
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
 <br>
 
@@ -390,7 +390,7 @@ the output of one of the tools listed above. If this is not possible for
 some cases but important to you please contact me at
 <yasin.el.abiead@univie.ac.at> <br>
 
-### Selecting a benchmark data set and starting an assessment
+### Selecting a benchmark dataset and starting an assessment
 
 Next, the benchmark file has to be selected. If a benchmark has been
 created during this shiny session (the benchmark is still visible in the
@@ -646,13 +646,13 @@ NPP abundances (confidence interval)</i>
 ### Alignment errors
 
 We use a form of error counting which does not rely on the correct
-alignment of the benchmark data set itself. Figure 5 shows three
+alignment of the benchmark dataset itself. Figure 5 shows three
 isotopologues (IT) of the same benchmark molecule detected in 5 samples.
 The color-coding indicates the feature the peak has been assigned to by
 the NPP algorithm. Whenever there is an asymmetry in the assignment of
 the different IT the minimum number of steps to reverse that asymmetry
 are counted as errors. Counting benchmark divergences as errors, on the
-other hand, assumes correct alignment of the benchmark data set. Finally
+other hand, assumes correct alignment of the benchmark dataset. Finally
 lost peaks correspond to the peaks which have been matched from the peak
 detection step but which are not present anymore after the alignment
 step. All those counts are given in the output of the NPP-assessment.
