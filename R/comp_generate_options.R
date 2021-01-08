@@ -44,7 +44,7 @@ generate_options <- function(raw_b_table, algo){
       #Add ug samples
       samples_dt <- samples_dt[, 'ug_samples' := sample_id]
       #Add g samples
-      samples_dt <- samples_dt[, 'g_samples' := ifelse(grepl('^[0-9]', b_samples), paste0('X', b_samples), b_samples)]
+      samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
 'CompoundDiscoverer' = {
   #Add ug columns
