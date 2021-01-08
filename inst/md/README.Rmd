@@ -195,7 +195,7 @@ feature_areas <- xcms::featureValues(XCMSnExp_object, value = "into")
 df <- merge(featuresDef, featuresIntensities, by=0, all=TRUE)
 df <- df[,!(names(df) %in% c("peakidx"))]
 
-data.table::fwrite(xcms::peakTable(df), "aligned_file.csv")
+data.table::fwrite(df, "aligned_file.csv")
 ```
 <br>
 <u>XCMS online:</u> <br>
