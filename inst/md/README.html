@@ -278,8 +278,8 @@ data.table::fwrite(xcms::peakTable(xcmsSet_object), &quot;aligned_file.csv&quot;
 data.table::fwrite(xcms::chromPeaks(XCMSnExp_object), &quot;unaligned_file.csv&quot;)
 
 #aligned file:
-feature_defs &lt;- featureDefinitions(XCMSnExp_object)
-feature_areas &lt;- featureValues(XCMSnExp_object, value = &quot;into&quot;)
+feature_defs &lt;- xcms::featureDefinitions(XCMSnExp_object)
+feature_areas &lt;- xcms::featureValues(XCMSnExp_object, value = &quot;into&quot;)
 
 df &lt;- merge(featuresDef, featuresIntensities, by=0, all=TRUE)
 df &lt;- df[,!(names(df) %in% c(&quot;peakidx&quot;))]
