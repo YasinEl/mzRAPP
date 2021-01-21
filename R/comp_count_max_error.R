@@ -19,6 +19,10 @@ count_errors_max <- function(dt){
                                           ifelse((!is.na(peak_area_g)) & (!is.na(peak_area_ug)) & (peak_area_g != peak_area_ug), feature_id_g, feature_id_g)))] # put -3 here
 
 
+  dt[, sample_id_b := as.character(sample_id_b)]
+  dt[, isoab_b := as.character(isoab_b)]
+  dt[, peak_status := as.character(peak_status)]
+
   dt <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
   theReturn <- count_alignment_errors(dt, get_main_UT_groups(dt))
