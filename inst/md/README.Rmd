@@ -262,7 +262,8 @@ benchmark <- check_benchmark_input(file = "Path_to_benchmark_csv_file.csv",
 #load non-targeted output
 NPP_output <- check_nonTargeted_input(ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
                              g_table_path = "Path_to_aligned_Output_csv_file.csv/.txt", 
-                             algo = algo
+                             algo = algo,
+                             options_table = benchmark$options_table
                              )
 
 #compare benchmark with non-targeted output
