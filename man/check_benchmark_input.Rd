@@ -13,7 +13,7 @@ check_benchmark_input(file, options_path = "generate", from_csv = TRUE, algo)
 
 \item{from_csv}{TRUE or FALSE depending on file being a data.table object or a path to a csv}
 
-\item{algo}{tool output format to compare the benchmark against. can be XCMS, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.}
+\item{algo}{tool output format to compare the benchmark against. can be XCMS, XCMS3, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.}
 }
 \value{
 returns a list including the benchmark in a format readable by \code{\link{compare_peaks}}.
