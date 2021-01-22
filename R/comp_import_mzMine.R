@@ -62,7 +62,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   ug_req_cols <- na.omit(options_table$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
-    stop('Columns defined in options but not present in raw benchmark dataset: ', paste0(cols_not_found, sep = " - "))
+    stop('Columns defined in options but not present in unaligned output: ', paste0(cols_not_found, sep = " - "))
   }
 
   #rename all columns for internal use according to optiosn frame
@@ -80,7 +80,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   #Check for duplicate peaks, should not be present so warning, removing them if there
   if (any(duplicated(ug_table, by=c('peak_area', 'mz', 'rt')))){
     ug_table <- ug_table[!duplicated(ug_table, by='peak_area')]
-    warning('Duplicate peaks present in raw benchmark file')
+    warning('Duplicate peaks in unaligned output are ignored (identical peak area, mz and rt')
   }
 
   #Multiply rt by 60 to convert min to seconds ##MAKE OPTIONAL LATER
@@ -121,7 +121,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   }
 
   if(length(file_path) != 1){
-    stop('There should only be one file for the aligned MS-DIAL output!')
+    stop('There should only be one file for the aligned mzMine output!')
   }
 
   #Import csv file
