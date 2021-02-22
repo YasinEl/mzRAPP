@@ -4,7 +4,7 @@
 \alias{Get_MZ_list}
 \title{Get_MZ_list}
 \usage{
-Get_MZ_list(l.peaks, raw_data, CompCol_xic, EIC.dt)
+Get_MZ_list(l.peaks, raw_data, CompCol_xic, EIC.dt, max.mz.diff_ppm)
 }
 \arguments{
 \item{l.peaks}{l.peaks}

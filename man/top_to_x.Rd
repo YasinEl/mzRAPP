@@ -12,7 +12,7 @@ top_to_x(number, x = 0)
 \item{x}{roof to this number}
 }
 \value{
-
+numeric
 }
 \description{
 top_to_x

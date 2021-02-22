@@ -13,8 +13,9 @@ find_bench_peaks(
   Integration_baseL_factor = 0.1,
   plan = "multiprocess",
   Min.cor.w.main_adduct = 0.8,
-  Min.cor.w.M0 = 0.75,
+  Min.cor.w.M0 = 0.85,
   Min.iso.count = 2,
+  remove_isoab_outliers = TRUE,
   return_unsuc_searches = FALSE,
   max.rt.diff_sec = 20,
   max.mz.diff_ppm = 5
@@ -23,7 +24,7 @@ find_bench_peaks(
 \arguments{
 \item{files}{vector with file paths}
 
-\item{Grps}{data frame with two columns: one for filenames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).}
+\item{Grps}{data frame with two columns: one for filen ames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).}
 
 \item{CompCol_all}{output from function \code{\link{get_ROIs}}}
 
@@ -41,7 +42,9 @@ find_bench_peaks(
 
 \item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.}
 
-\item{return_unsuc_searches}{Should unsuccsessfull searches be returned (TRUE/FALSE)}
+\item{remove_isoab_outliers}{Should isotopologues be removed if they differ from predicted values by more than 35\% (TRUE/FALSE)}
+
+\item{return_unsuc_searches}{Should unsuccessful searches be returned (TRUE/FALSE)}
 
 \item{max.rt.diff_sec}{maximum difference between user.rt in position of peak maximum in seconds}
 
@@ -141,4 +144,6 @@ Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candid
 \strong{samples_per_group:} number of samples per group
 
 \strong{iso_id:} id for specific isotopologue
+
+\strong{rt_raw_span:} Max RT difference within a given isotopologue of a given molecule and adduct
 }

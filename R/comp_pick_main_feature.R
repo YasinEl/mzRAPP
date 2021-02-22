@@ -24,7 +24,7 @@ pick_main_feature <- function(dt){
 #'
 #' @keywords internal
 pick_main_feature_sd <- function(dt){
-  dt <- copy(dt)
+  dt <- data.table::copy(dt)
 
   #Get list of all avaiable iso_abbs
   all_iso_abs <- sort(unique(dt[,isoab_b]), decreasing = TRUE)
@@ -55,9 +55,9 @@ pick_main_feature_sd <- function(dt){
     comp_dt <- comp_dt[, 'compare_ratio' := isoab_b.y/isoab_b.x]
     comp_dt[, 'group_temp_id' := .GRP, by=c('isoab_b.x', 'isoab_b.y')]
     comp_dt[, c('ratio_diff', 'min_ratio_diff') := best_feature_per_comparison(.SD), by=c('isoab_b.x', 'isoab_b.y')]
-    x_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.x', 'feature_id_g.x', 'ratio_diff')], c('feature_id_b.x', 'feature_id_g.x'), c('feature_id_b', 'feature_id_g'))
-    y_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.y', 'feature_id_g.y', 'ratio_diff')], c('feature_id_b.y', 'feature_id_g.y'), c('feature_id_b', 'feature_id_g'))
-    main_features_dt <- rbindlist(list(x_dt, y_dt), use.names = TRUE)
+    x_dt <- data.table::setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.x', 'feature_id_g.x', 'ratio_diff')], c('feature_id_b.x', 'feature_id_g.x'), c('feature_id_b', 'feature_id_g'))
+    y_dt <- data.table::setnames(comp_dt[min_ratio_diff == TRUE, c('feature_id_b.y', 'feature_id_g.y', 'ratio_diff')], c('feature_id_b.y', 'feature_id_g.y'), c('feature_id_b', 'feature_id_g'))
+    main_features_dt <- data.table::rbindlist(list(x_dt, y_dt), use.names = TRUE)
     main_features_dt <- main_features_dt[!duplicated(main_features_dt, by=c('feature_id_b', 'feature_id_g'))]
     main_features_dt <- main_features_dt[, 'main_feature' := ifelse(ratio_diff == suppressWarnings(min(ratio_diff)), TRUE, FALSE), by=c('feature_id_b')]
     if(any(duplicated(main_features_dt[main_feature == TRUE]$feature_id_b))){
@@ -78,7 +78,7 @@ pick_main_feature_sd <- function(dt){
 #'
 #' @keywords internal
 best_feature_per_comparison <- function(dt){
-  dt <- copy(dt)
+  dt <- data.table::copy(dt)
   dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
                                                           if(length(compare_samples) < 1){
                                                             return(as.numeric(NULL))

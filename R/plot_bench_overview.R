@@ -6,6 +6,8 @@
 #' @param colb variable (column name) to color by
 #' @param choice_vector_bench named vector including all variables used as elements
 #'
+#'
+#' @importFrom ggplot2 ggplot aes geom_point theme labs ggtitle theme_classic geom_histogram element_blank xlab
 #' @return plotly object
 #' @export
 #'

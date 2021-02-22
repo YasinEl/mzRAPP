@@ -9,6 +9,7 @@
 #' @param l.peaks.mz_list l.peaks.mz_list
 #'
 #'
+#'
 #' @keywords internal
 Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run, adduct.run, manual_bound){
 
@@ -32,11 +33,11 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
                                                                  rt >= StartTime &
                                                                  rt <= EndTime]$int)),
 
-      mz_accurate = weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])),
+      mz_accurate = stats::weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])),
 
-      mz_accuracy_abs = abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic$mz_ex),
+      mz_accuracy_abs = abs(stats::weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic$mz_ex),
 
-      mz_accuracy_ppm = 1e6*abs(weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic$mz_ex) / CompCol_xic$mz_ex,
+      mz_accuracy_ppm = 1e6*abs(stats::weighted.mean(unlist(l.peaks.mz_list[[idx]][["mz"]]), unlist(l.peaks.mz_list[[idx]][["int"]])) - CompCol_xic$mz_ex) / CompCol_xic$mz_ex,
 
       mz_span_abs = max(unlist(l.peaks.mz_list[[idx]][["mz"]])) - min(unlist(l.peaks.mz_list[[idx]][["mz"]])),
 
@@ -45,63 +46,6 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
       mz_min = min(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
 
       mz_max = max(unlist(l.peaks.mz_list[[idx]][["mz"]]), na.rm = TRUE),
-
-      #mz_interference = {
-
-      # #mz_min_t <- CompCol_xic$mz_acc - (CompCol_xic$mz_acc - CompCol_xic$eic_mzmin) * 3
-      #  #mz_max_t <- CompCol_xic$mz_acc + abs(CompCol_xic$mz_acc - CompCol_xic$eic_mzmax) * 3
-
-      # rdl_extended1 <- rdl_extended %>%
-      #    filterRt(rt = c(StartTime, EndTime)) #%>%
-      #filterMz(mz = c(mz_min_t, mz_max_t))
-
-
-      # suppressWarnings(
-      #    raw_data_lim1 <- raw_data_lim %>%
-      ##      filterRt(rt = c(StartTime, EndTime)) #%>%
-      #filterMz(mz = c(CompCol_xic$eic_mzmin - 0.0001, CompCol_xic$eic_mzmax + 0.0001))
-      #    )
-
-
-
-      #highest_mp <- sum(unlist(lapply(intensity(raw_data_lim), max)))
-      #summed_mp <- sum(unlist(lapply(intensity(rdl_extended), sum)))
-
-      #summed_mp > 2 * highest_mp
-
-
-      #  suppressWarnings(
-      #    EIC.spec_targets <- lapply(seq(length(raw_data_lim1)), function(x,
-      #                                                                   mz_lim = mz(raw_data_lim1),
-      #                                                                   int_lim = intensity(raw_data_lim1),
-      #                                                                   mz_lim_ext = mz(rdl_extended1),
-      #                                                                   int_lim_ext = intensity(rdl_extended1)){
-
-      #      if(length(int_lim[[x]]) == 0){return(c(mz = 0, int = 0, mz_if = 0, int_if = 0))}
-
-      #        wmi <- which.max(int_lim[[x]])
-      #        mz_val <- mz_lim[[x]][wmi]
-      #        int_val <- max(int_lim[[x]])#
-
-      #      if(int_val >= max(int_lim_ext[[x]])){return(c(mz = mz_val,int = int_val, mz_if = 0, int_if = 0))}
-
-      #     wmi_ext <- which.max(int_lim_ext[[x]])
-      #      mz_val_ext <- mz_lim_ext[[x]][wmi_ext]
-      #      int_val_ext <- max(int_lim_ext[[x]])
-
-      #      return(c(mz = mz_val, int = int_val, mz_if = mz_val_ext, int_if = int_val_ext))
-
-      #    })
-      #  )
-
-      #    interference_table <- as.data.table(do.call(rbind, EIC.spec_targets))
-
-      #   if(sum(interference_table$int) * 2 < sum(interference_table$int_if)){
-      #      interference_table$delta_mz <- abs(interference_table$mz - interference_table$mz_if)
-      #      as.double(min(interference_table$delta_mz, na.rm = TRUE))
-      #    } else as.double(NA)
-
-      # },
 
       FW25M = as.double(
         GetFWXM(
@@ -153,16 +97,147 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
                         int == max(EIC.dt[rt >= StartTime &
                                             rt <= EndTime]$int)]$rt,
 
-      zigZag_IDX = as.double(GetZigzagIDX(
-        EIC.dt[rt >= StartTime &
-                 rt <= EndTime]$int,
-        max(EIC.dt[rt >= StartTime &
-                     rt <= EndTime]$int)
-      )),
+      #zigZag_IDX = as.double(GetZigzagIDX(
+      #  EIC.dt[rt >= StartTime &
+      #           rt <= EndTime]$int,
+      #  max(EIC.dt[rt >= StartTime &
+      #               rt <= EndTime]$int)
+      #)),
 
-      sharpness = as.double(GetSharpness(EIC.dt[rt >= StartTime &
-                                                  rt <= EndTime]$int)),
+      zigZag_IDX = {
 
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+       as.double(MetaClean::calculateZigZagIndex(peakData = pd, pts = pts))
+      },
+
+      #GaussianSimilarity = {
+
+      #  pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+      #  pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+      #  as.double(MetaClean::calculateGaussianSimilarity(peakData = pd, pts = pts))
+
+
+      #},
+
+      Jaggedness = {
+
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+        as.double(MetaClean::calculateJaggedness(peakData = pd, pts = pts))
+
+
+      },
+
+      Modality = {
+
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+        as.double(MetaClean::calculateModality(peakData = pd, pts = pts, flatness.factor = 0.05))
+
+
+      },
+
+      #SignificanceLevel = {
+#
+#        pd <- c(rtmin = StartTime, rtmax = EndTime)
+#
+#        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+#
+#        as.double(MetaClean::calculatePeakSignificanceLevel (peakData = pd, pts = pts))
+#
+#
+#      },
+
+      Sharpness = {
+
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+        as.double(MetaClean::calculateSharpness(peakData = pd, pts = pts))
+
+
+      },
+
+      Symmetry = {
+
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+        as.double(MetaClean::calculateSymmetry(peakData = pd, pts = pts))
+
+
+      },
+
+      TPASR = {
+
+        pd <- c(rtmin = StartTime, rtmax = EndTime)
+
+        pts <- as.matrix(EIC.dt[, c("rt", "int")])
+
+        as.double(MetaClean::calculateTPASR(peakData = pd, pts = pts))
+
+
+      },
+
+
+      MinDivMax = {
+
+        min(EIC.dt[rt >= StartTime &
+                     rt <= EndTime &
+                     !is.na(int_wo_spikes) & int > 0]$int)/max(EIC.dt[rt >= StartTime &
+                                                              rt <= EndTime &
+                                                              !is.na(int_wo_spikes)]$int)
+
+
+      },
+
+
+
+      #sharpness = as.double(GetSharpness(EIC.dt[rt >= StartTime &
+      #                                            rt <= EndTime]$int)),
+
+
+      #symmetry = {
+#
+#        sig <- EIC.dt[rt >= StartTime &
+#                        rt <= EndTime]$int
+#
+#        left <- sig[1:floor(length(sig)/2)]
+#
+#        right <- sig[length(sig):ceiling(length(sig)/2) + 1]
+#
+#        if(abs(length(left) - length(right)) > max(c(length(left), length(right))) / 4) NA
+#
+#        left <- left[1:min(length(left), length(right))]
+#
+#        right <- right[1:min(length(left), length(right))]
+#
+#        if(abs(length(left) - length(right)) > max(c(length(left), length(right))) / 4 | length(left) < 2) NA
+#
+#        #right <- sig[seq(length(sig),length(sig) + 1 - floor(length(sig)/2),by = -1)]
+#
+#        r.symmetry <- suppressWarnings(cor(left,right,method = "pearson",
+#                                           use = "complete.obs"))
+#
+#        #r.symmetry[is.na(r.symmetry)] <- 1
+#
+#        peak.symmetry <- round(mean(r.symmetry),digits = 4)
+#
+#        peak.symmetry
+#
+#      },
+#
       height = max(EIC.dt[rt >= StartTime &
                             rt <= EndTime]$int),
 
@@ -178,8 +253,97 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
         method = "trapezoid"
       ),
 
+      rt_neighbors = {
+
+        if((length(EIC.dt[(rt > (StartTime - (EndTime - StartTime)) &
+                          rt < StartTime) &
+                          int > 0]$int) > 3)){
+
+          n_area_left <- DescTools::AUC(
+            EIC.dt[(rt > (StartTime - (EndTime - StartTime)) &
+                      rt < StartTime)]$rt,
+            EIC.dt[(rt > (StartTime - (EndTime - StartTime)) &
+                      rt < StartTime)]$int,
+            method = "trapezoid"
+          )
+
+          n_height_left <- max(EIC.dt[(rt > (StartTime - (EndTime - StartTime)) &
+                                       rt < StartTime)]$int)
+
+        } else {
+
+          n_area_left <- 0
+          n_height_left <- 0
+
+        }
+
+        if((length(EIC.dt[(rt > EndTime &
+                           rt < EndTime + (EndTime - StartTime)) &
+                          int > 0]$int) > 3)){
+
+          n_area_right <- DescTools::AUC(
+            EIC.dt[(rt > EndTime &
+                      rt < EndTime + (EndTime - StartTime))]$rt,
+            EIC.dt[(rt > EndTime &
+                      rt < EndTime + (EndTime - StartTime))]$int,
+            method = "trapezoid"
+          )
+
+          n_height_right <- max(EIC.dt[(rt > EndTime &
+                                          rt < EndTime + (EndTime - StartTime))]$int)
+
+        } else {
+
+          n_area_right <- 0
+          n_height_right <- 0
+
+        }
+
+        peak_height <- max(EIC.dt[rt >= StartTime &
+                                    rt <= EndTime]$int)
+
+        peak_area <- DescTools::AUC(
+          c(StartTime,
+            EIC.dt[rt > StartTime &
+                     rt < EndTime]$rt,
+            EndTime),
+          c(0,
+            EIC.dt[rt > StartTime &
+                     rt < EndTime]$int,
+            0),
+          method = "trapezoid"
+        )
+
+        neighbor_left <- FALSE
+        neighbor_right <- FALSE
+
+        #neighbor_left <- if(n_height_left > 0.2 * peak_height & n_area_left > 0.2 * peak_area) {TRUE} else {FALSE}
+        #neighbor_right <- if(n_height_right > 0.2 * peak_height & n_area_right > 0.2 * peak_area) {TRUE} else {FALSE}
+
+        neighbor_left <- if(n_area_left > 0.2 * peak_area) {TRUE} else {FALSE}
+        neighbor_right <- if(n_area_right > 0.2 * peak_area) {TRUE} else {FALSE}
+
+
+        if(neighbor_left == TRUE & neighbor_right == FALSE) {
+          ret <- "left"
+        }
+        if(neighbor_left == FALSE & neighbor_right == TRUE) {
+          ret <- "right"
+        }
+        if(neighbor_left == TRUE & neighbor_right == TRUE) {
+          ret <- "both sides"
+        }
+        if(neighbor_left == FALSE & neighbor_right == FALSE) {
+          ret <- "none"
+        }
+
+        if(is.null(ret)){character()} else {ret}
+      },
+
+      mz_neighbors = round(l.peaks.mz_list[[idx]][["EXTvsORIG"]][1] / l.peaks.mz_list[[idx]][["EXTvsORIG"]][2],1),
+
       cor_w_M0 = ifelse(iso.run == "LAisos", suppressWarnings(
-        cor(
+        stats::cor(
           EIC.dt[rt >= StartTime &
                    rt <= EndTime]$int,
           EIC.dt[rt >= StartTime &
@@ -190,7 +354,7 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
       ), NA),
 
       cor_w_main_add = ifelse(iso.run == "MAiso" & adduct.run == "screen_adducts", suppressWarnings(
-        cor(
+        stats::cor(
           EIC.dt[rt >= StartTime &
                    rt <= EndTime]$int,
           EIC.dt[rt >= StartTime &
@@ -206,7 +370,6 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
     ), by = .(idx)], on = .(idx)]
 
   )
-
   return(l.peaks)
 
 }

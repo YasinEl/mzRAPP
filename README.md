@@ -9,6 +9,7 @@ mzRAPP
       - [Select target file](#select-target-file)
       - [Select instrument and
         resolution](#select-instrument-and-resolution)
+      - [Select additional adducts](#select-additional-adducts)
       - [Setting parameters](#setting-parameters)
       - [Starting benchmark generation](#starting-benchmark-generation)
       - [How to check the benchmark](#how-to-check-the-benchmark)
@@ -26,11 +27,13 @@ mzRAPP
     (background)](#matching-between-bm-and-npp-output-background)
   - [Generation and interpretation of NPP performance
     metrics](#generation-and-interpretation-of-npp-performance-metrics)
-      - [Found peaks](#found-peaks)
+      - [Found/not found peaks](#foundnot-found-peaks)
       - [Split peaks](#split-peaks)
-      - [Missing peaks](#missing-peaks)
-      - [Degenerated IR](#degenerated-ir)
-      - [Alignment errors](#alignment-errors)
+      - [Missing peaks/values
+        classification](#missing-peaksvalues-classification)
+      - [Peak abundance quality/degenerated
+        IR](#peak-abundance-qualitydegenerated-ir)
+      - [Alignment error counting](#alignment-error-counting)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -95,7 +98,7 @@ interface.
 
 If you want to go through some useful examples on how to use mzRAPP
 please download [this
-pdf](https://ucloud.univie.ac.at/index.php/s/ZCtGKBBdjjELicE).
+pdf](https://ucloud.univie.ac.at/index.php/s/JEW3M6bsO9Q2Ea1).
 
 <span id="sBM_readme"> </span>
 
@@ -148,10 +151,14 @@ example](https://ucloud.univie.ac.at/index.php/s/NW4fGXpSeuIBVvc)) and
 include the following columns:
 
 <b>molecule:</b> names of target molecules (should be unique
-identifiers) <br> <b>adduct\_c:</b> adducts that should be evaluated
-(e.g. M+H or M+Na; without brackets). If more than one adduct is to be
-investigated another line with the same molecule name should be added.
-All adducts enabled in the enviPat package are allowed:
+identifiers) <br> <b>SumForm\_c:</b> Molecular composition of the
+neutral molecule (e.g. C10H15N5O10P2). Please make sure there is never a
+0 behind an element like behind the N in C12H8N0S2. <br>
+<b>main\_adduct:</b> One main adduct has to be defined for each molecule
+(e.g. M+H). If the main\_adduct is not detected also other adducts wont
+be accepted. Therefore it makes sense to select the most trusted adduct
+(generally M+H or M-H) as main adduct. All adducts enabled in the
+enviPat package are allowed:
 
 ``` r
 library(enviPat)
@@ -176,18 +183,19 @@ adducts$Name
 #> [49] "3M-H"
 ```
 
-<b>main\_adduct:</b> One main adduct has to be defined for each molecule
-(e.g. M+H). If the main\_adduct is not detected also other adducts wont
-be accepted. Therefore it makes sense to select the most trusted adduct
-(generally M+H or M-H) as main adduct. <br> <b>SumForm\_c:</b> Molecular
-composition of the neutral molecule (e.g. C10H15N5O10P2). Please make
-sure there is never a 0 behind an element like behind the N in
-C12H8N0S2. <br> <b>user.rtmin:</b> Start time of peak (seconds). If
-possible mzRAPP will narrow peak boundaries to intersect with the
-extracted ion chromatogram at 5% of the maximum peak height. It is also
-worth noting that peaks for which user.rtmin/user.rtmax are provided
-will still be rejected if the isotopic information is not fitting. <br>
-<b>user.rtmax:</b> End time of peak (seconds). <br>
+<b>user.rtmin:</b> Start time of peak (seconds). If possible mzRAPP will
+narrow peak boundaries to intersect with the extracted ion chromatogram
+at 5% of the maximum peak height. It is also worth noting that peaks for
+which user.rtmin/user.rtmax are provided will still be rejected if the
+isotopic information is not fitting. <br> <b>user.rtmax:</b> End time of
+peak (seconds). <br> <b>adduct\_c:</b> (optional) If this column is
+added there has to be at least one row per molecule where adduct\_c is
+the same as the selected main\_adduct. After that additional rows with
+different adducts can be added. Please note that adducts which should be
+screened for all molecules can be selected more easily using the
+adduct-selection-box (see below). Therefore is makes only sense to use
+the adduct\_c column if you want some adducts to be only screened for
+specific molecules.  
 <b>StartTime.EIC:</b> (optional) Start time for chromatograms extracted
 for this molecule (seconds). Peaks are only detected from this time on.
 If not given StartTime.EIC and EndTime.EIC are calculated from
@@ -196,8 +204,8 @@ for chromatograms extracted for this molecule (seconds). Peaks are only
 detected up to this time. <br> <b>FileName:</b> (optional) Name of
 sample file with or without file extension. Using this allows to apply
 different values (like user.rtmin/user.rtmax) for different files. <br>
-<b>Additional columns: </b> It is possible to add additional columns.
-Those will be kept for the final benchmark dataset. <br> <br>
+<b>Additional columns: </b> (optional) It is possible to add additional
+columns. Those will be kept for the final benchmark dataset. <br> <br>
 
 ### Select instrument and resolution
 
@@ -210,6 +218,14 @@ has to consist of two columns: <br> <b>R: </b> Resolution value at half
 height of a mass peak <br> <b>m/z: </b> m/z value for the corresponding
 resolution <br> Resolution values for at least 10 equally distributed
 m/z values are recommended.<br> <br>
+
+### Select additional adducts
+
+You can select any number of additional adducts to screen for. These
+adducts will be screened for each molecule if the selected main\_adduct
+has been found. Please note that (as for the main\_adduct) adducts will
+only be added if at least two isotoplogues of the respective adduct can
+be detected. <br> <br>
 
 ### Setting parameters
 
@@ -286,10 +302,10 @@ PCal <- find_bench_peaks(files = files, #vector of mzML file names (including pa
                       CompCol_all = rois,
                       Min.PointsperPeak = 8, #minimum number of points expected from a given peak
                       max.mz.diff_ppm = 5 #mass accuracy of the used mass spectrometer
-)
+                      )
 
 #save the resulting benchmark to a csv file
-fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
+data.table::fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
 ```
 
 <span id="sNPP_readme"> </span>
@@ -344,35 +360,35 @@ format to txt\] <br> aligned file: When performing the alignment make
 sure to activate the isotope tracking option in the alignment step (for
 most cases selecting 13C and 15N as labeling elements will be adequate).
 Afterwards export via: Export -\> Alignment result -\> \[check Raw data
-matrix Area\] -\> \[set Export format to msp\] <br> <br> <u>mzMine:</u>
-<br> unaligned files: \[select all files generated in the chromatogram
-deconvolution step\] -\> Feature list methods -\> Export/Import -\>
-Export to CSV file -\> \[set Filename including pattern/curly brackets
-(e.g. blabla\_{}\_blabla.csv)\] -\> \[check “Peak name”, “Peak height”,
-“Peak area”, “Peak RT start”, “Peak RT end”, “Peak RT”, “Peak m/z”,
-“Peak m/z min” and “Peak m/z max”\] -\> \[set Filter rows to ALL\]
-<br> aligned file: \[select file after alignment step\] -\> Feature list
-methods -\> Export/Import -\> Export to CSV file -\> \[additional to
-checks set for unaligned files check “Export row retention time” and
-“Export row m/z”\]<br> <br> <u>El-MAVEN:</u> <br> unaligned file:
-\[click the “Export csv” button in the “Peak Table”-panel\] -\> Export
-all groups -\> \[select “Peaks Detailed Format Comma Delimited (.csv)”\]
-<br> aligned file: \[click the “Export csv” button in the “Peak
-Table”-panel\] -\> Export all groups -\> \[select “Groups Summary
-Matrix Format Comma Delimited (.csv)”\] <br> <br> <u>OpenMS:</u> <br>
-When processing the FeatureFinderMetabo algorithm make sure to set
-local\_rt\_range as well as local\_mz\_range to 0. You will have to
-check ‘Show advanced parameters’ to make those parameters visible. Also
-set report\_covex\_hulls to true. <br> unaligned file: \[Connect a
-TextExporter node with separator set to ‘,’ directly to the
-FeatureFinderMetabo node\] -\> \[connect TextExporter to Output Folder\]
-<br> aligned file: \[Connect a TextExporter node with separator set to
-‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\> \[connect
-TextExporter to Output Folder\] <br> <br> <u>PatRoon:</u> <br> patRoon
-is not supported directly but can still be loaded since it allows to
-generate <i>xcmsSet</i> objects internally. Hence, it has to be loaded
-into mzRAPP as “XCMS” output which has to be stated as such in the
-“Setup NPP assessment tab”.
+matrix Area\] -\> \[set Export format to msp\] <br> <br> <u>MZmine
+2:</u> <br> unaligned files: \[select all files generated in the
+chromatogram deconvolution step\] -\> Feature list methods -\>
+Export/Import -\> Export to CSV file -\> \[set Filename including
+pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -\> \[check “Peak
+name”, “Peak height”, “Peak area”, “Peak RT start”, “Peak RT end”, “Peak
+RT”, “Peak m/z”, “Peak m/z min” and “Peak m/z max”\] -\> \[set Filter
+rows to ALL\] <br> aligned file: \[select file after alignment step\]
+-\> Feature list methods -\> Export/Import -\> Export to CSV file -\>
+\[additional to checks set for unaligned files check “Export row
+retention time” and “Export row m/z”\]<br> <br> <u>El-MAVEN:</u> <br>
+unaligned file: \[click the “Export csv” button in the “Peak
+Table”-panel\] -\> Export all groups -\> \[select “Peaks Detailed
+Format Comma Delimited (.csv)”\] <br> aligned file: \[click the “Export
+csv” button in the “Peak Table”-panel\] -\> Export all groups -\>
+\[select “Groups Summary Matrix Format Comma Delimited (.csv)”\] <br>
+<br> <u>OpenMS:</u> <br> When processing the FeatureFinderMetabo
+algorithm make sure to set local\_rt\_range as well as local\_mz\_range
+to 0. You will have to check ‘Show advanced parameters’ to make those
+parameters visible. Also set report\_covex\_hulls to true. <br>
+unaligned file: \[Connect a TextExporter node with separator set to ‘,’
+directly to the FeatureFinderMetabo node\] -\> \[connect TextExporter to
+Output Folder\] <br> aligned file: \[Connect a TextExporter node with
+separator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\>
+\[connect TextExporter to Output Folder\] <br> <br> <u>PatRoon:</u> <br>
+patRoon is not supported directly but can still be loaded since it
+allows to generate <i>xcmsSet</i> objects internally. Hence, it has to
+be loaded into mzRAPP as “XCMS” output which has to be stated as such in
+the “Setup NPP assessment tab”.
 
 ``` r
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
@@ -404,7 +420,7 @@ the assessment can be started via the blue “Start assessment button”.
 ``` r
 
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
-#options: XCMS, El-Maven, OpenMS, msDial or mzMine
+#options: XCMS, El-Maven, OpenMS, msDial or MZmine 2
 algo = "XCMS"
 
 #load benchmark csv file
@@ -484,10 +500,13 @@ each IT with the highest IT reported via NPP is considered.
 <br> For an NT feature (NF) to be considered as a match for a benchmark
 feature (BF) its reported mz and RT value have to lie between the
 lowest/highest benchmark peak mzmin/mzmax and RTmin/RTmax of the
-considered benchmark feature, respectively (Figure 1b). In the case of
-multiple matches for the same BF, the same strategy as for NP is applied
-(Figure 1c and d). However, in the case of features, the mean area is
-calculated over all samples for which a BP is present. <br>
+considered benchmark feature, respectively (Figure 1b). Moreover, NFs
+containing NPs to which BPs have been matched before alignment are also
+considered, even when those NF were reported with RT and mz values not
+fitting BM information. In the case of multiple matches for the same BF,
+the same strategy as for NP is applied (Figure 1c and d). However, in
+the case of features, the mean area is calculated over all samples for
+which a BP is present. <br>
 
 <b>Matching of non-targeted peaks to non-targeted features:</b> <br> To
 count alignment errors (explained below) it is necessary to trace
@@ -521,7 +540,7 @@ data (mzML files). It is calculated by summing up different metrics
 molecules (R = 1000). Confidence intervals with values \< 0 are round up
 to 0.<br> <br>
 
-### Found peaks
+### Found/not found peaks
 
 The number of benchmark peaks for which a match was found among the
 unaligned/aligned NPP results vs all peaks present in the benchmark (as
@@ -568,14 +587,14 @@ of split peaks found over all benchmark peaks) (confidence interval)</i>
 
 <span id="Missing_values"> </span>
 
-### Missing peaks
+### Missing peaks/values classification
 
 The classification of not found peaks (Not found peaks, as defined in
 figure 2) into high and low is done for each benchmark feature
-individually. Since we do not want to solely rely on the benchmark
-alignment to be correct we only classify missing values if the alignment
-of the benchmark is in agreement with the alignment performed by NPP in
-at least one isotopologue (as also described in figure 5).
+individually (as shown in figure 3). Since we do not want to rely on the
+benchmark alignment to be correct we only classify missing values if the
+alignment of the benchmark is in agreement with the alignment performed
+by NPP in at least one isotopologue (as also described in figure 5).
 Classification is based on the lowest benchmark peak present in the
 respective feature which has been found by the non-targeted algorithm.
 All benchmark peaks in this feature that have a benchmark area which is
@@ -609,7 +628,7 @@ missing values + Number of low missing values) (confidence interval)</i>
 
 <span id="Peak_quality"> </span>
 
-### Degenerated IR
+### Peak abundance quality/degenerated IR
 
 Isotopologue abundance ratios (IR) are calculated relative to the
 highest isotopologue of each molecule. If the relative bias of an IR
@@ -644,7 +663,7 @@ NPP abundances (confidence interval)</i>
 
 <span id="Alignment_counting"> </span>
 
-### Alignment errors
+### Alignment error counting
 
 We use a form of error counting which does not rely on the correct
 alignment of the benchmark dataset itself. Figure 5 shows three

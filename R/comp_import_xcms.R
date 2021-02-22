@@ -26,16 +26,16 @@ import_ungrouped_xcms <- function(file, options_dt){
   if(tools::file_ext(file) == "Rda"){
     rda_file_v <- load(file = file, envir = environment())
     rda_file <- get(rda_file_v[1])
-    ug_table <- as.data.table(xcms::peaks(rda_file))
+    ug_table <- data.table::as.data.table(xcms::peaks(rda_file))
   } else {
     #Import csv file
-    ug_table <- fread(file)
+    ug_table <- data.table::fread(file)
   }
 
 
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_dt$ug_columns)
+  ug_req_cols <- stats::na.omit(options_dt$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in unaligned XCMS output: ', paste0(cols_not_found, sep = " - "))
@@ -85,15 +85,15 @@ import_grouped_xcms <- function (file, options_dt) {
   if(tools::file_ext(file) == "Rda"){
     rda_file_v <- load(file = file, envir = environment())
     rda_file <- get(rda_file_v[1])
-    g_table <- as.data.table(xcms::peakTable(rda_file))
+    g_table <- data.table::as.data.table(xcms::peakTable(rda_file))
   } else {
     #Import csv file
-    g_table <- fread(file)
+    g_table <- data.table::fread(file)
   }
 
 
   #Check if all columns defined in optionsframe are present
-  g_req_cols <- na.omit(options_dt$g_columns)
+  g_req_cols <- stats::na.omit(options_dt$g_columns)
   colnames(g_table) <- tools::file_path_sans_ext(colnames(g_table))
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
@@ -105,9 +105,9 @@ import_grouped_xcms <- function (file, options_dt) {
 
 
   #Transforming table from wide to long format, creating 1 peak-per-row format
-  id_vars <- append(na.omit(options_dt[['g_columns']]), 'feature_id')
-  measure_vars = na.omit(options_dt[, g_samples])
-  g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
+  id_vars <- append(stats::na.omit(options_dt[['g_columns']]), 'feature_id')
+  measure_vars = stats::na.omit(options_dt[, g_samples])
+  g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
 
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_dt, 'g_columns', 'internal_columns')

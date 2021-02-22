@@ -12,6 +12,8 @@
 #' @details \strong{eic_mzmin:} lowest mz value detected in respective ROI
 #' @details \strong{eic_mzmax:} highest mz value detected in respective ROI
 #'
+#' @importFrom data.table as.data.table setkey
+#'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export
 #'
@@ -56,7 +58,7 @@ get_ROIs <-
     #replicate rows for each file if that did not already happen before
     ##################################
     if(is.na(match("FileName", colnames(Target.table)))){
-      files.dt <- data.table(FileName = sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files)))
+      files.dt <- data.table::data.table(FileName = sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files)))
       files.dt[,fileIdx:= seq(nrow(files.dt))]
       Target.table$fileIdx <- rep(1, nrow(Target.table))
       Target.table <- Target.table[files.dt, on=.(fileIdx<=fileIdx), allow.cartesian = TRUE]
@@ -78,7 +80,20 @@ get_ROIs <-
     ##################################
     `%dopar%` <- foreach::`%dopar%`
     doFuture::registerDoFuture()
-    future::plan(plan)
+
+
+    if(plan == "multiprocess" && future::supportsMulticore()){
+      future::plan(future::multicore)
+    } else if(plan == "multiprocess") {
+      future::plan(future::multisession)
+    } else {
+      future::plan(plan)
+    }
+
+
+
+
+    #future::plan(plan)
     Output <- foreach::foreach(file = unique(Target.table$FileName), .packages = c("mzRAPP")) %dopar% {
       #for(file in seq(length(files))){
 
@@ -100,9 +115,9 @@ get_ROIs <-
           ##################################
           #find ROIs and set up ROI-table and Target.table for their join
           ##################################
-          trash <- capture.output({
+          trash <- utils::capture.output({
             suppressWarnings(
-              ROI.list <- xcms:::findmzROI(xr,
+              ROI.list <- xcms::findmzROI(xr,
                                            dev = PrecisionMZtol * 1E-6,
                                            minCentroids = minCentroids,
                                            scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
@@ -110,7 +125,7 @@ get_ROIs <-
                                            noise = 0)
             )})
 
-          ROI.dt <- rbindlist(ROI.list)
+          ROI.dt <- data.table::rbindlist(ROI.list)
           if(nrow(ROI.dt) == 0) return(NULL)
           ROI.dt[, roi_id := 1:nrow(ROI.dt)]
           ROI.dt <- ROI.dt[, `:=` (rtmin = xr@scantime[scmin],
@@ -127,7 +142,7 @@ get_ROIs <-
           ##################################
           setkey(Target.table.wk.molec, mzlowerBD, mzupperBD)
           setkey(ROI.dt, mzlowerBD, mzupperBD)
-          mz.overlap <- foverlaps(ROI.dt,
+          mz.overlap <- data.table::foverlaps(ROI.dt,
                                   Target.table.wk.molec,
                                   nomatch = NULL)
 
@@ -158,14 +173,14 @@ get_ROIs <-
 
           } else return(NULL)
         })
-      return(rbindlist(matches_perfile_list))
+      return(data.table::rbindlist(matches_perfile_list))
     }
 
     future::plan("sequential")
     ##################################
     #collect and return cluster output
     ##################################
-    matches <- rbindlist(Output)
+    matches <- data.table::rbindlist(Output)
 
 
     return(matches[Target.table, on=.(molecule, adduct, isoab, FileName), nomatch = NA])

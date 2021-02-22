@@ -29,7 +29,7 @@ get_main_UT_groups <- function(DT){
 
     bestIso <- suppressWarnings(names(which.max(apply(DT[,-1], 2, function(x) {max(table(x[!x %in% c("Lost_b.PP", "Lost_b.A", NA, "", used_UTgrps) ]))}))))
 
-    best_UTgrp <- names(which.max(table(na.omit(DT[!DT[[bestIso]] %in% c("Lost_b.PP", "Lost_b.A", NA, "", used_UTgrps), ..bestIso]))))
+    best_UTgrp <- names(which.max(table(stats::na.omit(DT[!DT[[bestIso]] %in% c("Lost_b.PP", "Lost_b.A", NA, "", used_UTgrps), ..bestIso]))))
 
     used_UTgrps <- c(used_UTgrps, best_UTgrp)
 
@@ -65,7 +65,7 @@ count_alignment_errors <- function(DT, main_UTgroups, method = "both"){
 
   if(method == "self-critical" | method == "both"){
 
-    lba <- as.data.table(table(unlist(DT)))
+    lba <- data.table::as.data.table(table(unlist(DT)))
     if(nrow(lba[V1 == "Lost_b.A"]) == 1) {
       lba_e <- as.integer(lba[V1 == "Lost_b.A"]$N)
     } else {lba_e <- 0L}

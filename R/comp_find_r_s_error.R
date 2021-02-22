@@ -6,6 +6,7 @@
 #'
 #' @export
 #'
+#' @importFrom data.table data.table
 #' @keywords internal
 #'
 find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
@@ -57,13 +58,14 @@ find_r_s_error <- function(peak_area_b, peak_area, peak_height_b, Connected){
 #'
 #' @return connected file grps
 #'
+#'
 #' @keywords internal
 #'
 File_con_test <- function(FileName, feature_id){
 
   sub_tab <- data.table(FileName, feature_id)
 
-  tt <- na.omit(sub_tab)
+  tt <- stats::na.omit(sub_tab)
 
   if(length(unique(tt$FileName)) <= 1 |
      length(unique(tt$feature_id)) <= 1){return(rep(FALSE, nrow(sub_tab)))}

@@ -3,7 +3,7 @@
 #' @description Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candidates.
 #'
 #' @param files vector with file paths
-#' @param Grps data frame with two columns: one for filenames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).
+#' @param Grps data frame with two columns: one for filen ames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).
 #' @param CompCol_all output from function \code{\link{get_ROIs}}
 #' @param Min.PointsperPeak minimum number of points per peak for a peak to be considered
 #' @param peak.spotting.factor this parameter is ignored when user.rtmin/user.rtmax are given in the CompCol_all table. Relative height to the highest point of the EIC above which points should be considered during peak detection process. e.g. 0.001 corresponds to 0.1\% of the maximum.
@@ -12,7 +12,8 @@
 #' @param Min.cor.w.main_adduct Minimum pearson correlation coefficient between main_adduct and other adducts for other adducts to be retained
 #' @param Min.cor.w.M0 Minimum pearson correlation coefficient between highest isotopologues and lower isotopologues for lower isotopologues to be retained.
 #' @param Min.iso.count Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.
-#' @param return_unsuc_searches Should unsuccsessfull searches be returned (TRUE/FALSE)
+#' @param remove_isoab_outliers Should isotopologues be removed if they differ from predicted values by more than 35\% (TRUE/FALSE)
+#' @param return_unsuc_searches Should unsuccessful searches be returned (TRUE/FALSE)
 #' @param max.rt.diff_sec maximum difference between user.rt in position of peak maximum in seconds
 #' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm
 #'
@@ -62,7 +63,9 @@
 #' @details \strong{Iso_count:} isotopologue count per molecule and adduct
 #' @details \strong{samples_per_group:} number of samples per group
 #' @details \strong{iso_id:} id for specific isotopologue
-
+#' @details \strong{rt_raw_span:} Max RT difference within a given isotopologue of a given molecule and adduct
+#'
+#' @importFrom data.table data.table as.data.table
 #'
 #' @export
 
@@ -75,8 +78,9 @@ find_bench_peaks <- function(files,
                            #Min.Res = 60,
                            plan = "multiprocess",
                            Min.cor.w.main_adduct = 0.8,
-                           Min.cor.w.M0 = 0.75,
+                           Min.cor.w.M0 = 0.85,
                            Min.iso.count = 2,
+                           remove_isoab_outliers = TRUE,
                            return_unsuc_searches = FALSE,
                            max.rt.diff_sec = 20,
                            max.mz.diff_ppm = 5)
@@ -84,7 +88,7 @@ find_bench_peaks <- function(files,
 
 
 
-  #Conditions appon which to throw error
+  #Conditions upon which to throw error
   if(!isTRUE(is.data.frame(CompCol_all))){stop("CompCol_all has to be a data frame and/or data table!")}
   if(!isTRUE(is.data.table(CompCol_all))){CompCol_all <- as.data.table(CompCol_all)}
 
@@ -111,7 +115,7 @@ find_bench_peaks <- function(files,
 
 
   CompCol <-
-    na.omit(CompCol_all,
+    stats::na.omit(CompCol_all,
             cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
 
 
@@ -119,7 +123,15 @@ find_bench_peaks <- function(files,
   #prepare parallel processing
   ##################################
   doFuture::registerDoFuture()
-  future::plan(plan)
+
+  if(plan == "multiprocess" && future::supportsMulticore()){
+    future::plan(future::multicore)
+  } else if(plan == "multiprocess") {
+    future::plan(future::multisession)
+  } else {
+    future::plan(plan)
+  }
+
   `%dopar%` <- foreach::`%dopar%`
   #future::plan(list("sequential", "multiprocess"))
   #future::plan(multiprocess(workers = 40))
@@ -147,7 +159,7 @@ find_bench_peaks <- function(files,
               MA.Isos <- data.table(NULL)
               ##################################
               #setup order of EIC evaluation: 1. most abundant isotopologue (MAiso) of main adduct (main_adduct); 2. less abundant isotopologues (LAisos) of main adduct if peak has been found in "1.";
-              #3. most abundant isotopologue of other adducts (screen_adducts) if peak has been found in "1."; 4. less abundant isotopologues of screen adduct if peak has been found in "3."
+              #3. most abundant isotopologue of other adducts (screen_adducts) if peak has been found in "1." and "2."; 4. less abundant isotopologues of screen adduct if peak has been found in "3."
               ##################################
               for (adduct.run in c("main_adduct", "screen_adducts")) {
                 for (iso.run in c("MAiso", "LAisos")) {
@@ -271,8 +283,7 @@ find_bench_peaks <- function(files,
 
 
                           manual_bound <- FALSE
-                          if (iso.run == "MAiso" & adduct.run == "main_adduct") {
-
+                          if (iso.run == "MAiso" & adduct.run == "main_adduct" || nrow(M0_peaks) > 0) {
                             #check for manual boundaries
                             if(all(c("rtmin", "rtmax") %in% colnames(CompCol_xic))){
                               if(!is.na(CompCol_xic[i]$rtmin) & !is.na(CompCol_xic[i]$rtmax)){
@@ -287,60 +298,61 @@ find_bench_peaks <- function(files,
 
 
                             #automatic boundary imputation
-                            if(manual_bound == FALSE){
-                              l.peaks <- cutout_peaks(
-                                int = EIC.dt[!is.na(int_wo_spikes)]$int,
-                                rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
-                                Min.PpP = Min.PointsperPeak,
-                                peak.spotting.factor. = peak.spotting.factor,
-                                Integration_baseL_factor. = Integration_baseL_factor,
-                                Min.Res. = 1,#Min.Res,
-                                l = if(is.null(CompCol_xic[i]$user.rtmin)){1} else{if(!is.na(as.numeric(CompCol_xic[i]$user.rtmin))){
-                                  which.min(abs(CompCol_xic[i]$user.rtmin - EIC.dt[!is.na(as.numeric(int_wo_spikes))]$rt))}else {1}},
-                                r = if(is.null(CompCol_xic[i]$user.rtmax)){length(EIC.dt[!is.na(int_wo_spikes)]$rt)} else{
-                                  if(!is.na(CompCol_xic[i]$user.rtmax)){
-                                  which.min(abs(CompCol_xic[i]$user.rtmax - EIC.dt[!is.na(int_wo_spikes)]$rt))}else{length(EIC.dt[!is.na(int_wo_spikes)]$rt)}}
-                              )
-                            }
+                #            if(manual_bound == FALSE){
+                #              l.peaks <- cutout_peaks(
+                #                int = EIC.dt[!is.na(int_wo_spikes)]$int,
+                #                rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
+                #                Min.PpP = Min.PointsperPeak,
+                #                peak.spotting.factor. = peak.spotting.factor,
+                #                Integration_baseL_factor. = Integration_baseL_factor,
+                #                Min.Res. = 1,#Min.Res,
+                #                l = if(is.null(CompCol_xic[i]$user.rtmin)){1} else{if(!is.na(as.numeric(CompCol_xic[i]$user.rtmin))){
+                #                  which.min(abs(CompCol_xic[i]$user.rtmin - EIC.dt[!is.na(as.numeric(int_wo_spikes))]$rt))}else {1}},
+                #                r = if(is.null(CompCol_xic[i]$user.rtmax)){length(EIC.dt[!is.na(int_wo_spikes)]$rt)} else{
+                #                  if(!is.na(CompCol_xic[i]$user.rtmax)){
+                #                  which.min(abs(CompCol_xic[i]$user.rtmax - EIC.dt[!is.na(int_wo_spikes)]$rt))}else{length(EIC.dt[!is.na(int_wo_spikes)]$rt)}}
+                #              )
+                #            }
 
                             ##################################
                             #extract peaks from rt range of justifying peaks (highest isotopologue for lower isotopologues of each adduct; highest isotopologue of main
                             #adduct for other highest isotopologue of other adducts)
                             ##################################
-                          } else if (nrow(M0_peaks) > 0)  {
-
-                            l.peaks <- mapply(
-                              cutout_peaks,
-                              l = sapply(M0_peaks$peaks.StartTime, function(val) {
-                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
-                              }),
-                              r = sapply(M0_peaks$peaks.EndTime, function(val) {
-                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
-                              }),
-                              M0.grp = M0_peaks$peaks.M0.grp, #ifelse(iso.run == "LAisos", paste0(M0_peaks$peaks.M0.grp), NA),
-                              MoreArgs = list(
-                                int = EIC.dt[!is.na(int_wo_spikes)]$int,
-                                rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
-                                Min.PpP = Min.PointsperPeak,
-                                peak.spotting.factor. = peak.spotting.factor,
-                                Integration_baseL_factor. = Integration_baseL_factor,
-                                Min.Res. = 1#Min.Res
-                              ),
-                              SIMPLIFY = FALSE
-                            )
-
-
-                            if (!is.null(l.peaks)) {
-                              l.peaks <- rbindlist(l.peaks, use.names = TRUE)
-                              l.peaks$idx <- 1:nrow(l.peaks)
-                            }
-                          } else if (nrow(M0_peaks) == 0) {
-                            l.peaks <- NULL
+                #          } else if (nrow(M0_peaks) > 0)  {
+#
+#                            l.peaks <- mapply(
+#                              cutout_peaks,
+#                              l = sapply(M0_peaks$peaks.StartTime, function(val) {
+#                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
+#                              }),
+#                              r = sapply(M0_peaks$peaks.EndTime, function(val) {
+#                                which.min(abs(EIC.dt[!is.na(int_wo_spikes)]$rt - val))
+#                              }),
+#                              M0.grp = M0_peaks$peaks.M0.grp, #ifelse(iso.run == "LAisos", paste0(M0_peaks$peaks.M0.grp), NA),
+#                              MoreArgs = list(
+#                                int = EIC.dt[!is.na(int_wo_spikes)]$int,
+#                                rt = EIC.dt[!is.na(int_wo_spikes)]$rt,
+#                                Min.PpP = Min.PointsperPeak,
+#                                peak.spotting.factor. = peak.spotting.factor,
+#                                Integration_baseL_factor. = Integration_baseL_factor,
+#                                Min.Res. = 1#Min.Res
+#                              ),
+#                              SIMPLIFY = FALSE
+#                            )
+#
+#
+#                            if (!is.null(l.peaks)) {
+#                              l.peaks <- rbindlist(l.peaks, use.names = TRUE)
+##                              l.peaks$idx <- 1:nrow(l.peaks)
+#                            }
                           }
+
+if(!exists("l.peaks")){
+  l.peaks <- data.table(NULL)
+}
 
                           if (!is.null(l.peaks)) {
                             if (nrow(l.peaks) > 0 & length(l.peaks) > 1) {
-
                               ##################################
                               #get start and end time for detected peaks and add them to the table
                               ##################################
@@ -387,7 +399,7 @@ find_bench_peaks <- function(files,
                               ##################################
                               #get information on mz peaks for each chromatographic peak
                               ##################################
-                              l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i], EIC.dt)
+                              l.peaks.mz_list <- Get_MZ_list(l.peaks, raw_data, CompCol_xic[i], EIC.dt, max.mz.diff_ppm)
                               ##################################
                               #add additional variables for each chromatographic peak
                               ##################################
@@ -410,7 +422,7 @@ find_bench_peaks <- function(files,
                   #first combine peaks from all compounds into one table then peaks from all adducts and isotopologues into one table
                   ##################################
                   if (iso.run == "MAiso") {
-                    MA.Isos <- rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+                    MA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
                     if(!("peaks.PpP" %in% colnames(MA.Isos))){
                       MA.Isos[, peaks.PpP := 0]
                     }
@@ -426,7 +438,7 @@ find_bench_peaks <- function(files,
                       if(nrow(MA.Isos) > 0 & !is.null(MA.Isos) & "peaks.cor_w_main_add"  %in% colnames(MA.Isos)) MA.Isos <- MA.Isos[peaks.cor_w_main_add >= Min.cor.w.main_adduct]
                     }
                   } else if (iso.run == "LAisos"){
-                    LA.Isos <- rbindlist(Bureau, fill = TRUE, use.names = TRUE)
+                    LA.Isos <- data.table::rbindlist(Bureau, fill = TRUE, use.names = TRUE)
                     if(nrow(LA.Isos) > 0 & !is.null(LA.Isos) & c("peaks.cor_w_M0")  %in% colnames(LA.Isos)) LA.Isos <- LA.Isos[peaks.cor_w_M0 >= Min.cor.w.M0 &
                                                                                                                               peaks.PpP >= Min.PointsperPeak &
                                                                                                                               peaks.mz_accuracy_ppm < max.mz.diff_ppm]
@@ -449,7 +461,7 @@ find_bench_peaks <- function(files,
   future::plan("sequential")
 
 
-  Result <- rbindlist(Output, fill = TRUE, use.names = TRUE)
+  Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
 
 
@@ -465,7 +477,9 @@ find_bench_peaks <- function(files,
                         flag_extremes = TRUE
   )
 
-  Result <- Result[isoab_ol == FALSE]
+  if(remove_isoab_outliers == TRUE){
+    Result <- Result[isoab_ol == FALSE]
+  }
 
   Result <-
     Result[Result[!is.na(peaks.idx) &
@@ -544,22 +558,26 @@ find_bench_peaks <- function(files,
 
     Result <- Result[Results_ia100[, c("molecule", "adduct", "FileName", "peaks.M0.grp")], on =.(molecule, adduct, FileName, peaks.M0.grp), nomatch = NULL]
 
+  }
+
+  Result[, rt_raw_span := .(max(peaks.rt_raw) - min(peaks.rt_raw)), by = .(molecule, adduct, isoab)]
+
     sort_vct <- intersect(colnames(Result),
                           c("IDX",	"molecule",	"adduct",	"main_adduct",	"isoab",	"FileName",	"Grp",	"samples_per_group",
                             "formula",	"charge",	"Iso_count",	"mz_ex",	"peaks.idx",	"peaks.rtmin",	"peaks.rtmax",
                             "peaks.M0.grp",	"peaks.StartTime",	"peaks.EndTime",	"peaks.PpP",	"peaks.mz_accurate",
                             "peaks.mz_accuracy_abs",	"peaks.mz_accuracy_ppm",	"peaks.mz_span_abs",	"peaks.mz_span_ppm",
                             "peaks.mz_min",	"peaks.mz_max",	"peaks.FW25M",	"peaks.FW50M",	"peaks.FW75M",	"peaks.data_rate",
-                            "peaks.rt_raw",	"peaks.zigZag_IDX",	"peaks.sharpness",	"peaks.height",	"peaks.area",
-                            "peaks.cor_w_M0",	"peaks.cor_w_main_add",	"peaks.manual_int",	"ExpectedArea",	"ErrorRel_A",
-                            "ErrorAbs_A",	"ExpectedHeight",	"ErrorRel_H",	"ErrorAbs_H",	"isoab_ol",	"Intensities.v",	"RT.v")
+                            "peaks.rt_raw", "peaks.symmetry", "peaks.jaggedness",	"peaks.zigZag_IDX",	"peaks.sharpness",	"peaks.height",	"peaks.area",
+                            "peaks.cor_w_M0",	"peaks.cor_w_main_add",	"peaks.manual_int", "rt_raw_span", "peaks.rt_neighbors", "peaks.mz_neighbors",
+                            "ExpectedArea",	"ErrorRel_A", "ErrorAbs_A",	"ExpectedHeight",	"ErrorRel_H",	"ErrorAbs_H",	"isoab_ol",	"Intensities.v",	"RT.v")
     )
 
-    setcolorder(Result, c(sort_vct, setdiff(colnames(Result), sort_vct)))
+    data.table::setcolorder(Result, c(sort_vct, setdiff(colnames(Result), sort_vct)))
 
 
 
-  }
+
 
   return(Result)
 

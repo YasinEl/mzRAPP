@@ -3,6 +3,12 @@
 #' @return shiny app
 #' @export
 #'
+#' @importFrom plotly plotlyOutput
+#' @importFrom shiny observeEvent renderUI reactiveVal reactive renderText isolate observe withProgress incProgress updateTabsetPanel showModal
+#' modalDialog req updateSelectInput renderTable downloadHandler
+#' @importFrom shinyjs useShinyjs disable enable
+#' @importFrom stats median
+#' @import shinyjs
 #'
 
 
@@ -11,15 +17,21 @@ callmzRAPP <- function(){
 
   #load resolution list from enviPat
   rm(list = ls(), envir = environment())
-  if(!("resolution_list" %in% ls())){data("resolution_list", envir = environment(), package = "enviPat")}
-
+  if(!("resolution_list" %in% ls())){utils::data("resolution_list", envir = environment(), package = "enviPat")}
+  if(!("adducts" %in% ls())){utils::data("adducts", envir = environment(), package = "enviPat")}
 
   #setup choice vectors
   choice_vector_bench <- c(
     'Retention time [s]' = 'peaks.rt_raw',
     'Points per peak' = 'peaks.PpP',
     'Mean scan to scan time [s]' = 'peaks.data_rate',
-    'Sharpness' = 'peaks.sharpness',
+    'Sharpness' = 'peaks.Sharpness',
+    'Jaggedness' = 'peaks.Jaggedness',
+    'Modality'  = 'peaks.Modality',
+    'SignificanceLevel' = 'peaks.SignificanceLevel',
+    'Symmetry' = 'peaks.Symmetry',
+    'TPASR' = 'peaks.TPASR',
+    'MinDivMax' = 'peaks.MinDivMax',
     'FW25M' = 'peaks.FW25M',
     'FW50M'= 'peaks.FW50M',
     'FW75M' = 'peaks.FW75M',
@@ -32,6 +44,9 @@ callmzRAPP <- function(){
     'mz range (abs)' = 'peaks.mz_span_abs',
     'mz range [ppm]' = 'peaks.mz_span_ppm',
     'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0',
+    'RT neighbors' = 'peaks.rt_neighbors',
+    'mz neighbors' = 'peaks.mz_neighbors',
+    'Max. RT shift [s]' = 'rt_raw_span',
     'Molecule' = 'molecule',
     'Filename' = 'FileName',
     'Adduct' = 'adduct',
@@ -49,11 +64,17 @@ callmzRAPP <- function(){
     'Retention time [sec]' = 'rt_b',
     'Points per peak' = 'peaks.PpP_b',
     'Mean scan to scan time [s]' = 'peaks.data_rate_b',
-    'Sharpness' = 'peaks.sharpness_b',
+    'Sharpness' = 'peaks.Sharpness_b',
+    'Jaggedness' = 'peaks.Jaggedness_b',
+    'Modality'  = 'peaks.Modality_b',
+    'SignificanceLevel' = 'peaks.SignificanceLevel_b',
+    'Symmetry' = 'peaks.Symmetry_b',
+    'TPASR' = 'peaks.TPASR_b',
+    'MinDivMax' = 'peaks.MinDivMax_b',
     'FW25M' = 'peaks.FW25M_b',
     'FW50M'= 'peaks.FW50M_b',
     'FW75M' = 'peaks.FW75M_b',
-    'Zigzag index' = 'peaks.zigZag_IDX_b',
+    'Zigzag index' = 'peaks.zigZag_IDX',
     'log10(Height)' = 'peak_height_b',
     'log10(Area)' = 'peak_area_b',
     'mz measured' = 'mz_b',
@@ -61,7 +82,10 @@ callmzRAPP <- function(){
     'mz accuracy [ppm]' = 'peaks.mz_accuracy_ppm_b',
     'mz range (abs)' = 'peaks.mz_span_abs_b',
     'mz range [ppm]' = 'peaks.mz_span_ppm_b',
+    'RT neighbors' = 'peaks.rt_neighbors_b',
+    'mz neighbors' = 'peaks.mz_neighbors_b',
     'Pearson cor. coef. with highest Iso.' = 'peaks.cor_w_M0_b',
+    'Max. RT shift [s]' = 'rt_raw_span_b',
     'Molecule' = 'molecule_b',
     'Filename' = 'sample_name_b',
     'Adduct' = 'adduct_b',
@@ -89,7 +113,7 @@ callmzRAPP <- function(){
     ),
     shinydashboard::dashboardBody(
       useShinyjs(),
-      extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};', functions = c("scrolltop")), #always start from top of panel
+      shinyjs::extendShinyjs(text = 'shinyjs.scrolltop = function() {window.scrollTo(0, 0)};', functions = c("scrolltop")), #always start from top of panel
       shiny::tags$script(shiny::HTML("$('body').addClass('fixed');")),
       shiny::tags$script(shiny::HTML("
         var openTab = function(tabName){
@@ -117,7 +141,7 @@ callmzRAPP <- function(){
                 shiny::fluidRow(
                   shiny::column(5,
                          shiny::strong("1. Select necessary files", style = "font-size:30px"),
-                         shiny::p("(If dialog boxes do not appear after clicking please check behind the R console)"),
+                         shiny::p("(If dialog boxes do not appear after clicking please check behind your open windows.)"),
                          shiny::a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
 
                   )
@@ -191,6 +215,22 @@ callmzRAPP <- function(){
                   shiny::conditionalPanel(condition = "input.use_envipat_res_list",
                                    shiny::column(2, shiny::verbatimTextOutput(outputId = 'custom_res_mz', placeholder = TRUE)
                                    )
+                  )
+                ),
+
+                shiny::fluidRow(
+                    shiny::column(4,
+                    shinyWidgets::multiInput(
+                      inputId = "adduct_choice",
+                      label = "Would you like to screen for additional adducts? (Adducts with polarity not presents in target file will be ignored):",
+                      choices = c(adducts$Name),
+                      width = "350px",
+                      selected = c("M+H", "M-H", "2M+H", "2M-H", "M+Na", "M+Cl"),
+                      options = list(
+                        non_selected_header = "Choose between:",
+                        selected_header = "You have selected:"
+                      )
+                    )
                   )
                 ),
 
@@ -742,8 +782,15 @@ callmzRAPP <- function(){
 
 
     ##File Filters for choice dialogues
-    mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
-    csv_filter <- matrix(c('Files (*.csv, *.txt, *.Rda)', '*.csv;*.txt;*.Rda'), nrow = 1, ncol = 2)
+    #mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
+    #csv_filter <- matrix(c('Files (*.csv, *.txt, *.Rda)', '*.csv;*.txt;*.Rda'), nrow = 1, ncol = 2)
+
+    mzML_filter <- matrix(c('mzML Files', '.mzML',
+                            'All Files', '*'), 2, 2, byrow = TRUE)
+    csv_filter <- matrix(c('Supported Files', '.csv',
+                           'Supported Files', '.txt',
+                           'Supported Files', '.Rda',
+                           'All Files','*'), 4, 2, byrow = TRUE)
 
     #File input reactives
     #Benchmark
@@ -890,7 +937,7 @@ callmzRAPP <- function(){
         if(is.null(grps_file()) || length(grps_file()) == 0){
           stop('No grps file selected')
         } else {
-          grps <- fread(grps_file())
+          grps <- data.table::fread(grps_file())
 
           missing_cols <- setdiff(c("sample_name", "sample_group"), colnames(grps))
           if(length(missing_cols) > 0){stop(paste0("Sample_group table is lacking columns: ", paste(missing_cols, collapse = ", ")))}
@@ -905,9 +952,9 @@ callmzRAPP <- function(){
         if(is.null(coi_file()) || length(coi_file()) == 0){
           stop('No target file selected')
         } else {
-          targets <- fread(coi_file())
+          targets <- data.table::fread(coi_file())
 
-          missing_cols <- setdiff(c("molecule", "SumForm_c", "adduct_c", "main_adduct"), colnames(targets))
+          missing_cols <- setdiff(c("molecule", "SumForm_c", "main_adduct"), colnames(targets))
           if(length(missing_cols) > 0){stop(paste0("Target.table is lacking columns: ", paste0(missing_cols, collapse = ", ")))}
 
 
@@ -947,9 +994,9 @@ callmzRAPP <- function(){
           if(is.null(res_file()) || length(res_file()) == 0){
             stop('No Resolution/mz file selected')
           }
-          resolution_df <- fread(res_file())
+          resolution_df <- data.table::fread(res_file())
           if(!all(c("m/z", "R") %in% c(colnames(resolution_df)))){stop('Columns in Res/mz file missing')}
-          resolution_df <- na.omit(resolution_df[, c("m/z", "R")])
+          resolution_df <- stats::na.omit(resolution_df[, c("m/z", "R")])
           if(nrow(resolution_df) < 10){stop('Not enough values in Res/mz file. Please provide at least 10 (better more).')}
         }
 
@@ -963,7 +1010,8 @@ callmzRAPP <- function(){
                        MassTraces <- get_mz_table(targets,
                                                 instrumentRes = resolution_df,
                                                 RelInt_threshold = input$RelInt_Thresh_input,
-                                                stick_method = "intensoid"
+                                                stick_method = "intensoid",
+                                                screening_adducts = input$adduct_choice
                        )
 
                        ###################################################
@@ -988,12 +1036,13 @@ callmzRAPP <- function(){
                                               plan = input$plan_input,
                                               CompCol_all = rois,
                                               Integration_baseL_factor = 0.05,
+                                              Min.cor.w.M0 = 0.85,
                                               Min.PointsperPeak = input$min_PpP_input,
                                               max.mz.diff_ppm = input$accurate_MZ_tol_input
                        )
 
                        #####################################################
-                       fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
+                       data.table::fwrite(PCal, file = "Peak_list.csv", row.names = FALSE)
                        message(paste0("Benchmark dataset has been exported to ", getwd(), "/Peak_list.csv"))
                        incProgress(15/15, detail = "Finished")
 
@@ -1189,21 +1238,21 @@ callmzRAPP <- function(){
     observeEvent(comparison_data(),{
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+        comp.dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'mol_c', choices = as.character(unique(comp.dt$molecule_b)), selected = as.character(unique(comp.dt$molecule_b)[1]))
       }
     })
     observeEvent(input$mol_c, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+        comp.dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'add_c', choices = unique(comp.dt[molecule_b == input$mol_c]$adduct_b))
       }
     })
     observeEvent({input$mol_c; input$add_c}, {
       comparison_data<-isolate(comparison_data())
       if(!is.null(comparison_data)){
-        comp.dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+        comp.dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
         updateSelectInput(session, 'ia_c', choices = sort(round_woe(unique(comp.dt[molecule_b == input$mol_c & adduct_b == input$add_c]$isoab_b), 2), decreasing = TRUE))
       }
     })
@@ -1236,7 +1285,7 @@ callmzRAPP <- function(){
     observeEvent(plotly_click_wo_warnings(sc = "scatter"), {
 
       comparison_data <- comparison_data()
-      CE_plot <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
+      CE_plot <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
       CE_plot <- CE_plot[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
       CE_plot <- unique(CE_plot, by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"))
 
@@ -1282,7 +1331,7 @@ callmzRAPP <- function(){
     observeEvent(plotly_click_wo_warnings(sc = "IRbias"), {
 
       comparison_data <- comparison_data()
-      CE_plot <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+      CE_plot <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
       event.data <- suppressWarnings(plotly::event_data("plotly_click", source = "IRbias", priority = "event"))
       showModal(modalDialog(
         plotly::renderPlotly({

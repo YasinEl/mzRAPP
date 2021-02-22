@@ -10,7 +10,8 @@ get_mz_table(
   RelInt_threshold = 0.05,
   stick_method = "intensoid",
   adducts,
-  isotopes
+  isotopes,
+  screening_adducts = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ get_mz_table(
 \item{adducts}{data frame containing adducts (see \code{\link{adducts}})}
 
 \item{isotopes}{data frame containing isotopes (see \code{\link{isotopes}})}
+
+\item{screening_adducts}{vector of adduct names to be added for all molecules (if not already in the provided DT)}
 }
 \value{
 data.table with columns "molecule", "formula", "adduct", "charge", "m/z" and "abundance"

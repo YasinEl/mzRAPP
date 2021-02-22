@@ -23,7 +23,7 @@ count_errors_max <- function(dt){
   dt[, isoab_b := as.character(isoab_b)]
   dt[, peak_status := as.character(peak_status)]
 
-  dt <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
+  dt <- data.table::dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
   theReturn <- count_alignment_errors(dt, get_main_UT_groups(dt))
   return(theReturn)

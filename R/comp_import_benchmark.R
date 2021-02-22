@@ -8,6 +8,8 @@
 #' @param from_csv TRUE or FALSE depending on file being a data.table object or a path to a csv
 #' @param algo tool output format to compare the benchmark against. can be XCMS, XCMS3, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.
 #'
+#'
+#'
 #' @return returns a list including the benchmark in a format readable by \code{\link{compare_peaks}}.
 #' @export
 #'
@@ -23,12 +25,12 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
     }
 
     #Import csv file
-    b_table <- fread(file)
+    b_table <- data.table::fread(file)
   } else {
     if (!is.data.table(file)){
       stop('Generated benchmark is not a datatable')
     } else {
-      b_table <- copy(file)
+      b_table <- data.table::copy(file)
     }
   }
 
@@ -44,7 +46,7 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
   }
 
   #Check if all columns defined in optionsframe are present
-  b_req_cols <- na.omit(options_table$b_columns)
+  b_req_cols <- stats::na.omit(options_table$b_columns)
   if(!all(b_req_cols %in% colnames(b_table))){
     cols_not_found <- setdiff(b_req_cols, colnames(b_table))
     stop('Columns defined in options but not present in raw benchmark dataset: ', paste0(cols_not_found, sep = " - "))

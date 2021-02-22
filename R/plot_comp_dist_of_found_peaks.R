@@ -8,6 +8,14 @@
 #' @return plotly object
 #' @export
 #'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
+#' scale_fill_manual ggtitle scale_colour_manual theme_classic geom_histogram element_blank xlab ylab position_dodge geom_col
+#' @importFrom dplyr count
+#' @importFrom  data.table as.data.table
+#' @import plotly
+#' @importFrom dplyr sym summarize
+#'
+#'
 plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
   if(missing(var) | missing(comparison_data)) return(plotly::ggplotly(ggplot() + ggtitle("Missing arguments")))
 
@@ -19,7 +27,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
     feat_t <- comparison_data[["Matches_BM_NPPpeaks_NPPfeatures"]]
     feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
-    BM_bu <- rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+    BM_bu <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
     feat_t <- feat_t[main_feature == TRUE]
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
@@ -39,7 +47,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
   } else if(post_alignment == FALSE){
 
-    f_nf_dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+    f_nf_dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }
@@ -57,7 +65,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
     df_tmp$dpl <- duplicated(df_tmp$var_r)
     compl <- df_tmp$var_r[df_tmp$dpl]
     uncompl <- df_tmp[!var_r %in% compl]
-    dt <- data.table(var_r = uncompl$var_r,
+    dt <- data.table::data.table(var_r = uncompl$var_r,
                      f_nf_col = !as.logical(df_tmp[!var_r %in% compl]$f_nf_col),
                      N = rep(0, length(uncompl$var_r)))
     f_nf_plot <- rbind(df_sum, dt)
@@ -89,7 +97,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
       count(var = floor(!! sym(var)/binwidth)*binwidth, f_nf_col)
     df_bin_vct <- sort(df_bin$var)
     df_bin <- as.data.table(df_bin)
-    df_bin <- na.omit(df_bin)
+    df_bin <- stats::na.omit(df_bin)
     df_bin <- df_bin[df_bin[, .(MAXn = max(n)), by = var], on = .(var)]
 
     #add zeros
@@ -108,7 +116,7 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
 
         })
       subst <- as.data.table(subst, keep.rownames = TRUE)
-      subst <- dcast(melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
+      subst <- data.table::dcast(data.table::melt(subst, id.vars = "rn"), variable ~ rn)[, -1]
       subst$f_nf_col <- as.logical(subst$f_nf_col)
       df_bin <- rbind(df_bin, subst, use.names = TRUE, fill = FALSE)
     }

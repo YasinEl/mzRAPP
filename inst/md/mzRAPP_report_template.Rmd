@@ -145,7 +145,7 @@ Key metrics of the mzRAPP generated benchmark are summarized in the following. A
 <div class = "row">
 <div class = "col-md-4">
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-bm <- rbindlist(list(params$comp_d$Matches_BM_NPPpeaks, params$comp_d$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+bm <- data.table::rbindlist(list(params$comp_d$Matches_BM_NPPpeaks, params$comp_d$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 
 dt_benchmark <- data.table(metrics = c("molecule count", "sample count", "peak count", "med_scan_acqu._rate [1/s]"),
                            values = c(round(length(unique(bm[Split_peak == FALSE & main_peak == TRUE | 

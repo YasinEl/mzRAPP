@@ -6,6 +6,7 @@
 #' @param options_table options_table
 #'
 #'
+#'
 #' @keywords internal
 import_ungrouped_mzmine <- function(folder_path, options_table){
   message('Starting unaligned mzmine import')
@@ -22,7 +23,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
     file_path <- folder_path[i]
     #Check if ug_table exists, if not: create
     if(!exists("temp_dt")){
-      ug_table <- fread(file_path, integer64 = 'numeric')
+      ug_table <- data.table::fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
 
       if(length(names(ug_table)[grep(' Peak name$', names(ug_table))]) < 1){
@@ -38,10 +39,10 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
       temp_dt <- ug_table[,cols_to_keep, with=FALSE]
       old_names <- names(temp_dt)[names(temp_dt)!='sample_name']
       new_names <- sapply(old_names, function(x) strsplit(x, paste0(sample_name, ' '))[[1]], USE.NAMES = FALSE)[2,]
-      temp_dt <- setnames(temp_dt, old_names, new_names)
+      temp_dt <- data.table::setnames(temp_dt, old_names, new_names)
 
     } else {
-      ug_table <- fread(file_path, integer64 = 'numeric')
+      ug_table <- data.table::fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
       sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
 
@@ -52,14 +53,14 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
       temp_data <- ug_table[,cols_to_keep, with=FALSE]
       old_names <- names(temp_data)[names(temp_data)!='sample_name']
       new_names <- sapply(old_names, function(x) strsplit(x, paste0(sample_name, ' '))[[1]], USE.NAMES = FALSE)[2,]
-      temp_data <- setnames(temp_data, old_names, new_names)
+      temp_data <- data.table::setnames(temp_data, old_names, new_names)
       temp_dt <- rbind(temp_dt, temp_data)
     }
   }
   ug_table <- temp_dt
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_table$ug_columns)
+  ug_req_cols <- stats::na.omit(options_table$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in unaligned output: ', paste0(cols_not_found, sep = " - "))
@@ -125,10 +126,10 @@ import_grouped_mzmine <- function(file_path, options_table){
   }
 
   #Import csv file
-  g_table <- fread(file_path)
+  g_table <- data.table::fread(file_path)
 
   #Check if all columns defined in optionsframe are present
-  g_req_cols <- na.omit(options_table$g_columns)
+  g_req_cols <- stats::na.omit(options_table$g_columns)
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns defined in options but not present in grouped dataset: ', paste0(cols_not_found, sep = " - "))
@@ -140,8 +141,8 @@ import_grouped_mzmine <- function(file_path, options_table){
 
 
   #Removing file extensions from column names and transforming table from wide to long format, creating 1 peak-per-row format
-  id_vars <- append(na.omit(options_table[['g_columns']]), 'feature_id')
-  measure_vars <- paste0(na.omit(options_table[, g_samples]), ' Peak area')
+  id_vars <- append(stats::na.omit(options_table[['g_columns']]), 'feature_id')
+  measure_vars <- paste0(stats::na.omit(options_table[, g_samples]), ' Peak area')
 
   colnames(g_table) <-
     sapply(colnames(g_table), function(x){
@@ -154,8 +155,8 @@ import_grouped_mzmine <- function(file_path, options_table){
     },
     USE.NAMES = FALSE)
 
-  g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
-  g_table <- g_table[, sample_name := tstrsplit(sample_name, ' Peak area')]
+  g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
+  g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, ' Peak area')]
 
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')

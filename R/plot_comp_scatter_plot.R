@@ -7,6 +7,9 @@
 #' @param post_alignment TRUE/FALSE should NT data from before or after alignment be plotted
 #' @param comparison_data output from \code{\link{compare_peaks}}
 #'
+#'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
+#' scale_fill_manual ggtitle scale_colour_manual theme_classic geom_histogram element_blank xlab
 #' @return plotly object
 #' @export
 #'
@@ -20,7 +23,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
 
     feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
 
-    BM_bu <- rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+    BM_bu <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
 
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
 
@@ -43,7 +46,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
   } else if(post_alignment == FALSE){
 
 
-    f_nf_dt <-  rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
+    f_nf_dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
 
     f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
 

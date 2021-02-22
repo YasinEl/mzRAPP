@@ -3,6 +3,7 @@
 #' @param file_list file_list
 #' @param options_dt options_dt
 #'
+#' @importFrom  data.table as.data.table
 #'
 #' @keywords internal
 import_ungrouped_openms <- function(file_list, options_dt){
@@ -36,10 +37,10 @@ import_ungrouped_openms <- function(file_list, options_dt){
 
               #Check if ug_table exists, if not: create
 
-                    cols <- max(count.fields(file_path, sep = ","))
+                    cols <- max(utils::count.fields(file_path, sep = ","))
 
                     suppressWarnings(
-                    ug_table <- read.table(file_path,
+                    ug_table <- utils::read.table(file_path,
                                  col.names = paste("V", seq(cols)),
                                  fill = TRUE,
                                  sep = ",",
@@ -59,11 +60,11 @@ import_ungrouped_openms <- function(file_list, options_dt){
                     return(ug_table)
             }
 
-  ug_table <- rbindlist(Output, fill = TRUE, use.names = TRUE)
+  ug_table <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
 
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_dt$ug_columns)
+  ug_req_cols <- stats::na.omit(options_dt$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in OpenMS output: ', paste0(cols_not_found, sep = " - "))
@@ -105,6 +106,7 @@ import_ungrouped_openms <- function(file_list, options_dt){
 #' @param file_path file_path
 #' @param options_table options_table
 #'
+#' @importFrom data.table as.data.table
 #'
 #' @keywords internal
 import_grouped_openms <- function(file_path, options_table){
@@ -126,11 +128,11 @@ import_grouped_openms <- function(file_path, options_table){
   }
 
   #Import csv file
-  ######################g_table <- fread(file_path)#########################
+  ######################g_table <- data.table::fread(file_path)#########################
 
-  cols <- max(count.fields(file_path, sep = ","))
+  cols <- max(utils::count.fields(file_path, sep = ","))
 
-  openms_exp <- read.table(file_path,
+  openms_exp <- utils::read.table(file_path,
                            col.names = paste("V", seq(cols)),
                            fill = TRUE,
                            sep = ",",
@@ -160,7 +162,7 @@ import_grouped_openms <- function(file_path, options_table){
   sampid <- sampid[, sample_name := tools::file_path_sans_ext(basename(as.character(filename)))]
 
   #Check if all columns defined in optionsframe are present
-  g_req_cols <- na.omit(options_table$g_columns)
+  g_req_cols <- stats::na.omit(options_table$g_columns)
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns defined in options but not present in aligned OpenMS export: ', paste0(cols_not_found, sep = " - "))
@@ -171,10 +173,10 @@ import_grouped_openms <- function(file_path, options_table){
   g_table[, feature_id := seq.int(nrow(g_table))]
 
   #transforming table from wide to long format, creating 1 peak-per-row format
-  id_vars <- append(na.omit(options_table[['g_columns']]), 'feature_id')
+  id_vars <- append(stats::na.omit(options_table[['g_columns']]), 'feature_id')
   measure_vars <- sampid$vars
 
-  g_table <- melt(g_table,
+  g_table <- data.table::melt(g_table,
                   id.vars = id_vars,
                   measure.vars = measure_vars,
                   variable.name = 'vars',

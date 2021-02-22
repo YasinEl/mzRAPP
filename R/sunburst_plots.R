@@ -1,10 +1,13 @@
 #' plot_sunburst_alignment
 #'
-#' Generates a sunburst plot visualizing non-targeted data pre-processing alignment errors.
+#' @description Generates a sunburst plot visualizing non-targeted data pre-processing alignment errors.
 #' From inside to outside the donuts correspond to peaks found during peak detection, aligned/lost peaks, correct/incorrect alignments and error type. For
 #' more information please check the mzRAPP readme.
 #'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
+#'
+#' @import plotly
+#' @importFrom data.table data.table
 #'
 #' @return plotly object
 #' @export
@@ -84,13 +87,18 @@ plot_sunburst_alignment <- function(result_txt){
 
 #' plot_sunburst_peaks
 #'
-#' Generates a sunburst plot visualizing the proportions of found/not found peaks in order to assess non-targeted data pre-processing.
+#' @description Generates a sunburst plot visualizing the proportions of found/not found peaks in order to assess non-targeted data pre-processing.
 #' From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
 #' more information please check the mzRAPP readme.
 #'
 #'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}
+#'
+#'
+#' @import plotly
+#' @importFrom data.table data.table
+#'
 #'
 #' @return plotly object
 #' @export
@@ -150,22 +158,24 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
 #'
 #'
 #'
-#' Generates a sunburst plot visualizing the proportions of well recovered isotopologue ratios in order to assess non-targeted data pre-processing.
+#' @description Generates a sunburst plot visualizing the proportions of well recovered isotopologue ratios in order to assess non-targeted data pre-processing.
 #' From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
 #' more information please check the mzRAPP readme.
 #'
-#'
-#'
-#'
 #' @param result_txt output from \code{\link{derive_performance_metrics}}
 #' @param comparison_object output from \code{\link{compare_peaks}}
+#'
+#'
+#' @import plotly
+#' @importFrom data.table data.table
+#'
 #'
 #' @return plotly object
 #' @export
 #'
 plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
-  bm <- rbindlist(list(comparison_object$Matches_BM_NPPpeaks,
+  bm <- data.table::rbindlist(list(comparison_object$Matches_BM_NPPpeaks,
                        comparison_object$Unmatched_BM_NPPpeaks),
                   fill = TRUE,
                   use.names = TRUE)
@@ -244,20 +254,26 @@ plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
 #' as.sunburstDF
 #'
+#'
+#' @description This function was written by ismirsehregal on stackoverflow https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram
+#'
+#'
 #' @param DF DF
 #' @param valueCol valueCol
 #'
-#' @description This function was written by ismirsehregal on stackoverflow https://stackoverflow.com/questions/57395424/how-to-format-data-for-plotly-sunburst-diagram
+#' @import plotly
+#' @importFrom data.table data.table
+#'
 #' @keywords internal
 #'
 as.sunburstDF <- function(DF, valueCol = NULL){
 
   DT <- data.table(DF, stringsAsFactors = FALSE)
   DT[, root := "total"]
-  setcolorder(DT, c("root", names(DF)))
+  data.table::setcolorder(DT, c("root", names(DF)))
 
   hierarchyList <- list()
-  if(!is.null(valueCol)){setnames(DT, valueCol, "values", skip_absent=TRUE)}
+  if(!is.null(valueCol)){data.table::setnames(DT, valueCol, "values", skip_absent=TRUE)}
   hierarchyCols <- setdiff(names(DT), "values")
 
   for(i in seq_along(hierarchyCols)){
@@ -267,14 +283,14 @@ as.sunburstDF <- function(DF, valueCol = NULL){
     } else {
       currentDT <- DT[, lapply(.SD, sum, na.rm = TRUE), by=currentCols, .SDcols = "values"]
     }
-    setnames(currentDT, length(currentCols), "labels")
+    data.table::setnames(currentDT, length(currentCols), "labels")
     hierarchyList[[i]] <- currentDT
   }
 
-  hierarchyDT <- rbindlist(hierarchyList, use.names = TRUE, fill = TRUE)
+  hierarchyDT <- data.table::rbindlist(hierarchyList, use.names = TRUE, fill = TRUE)
 
   parentCols <- setdiff(names(hierarchyDT), c("labels", "values", valueCol))
-  hierarchyDT[, parents := apply(.SD, 1, function(x){fifelse(all(is.na(x)), yes = NA_character_, no = paste(x[!is.na(x)], sep = ":", collapse = " - "))}), .SDcols = parentCols]
+  hierarchyDT[, parents := apply(.SD, 1, function(x){data.table::fifelse(all(is.na(x)), yes = NA_character_, no = paste(x[!is.na(x)], sep = ":", collapse = " - "))}), .SDcols = parentCols]
   hierarchyDT[, ids := apply(.SD, 1, function(x){paste(x[!is.na(x)], collapse = " - ")}), .SDcols = c("parents", "labels")]
   hierarchyDT[, c(parentCols) := NULL]
   return(hierarchyDT)

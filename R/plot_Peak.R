@@ -3,6 +3,8 @@
 #' @param PC output from \code{\link{find_bench_peaks}}
 #' @param IndexNumber IDX number of peak to be plotted
 #'
+#'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
 #' @return plotly object
 #' @export
 #'
@@ -79,6 +81,9 @@ plot_Peak  <- function(PC, IndexNumber){
 #' @param IndexNumber IDX number of peak to be plotted
 #'
 #'
+#'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
+#' @importFrom data.table data.table
 #' @return plotly object
 #' @export
 #'
@@ -136,6 +141,8 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 #' @param ia isotopic abundance rounded to 2 digits
 #' @param add adduct
 #'
+#'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
 #' @return plotly object
 #' @export
 #'
@@ -143,7 +150,7 @@ plot_Peak_per_mol  <- function(PC_object, mol, ia = 100, add = "M+H"){
 UT_comp = FALSE
 
 if(is.list(PC_object) == TRUE && is.data.table == FALSE){
-  PC_object <- rbindlist(list(PC_object$Matches_BM_NPPpeaks, PC_object$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+  PC_object <- data.table::rbindlist(list(PC_object$Matches_BM_NPPpeaks, PC_object$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 }
 
 
@@ -282,6 +289,7 @@ plot_dt <- plot_dt[-1]
 #' @param plotly_key plotly_key
 #'
 #'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate facet_wrap
 #' @keywords internal
 plot_IR_peaks  <- function(PC, plotly_key){
   id_vetor <- unlist(strsplit(plotly_key, split = "_;_"))

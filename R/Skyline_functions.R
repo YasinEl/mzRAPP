@@ -5,6 +5,8 @@
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}
 #'
+#'
+#'
 #' @return Skyline Transition List
 #' @export
 #'
@@ -26,7 +28,7 @@ SkylineTransitionList <-
     BM <- BM[, c("Precursor charge", "Product charge") := .(charge, charge)][, !"charge"]
 
 
-    fwrite(unique(BM), file = "Skyline_Transition_List.csv", row.names = FALSE)
+    data.table::fwrite(unique(BM), file = "Skyline_Transition_List.csv", row.names = FALSE)
 
     message(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
 
@@ -45,6 +47,7 @@ SkylineTransitionList <-
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}
 #'
+#'
 #' @return Skyline peak boundaries
 #' @export
 #'
@@ -61,10 +64,10 @@ SkylinePeakBoundaries <-
 
     BM[, "Peptide Modified Sequence" := paste0(molecule, "_", adduct, "_", round(isoab, 2))]
 
-    files <- data.table("FileName" = sort(unique(BM$FileName)),
+    files <- data.table::data.table("FileName" = sort(unique(BM$FileName)),
                         "i" = seq(length(unique(BM$FileName))))
 
-    EICs <- data.table("Peptide Modified Sequence" = sort(unique(BM$`Peptide Modified Sequence`)),
+    EICs <- data.table::data.table("Peptide Modified Sequence" = sort(unique(BM$`Peptide Modified Sequence`)),
                         "i" = rep(1, length(unique(BM$`Peptide Modified Sequence`))))
 
     Peak_Boundaries_Skyline <- EICs[files, on=.(i<=i), allow.cartesian = TRUE][, !"i"]
@@ -80,7 +83,7 @@ SkylinePeakBoundaries <-
 
       colnames(Peak_Boundaries_Skyline) <- c("File Name", "Peptide Modified Sequence", "Min Start Time", "Max End Time")
 
-    fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
+      data.table::fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
 
     message(paste0("Peak Boundaries have been saved to your working directory as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
 

@@ -13,7 +13,7 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 \item{g_table}{one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table}
 
-\item{algo}{output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
+\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
 }
 \value{
 returns list containing different tables including data from different types of comparisons
@@ -87,7 +87,7 @@ in the Matches_BM_NPPpeaks table have "present_in_found" = TRUE
 
 \strong{MissingPeak_classification:} Classifies the missing value status of peaks before and after alignment. This classification
 is made only correct alignment of the benchmark is in general agreement with the alignment of the non-targeted output per molecule (as described in mzRAPP readme). Peaks for which this was confirmed
-show "Connected" = TRUE. The MissingPeak status is done for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
+show "Connected" = TRUE. The MissingPeak status is determined for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
 
 F (found): Peak is not missing
 

@@ -3,6 +3,7 @@
 #' @param raw_b_table raw_b_table
 #' @param algo algo
 #'
+#' @importFrom data.table data.table
 #'
 #' @keywords internal
 generate_options <- function(raw_b_table, algo){

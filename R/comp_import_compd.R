@@ -18,7 +18,7 @@ import_ungrouped_cd <- function(file_path, options_table){
   }
 
   #Import csv file
-  ug_table <- fread(file_path)
+  ug_table <- data.table::fread(file_path)
 
   #Make sure options_table is valid
   if (!is.data.table(options_table)){
@@ -26,7 +26,7 @@ import_ungrouped_cd <- function(file_path, options_table){
   }
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_table$ug_columns)
+  ug_req_cols <- stats::na.omit(options_table$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in Compound Discoverer ungrouped dataset: ', paste0(cols_not_found, sep = " - "))
