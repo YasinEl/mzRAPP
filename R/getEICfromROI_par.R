@@ -117,7 +117,7 @@ get_ROIs <-
           ##################################
           trash <- utils::capture.output({
             suppressWarnings(
-              ROI.list <- xcms::findmzROI(xr,
+              ROI.list <- xcms:::findmzROI(xr,
                                            dev = PrecisionMZtol * 1E-6,
                                            minCentroids = minCentroids,
                                            scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
