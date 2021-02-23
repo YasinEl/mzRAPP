@@ -9,14 +9,14 @@
 #'
 #' @keywords internal
 import_ungrouped_mzmine <- function(folder_path, options_table){
-  message('Starting unaligned mzmine import')
+  message('Starting unaligned MZmine 2 import')
 
   if(is.null(folder_path)){
     stop('No ungrouped files selected')
   }
 
   if(length(folder_path) < 2){
-    stop('There should be multiple files for the unaligned mzMine output!')
+    stop('There should be multiple files for the unaligned MZmine 2 output!')
   }
 
   for (i in 1:length(folder_path)){
@@ -27,7 +27,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
       #get sample name from Peak Name column
 
       if(length(names(ug_table)[grep(' Peak name$', names(ug_table))]) < 1){
-        stop(paste("It seems mzMine specific columns are missing in file ", file_path))
+        stop(paste("It seems MZmine 2 specific columns are missing in file ", file_path))
       }
 
       sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
@@ -93,7 +93,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  message(paste0('Successful mzMine unaligned import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful MZmine 2 unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 
@@ -109,7 +109,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
 #' @keywords internal
 import_grouped_mzmine <- function(file_path, options_table){
 
-  message('start mzMine aligned import')
+  message('start MZmine 2 aligned import')
 
   if(is.null(file_path)){
     return(NULL)
@@ -122,7 +122,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   }
 
   if(length(file_path) != 1){
-    stop('There should only be one file for the aligned mzMine output!')
+    stop('There should only be one file for the aligned MZmine 2 output!')
   }
 
   #Import csv file
@@ -176,7 +176,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  message(paste0('Successful mzMine aligned import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful MZmine 2 aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

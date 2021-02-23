@@ -80,7 +80,7 @@ generate_options <- function(raw_b_table, algo){
 
 
     },
-    'msDial' = {
+    'MS-DIAL' = {
       #Add ug columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'rt_start', 'rt_end', 'rt', 'mz'),
                                                  'ug_columns' = c('Height', 'Area', 'RT left(min)', 'RT right (min)', 'RT (min)', 'Precursor m/z')),
@@ -110,7 +110,7 @@ generate_options <- function(raw_b_table, algo){
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
-    'mzMine' = {
+    'MZmine 2' = {
       #Add ug columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
                                                  'ug_columns' = c('Peak height', 'Peak area', 'Peak RT start', 'Peak RT end', 'Peak RT', 'Peak m/z', 'Peak m/z min', 'Peak m/z max')),

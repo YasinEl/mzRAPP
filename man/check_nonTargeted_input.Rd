@@ -18,7 +18,7 @@ check_nonTargeted_input(
 
 \item{options_table}{output from \code{\link{check_benchmark_input}}}
 
-\item{algo}{tool output format of ug_table and g_table. can be XCMS, XCMS3, El-Maven, OpenMS, msDial, CompoundDiscoverer or mzMine. Outputs from different tools can also be used as long as they are reformatted to one of those types.}
+\item{algo}{tool output format of ug_table and g_table. can be XCMS, XCMS3, El-Maven, OpenMS, MS-DIAL, CompoundDiscoverer or MZmine 2. Outputs from different tools can also be used as long as they are reformatted to one of those types.}
 }
 \value{
 returns unaligned and aligned outputs from non-targeted tool in a format readable via \code{\link{compare_peaks}}

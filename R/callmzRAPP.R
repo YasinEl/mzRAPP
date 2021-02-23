@@ -395,7 +395,7 @@ callmzRAPP <- function(){
                 shiny::fluidRow(
                   shiny::column(
 
-                    12, shiny::selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'XCMS3', 'msDial', 'mzMine', 'El-MAVEN', 'OpenMS'), selected = '---')
+                    12, shiny::selectInput('algorithm_input', 'Non-targeted tool used', c('---', 'XCMS', 'XCMS3', 'MS-DIAL', 'MZmine 2', 'El-MAVEN', 'OpenMS'), selected = '---')
                   )#'CompoundDiscoverer',
                 ),
 

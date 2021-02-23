@@ -13,13 +13,14 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 \item{g_table}{one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table}
 
-\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
+\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "MS-DIAL", "CompoundDiscoverer" or "MZmine 2"}
 }
 \value{
 returns list containing different tables including data from different types of comparisons
 }
 \description{
-Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme
+\url{https://github.com/YasinEl/mzRAPP#matching-between-bm-and-npp-output-background}.
 }
 \details{
 The output of this function is a list containing 9 different elements. In the following benchmark peaks are referred to as BM, non-targeted unaligned peaks as NP and NP which have been aligned across samples (features) as NF. In all
