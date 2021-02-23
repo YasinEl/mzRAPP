@@ -96,9 +96,16 @@ interface.
 
 ## Use examples
 
-If you want to go through some useful examples on how to use mzRAPP
-please download [this
-pdf](https://ucloud.univie.ac.at/index.php/s/JEW3M6bsO9Q2Ea1).
+If you want to go through some examples on how to use mzRAPP please and
+interpret results you can go through some use-cases using the code
+below. However, more general explanations are provided in the chapter
+‘Generation and interpretation of NPP performance metrics’ of this
+readme.
+
+``` r
+library(mzRAPP)
+vignette("Vignette_mzRAPP_Example_workflow")
+```
 
 <span id="sBM_readme"> </span>
 

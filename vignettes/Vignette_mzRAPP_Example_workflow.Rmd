@@ -79,11 +79,11 @@ Afterward, the assessment can be started by pressing the blue button on the bott
 When assessment is done mzRAPP will automatically switch to the <i>View NPP assessment</i> tab. Key performance metrics can be inspected in the three overview boxes on the top. 
 
 
-1. It always makes sense to first check the final output in the <i>Post Alignment</i> box (If the final output looks good, we generally do not need to waste time on understanding if the intermediate steps worked well). There we can see that about 83-94% of peaks have been detected, which is ok. However, the isotopologue ratio (IR)-metric reports 28-53% degenerated IR, which we would consider quite a lot. Hence we need to look at the other steps.
+1. It always makes sense to first check the final output in the <i>Post Alignment</i> box (If the final output looks good, we generally do not need to waste time on understanding if the intermediate steps worked well). There we can see that about 83-94% of peaks have been detected, which is ok. However, the isotopologue ratio (IR)-metric reports 28-53% degenerated IR, which we would consider quite a lot. Hence we need to look at the previous steps.
 
-2. The <i>Peak Picking</i> box shows that 2463/2870 peaks have been found, which should correspond to about 83-90% of all raw data peaks. This is about the same range as the final output (we would consider that to be not problematic). The IR-metric looks quite good, with only up to 3% of IR being degenerated. However, up to 12% of matches led to split peaks which is quite a lot. This is problematic since they tend to cause problems for downstream alignment processes. More specifically, they are often in competition with more "properly" picked peaks during the alignment process and also "sabotage" the fill gaps algorithm (this can lead to a high number of alignment errors and/or degenerated IR in the aligned output).
+2. The <i>Peak Picking</i> box shows that 2463/2870 peaks have been found, which should correspond to about 83-90% of all raw data peaks. This is about the same range as the final output (we would consider that to be not problematic). The IR-metric looks quite good, with only up to 3% of IR being degenerated. However, up to 12% of matches led to split peaks which is quite a lot. This is problematic since they tend to cause problems for downstream alignment processes. More specifically, they are often in competition with more "properly" picked peaks during the alignment process. Check Figure 1 in the readme to find out how mzRAPP decides which peak is 'best'.
 
-3. In the <i>Alignment</i> box, 19-35% of peaks matched from peak picking are reported to not appear anymore in the aligned file. This can happen when the alignment algorithm only selects one peak per time unit and file but discards all other peaks within the same time unit. We consider 19-35% to be quite much. As mentioned above, this could be due to the high number of split peaks.
+3. In the <i>Alignment</i> box, 19-35% of peaks matched from peak picking are reported to not appear anymore in the aligned file. This can happen when the alignment algorithm only selects one peak per time unit and file but discards all other peaks within the same time unit. We consider 19-35% to be quite a lot. As mentioned above, this could be due to the high number of split peaks, when split peaks are retained for the aligned output instead of 'true' peaks.
 
 <b>We consider the high number of degenerated IR in the aligned output as not acceptable. As mentioned, the peak picking step and the high number of split peaks might have been problematic. We will therefore try to improve it.</b>
 
@@ -98,7 +98,7 @@ Afterward, the assessment can be started by pressing the blue button on the bott
 
 1. Looking at the final output in <i>Post Alignment</i>, we see that the Found peaks-metric did not change a lot. The IR-metric improved a little bit but not much.
 
-2. Also, in the <i>Peak Picking</i> box, both of those metrics did not change much. However, we have fewer split peaks now (1-3%) which is going in the right direction. The number of found peaks decreased by a little, which is not problematic since it seems like the fill gaps algorithm has picked them up as the number of found peaks in the post-alignment box is unaffected high.
+2. Also, in the <i>Peak Picking</i> box, both of those metrics did not change much. However, we have fewer split peaks now (1-3%) which is going in the right direction. The number of found peaks decreased by a little, which is not problematic since it seems like the fill gaps algorithm has picked them up as the number of found peaks in the post-alignment box is still high.
 
 3. The <i>Alignment Step</i> improved slightly but also not too much. 
 
@@ -115,7 +115,7 @@ Afterward, the assessment can be started by pressing the blue button on the bott
 
 Afterward, the assessment can be started by pressing the blue button on the bottom of the page.
 
-1. In the <i>Post Alignment</i> box, we see that now about 93-99% of peaks have been detected, which is quite some improvement. Also, the proportion of degenerated IR decreased to 3-20%. The Missing peaks classification shows that no classification was possible, most likely because full features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
+1. In the <i>Post Alignment</i> box, we see that now about 93-99% of peaks have been detected, which is quite some improvement. Also, the proportion of degenerated IR decreased to 3-20%. The Missing peaks classification shows that no classification was possible. This is most likely because full features have gone missing rather than random peaks. This can be confirmed by scrolling down to the <i>Nature of missing values</i> section, setting the slider to <i>after Alignment</i> and turning the plotting function on.
 
 2. We did not change anything about the peak picking step, so everything stayed the same.
 
@@ -138,9 +138,9 @@ Afterward, the assessment can be started by pressing the blue button on the bott
 
 2. In the <i>Peak Picking</i> box, we can see that about the same number of peaks have been detected before and after the alignment. However, checking the sunburst plot in the section <i>Distribution of found/not found peaks</i> shows that it has not been the same peaks that have not been detected. This can be explained by the fact that there have been several alignment problems reported in the <i>Alignment</i> box.
 
-3. The <i>Alignment Step</i> box shows that there have been not all (but most) BM divergences can be identified as alignment errors (details on this difference is explained in the Readme). Under the assumption that the alignment in the Benchmark was done correctly the number of errors accounts for up to about 7\%. As can be seen in the sunburst plot in the section <i>Distribution of found/not found peaks</i>, this might be the reason some of the peaks found during peak detection were not found anymore after alignment.
+3. The <i>Alignment Step</i> box shows that not all (but most) BM divergences can be identified as alignment errors (details on this difference is explained in the Readme, e.g., Figure 5). Under the assumption that the alignment in the Benchmark was done correctly the number of errors accounts for up to about 7\%. As can be seen in the sunburst plot in the section <i>Distribution of found/not found peaks</i>, this might be the reason some of the peaks found during peak detection were not found anymore after alignment, as they might have been put into a different aligned feature. 
 
 <b>If you want, you can try to do better using MZmine, XCMS, or another tool (all tools listed in the Readme on [GitHub](https://github.com/YasinEl/mzRAPP) are supported by mzRAPP).</b> <br>
 <br>
-<b>Please note that although you can use mzRAPP in this way for parameter optimization, it is not mzRAPPs primary purpose. mzRAPP is meant to provide you with an idea of how well your non-targeted pre-processing went. It is on the user to decide whether that result is good enough or not.</b>
+<b>Please note that although you can use mzRAPP for non-targeted parameter optimization, it is not mzRAPPs primary purpose. mzRAPP is meant to provide you with an idea of how well your non-targeted pre-processing went. It is on the user to decide whether that result is good enough or not.</b>
 
