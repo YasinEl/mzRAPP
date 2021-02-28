@@ -21,7 +21,7 @@ import_ungrouped_cd <- function(file_path, options_table){
   ug_table <- data.table::fread(file_path)
 
   #Make sure options_table is valid
-  if (!is.data.table(options_table)){
+  if (!data.table::is.data.table(options_table)){
     stop('Options is not type DataTable')
   }
 

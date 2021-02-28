@@ -14,7 +14,7 @@ import_options <- function (file_path) {
   }
   options_table = data.table::fread(file_path, na.strings = c(""))
 
-  if (!is.data.table(options_table)){
+  if (!data.table::is.data.table(options_table)){
     stop('Options is not type DataTable')
   }
   return(options_table)

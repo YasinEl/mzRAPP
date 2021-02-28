@@ -45,7 +45,7 @@ utils::globalVariables(c("adduct_b", "isoab_b", "idx", "int_wo_spikes", "rt", "S
                          "mean_area_g.y", "mean_area_g.x", "first_found_area_temp", "int_smooth",
                          "sc.i", "mzlowerBD", "mzupperBD", "filename", "average_area",
                          "merge_key", "no_of_samples", "peak_area_ug.y", "peak_area_ug.x",
-                         "is.data.table", "f_nf_col", "..var", "var_r", "N", "n", "diffH20PP",
+                         "f_nf_col", "..var", "var_r", "N", "n", "diffH20PP",
                          "grp_col", "data_type", "Pred_error", "RT_neighbors", "mz_neighbors",
                          "missing_peaks", "plot_group", "ord", "ErrorRel_A_b", "order_temp",
                          ".I", "area_diff", "..entrustedGrp", "Peptide", "NPP_peak", "Peptide Modified Sequence", ".",

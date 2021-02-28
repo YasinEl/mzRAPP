@@ -44,8 +44,12 @@
 #' @details \strong{peaks.FW75M:} chromatographic peak width at 75% of the maximum (s)
 #' @details \strong{peaks.data_rate:} mean differences between scans (s)
 #' @details \strong{peaks.rt_raw:} position of the highest intensity (s)
-#' @details \strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
-#' @details \strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+#' @details \strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+#' @details \strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+#' @details \strong{peaks.jaggedness:} peak jaggedness as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+#' @details \strong{peaks.symmetry:} peak symmetry as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+#' @details \strong{peaks.rt_neighbors:} reports whether extension of integration boundaries in the RT dimension in left or right increases the calculated chromatographic peak area by more than 20%
+#' @details \strong{peaks.mz_neighbors:} ratio between the chromatographic peak area and the chromatographic peak area calculated after increasing the width of the mz-extraction window by 4 * max.mz.diff_ppm (worst allowed mass accuracy)
 #' @details \strong{peaks.height:} highest intensity of the peak
 #' @details \strong{peaks.area:} chromatographic peak area
 #' @details \strong{peaks.cor_w_M0:} pearson correlation coefficient between most abundant isotopologue (isoab = 100) and lower isotopologues
@@ -59,13 +63,13 @@
 #' @details \strong{ExpectedHeight:} predicted chromatrographic peak height for lower isotopologues as calculated from most abundant isotopologue of the same molecule and adduct
 #' @details \strong{ErrorRel_H:} relative difference between ExpectedHeight and peaks.height
 #' @details \strong{ErrorAbs_H:} absolute difference between ExpectedHeight and peaks.height
-#' @details \strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to preducted isoab
-#' @details \strong{Iso_count:} isotopologue count per molecule and adduct
+#' @details \strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to predicted isoab
+#' @details \strong{Iso_count:} isotopologue count per file, molecule and adduct
 #' @details \strong{samples_per_group:} number of samples per group
 #' @details \strong{iso_id:} id for specific isotopologue
 #' @details \strong{rt_raw_span:} Max RT difference within a given isotopologue of a given molecule and adduct
 #'
-#' @importFrom data.table data.table as.data.table
+#' @importFrom data.table data.table as.data.table is.data.table
 #'
 #' @export
 
@@ -347,9 +351,10 @@ find_bench_peaks <- function(files,
 #                            }
                           }
 
-if(!exists("l.peaks")){
-  l.peaks <- data.table(NULL)
-}
+                          if(!exists("l.peaks")){
+                            l.peaks <- data.table(NULL)
+                          }
+
 
                           if (!is.null(l.peaks)) {
                             if (nrow(l.peaks) > 0 & length(l.peaks) > 1) {

@@ -12,7 +12,7 @@
 #' @details \strong{eic_mzmin:} lowest mz value detected in respective ROI
 #' @details \strong{eic_mzmax:} highest mz value detected in respective ROI
 #'
-#' @importFrom data.table as.data.table setkey
+#' @importFrom data.table as.data.table setkey is.data.table
 #'
 #' @return data.table object with information on ROIs for each row in Target.table. additional columns from Target.table are retained
 #' @export

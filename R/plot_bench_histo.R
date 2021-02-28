@@ -17,7 +17,7 @@
 plot_bench_histo <- function(benchmark_data, var, choice_vector_bench, color = "blue", post_comp = FALSE, rm_NF_legend = FALSE){
 
   if(post_comp == FALSE){
-    if(is.data.table(benchmark_data) == FALSE){
+    if(data.table::is.data.table(benchmark_data) == FALSE){
       benchmark_data <- benchmark_data$PCal
     }
   } else if (post_comp == TRUE){

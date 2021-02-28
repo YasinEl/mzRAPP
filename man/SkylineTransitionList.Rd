@@ -4,15 +4,17 @@
 \alias{SkylineTransitionList}
 \title{SkylineTransitionList}
 \usage{
-SkylineTransitionList(BM)
+SkylineTransitionList(BM, export_to_csv = TRUE)
 }
 \arguments{
 \item{BM}{output of \code{\link{find_bench_peaks}}}
+
+\item{export_to_csv}{export output automatically to working directory}
 }
 \value{
 Skyline Transition List
 }
 \description{
 Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list (automatically exported to working directory) which can then be imported to Skyline via
-Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
+Skyline -> File -> Import -> Transition List
 }

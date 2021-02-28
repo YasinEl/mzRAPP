@@ -264,15 +264,17 @@ csv file.<br> <br>
 
 An overview of different benchmark key data is provided in the “View
 Benchmark” panel. The plots can be used to inspect different qualities
-of the dataset. A molecule not being detected does not necessarily mean
-that there is no peak, but that mzRAPP was not able to validate it. This
-could happen since at least two isotopologues, fulfilling strict
-criteria regarding abundance, peak shape correlation, and the number of
-points per peak is required for a given molecule to be retained in the
-benchmark. To get a better overview of picked peaks two csv files as
-well as instructions for their application in Skyline can be exported.
-Those can (but do not have to) be used to generate a mirror image of the
-benchmark dataset in the free software,
+of the dataset. For information on the peak variables calculated please
+check `?mzRAPP::find_bench_peaks`. Also, please note that a molecule not
+being detected does not necessarily mean that there is no peak, but that
+mzRAPP was not able to validate it. This could happen since at least two
+isotopologues, fulfilling strict criteria regarding abundance, peak
+shape correlation, and the number of points per peak is required for a
+given molecule to be retained in the benchmark. To get a better overview
+of picked peaks two csv files as well as instructions for their
+application in Skyline can be exported. Those can (but do not have to)
+be used to generate a mirror image of the benchmark dataset in the free
+software,
 [Skyline](https://skyline.ms/project/home/software/Skyline/begin.view).
 <br>
 

@@ -16,7 +16,7 @@
 #'
 #' @import enviPat
 #'
-#' @importFrom data.table data.table as.data.table setDT melt.data.table
+#' @importFrom data.table data.table as.data.table setDT melt.data.table is.data.table
 #'
 #' @return data.table with columns "molecule", "formula", "adduct", "charge", "m/z" and "abundance"
 #' @export

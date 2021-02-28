@@ -149,7 +149,7 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 plot_Peak_per_mol  <- function(PC_object, mol, ia = 100, add = "M+H"){
 UT_comp = FALSE
 
-if(is.list(PC_object) == TRUE && is.data.table == FALSE){
+if(is.list(PC_object) == TRUE && data.table::is.data.table == FALSE){
   PC_object <- data.table::rbindlist(list(PC_object$Matches_BM_NPPpeaks, PC_object$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 }
 

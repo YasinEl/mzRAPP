@@ -1,10 +1,10 @@
 #' SkylineTransitionList
 #'
 #' @description Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline Transition list (automatically exported to working directory) which can then be imported to Skyline via
-#' Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy
+#' Skyline -> File -> Import -> Transition List
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}
-#'
+#' @param export_to_csv export output automatically to working directory
 #'
 #'
 #' @return Skyline Transition List
@@ -12,7 +12,7 @@
 #'
 #'
 SkylineTransitionList <-
-  function(BM){
+  function(BM, export_to_csv = TRUE){
 
     MassPrec <- round(max(BM$peaks.mz_span_ppm) / 2, 1)
 
@@ -27,14 +27,13 @@ SkylineTransitionList <-
 
     BM <- BM[, c("Precursor charge", "Product charge") := .(charge, charge)][, !"charge"]
 
-
-    data.table::fwrite(unique(BM), file = "Skyline_Transition_List.csv", row.names = FALSE)
-
-    message(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
-
+    if(export_to_csv == TRUE){
+      data.table::fwrite(unique(BM), file = "Skyline_Transition_List.csv", row.names = FALSE)
+      message(paste0("Transition List has been saved to your working directory as ", getwd(), "/Skyline_Transition_List.csv"))
+    }
 
     message(paste0("Please go to 'Skyline -> Settings -> Transition Settings -> Full-Scan -> Mass Accuracy' and set 'Precursor mass analyzer' to 'Centroided' and ",
-                 "Mass Accuracy to ", MassPrec, " ppm. You can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'."))
+                 "Mass Accuracy to about ", MassPrec, " ppm. You can then load this Transition list into Skyline via 'Skyline -> File -> Import -> Transition List...'."))
 
     return(unique(BM))
 
@@ -43,17 +42,17 @@ SkylineTransitionList <-
 
 #' SkylinePeakBoundaries
 #' @description Takes the output of \code{\link{find_bench_peaks}} and generates a Skyline peak-boundaries file (automatically exported to working directory) which can then be imported to Skyline via
-#' Skyline -> File -> Import -> Peak Boundaries...
+#' Skyline -> File -> Import -> Peak Boundaries... (after the required mzML files have been imported into Skyline using Skyline -> Import -> Results...)
 #'
 #' @param BM output of \code{\link{find_bench_peaks}}
-#'
+#' @param export_to_csv export output automatically to working directory
 #'
 #' @return Skyline peak boundaries
 #' @export
 #'
 #'
 SkylinePeakBoundaries <-
-  function(BM){
+  function(BM, export_to_csv = TRUE){
 
     BM <- BM[, c("molecule", "adduct", "isoab", "FileName", "peaks.StartTime", "peaks.EndTime")]
     BM[, peaks.StartTime := peaks.StartTime/60]
@@ -78,16 +77,19 @@ SkylinePeakBoundaries <-
       nomatch = NA
       ]
 
+
       Peak_Boundaries_Skyline[is.na(peaks.StartTime), peaks.StartTime := 0]
       Peak_Boundaries_Skyline[is.na(peaks.EndTime), peaks.EndTime := 0]
 
       colnames(Peak_Boundaries_Skyline) <- c("File Name", "Peptide Modified Sequence", "Min Start Time", "Max End Time")
 
-      data.table::fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
 
-    message(paste0("Peak Boundaries have been saved to your working directory as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
+      if(export_to_csv == TRUE){
+        data.table::fwrite(Peak_Boundaries_Skyline, file = "Skyline_Peak_Boundaries.csv", row.names = FALSE)
+        message(paste0("Peak Boundaries have been saved to your working directory as ", getwd(), "/Skyline_Peak_Boundaries.csv"))
+      }
 
-    message("After Transition List and mzML files have been loaded into Skyline you can apply these Peak Boundaries via 'Skyline -> File -> Import -> Peak Boundaries...'.")
+      message("After Transition List and mzML files have been loaded into Skyline you can apply these Peak Boundaries via 'Skyline -> File -> Import -> Peak Boundaries...'.")
 
     return(Peak_Boundaries_Skyline)
   }

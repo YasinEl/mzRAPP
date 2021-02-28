@@ -41,7 +41,6 @@ Imports:
     ggplot2,
     plotly
 Suggests: 
-    tools,
     foreach,
     stats,
     knitr,

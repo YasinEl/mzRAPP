@@ -69,7 +69,7 @@
 #' @details area_g: peak area as reported in NF
 #'
 #'
-#' @importFrom data.table data.table
+#' @importFrom data.table data.table is.data.table
 #'
 #' @export
 #'

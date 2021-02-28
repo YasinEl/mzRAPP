@@ -27,7 +27,7 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
     #Import csv file
     b_table <- data.table::fread(file)
   } else {
-    if (!is.data.table(file)){
+    if (!data.table::is.data.table(file)){
       stop('Generated benchmark is not a datatable')
     } else {
       b_table <- data.table::copy(file)
@@ -41,7 +41,7 @@ check_benchmark_input <- function (file, options_path = "generate", from_csv = T
   }
 
   #Make sure options_table is valid
-  if (!is.data.table(options_table)){
+  if (!data.table::is.data.table(options_table)){
     stop('Options is not type DataTable')
   }
 

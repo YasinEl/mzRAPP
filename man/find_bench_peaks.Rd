@@ -107,9 +107,17 @@ Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candid
 
 \strong{peaks.rt_raw:} position of the highest intensity (s)
 
-\strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+\strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
 
-\strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+\strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.jaggedness:} peak jaggedness as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.symmetry:} peak symmetry as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.rt_neighbors:} reports whether extension of integration boundaries in the RT dimension in left or right increases the calculated chromatographic peak area by more than 20%
+
+\strong{peaks.mz_neighbors:} ratio between the chromatographic peak area and the chromatographic peak area calculated after increasing the width of the mz-extraction window by 4 * max.mz.diff_ppm (worst allowed mass accuracy)
 
 \strong{peaks.height:} highest intensity of the peak
 
@@ -137,9 +145,9 @@ Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candid
 
 \strong{ErrorAbs_H:} absolute difference between ExpectedHeight and peaks.height
 
-\strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to preducted isoab
+\strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to predicted isoab
 
-\strong{Iso_count:} isotopologue count per molecule and adduct
+\strong{Iso_count:} isotopologue count per file, molecule and adduct
 
 \strong{samples_per_group:} number of samples per group
 

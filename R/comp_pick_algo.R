@@ -11,7 +11,7 @@
 #'
 check_nonTargeted_input <- function(ug_table_path, g_table_path, options_table = 'generate', algo){
 
-  if(is.list(options_table) == TRUE && is.data.table(options_table) == FALSE){
+  if(is.list(options_table) == TRUE && data.table::is.data.table(options_table) == FALSE){
 
     options_table <- options_table$options_table
 
