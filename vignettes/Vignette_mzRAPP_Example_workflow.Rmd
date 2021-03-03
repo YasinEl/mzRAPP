@@ -64,7 +64,7 @@ When mzRAPP is done, it will automatically export the finished Benchmark as csv 
 
 ### Non-targeted data pre-processing assement
 
-Going forward, the generated Benchmark (BM) can be used to assess non-targeted data pre-processing (NPP) outputs. To do this go to the <i>Setup NPP assessment</i> tab. You can then assess the performance of NPP runs we have performed via XCMS (script for their generation is available on [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe)):
+Going forward, the generated Benchmark (BM) can be used to assess non-targeted data pre-processing (NPP) outputs. To do this go to the <i>Setup NPP assessment</i> tab. You can then assess the performance of NPP runs we have performed via XCMS (script for their generation is available on [ucloud](https://ucloud.univie.ac.at/index.php/s/CQZeMvF9S02jrwe)). Please note that the following percentage values reported by us could slightly vary since we estimate confidence intervals using bootstrapping, which implies an element of randomness:
 
 
 #### Performance check (XCMS) 1 

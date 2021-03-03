@@ -74,7 +74,7 @@ callmzRAPP <- function(){
     'FW25M' = 'peaks.FW25M_b',
     'FW50M'= 'peaks.FW50M_b',
     'FW75M' = 'peaks.FW75M_b',
-    'Zigzag index' = 'peaks.zigZag_IDX',
+    'Zigzag index' = 'peaks.zigZag_IDX_b',
     'log10(Height)' = 'peak_height_b',
     'log10(Area)' = 'peak_area_b',
     'mz measured' = 'mz_b',
@@ -142,7 +142,7 @@ callmzRAPP <- function(){
                   shiny::column(5,
                          shiny::strong("1. Select necessary files", style = "font-size:30px"),
                          shiny::p("(If dialog boxes do not appear after clicking please check behind your open windows.)"),
-                         shiny::a("Click here for information on how to prepare csv files and set paramters.", onclick = "openTab('Readme')", href="#sBM_readme")
+                         shiny::a("For more information about those files check the section 'Benchmark dataset generation' in the Readme.", onclick = "openTab('Readme')", href="#sBM_readme")
 
                   )
                 ),
@@ -264,9 +264,9 @@ callmzRAPP <- function(){
                          shiny::p("(depending on the number of files and compounds this can take some time (minutes to hours))")
                   )
                 ),
-
+                shiny::fluidRow(shiny::column(6,shiny::br())),
                 shiny::fluidRow(
-                  shiny::column(2,shiny::actionButton('generate_benchmark', 'Generate benchmark', style = "background-color: #d2f8fa"))
+                  shiny::column(4,shiny::actionButton('generate_benchmark', 'Generate benchmark', style = "background-color: #2596be;color: white;padding:20px; font-size:150%"))
                 ),
         ),
 
@@ -402,7 +402,7 @@ callmzRAPP <- function(){
                 shiny::fluidRow(
                   shiny::column(
                     12, shiny::strong('2. Select unaligned and aligned files', style = "font-size:30px"), shiny::br(),
-                    shiny::a("Click here for information on how to get unaligned and aligned files from different NPP tools.",
+                    shiny::a("For information on how to export non-targeted results please check section 'Exporting NPP outputs from different tools' of the Readme.",
                       onclick = "openTab('Readme')",
                       href="#sNPP_readme"),
                     shiny::br()
@@ -436,7 +436,7 @@ callmzRAPP <- function(){
 
                 shiny::fluidRow(
                   shiny::column(
-                    12, shiny::strong('3. Select benchmark and/or options file', style = "font-size:30px"), shiny::br(), shiny::br()
+                    12, shiny::strong('3. Select benchmark', style = "font-size:30px"), shiny::br(), shiny::br()
                   )
                 ),
 
@@ -502,11 +502,13 @@ callmzRAPP <- function(){
                   )
                 ),
 
+                shiny::fluidRow(shiny::column(6, shiny::br())),
+
                 shiny::fluidRow(
                   shiny::column(12,
                          style = "display: inline-flex;",
                          shiny::actionButton('start_compare', 'Start assessment', style =
-                                        'height: 34px; allign: center; background-color: #d2f8fa')
+                                               "background-color: #2596be;color: white;padding:20px; font-size:150%")
                   )
                 )
 
@@ -654,7 +656,7 @@ callmzRAPP <- function(){
 
                        shiny::fluidRow(
                          shiny::column(1,
-                                shinyWidgets::dropdownButton(shiny::br('Please note that plotted NPP-integration boundries always correspond to boundaries from the peak picking step.\nInc.>20%p corresponds to isotopologue ratio biases which increased by more than 20 percentage points.\nInc.<20%p to IR which increased by less than 20%p. \nFeature Inc.>20%p means that the increase was <20%p at the peak picking step but increased then to >20%p after feature processing.'),
+                                shinyWidgets::dropdownButton(shiny::br('Please note that plotted NPP-integration boundries always correspond to boundaries from the peak picking step.\nInc.>20%p corresponds to isotopologue ratio biases which increased by more than 20 percentage points as compared to the benchmark.\nInc.<20%p to IR which increased by less than 20%p. \nFeature Inc.>20%p means that the increase was <20%p at the peak picking step but increased then to >20%p after feature processing.'),
                                                tooltip = shinyWidgets::tooltipOptions(title = 'Click for description'),
                                                circle = TRUE,
                                                status = 'info',

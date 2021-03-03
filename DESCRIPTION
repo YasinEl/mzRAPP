@@ -27,7 +27,6 @@ Imports:
     tcltk,
     hutils,
     retistruct,
-    xcms,
     enviPat,
     DescTools,
     signal,

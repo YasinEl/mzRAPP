@@ -74,6 +74,8 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                             molecule = molecule_b,
                                                             adduct = adduct_b,
                                                             isoab = round(isoab_b, 2),
+                                                            mz_b = mz_b,
+                                                            rt_b = rt_b,
                                                             sample_name = sample_name_b,
                                                             key = comp_id_b),
                    color = "#82e0aa", show.legend = T) +
@@ -86,6 +88,8 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                                 molecule = molecule_b,
                                                                 adduct = adduct_b,
                                                                 isoab = round(isoab_b, 2),
+                                                                mz_b = mz_b,
+                                                                rt_b = rt_b,
                                                                 sample_name = sample_name_b,
                                                                 key = comp_id_b),
                    color = "#ccd1d1", show.legend = T) +
@@ -98,6 +102,8 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                                             adduct = adduct_b,
                                                             isoab = round(isoab_b, 2),
                                                             sample_name = sample_name_b,
+                                                            mz_b = mz_b,
+                                                            rt_b = rt_b,
                                                             key = comp_id_b),
                    color = "goldenrod2", show.legend = T)
     )
@@ -112,6 +118,8 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
                                        adduct = adduct_b,
                                        isoab = round(isoab_b, 2),
                                        sample_name = sample_name_b,
+                                       mz_b = mz_b,
+                                       rt_b = rt_b,
                                        key = comp_id_b)
         )+labs(col=if(col != "peak_height_b_off" & x != "peak_area_b_off") {names(choice_vector_comp)[choice_vector_comp == col]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == col], ")")})
     )
@@ -123,7 +131,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
          y = if(y != "peak_height_b_off" & y != "peak_area_b_off") {names(choice_vector_comp)[choice_vector_comp == y]} else {paste0("log10(", names(choice_vector_comp)[choice_vector_comp == y], ")")}) +
     ggtitle("Overview of found/not found peaks against benchmark variables")
 
-  p <- plotly::ggplotly(p, tooltip = c("NPP_status", "molecule", "adduct", "isoab", "sample_name"), dynamicTicks = TRUE, source = "scatter")
+  p <- plotly::ggplotly(p, tooltip = c("NPP_status", "molecule", "adduct", "isoab", "mz_b", "rt_b", "sample_name"), dynamicTicks = TRUE, source = "scatter")
   return(p)
 }
 

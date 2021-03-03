@@ -19,12 +19,14 @@ check_nonTargeted_input <- function(ug_table_path, g_table_path, options_table =
 
   switch(algo,
     'XCMS' = {
-      ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
       g_table <- import_grouped_xcms(g_table_path, options_table)
+      options_table <- g_table[["options_dt"]]
+      g_table <- g_table[["g_table"]]
+      ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
     },
     'XCMS3' = {
-      ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
       g_table <- import_grouped_xcms(g_table_path, options_table)
+      ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
     },
     'El-MAVEN' = {
       ug_table <- import_ungrouped_elmaven(ug_table_path, options_table)

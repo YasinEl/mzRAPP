@@ -95,7 +95,7 @@ get_ROIs <-
 
     #future::plan(plan)
     Output <- foreach::foreach(file = unique(Target.table$FileName), .packages = c("mzRAPP")) %dopar% {
-      #for(file in seq(length(files))){
+  #    for(file in files){
 
       ##################################
       #read mzML files into xcmsRaw objects and determine clostest scans to attempted start and end points of XICs
@@ -124,7 +124,6 @@ get_ROIs <-
                                            prefilter = c(minCentroids,0),
                                            noise = 0)
             )})
-
           ROI.dt <- data.table::rbindlist(ROI.list)
           if(nrow(ROI.dt) == 0) return(NULL)
           ROI.dt[, roi_id := 1:nrow(ROI.dt)]

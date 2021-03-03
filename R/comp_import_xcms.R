@@ -40,12 +40,21 @@ import_ungrouped_xcms <- function(file, options_dt){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in unaligned XCMS output: ', paste0(cols_not_found, sep = " - "))
   }
+
+
   #rename all columns for internal use according to optiosn frame
   ug_table <- rename_columns_from_options(ug_table, options_dt, 'ug_columns', 'internal_columns')
+
+  #correct ug_sample_IDs
+  options_dt[, ug_samples := ug_samples + max(ug_table$sample_name, na.rm = TRUE)]
+
+  op <<- data.table::copy(options_dt)
+  u1 <<- data.table::copy(ug_table)
 
   #Add a sample_id column based on the sample_names in options_dt
   ug_table <- ug_table[options_dt, ':=' (sample_id = i.sample_id), on=c(sample_name = 'ug_samples')]
 
+  u2 <<- data.table::copy(ug_table)
 
   #Remove peaks where height and area are below 0
   ug_table <- ug_table[peak_area > 0 & peak_height > 0]
@@ -100,13 +109,26 @@ import_grouped_xcms <- function (file, options_dt) {
     stop('Columns defined in options but not present in aligned XCMS output: ', paste0(cols_not_found, sep = " - "))
   }
 
+  #Compare order of present samples in options_dt to grouped output and update options_dt
+  nt_samples <- colnames(g_table)
+  #nt_ids <- match(na.omit(options_dt$g_samples), nt_samples)
+  options_dt[!is.na(g_samples), ug_samples := match(na.omit(options_dt$g_samples), nt_samples) - length(g_table)] #columns not containing samples have to be substracted in ug_import
+
+  op_ug <<- options_dt
+  nt_samples <<- nt_samples
+  g1 <<- g_table
+
+  #nt_samples <- colnames(g_table)[sort(match(options_dt$g_samples, colnames(g_table)))]
+  #options_dt[, ug_samples := NA_integer_]
+  #options_dt[g_samples %in% nt_samples, ug_samples := na.omit(match(options_dt$g_samples, nt_samples))]
+
   #Add feature_id for each row
   g_table$feature_id <- seq.int(nrow(g_table))
 
 
   #Transforming table from wide to long format, creating 1 peak-per-row format
   id_vars <- append(stats::na.omit(options_dt[['g_columns']]), 'feature_id')
-  measure_vars = stats::na.omit(options_dt[, g_samples])
+  measure_vars = stats::na.omit(options_dt[!is.na(ug_samples), g_samples])
   g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
 
   #rename all columns for internal use according to optiosn frame
@@ -129,5 +151,5 @@ import_grouped_xcms <- function (file, options_dt) {
 
   message(paste0('Successful xcms aligned import. No. of peaks imported: ', nrow(g_table)))
 
-  return(g_table)
+  return(list(g_table = g_table, options_dt = options_dt))
 }
