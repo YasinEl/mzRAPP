@@ -32,7 +32,6 @@ Imports:
     signal,
     future.apply,
     S4Vectors,
-    MSnbase,
     future,
     shiny,
     kableExtra,
