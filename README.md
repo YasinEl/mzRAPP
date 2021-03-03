@@ -80,6 +80,7 @@ do so before or after installing mzRAPP.
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true") #this is necessary because of a problem with the mzR package
 devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE, build_vignettes = TRUE)
 ```
 
