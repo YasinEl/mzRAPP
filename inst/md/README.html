@@ -119,7 +119,7 @@ if (window.hljs) {
 <p>In the case of Rtools make sure you also follow the subsequent instructions described on the webpage. <br></p>
 <p>Afterward, it is time to install mzRAPP. It is possible to do that by pasting the following code into the console of R Studio and press enter. Sometimes you are asked if you want to update packages before installing mzRAPP. In that case, select the option “None” since this often leads to problems with the installation. If you want to update the packages just do so before or after installing mzRAPP.</p>
 <pre class="r"><code>if(&quot;devtools&quot; %in% rownames(installed.packages()) == FALSE) {install.packages(&quot;devtools&quot;)}
-devtools::install_github(&quot;YasinEl/mzRAPP&quot;, dependencies = TRUE)
+devtools::install_github(&quot;YasinEl/mzRAPP&quot;, dependencies = TRUE, build_vignettes = TRUE)
 </code></pre>
 <p>Afterwards you can run mzRAPP using:</p>
 <pre class="r"><code>library(mzRAPP)

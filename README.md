@@ -80,7 +80,7 @@ do so before or after installing mzRAPP.
 
 ``` r
 if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
-devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE)
+devtools::install_github("YasinEl/mzRAPP", dependencies = TRUE, build_vignettes = TRUE)
 ```
 
 Afterwards you can run mzRAPP using:
