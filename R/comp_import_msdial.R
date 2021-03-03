@@ -7,7 +7,7 @@
 #' @keywords internal
 import_ungrouped_msdial <- function(file_list, options_dt){
 
-  message('Starting msdial unaligned import')
+  message('Starting MS-DIAL unaligned import')
 
   if(is.null(file_list)){
     stop('No ungrouped files selected')
@@ -24,11 +24,11 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
     #Check if ug_table exists, if not: create
     if(!exists("ug_table")){
-      ug_table <- fread(file_path, integer64 = "numeric")
+      ug_table <- data.table::fread(file_path, integer64 = "numeric")
       if(!("Area" %in% names(ug_table))) {stop(paste("There are MS-DIAL specific columns missing in " , file_path))}
       ug_table <- ug_table[, sample_name := file_name]
     } else if (exists("ug_table")){
-      temp_data <- fread(file_path, integer64 = "numeric")
+      temp_data <- data.table::fread(file_path, integer64 = "numeric")
       temp_data <- temp_data[, sample_name := file_name]
       ug_table <- rbind(ug_table, temp_data)
     }
@@ -36,7 +36,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_dt$ug_columns)
+  ug_req_cols <- stats::na.omit(options_dt$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in raw benchmark dataset: ', paste0(cols_not_found, sep = " - "))
@@ -66,7 +66,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
   #Add "_ug" as suffix to each column name
   colnames(ug_table) <- paste(colnames(ug_table), 'ug', sep = '_')
 
-  message(paste0('Successful msdial unaligned import. No. of peaks imported: ', nrow(ug_table)))
+  message(paste0('Successful MS-DIAL unaligned import. No. of peaks imported: ', nrow(ug_table)))
 
   return(ug_table)
 }
@@ -80,7 +80,7 @@ import_ungrouped_msdial <- function(file_list, options_dt){
 #' @keywords internal
 import_grouped_msdial <- function(file_path, options_dt){
 
-  message('Starting msdial aligned import')
+  message('Starting MS-DIAL aligned import')
 
   if(is.null(file_path)){
     return(NULL)
@@ -99,11 +99,11 @@ import_grouped_msdial <- function(file_path, options_dt){
   #Import text file
   #Make skip variable
 
-  g_table <- fread(file_path, skip=4, integer64 = "double", verbose = FALSE)
+  g_table <- data.table::fread(file_path, skip=4, integer64 = "double", verbose = FALSE)
 
 
   #Check if all columns defined in optionsframe are present
-  g_req_cols <- na.omit(options_dt$g_columns)
+  g_req_cols <- stats::na.omit(options_dt$g_columns)
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns defined in options but not present in raw benchmark dataset: ', paste0(cols_not_found, sep = " - "))
@@ -113,9 +113,9 @@ import_grouped_msdial <- function(file_path, options_dt){
   g_table$feature_id <- seq.int(nrow(g_table))
 
   #Transforming table from wide to long format, creating 1 peak-per-row format
-  id_vars <- append(na.omit(options_dt[['g_columns']]), 'feature_id')
-  measure_vars = na.omit(options_dt[, g_samples])
-  g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
+  id_vars <- append(stats::na.omit(options_dt[['g_columns']]), 'feature_id')
+  measure_vars = stats::na.omit(options_dt[, g_samples])
+  g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
 
   #rename all columns for internal use according to optiosn frame
   g_table <- rename_columns_from_options(g_table, options_dt, 'g_columns', 'internal_columns')
@@ -140,7 +140,7 @@ import_grouped_msdial <- function(file_path, options_dt){
   #Add "_g" as suffix to each column name
   colnames(g_table) <- paste(colnames(g_table), 'g', sep = '_')
 
-  message(paste0('Successful msdial aligned import. No. of peaks imported: ', nrow(g_table)))
+  message(paste0('Successful MS-DIAL aligned import. No. of peaks imported: ', nrow(g_table)))
 
   return(g_table)
 }

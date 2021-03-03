@@ -4,6 +4,8 @@
 #' @param post_alignment TRUE/FALSE should NT data from before or after alignment be plotted
 #' @param disable_plot if TRUE plot is not generated (for shiny app due to long loading times)
 #'
+#'
+#' @importFrom ggplot2 ggplot aes geom_tile theme labs annotate scale_fill_manual ggtitle scale_colour_manual theme_classic geom_histogram element_blank xlab
 #' @return plotly object
 #' @export
 #'
@@ -49,8 +51,8 @@ plot_comp_missing_value_hm <- function(comparison_data, post_alignment = FALSE, 
   plot_r_s <- ggplot(
     hm_dt,
     aes(
-      x = reorder(as.factor(plot_group), nr),
-      y = reorder(as.factor(sample_name_b), ord),
+      x = stats::reorder(as.factor(plot_group), nr),
+      y = stats::reorder(as.factor(sample_name_b), ord),
       fill = NPP_status,
       molecule = molecule_b,
       #mz = mz_acc_b,

@@ -8,7 +8,7 @@
 #'
 #' @keywords internal
 get_EIMatches_BM_NPPpeaks <- function(rt, int, Min.PpP) {
-  EIC.dt <- data.table(
+  EIC.dt <- data.table::data.table(
     rt = rt,
     int = int,
     val = as.vector(S4Vectors::Rle(int > 0)),

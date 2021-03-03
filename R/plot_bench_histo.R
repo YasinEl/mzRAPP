@@ -8,18 +8,21 @@
 #' @param post_comp TRUE/FALSE are data from benchmark or comparison with non-targeted
 #' @param rm_NF_legend for shiny functionality
 #'
+#'
+#' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
+#' scale_fill_manual ggtitle scale_colour_manual theme_classic geom_histogram element_blank xlab geom_bar
 #' @return plotly object
 #' @export
 #'
 plot_bench_histo <- function(benchmark_data, var, choice_vector_bench, color = "blue", post_comp = FALSE, rm_NF_legend = FALSE){
 
   if(post_comp == FALSE){
-    if(is.data.table(benchmark_data) == FALSE){
+    if(data.table::is.data.table(benchmark_data) == FALSE){
       benchmark_data <- benchmark_data$PCal
     }
   } else if (post_comp == TRUE){
     dtf <- benchmark_data$Matches_BM_NPPpeaks_NPPfeatures
-    benchmark_data <- rbindlist(list(benchmark_data$Matches_BM_NPPpeaks, benchmark_data$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+    benchmark_data <- data.table::rbindlist(list(benchmark_data$Matches_BM_NPPpeaks, benchmark_data$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
     benchmark_data <- benchmark_data[main_peak == TRUE |
                                        is.na(peak_area_ug)]
 

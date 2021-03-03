@@ -7,6 +7,7 @@
 #' @param adduct.run adduct.run
 #' @param Min.PointsperPeak PpP
 #'
+#' 
 #' @keywords internal
 #'
 Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min.PointsperPeak){
@@ -26,7 +27,7 @@ Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min
                                   adduct != main_adduct]
 
         CompCol_xic <-
-          na.omit(CompCol_xic[unique(CondPeaks[peaks.PpP > Min.PointsperPeak &
+          stats::na.omit(CompCol_xic[unique(CondPeaks[peaks.PpP > Min.PointsperPeak &
                                                 !is.na(peaks.PpP), c("molecule", "FileName")]),
                                on = .(molecule, FileName),
                                allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))
@@ -34,7 +35,7 @@ Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min
 
   } else if (iso.run == "LAisos") {
       if (adduct.run == "main_adduct") {
-        CompCol_xic <- na.omit(CompCol[isoab < 100 &
+        CompCol_xic <- stats::na.omit(CompCol[isoab < 100 &
                                           FileName == sub(pattern = "(.*)\\..*$",
                                                           replacement = "\\1",
                                                           basename(file)) &
@@ -48,7 +49,7 @@ Limit_Target_list <- function(CompCol, CondPeaks, iso.run, adduct.run, file, Min
       }
 
       CompCol_xic <-
-        na.omit(CompCol_xic[unique(CondPeaks[peaks.PpP > Min.PointsperPeak &
+        stats::na.omit(CompCol_xic[unique(CondPeaks[peaks.PpP > Min.PointsperPeak &
                                               !is.na(peaks.PpP), c("molecule", "adduct", "FileName")]),
                              on = .(molecule, adduct, FileName),
                              allow.cartesian = TRUE], cols = c("eic_mzmin", "eic_mzmax", "StartTime.EIC", "EndTime.EIC"))

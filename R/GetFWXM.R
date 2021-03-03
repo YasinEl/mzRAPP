@@ -25,7 +25,7 @@ GetFWXM <- function(RT_vect, Int_vect, baseL, X, peak_borders = FALSE, return_di
   l <- tl[["lengths"]]
   v <- tl[["values"]]
 
-  dt <- data.table(idx = seq(1:length(l)),
+  dt <- data.table::data.table(idx = seq(1:length(l)),
                    l = l,
                    v = v)
 

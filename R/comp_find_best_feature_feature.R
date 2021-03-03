@@ -8,17 +8,17 @@
 #' @keywords internal
 find_best_feature_feature <- function(dt, bys) {
 
-  dt <- copy(dt)
+  dt <- data.table::copy(dt)
   dt <- dt[, 'cross_join_key' := 1]
 
   all_iso <- sort(unique(dt$isoab_b), decreasing=TRUE)
   #Stop if each iso occures axactly once, mark all as main feature
   if (length(all_iso) == nrow(dt)){
-    return_dt <- setDT(list(feature_id_g = unique(dt$feature_id_g)))
+    return_dt <- data.table::setDT(list(feature_id_g = unique(dt$feature_id_g)))
     return_dt[, 'main_feature' := TRUE]
   } else if (length(all_iso) < nrow(dt)){
 
-    return_dt <- setDT(list(feature_id_g = unique(dt$feature_id_g)))
+    return_dt <- data.table::setDT(list(feature_id_g = unique(dt$feature_id_g)))
 
     exp_ratio = all_iso[2]/all_iso[1]
 

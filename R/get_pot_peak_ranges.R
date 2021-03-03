@@ -15,7 +15,7 @@ get_pot_peak_ranges2 <- function(int, Min.PpP = 10, peak.spotting.factor = 0.01)
   ##################################
   baseL <- min(int) + (max(int) - min(int)) * peak.spotting.factor
   rle.obj <- S4Vectors::Rle(int > baseL)
-  rle.dt <- data.table(
+  rle.dt <- data.table::data.table(
     v = rle.obj@values,
     l = rle.obj@lengths,
     s = S4Vectors::start(rle.obj),

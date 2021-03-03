@@ -6,6 +6,7 @@
 #' @param r r
 #' @param Min.Res Min.Res
 #'
+#' @importFrom data.table data.table
 #'
 #' @keywords internal
 detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(pot.doubleP.v), Min.Res = 70) {
@@ -14,7 +15,7 @@ detect_double_peaks2 <- function(pot.doubleP.v, Min.PpP = 10, l = 1, r = length(
 
   noise.over.peak.v <- get_avg_noise(pot.doubleP.v)
 
-  susp.noise <- median(noise.over.peak.v) + sd(noise.over.peak.v)
+  susp.noise <- median(noise.over.peak.v) + stats::sd(noise.over.peak.v)
 
   peak.dt.ini <-
     data.table(
@@ -99,27 +100,27 @@ lapply((pot.doubleP.v[pot.doubleP.v > max(susp.noise, 0.05 * max(pot.doubleP.v))
       }
     }
   })
-peak.dt <- rbindlist(peak.dt_list)
+peak.dt <- data.table::rbindlist(peak.dt_list)
 peak.dt$breakP <- as.integer(peak.dt$breakP)
   if(nrow(peak.dt) == 0) return(NULL) else{
 
     noise_valleys <- get_avg_noise(pot.doubleP.v)
 
     if(!is.null(noise_valleys)){
-      noise_valleys <- noise_valleys[!noise_valleys %in% na.omit(peak.dt$valley_diff)]
+      noise_valleys <- noise_valleys[!noise_valleys %in% stats::na.omit(peak.dt$valley_diff)]
     }
 
     if(!is.null(noise_valleys)){
       if(length(noise_valleys) > 0){
-        valley_tsh <- 3 * median(noise_valleys) #+ ifelse( length(noise_valleys) > 1, sd(noise_valleys), 0 )
+        valley_tsh <- 3 * median(noise_valleys) #+ ifelse( length(noise_valleys) > 1, stats::sd(noise_valleys), 0 )
         peak.dt <- peak.dt[valley_diff > valley_tsh]
       }
 
     }
 
 
-    if(nrow(na.omit(peak.dt)) == 0){return(NULL)}
-    return(na.omit(unique(peak.dt, by="breakP")))
+    if(nrow(stats::na.omit(peak.dt)) == 0){return(NULL)}
+    return(stats::na.omit(unique(peak.dt, by="breakP")))
   }
 }
 

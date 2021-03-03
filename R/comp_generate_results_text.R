@@ -4,7 +4,8 @@
 #'
 #' @description Returns a list with counts, statistics and performance metrics. For each metric a count and for some also a confidence interval (CI)
 #' as estimated via bootstrapping is reported. CIs are reported for percentages which should not only be true for the benchmark but also be an estimate for non-targeted
-#' processing results. For more information please check the details section below.
+#' processing results. For more information please check the details section below. Background on the logic behind the different metrics is provided in the mzRAPP Readme
+#' \url{https://github.com/YasinEl/mzRAPP#generation-and-interpretation-of-npp-performance-metrics}
 #'
 #' @param comparison_data output from \code{\link{compare_peaks}}
 #'
@@ -45,7 +46,7 @@ derive_performance_metrics <- function(comparison_data){
   set.seed(12987)
 
   UT_peaks <-
-    nrow(rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))
+    nrow(data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))
   sum_tab <- comparison_data$Overview_per_molecule
   main_peak_table <- comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE]
 

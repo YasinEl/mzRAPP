@@ -13,8 +13,9 @@ find_bench_peaks(
   Integration_baseL_factor = 0.1,
   plan = "multiprocess",
   Min.cor.w.main_adduct = 0.8,
-  Min.cor.w.M0 = 0.75,
+  Min.cor.w.M0 = 0.85,
   Min.iso.count = 2,
+  remove_isoab_outliers = TRUE,
   return_unsuc_searches = FALSE,
   max.rt.diff_sec = 20,
   max.mz.diff_ppm = 5
@@ -23,7 +24,7 @@ find_bench_peaks(
 \arguments{
 \item{files}{vector with file paths}
 
-\item{Grps}{data frame with two columns: one for filenames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).}
+\item{Grps}{data frame with two columns: one for filen ames without .mzML (sample_name) and one for their respective sample group affiliations (sample_group).}
 
 \item{CompCol_all}{output from function \code{\link{get_ROIs}}}
 
@@ -41,7 +42,9 @@ find_bench_peaks(
 
 \item{Min.iso.count}{Minimum number of isotopotologues per compound to be kept in the final output. Has to be more than one.}
 
-\item{return_unsuc_searches}{Should unsuccsessfull searches be returned (TRUE/FALSE)}
+\item{remove_isoab_outliers}{Should isotopologues be removed if they differ from predicted values by more than 35\% (TRUE/FALSE)}
+
+\item{return_unsuc_searches}{Should unsuccessful searches be returned (TRUE/FALSE)}
 
 \item{max.rt.diff_sec}{maximum difference between user.rt in position of peak maximum in seconds}
 
@@ -104,9 +107,17 @@ Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candid
 
 \strong{peaks.rt_raw:} position of the highest intensity (s)
 
-\strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+\strong{peaks.zigZag_IDX:} peak zigzag index as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
 
-\strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5
+\strong{peaks.sharpness:} peak sharpness as calculated in Zhang, W., Zhao, P.X. Quality evaluation of extracted ion chromatograms and chromatographic peaks in liquid chromatography/mass spectrometry-based metabolomics data. BMC Bioinformatics 15, S5 (2014). 10.1186/1471-2105-15-S11-S5 (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.jaggedness:} peak jaggedness as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.symmetry:} peak symmetry as calculated in Eshghi,S.T. et al. Quality assessment and interference detection in targeted mass spectrometry data using machine learning. Clinical Proteomics.  (R function taken from Chetnik,K. et al. (2020) MetaClean: a machine learning-based classifier for reduced false positive peak detection in untargeted LC–MS metabolomics data. Metabolomics, 16, 117.)
+
+\strong{peaks.rt_neighbors:} reports whether extension of integration boundaries in the RT dimension in left or right increases the calculated chromatographic peak area by more than 20%
+
+\strong{peaks.mz_neighbors:} ratio between the chromatographic peak area and the chromatographic peak area calculated after increasing the width of the mz-extraction window by 4 * max.mz.diff_ppm (worst allowed mass accuracy)
 
 \strong{peaks.height:} highest intensity of the peak
 
@@ -134,11 +145,13 @@ Takes a the output of \code{\link{get_ROIs}} and detects and filters peak candid
 
 \strong{ErrorAbs_H:} absolute difference between ExpectedHeight and peaks.height
 
-\strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to preducted isoab
+\strong{isoab_ol:} true if isotopologue abundance is considered to be too far off as compared to predicted isoab
 
-\strong{Iso_count:} isotopologue count per molecule and adduct
+\strong{Iso_count:} isotopologue count per file, molecule and adduct
 
 \strong{samples_per_group:} number of samples per group
 
 \strong{iso_id:} id for specific isotopologue
+
+\strong{rt_raw_span:} Max RT difference within a given isotopologue of a given molecule and adduct
 }

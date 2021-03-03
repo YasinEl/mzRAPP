@@ -1,11 +1,12 @@
 #' compare_peaks
 #'
-#' Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+#' Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme
+#' \url{https://github.com/YasinEl/mzRAPP#matching-between-bm-and-npp-output-background}.
 #'
 #' @param b_table output from \code{\link{check_benchmark_input}}
 #' @param ug_table one of the listed objects (ug_table) in output of \code{\link{check_nonTargeted_input}}. e.g. check_nonTargeted_input_output$ug_table
 #' @param g_table one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table
-#' @param algo output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"
+#' @param algo output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "MS-DIAL", "CompoundDiscoverer" or "MZmine 2"
 #'
 #' @return returns list containing different tables including data from different types of comparisons
 #'
@@ -45,7 +46,7 @@
 #' in the Matches_BM_NPPpeaks table have "present_in_found" = TRUE
 #' @details \strong{MissingPeak_classification:} Classifies the missing value status of peaks before and after alignment. This classification
 #' is made only correct alignment of the benchmark is in general agreement with the alignment of the non-targeted output per molecule (as described in mzRAPP readme). Peaks for which this was confirmed
-#' show "Connected" = TRUE. The MissingPeak status is done for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
+#' show "Connected" = TRUE. The MissingPeak status is determined for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
 #' @details F (found): Peak is not missing
 #' @details NC (not confirmable): alignment could not be confirmed as described above
 #' @details L (lost): all peaks of the respective features were not found
@@ -66,6 +67,10 @@
 #' @details peak_area_b: peak area as reported in benchmark
 #' @details peak_area_ug: peak area as reported in unaligned NP
 #' @details area_g: peak area as reported in NF
+#'
+#'
+#' @importFrom data.table data.table is.data.table
+#'
 #' @export
 #'
 compare_peaks <- function(b_table, ug_table, g_table, algo){
@@ -142,7 +147,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     total_ug_peaks <- nrow(ug_table)
     ug_table <- ug_table[!duplicated(ug_table, by = c('rt_ug', 'mz_ug', 'peak_area_ug'))]
-    message(paste0('Removed ',total_ug_peaks - nrow(ug_table), ' duplicated non-aligned peaks from non-targeted output (identical rt, mz and area)'))
+    message(paste0('Ignored ',total_ug_peaks - nrow(ug_table), ' duplicated non-aligned peaks from non-targeted output (identical rt, mz and area)'))
 
   ##############
   #Start comparison!
@@ -151,8 +156,8 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     message("Staring to compare benchmark with non-targeted output")
   ##############
-  #Generating minimum peak bounderies in benchmark
-  #Untrageted rt range must completely envelope these bounderies
+  #Generating minimum peak boundaries in benchmark
+  #Untargeted rt range must completely envelope these boundaries
   #Defined as taking the shorter of rt_start_b to rt_b or rt_end_b to rt_b,
   #taking 50% of this distance, adding and subtracting it from rt_b
   ##############
@@ -197,7 +202,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #Finding split peaks by checking if only rt_start or rt_end of ug file fits inside the boundaries
   ##############
 
-  #Find Peaks to the left of benchmark bounderies
+  #Find Peaks to the left of benchmark boundaries
   split_left_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
                                     new_rt_start_b_temp >= rt_start_ug_temp,
                                     new_rt_start_b_temp <= rt_end_ug_temp,
@@ -207,7 +212,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
 
-  #Find Peaks to the right of benchmark bounderies
+  #Find Peaks to the right of benchmark boundaries
   split_right_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
                                              new_rt_start_b_temp <= rt_start_ug_temp,
                                              new_rt_end_b_temp >= rt_start_ug_temp,
@@ -225,7 +230,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
   #Combine the split peak tables
-  SplittedMatches_BM_NPPpeaks <- rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
+  SplittedMatches_BM_NPPpeaks <- data.table::rbindlist(list('split_left_table' = split_left_table, 'split_right_table' = split_right_table, 'split_middle_table' = split_middle_table), fill=TRUE, use.names = TRUE, idcol='file')
 
 
 
@@ -236,7 +241,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   Matches_BM_NPPpeaks <- Matches_BM_NPPpeaks[main_peak == TRUE]
 
   ##############
-  #Joining peaks from groupd file onto found areas of ungrouped
+  #Joining peaks from grouped file onto found areas of ungrouped
   #Could be a problem with rounded areas
   ##############
 
@@ -284,7 +289,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   SplittedMatches_BM_NPPpeaks[, present_in_found := ifelse(id_b_ug %in% Matches_BM_NPPpeaks$id_b_ug, 'TRUE', 'FALSE')]
 
 
-  #Make sure main peaks only occure once
+  #Make sure main peaks only occur once
   if (any(duplicated(Matches_BM_NPPpeaks[main_peak==TRUE]))){
     stop('Duplicate Peaks still present after analysis')
   }
@@ -314,7 +319,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   AlignmentErrors_per_moleculeAndAdduct <-
-    rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
+    data.table::rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
 
   if('peak_area_rounded_ug' %in% colnames(AlignmentErrors_per_moleculeAndAdduct)){
     AlignmentErrors_per_moleculeAndAdduct <- AlignmentErrors_per_moleculeAndAdduct[, 'peak_area_ug' := peak_area_rounded_ug]
@@ -330,11 +335,11 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                     'peak_area_ug'),
                  by=.(molecule_b, adduct_b)]
 
-  AlignmentErrors_per_moleculeAndAdduct <- setnames(AlignmentErrors_per_moleculeAndAdduct, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
+  AlignmentErrors_per_moleculeAndAdduct <- data.table::setnames(AlignmentErrors_per_moleculeAndAdduct, c('errors', 'Lost_b.A', 'diff_BM', 'molecule_b', 'adduct_b'), c('Min.errors', 'Lost_b.A', 'BM.div', 'Molecule', 'Adduct'))
 
   } else {
 
-    AlignmentErrors_per_moleculeAndAdduct <- setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
+    AlignmentErrors_per_moleculeAndAdduct <- stats::setNames(data.table(matrix(nrow = 0, ncol = 5)), c("Molecule", "Adduct", "Min.errors", "Lost_b.A", "BM.div"))
 
   }
 
@@ -343,9 +348,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     if(nrow(g_table) > 0){
 
-      b_table <- b_table
-      g_table <- g_table
-      ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table))
+      ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table, Matches_BM_NPPpeaks[, c("feature_id_b", "feature_id_g")]))
       ff_table_dt <- ff_table_dt
 
 
@@ -357,18 +360,18 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                  "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
                  "max_rt_end", "main_feature")
 
-    dt_melt_b <- melt(dt,
+    dt_melt_b <- data.table::melt(dt,
                       id.vars = id.cols,
-                      measure.vars = colnames(dt)[grepl(glob2rx("sample_*_b"), colnames(dt))],
+                      measure.vars = colnames(dt)[grepl(utils::glob2rx("sample_*_b"), colnames(dt))],
                       value.name = "area_b",
                       variable.name = "sample_id_b",
                       variable.factor = FALSE)
 
     dt_melt_b$sample_id_b <-  as.factor(substr(dt_melt_b$sample_id_b, 8, nchar(dt_melt_b$sample_id_b) - 2))
 
-    dt_melt_g <- melt(dt,
+    dt_melt_g <- data.table::melt(dt,
                       id.vars = id.cols,
-                      measure.vars = colnames(dt)[grepl(glob2rx("sample_*_g"), colnames(dt))],
+                      measure.vars = colnames(dt)[grepl(utils::glob2rx("sample_*_g"), colnames(dt))],
                       value.name = "area_g",
                       variable.name = "sample_id_b",
                       variable.factor = FALSE)
@@ -384,7 +387,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     Matches_BM_NPPpeaks_NPPfeatures <- dt_n[tmp, on = .(sample_id_b)]
 
-    ug_info <- rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+    ug_info <- data.table::rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 
 
     Matches_BM_NPPpeaks_NPPfeatures <-
@@ -398,7 +401,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
     } else {
 
-      Matches_BM_NPPpeaks_NPPfeatures <- setNames(data.table(matrix(nrow = 0, ncol = 15)), c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
+      Matches_BM_NPPpeaks_NPPfeatures <- stats::setNames(data.table(matrix(nrow = 0, ncol = 15)), c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                                                                           "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
                                                                           "max_rt_end", "main_feature", "sample_id_b", "area_g", "area_b",
                                                                           "sample_name_b"))
@@ -408,7 +411,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   #Generate Random and systematic error DT
-  MissingPeak_classification <- rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
+  MissingPeak_classification <- data.table::rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE)
 
   MissingPeak_classification <- MissingPeak_classification[, c("molecule_b", "adduct_b", "isoab_b", "sample_name_b", "peak_area_b", "peak_height_b",
                            "peak_area_ug", "peak_area_g", "feature_id_g", "sample_id_b"
@@ -499,7 +502,9 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                                   "peak_area_ug",
                                                                   "peak_area_b",
                                                                   "Grp_b",
-                                                                  "sample_name_b")][join_on_dt,
+                                                                  "sample_name_b",
+                                                                  "peaks.rt_neighbors_b",
+                                                                  "peaks.mz_neighbors_b")][join_on_dt,
                                                                 on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
 
     IT_ratio_biases <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
@@ -525,13 +530,17 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 }
 
   IT_ratio_biases <- IT_ratio_biases[isoab_b != 100][IT_ratio_biases[isoab_b == 100,
-                                     c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug")],
+                                     c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug", "peaks.rt_neighbors_b", "peaks.mz_neighbors_b")],
                                 on=.(sample_id_b, molecule_b, adduct_b),
                                 nomatch = NA, allow.cartesian=TRUE][,c("benchmark",
                                                                        "NPP_peak picking",
-                                                                       "NPP_features") := .((peak_area_b / ((i.peak_area_b * isoab_b) / 100) - 1) * 100,
+                                                                       "NPP_features",
+                                                                       "RT_neighbors",
+                                                                       "mz_neighbors") := .((peak_area_b / ((i.peak_area_b * isoab_b) / 100) - 1) * 100,
                                                                                             (peak_area_ug / ((i.peak_area_ug * isoab_b) / 100) - 1) * 100,
-                                                                                            (area_g / ((i.area_g * isoab_b) / 100) - 1) * 100)]
+                                                                                            (area_g / ((i.area_g * isoab_b) / 100) - 1) * 100,
+                                                                                            paste0(paste0(i.peaks.rt_neighbors_b, " | "), peaks.rt_neighbors_b),
+                                                                                            paste0(paste0(i.peaks.mz_neighbors_b, " | "), peaks.mz_neighbors_b))]
 
 
   IT_ratio_biases[, diffH20PP_pp := as.character(abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
@@ -555,7 +564,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #create overview table per compound
 
 
-  bm_tab <- rbindlist(list(Matches_BM_NPPpeaks[main_peak == TRUE], Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
+  bm_tab <- data.table::rbindlist(list(Matches_BM_NPPpeaks[main_peak == TRUE], Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
   bm_tab[is.na(main_peak), main_peak := FALSE]
 
 
@@ -602,7 +611,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
 
-  setnafill(sum_tab, fill=0, cols = colnames(sum_tab)[-1])
+  data.table::setnafill(sum_tab, fill=0, cols = colnames(sum_tab)[-1])
 
 
 

@@ -15,9 +15,6 @@ plot_sunburst_peakQuality(result_txt, comparison_object)
 plotly object
 }
 \description{
-plot_sunburst_peakQuality
-}
-\details{
 Generates a sunburst plot visualizing the proportions of well recovered isotopologue ratios in order to assess non-targeted data pre-processing.
 From inside to outside the donuts correspond to peaks found during peak detection and peaks found after alignment/feature processing. For
 more information please check the mzRAPP readme.

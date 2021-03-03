@@ -4,12 +4,14 @@
 \alias{feature_compare}
 \title{feature_compare}
 \usage{
-feature_compare(b_table, g_table)
+feature_compare(b_table, g_table, areaMatch_table = NA)
 }
 \arguments{
 \item{b_table}{b_table}
 
 \item{g_table}{g_table}
+
+\item{areaMatch_table}{areaMatch_table}
 }
 \description{
 feature_compare

@@ -1,57 +1,54 @@
 Package: mzRAPP
 Type: Package
-Title: Benchmark Dataset Generation
+Title: Benchmark Dataset Generation And Non-Targeted Data Pre-Processing Assessment
 Version: 0.2.0
-Author: Yasin El Abiead <yasin.el.abiead@univie.ac.at>, Maximilian Milford <max@mmilford.com>
-Maintainer: Yasin El Abiead <yasin.el.abiead@univie.ac.at>
-Description: mzRAPP is a package for the generation and evaluation of LC-HRMS benchmark datasets and assessment of non-targeted data pre-processing.
-License: GPL-3
+Authors@R:c(person("Yasin", "El Abiead",
+           email = "yasin.el.abiead@univie.ac.at",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4392-7706")),
+           person("Maximilian", "Milford",
+           email = "max@mmilford.com",
+           role = "aut",
+           comment = c(ORCID = "0000-0003-3616-8334"))
+           )
+Description: Generates and evaluates liquid chromatography-high resolution mass spectrometry benchmark peak-lists, which can be used for the assessment of non-targeted data pre-processing outputs from 'XCMS', 'XCMS3', 'XCMS-online', 'MZmine 2', 'MS-DIAL', 'El-MAVEN', 'OpenMS', etc..
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-Depends: 
-    data.table,
-    ggplot2,
-    shinyjs,
-    dplyr
 biocViews:
 Imports:
-    shinybusy,
-    shinydashboard,
-    shiny,
-    shinyWidgets,
     doFuture,
-    plotly,
+    data.table,
+    MSnbase,
+    xcms,
+    dplyr,
+    shinyjs,
     tcltk,
     hutils,
-    DT,
-    tools,
     retistruct,
-    xcms,
-    multtest,
     enviPat,
-    stats,
-    parallel,
-    doBy,
-    shinycssloaders,
-    BiocParallel,
-    doParallel,
-    MSnbase,
     DescTools,
     signal,
-    intervals,
     future.apply,
-    foreach,
     S4Vectors,
-    V8,
-    boot,
+    MSnbase,
     future,
-    bit64,
-    htmltools,
+    shiny,
     kableExtra,
-    shinythemes,
-    knitr
+    MetaClean,
+    ggplot2,
+    plotly
 Suggests: 
+    foreach,
+    stats,
+    knitr,
+    bit64,
+    boot,
+    shinybusy,
+    shinydashboard,
+    shinyWidgets,
+    shinycssloaders,
     rmarkdown
 VignetteBuilder: 
     knitr

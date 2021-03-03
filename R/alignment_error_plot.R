@@ -4,14 +4,21 @@
 #' @param add Name of adduct
 #' @param comparison_data output of compare_peaks
 #'
+#'
+#'
+#' @import plotly
+#' @importFrom ggplot2 ggplot aes ggtitle coord_equal labs theme element_text geom_tile
 #' @return plotly object
 #' @export
 #'
 Alignment_error_plot <- function(comparison_data, mol, add){
+
+  peak_area_rounded_ug <- NULL
+
   if(missing(mol) | missing(add) | missing(comparison_data) | length(mol) < 1 | length(add) < 1) return(plotly::ggplotly(ggplot() +
                                                                                                                            ggtitle("Missing arguments")))
 
-  dt <- rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+  dt <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
 
   if('peak_area_rounded_ug' %in% colnames(dt)){
     dt <- dt[, 'peak_area_ug' := peak_area_rounded_ug]
@@ -38,7 +45,7 @@ Alignment_error_plot <- function(comparison_data, mol, add){
                                    ifelse(is.na(peak_area_g) & !is.na(peak_area_ug), 'Lost_b.A',
                                           ifelse(!is.na(peak_area_g) & !is.na(peak_area_ug) & peak_area_g != peak_area_ug, feature_id_g, feature_id_g)))] #repl -3
 
-  dt_for_error_count <- dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
+  dt_for_error_count <- data.table::dcast(dt, sample_id_b ~ isoab_b, value.var='peak_status', fun.aggregate = function(x) paste(x, collapse = ""))
 
   error_count <- count_alignment_errors(dt_for_error_count, get_main_UT_groups(dt_for_error_count))[1]
 

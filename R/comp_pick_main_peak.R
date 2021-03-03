@@ -21,7 +21,7 @@ pick_main_peak <- function(dt){
 #'
 #' @keywords internal
 pick_main_peak_sd <- function(dt){
-  dt <- copy(dt)
+  dt <- data.table::copy(dt)
   all_iso_abbs <- sort(unique(dt[,isoab_b]), decreasing = TRUE)
   if(nrow(dt) == length(all_iso_abbs)){
     #If number of rows is equal to isoabs mark all as main peak
@@ -47,9 +47,9 @@ pick_main_peak_sd <- function(dt){
     #Calc best best peak per comparison (=comp)
     comp_dt <- comp_dt[, 'min_ratio_diff' := ifelse(ratio_diff == min(ratio_diff), TRUE, FALSE), by=c('isoab_b.x', 'isoab_b.y')]
 
-    x_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('comp_id_b.x', 'comp_id_ug.x', 'ratio_diff')], c('comp_id_b.x', 'comp_id_ug.x'), c('comp_id_b', 'comp_id_ug'))
-    y_dt <- setnames(comp_dt[min_ratio_diff == TRUE, c('comp_id_b.y', 'comp_id_ug.y', 'ratio_diff')], c('comp_id_b.y', 'comp_id_ug.y'), c('comp_id_b', 'comp_id_ug'))
-    main_peaks_dt <- rbindlist(list(x_dt, y_dt), use.names = TRUE)
+    x_dt <- data.table::setnames(comp_dt[min_ratio_diff == TRUE, c('comp_id_b.x', 'comp_id_ug.x', 'ratio_diff')], c('comp_id_b.x', 'comp_id_ug.x'), c('comp_id_b', 'comp_id_ug'))
+    y_dt <- data.table::setnames(comp_dt[min_ratio_diff == TRUE, c('comp_id_b.y', 'comp_id_ug.y', 'ratio_diff')], c('comp_id_b.y', 'comp_id_ug.y'), c('comp_id_b', 'comp_id_ug'))
+    main_peaks_dt <- data.table::rbindlist(list(x_dt, y_dt), use.names = TRUE)
     main_peaks_dt <- main_peaks_dt[!duplicated(main_peaks_dt, by=c('comp_id_b', 'comp_id_ug'))]
     main_peaks_dt <- main_peaks_dt[, 'main_peak' := ifelse(ratio_diff == min(ratio_diff), TRUE, FALSE), by=c('comp_id_b')]
 

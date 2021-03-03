@@ -13,13 +13,14 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 \item{g_table}{one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table}
 
-\item{algo}{output format of ug_table and g_table. Can be "XCMS", "El-Maven", "OpenMS", "msDial", "CompoundDiscoverer" or "mzMine"}
+\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "MS-DIAL", "CompoundDiscoverer" or "MZmine 2"}
 }
 \value{
 returns list containing different tables including data from different types of comparisons
 }
 \description{
-Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme.
+Matches peaks reported in the aligned and unaligned non-targeted output against the provided benchmark as prepared by \code{\link{check_benchmark_input}}. For details on how this matching procedure is conducted please check the mzRAPP readme
+\url{https://github.com/YasinEl/mzRAPP#matching-between-bm-and-npp-output-background}.
 }
 \details{
 The output of this function is a list containing 9 different elements. In the following benchmark peaks are referred to as BM, non-targeted unaligned peaks as NP and NP which have been aligned across samples (features) as NF. In all
@@ -87,7 +88,7 @@ in the Matches_BM_NPPpeaks table have "present_in_found" = TRUE
 
 \strong{MissingPeak_classification:} Classifies the missing value status of peaks before and after alignment. This classification
 is made only correct alignment of the benchmark is in general agreement with the alignment of the non-targeted output per molecule (as described in mzRAPP readme). Peaks for which this was confirmed
-show "Connected" = TRUE. The MissingPeak status is done for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
+show "Connected" = TRUE. The MissingPeak status is determined for the unaligned ("missing_peaks_ug") as well as the aligned ("missing_peaks_g") output individually and can hold the following values.
 
 F (found): Peak is not missing
 

@@ -15,7 +15,8 @@ returns a list containing different performance metrics of non-targeted data pre
 \description{
 Returns a list with counts, statistics and performance metrics. For each metric a count and for some also a confidence interval (CI)
 as estimated via bootstrapping is reported. CIs are reported for percentages which should not only be true for the benchmark but also be an estimate for non-targeted
-processing results. For more information please check the details section below.
+processing results. For more information please check the details section below. Background on the logic behind the different metrics is provided in the mzRAPP Readme
+\url{https://github.com/YasinEl/mzRAPP#generation-and-interpretation-of-npp-performance-metrics}
 }
 \details{
 Bootstrapping is performed on benchmark molecules with R=1000 using \code{\link{boot.ci}} with type="basic" which returns a vector of

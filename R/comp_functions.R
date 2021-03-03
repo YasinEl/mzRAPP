@@ -12,9 +12,9 @@ import_options <- function (file_path) {
   if(tools::file_ext(file_path) != 'csv'){
     stop('options file is not a valid csv file')
   }
-  options_table = fread(file_path, na.strings = c(""))
+  options_table = data.table::fread(file_path, na.strings = c(""))
 
-  if (!is.data.table(options_table)){
+  if (!data.table::is.data.table(options_table)){
     stop('Options is not type DataTable')
   }
   return(options_table)
@@ -33,8 +33,8 @@ import_options <- function (file_path) {
 #'
 #' @keywords internal
 rename_columns_from_options <- function(dt, options_dt, old_columns, new_columns) {
-  rename_table = na.omit(options_dt[, c(old_columns, new_columns), with=FALSE], old_columns)
-  return(setnames(dt, rename_table[[old_columns]], rename_table[[new_columns]]))
+  rename_table = stats::na.omit(options_dt[, c(old_columns, new_columns), with=FALSE], old_columns)
+  return(data.table::setnames(dt, rename_table[[old_columns]], rename_table[[new_columns]]))
 }
 
 

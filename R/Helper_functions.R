@@ -4,6 +4,8 @@
 #'
 #' @return dataframe; plotly event
 #'
+#' @import plotly
+#'
 #' @keywords internal
 plotly_click_wo_warnings <- function(sc){
 
@@ -23,10 +25,11 @@ plotly_click_wo_warnings <- function(sc){
 #' @param IndexNumber IndexNumber
 #'
 #'
+#'
 #' @keywords internal
 getXIC <- function(PC, IndexNumber){
 
-plot.table <- data.table(rt = as.numeric(unlist(strsplit(PC[IDX == IndexNumber, RT.v], split = ","))),
+plot.table <- data.table::data.table(rt = as.numeric(unlist(strsplit(PC[IDX == IndexNumber, RT.v], split = ","))),
                          int = as.numeric(unlist(strsplit(PC[IDX == IndexNumber, Intensities.v], split = ","))))
 
 return(plot.table)
@@ -84,7 +87,7 @@ round_woe <- function(x, stellen){
 #' @param number numeric(1)
 #' @param x roof to this number
 #'
-#' @return
+#' @return numeric
 #' @keywords internal
 #'
 top_to_x <- function(number, x = 0){

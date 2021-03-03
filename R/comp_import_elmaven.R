@@ -23,13 +23,13 @@ import_ungrouped_elmaven <- function(file, options_dt){
     stop('There should only be 1 file for the unaligned El-MAVEN output!')
   }
     #Import csv file
-    ug_table <- fread(file)
+    ug_table <- data.table::fread(file)
 
 
 
 
   #Check if all columns defined in optionsframe are present
-  ug_req_cols <- na.omit(options_dt$ug_columns)
+  ug_req_cols <- stats::na.omit(options_dt$ug_columns)
   if(!all(ug_req_cols %in% colnames(ug_table))){
     cols_not_found <- setdiff(ug_req_cols, colnames(ug_table))
     stop('Columns defined in options but not present in unaligned El-MAVEN output: ', paste0(cols_not_found, sep = " - "))
@@ -84,11 +84,11 @@ import_grouped_elmaven <- function (file, options_dt) {
     stop('ungrouped dataset is not a valid csv (/Rda) file')
   }
     #Import csv file
-    g_table <- fread(file)
+    g_table <- data.table::fread(file)
 
 
   #Check if all columns defined in optionsframe are present
-  g_req_cols <- na.omit(options_dt$g_columns)
+  g_req_cols <- stats::na.omit(options_dt$g_columns)
   if(!all(g_req_cols %in% colnames(g_table))){
     cols_not_found <- setdiff(g_req_cols, colnames(g_table))
     stop('Columns defined in options but not present in aligned El-MAVEN output: ', paste0(cols_not_found, sep = " - "))
@@ -99,9 +99,9 @@ import_grouped_elmaven <- function (file, options_dt) {
 
 
   #Transforming table from wide to long format, creating 1 peak-per-row format
-  id_vars <- append(na.omit(options_dt[['g_columns']]), 'feature_id')
-  measure_vars = na.omit(options_dt[, g_samples])
-  g_table <- melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
+  id_vars <- append(stats::na.omit(options_dt[['g_columns']]), 'feature_id')
+  measure_vars = stats::na.omit(options_dt[, g_samples])
+  g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
 
 
   #rename all columns for internal use according to optiosn frame
