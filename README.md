@@ -97,7 +97,7 @@ interface.
 
 ## Use examples
 
-If you want to go through some examples on how to use mzRAPP please and
+If you want to go through some examples on how to use mzRAPP and
 interpret results you can go through some use-cases using the code
 below. However, more general explanations are provided in the chapter
 ‘Generation and interpretation of NPP performance metrics’ of this
