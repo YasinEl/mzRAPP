@@ -26,6 +26,8 @@ check_nonTargeted_input <- function(ug_table_path, g_table_path, options_table =
     },
     'XCMS3' = {
       g_table <- import_grouped_xcms(g_table_path, options_table)
+      options_table <- g_table[["options_dt"]]
+      g_table <- g_table[["g_table"]]
       ug_table <- import_ungrouped_xcms(ug_table_path, options_table)
     },
     'El-MAVEN' = {
