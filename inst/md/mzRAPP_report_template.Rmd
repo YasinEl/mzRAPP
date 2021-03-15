@@ -12,6 +12,9 @@ text-align: justify}
 </style>
 
 ```{r message=FALSE, echo=FALSE}
+library(mzRAPP)
+library(data.table)
+library(dplyr)
 trash <- capture.output({
     result_list <- suppressWarnings(derive_performance_metrics(params$comp_d))
 })
