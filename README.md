@@ -40,6 +40,7 @@ mzRAPP
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/YasinEl/mzRAPP/workflows/R-CMD-check/badge.svg)](https://github.com/YasinEl/mzRAPP/actions)
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted

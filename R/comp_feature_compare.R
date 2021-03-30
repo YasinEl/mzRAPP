@@ -12,8 +12,8 @@ feature_compare <- function(b_table, g_table, areaMatch_table = NA){
   #Find smallest and largest mz and rt and area per feature
   b_table <- b_table[, ':=' (min_mz_start = min(mz_start_b),
                              max_mz_end = max(mz_end_b),
-                             min_rt_start = min(new_rt_start_b),# - if(is.na(sd(rt_b))){ 0} else stats::sd(rt_b),
-                             max_rt_end = max(new_rt_end_b),# + if(is.na(sd(rt_b))){ 0} else stats::sd(rt_b),
+                             min_rt_start = min(peak_core_rt_range_start_b),# - if(is.na(sd(rt_b))){ 0} else stats::sd(rt_b),
+                             max_rt_end = max(peak_core_rt_range_end_b),# + if(is.na(sd(rt_b))){ 0} else stats::sd(rt_b),
                              total_area_b = sum(peak_area_b),
                              present_samples_b = paste(.SD$sample_id_b, collapse = ','),
                              sample_id_b_suf = paste0('sample_',sample_id_b, '_b')), by=c('molecule_b', 'isoab_b', 'adduct_b')]

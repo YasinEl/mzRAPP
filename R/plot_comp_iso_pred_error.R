@@ -49,7 +49,9 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
   }else if(BMvsPPvsAl == TRUE){
 
-    IT_ratio_biases$diffH20PP <- IT_ratio_biases$diffH20PP_ft
+    IT_ratio_biases <- IT_ratio_biases[!is.na(sample_name_b) & !is.na(i.sample_name_b) & !is.na(area_b)]
+    IT_ratio_biases[, diffH20PP := diffH20PP_ft]
+    IT_ratio_biases[is.na(diffH20PP_ft), diffH20PP := diffH20PP_pp]
     IT_ratio_biases[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
 
     IT_ratio_biases <-
@@ -60,15 +62,10 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
         variable.name = 'data_type',
         value.name = 'Pred_error'
       )
-
-
-
   }
 
   IT_ratio_biases[, grp_col := paste(molecule_b, adduct_b, isoab_b, sample_name_b, sep = "_;_")]
-
-  IT_ratio_biases <- stats::na.omit(IT_ratio_biases, cols = "Pred_error")
-
+  IT_ratio_biases <- IT_ratio_biases[!is.na(Pred_error)]
 
   p <- ggplot(IT_ratio_biases[isoab_b < 100]) +
     suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,
@@ -92,8 +89,10 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
           legend.position = 'bottom')
 
 
+
   return(plotly::ggplotly(p, tooltip = c("molecule", "adduct", "isoab", "sample", "RT_neighbors", "mz_neighbors", "Pred_error"),
                           dynamicTicks = "y",
-                          source = "IRbias")  %>% plotly::layout(legend = list(orientation = "h", x = -0.05, y =-0.1)))
+                          source = "IRbias")  %>%
+           plotly::layout(legend = list(orientation = "h", x = -0.05, y =-0.1)))
 
 }

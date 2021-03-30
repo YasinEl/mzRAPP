@@ -43,7 +43,7 @@
 #'
 derive_performance_metrics <- function(comparison_data){
 
-  set.seed(12987)
+  #set.seed(12987)
 
   UT_peaks <-
     nrow(data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))

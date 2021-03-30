@@ -154,7 +154,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ##############
 
 
-    message("Staring to compare benchmark with non-targeted output")
+    message("Starting to compare benchmark with non-targeted output")
   ##############
   #Generating minimum peak boundaries in benchmark
   #Untargeted rt range must completely envelope these boundaries
@@ -163,7 +163,12 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   ##############
   b_table[, rt_add_temp := ifelse((rt_end_b - rt_b) < (rt_b - rt_start_b),
                                   rt_end_b - rt_b,  rt_b - rt_start_b)]
-  b_table[, ':=' (new_rt_start_b = rt_b - rt_add_temp*0.3,new_rt_end_b = rt_b + rt_add_temp*0.3)]
+
+  b_table[, rt_start_b_temp := rt_start_b]
+  b_table[, rt_end_b_temp := rt_end_b]
+
+  b_table[, ':=' (peak_core_rt_range_start_b = rt_b - rt_add_temp*0.3,
+                  peak_core_rt_range_end_b = rt_b + rt_add_temp*0.3)]
 
 
   #Creating temp columns to prevent over-writing by join
@@ -175,8 +180,8 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   b_table[, ':=' (sample_id_b_temp = sample_id_b,
-                  new_rt_start_b_temp = new_rt_start_b,
-                  new_rt_end_b_temp = new_rt_end_b,
+                  peak_core_rt_range_start_b_temp = peak_core_rt_range_start_b,
+                  peak_core_rt_range_end_b_temp = peak_core_rt_range_end_b,
                   mz_start_b_temp = mz_start_b - 0.0002,
                   mz_end_b_temp = mz_end_b + 0.0002)]
 
@@ -187,12 +192,12 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #mz must fall within mz start and end of benchmark
   ##############
   Matches_BM_NPPpeaks <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
-                                    new_rt_start_b_temp >= rt_start_ug_temp,
-                                    new_rt_end_b_temp <= rt_end_ug_temp,
+                                    peak_core_rt_range_start_b_temp >= rt_start_ug_temp,
+                                    peak_core_rt_range_end_b_temp <= rt_end_ug_temp,
                                     mz_start_b_temp <= mz_ug_temp,
                                     mz_end_b_temp >= mz_ug_temp,
-                                    new_rt_start_b_temp < rt_ug_temp,
-                                    new_rt_end_b_temp > rt_ug_temp),
+                                    rt_start_b_temp < rt_ug_temp,
+                                    rt_end_b_temp > rt_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
 
@@ -204,9 +209,9 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   #Find Peaks to the left of benchmark boundaries
   split_left_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
-                                    new_rt_start_b_temp >= rt_start_ug_temp,
-                                    new_rt_start_b_temp <= rt_end_ug_temp,
-                                    new_rt_end_b_temp >= rt_end_ug_temp,
+                                    peak_core_rt_range_start_b_temp >= rt_start_ug_temp,
+                                    peak_core_rt_range_start_b_temp <= rt_end_ug_temp,
+                                    peak_core_rt_range_end_b_temp >= rt_end_ug_temp,
                                     mz_start_b_temp <= mz_ug_temp,
                                     mz_end_b_temp >= mz_ug_temp),
                      allow.cartesian=TRUE, nomatch=NULL, mult='all']
@@ -214,17 +219,17 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   #Find Peaks to the right of benchmark boundaries
   split_right_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
-                                             new_rt_start_b_temp <= rt_start_ug_temp,
-                                             new_rt_end_b_temp >= rt_start_ug_temp,
-                                             new_rt_end_b_temp <= rt_end_ug_temp,
+                                             peak_core_rt_range_start_b_temp <= rt_start_ug_temp,
+                                             peak_core_rt_range_end_b_temp >= rt_start_ug_temp,
+                                             peak_core_rt_range_end_b_temp <= rt_end_ug_temp,
                                              mz_start_b_temp <= mz_ug_temp,
                                              mz_end_b_temp >= mz_ug_temp),
                               allow.cartesian=TRUE, nomatch=NULL, mult='all']
 
   #Find Peaks inside of benchmark boundaries
   split_middle_table <- b_table[ug_table, on=.(sample_id_b_temp == sample_id_ug_temp,
-                                              new_rt_start_b_temp <= rt_start_ug_temp,
-                                              new_rt_end_b_temp >= rt_end_ug_temp,
+                                              peak_core_rt_range_start_b_temp <= rt_start_ug_temp,
+                                              peak_core_rt_range_end_b_temp >= rt_end_ug_temp,
                                               mz_start_b_temp <= mz_ug_temp,
                                               mz_end_b_temp >= mz_ug_temp),
                                allow.cartesian=TRUE, nomatch=NULL, mult='all']
@@ -478,55 +483,24 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   #Generate Isotopologe error dt
-  Matches_BM_NPPpeaks_t <- Matches_BM_NPPpeaks
+  IR_check <- Matches_BM_NPPpeaks
+
   if(nrow(g_table) > 0){
 
-    Matches_BM_NPPpeaks_t$sample_id_b <- as.factor(Matches_BM_NPPpeaks_t$sample_id_b)
+    IT_ratio_biases <- Matches_BM_NPPpeaks_NPPfeatures
 
-    join_vct <- c("molecule_b",
-                  "adduct_b",
-                  "isoab_b",
-                  "sample_id_b",
-                  "sample_name_b")
-
-    join_on_dt <- unique(rbind(Matches_BM_NPPpeaks_t[main_peak == TRUE, ..join_vct],
-                               Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
-                                                                 !is.na(peak_area_b) &
-                                                                 !is.na(area_g),
-                                                               ..join_vct]))
-
-    IT_ratio_biases <- Matches_BM_NPPpeaks_t[main_peak == TRUE, c("molecule_b",
-                                                                  "adduct_b",
-                                                                  "isoab_b",
-                                                                  "sample_id_b",
-                                                                  "peak_area_ug",
-                                                                  "peak_area_b",
-                                                                  "Grp_b",
-                                                                  "sample_name_b",
-                                                                  "peaks.rt_neighbors_b",
-                                                                  "peaks.mz_neighbors_b")][join_on_dt,
-                                                                on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
-
-    IT_ratio_biases <- Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE &
-                                                         !is.na(peak_area_b) &
-                                                         !is.na(area_g),
-                                                       c("molecule_b",
-                                                         "adduct_b",
-                                                         "isoab_b",
-                                                         "sample_id_b",
-                                                         "area_b",
-                                                         "area_g",
-                                                         "sample_name_b")][IT_ratio_biases, on = .(molecule_b, adduct_b, isoab_b, sample_id_b)]
-
-
-    IT_ratio_biases[is.na(peak_area_b)]$peak_area_b <- IT_ratio_biases[is.na(peak_area_b)]$area_b
-    IT_ratio_biases[is.na(sample_name_b)]$sample_name_b <- IT_ratio_biases[is.na(sample_name_b)]$i.sample_name_b
+    IT_ratio_biases <- IT_ratio_biases[b_table[, c("molecule_b",
+                                                   "adduct_b",
+                                                   "isoab_b",
+                                                   "sample_name_b",
+                                                   "peaks.rt_neighbors_b",
+                                                   "peaks.mz_neighbors_b")], on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
 
 } else {
-    Matches_BM_NPPpeaks_t$sample_id_b <- as.factor(Matches_BM_NPPpeaks_t$sample_id_b)
-    Matches_BM_NPPpeaks_t[, area_g := as.numeric(NA)]
-    IT_ratio_biases <- Matches_BM_NPPpeaks_t
+  IR_check[, sample_id_b := as.factor(sample_id_b)]
+  IR_check[, area_g := as.numeric(NA)]
+  IT_ratio_biases <- IR_check
 }
 
   IT_ratio_biases <- IT_ratio_biases[isoab_b != 100][IT_ratio_biases[isoab_b == 100,
@@ -543,14 +517,14 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                                                             paste0(paste0(i.peaks.mz_neighbors_b, " | "), peaks.mz_neighbors_b))]
 
 
-  IT_ratio_biases[, diffH20PP_pp := as.character(abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
-                                        abs(`NPP_peak picking` - benchmark) > 20 &
-                                        abs(`NPP_peak picking`) > 30)]
+  IT_ratio_biases[, diffH20PP_pp := as.character(
+    abs(abs(benchmark) - abs(`NPP_peak picking`)) > 10 &
+      abs(`NPP_peak picking` - benchmark) > 20 &
+      abs(`NPP_peak picking`) > 30)]
 
   IT_ratio_biases[, diffH20PP_ft := as.character(abs(abs(benchmark) - abs(NPP_features)) > 10 &
                                         abs(NPP_features - benchmark) > 20 &
                                         abs(NPP_features) > 30)]
-
 
   IT_ratio_biases[diffH20PP_pp == "TRUE"]$diffH20PP_pp <- "Inc. > 20%p"
   IT_ratio_biases[diffH20PP_pp == "FALSE"]$diffH20PP_pp <- "Inc. < 20%p"
@@ -559,7 +533,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   IT_ratio_biases[diffH20PP_ft == "FALSE"]$diffH20PP_ft <- "Inc. < 20%p"
 
   IT_ratio_biases <- IT_ratio_biases[!is.na(peak_area_b)]
-
 
   #create overview table per compound
 
@@ -624,7 +597,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   ##############
-  #Return the found and 3 notfoundtables in a list
+  #Return the found and 3 notfound tables in a list
   ##############
 
   return_list <- list('BM_NPPoutput_size' = BM_NPPoutput_size,

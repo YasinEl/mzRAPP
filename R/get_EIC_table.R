@@ -18,16 +18,16 @@ get_EIMatches_BM_NPPpeaks <- function(rt, int, Min.PpP) {
     int_wo_spikes = int
   )
 
-  EIC.dt[val == TRUE &
-           len <= max(Min.PpP / 3, 3)]$int_wo_spikes <- 0
+#  EIC.dt[val == TRUE &
+#           len <= max(Min.PpP / 3, 2)]$int_wo_spikes <- 0
+#
+#  EIC.dt$val <- as.vector(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0))
+#  EIC.dt$len <-
+#    unlist(lapply(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0)@lengths, function(x) {
+#      rep(x, x)
+#    }))
 
-  EIC.dt$val <- as.vector(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0))
-  EIC.dt$len <-
-    unlist(lapply(S4Vectors::Rle(EIC.dt$int_wo_spikes > 0)@lengths, function(x) {
-      rep(x, x)
-    }))
-
-  EIC.dt <- EIC.dt[val == FALSE & len < 3, int_wo_spikes := NA]
+  EIC.dt <- EIC.dt[val == FALSE & len <= max(Min.PpP / 3, 2), int_wo_spikes := NA]
 
   if(sum(EIC.dt$int_wo_spikes, na.rm =  TRUE) == 0 | length(EIC.dt[int_wo_spikes > 0]$int_wo_spikes) < 5) {
     EIC.dt <- EIC.dt[, int_smooth := int_wo_spikes][]

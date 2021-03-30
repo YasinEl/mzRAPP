@@ -97,6 +97,17 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
                         int == max(EIC.dt[rt >= StartTime &
                                             rt <= EndTime]$int)]$rt,
 
+      rt_weig = stats::weighted.mean(EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
+                                             int > stats::median(EIC.dt[rt >= StartTime &
+                                                                          rt <= EndTime]$int)]$rt,
+                                    EIC.dt[rt >= StartTime &
+                                             rt <= EndTime &
+                                             int > stats::median(EIC.dt[rt >= StartTime &
+                                                                          rt <= EndTime]$int)]$int),
+
+
+
       #zigZag_IDX = as.double(GetZigzagIDX(
       #  EIC.dt[rt >= StartTime &
       #           rt <= EndTime]$int,
@@ -145,17 +156,6 @@ Get_peak_vars <- function(l.peaks, EIC.dt, CompCol_xic, l.peaks.mz_list, iso.run
 
 
       },
-
-      #SignificanceLevel = {
-#
-#        pd <- c(rtmin = StartTime, rtmax = EndTime)
-#
-#        pts <- as.matrix(EIC.dt[, c("rt", "int")])
-#
-#        as.double(MetaClean::calculatePeakSignificanceLevel (peakData = pd, pts = pts))
-#
-#
-#      },
 
       Sharpness = {
 

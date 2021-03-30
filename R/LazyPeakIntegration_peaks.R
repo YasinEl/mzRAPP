@@ -572,7 +572,7 @@ find_bench_peaks <- function(files,
                             "formula",	"charge",	"Iso_count",	"mz_ex",	"peaks.idx",	"peaks.rtmin",	"peaks.rtmax",
                             "peaks.M0.grp",	"peaks.StartTime",	"peaks.EndTime",	"peaks.PpP",	"peaks.mz_accurate",
                             "peaks.mz_accuracy_abs",	"peaks.mz_accuracy_ppm",	"peaks.mz_span_abs",	"peaks.mz_span_ppm",
-                            "peaks.mz_min",	"peaks.mz_max",	"peaks.FW25M",	"peaks.FW50M",	"peaks.FW75M",	"peaks.data_rate",
+                            "peaks.mz_min",	"peaks.mz_max",	"peaks.FW25M",	"peaks.FW50M",	"peaks.FW75M",	"peaks.data_rate", "peaks.rt_weig",
                             "peaks.rt_raw", "peaks.symmetry", "peaks.jaggedness",	"peaks.zigZag_IDX",	"peaks.sharpness",	"peaks.height",	"peaks.area",
                             "peaks.cor_w_M0",	"peaks.cor_w_main_add",	"peaks.manual_int", "rt_raw_span", "peaks.rt_neighbors", "peaks.mz_neighbors",
                             "ExpectedArea",	"ErrorRel_A", "ErrorAbs_A",	"ExpectedHeight",	"ErrorRel_H",	"ErrorAbs_H",	"isoab_ol",	"Intensities.v",	"RT.v")

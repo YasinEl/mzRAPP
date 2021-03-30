@@ -7,6 +7,8 @@
 #' @keywords internal
 import_ungrouped_xcms <- function(file, options_dt){
 
+
+
   message('Starting xcms unaligned import')
 
   if(is.null(file)){
@@ -31,7 +33,6 @@ import_ungrouped_xcms <- function(file, options_dt){
     #Import csv file
     ug_table <- data.table::fread(file)
   }
-
 
 
   #Check if all columns defined in optionsframe are present
@@ -107,7 +108,7 @@ import_grouped_xcms <- function (file, options_dt) {
   #Compare order of present samples in options_dt to grouped output and update options_dt
   nt_samples <- colnames(g_table)
   #nt_ids <- match(na.omit(options_dt$g_samples), nt_samples)
-  options_dt[!is.na(g_samples), ug_samples := match(na.omit(options_dt$g_samples), nt_samples) - length(g_table)] #columns not containing samples have to be substracted in ug_import
+  options_dt[!is.na(g_samples), ug_samples := match(stats::na.omit(options_dt$g_samples), nt_samples) - length(g_table)] #columns not containing samples have to be substracted in ug_import
 
   #Add feature_id for each row
   g_table$feature_id <- seq.int(nrow(g_table))

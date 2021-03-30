@@ -79,7 +79,7 @@ plot_Peak  <- function(PC, IndexNumber){
 #'
 #' @param PC_object output from \code{\link{find_bench_peaks}}
 #' @param IndexNumber IDX number of peak to be plotted
-#'
+#' @param focus should plotted chromatogram be limited to peak (TRUE/FALSE)
 #'
 #'
 #' @importFrom ggplot2 ggplot geom_line aes geom_point geom_vline theme labs annotate
@@ -87,7 +87,7 @@ plot_Peak  <- function(PC, IndexNumber){
 #' @return plotly object
 #' @export
 #'
-plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
+plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber, focus = TRUE){
 
 
   mol <- as.character(PC_object[IDX == IndexNumber, molecule])
@@ -110,6 +110,18 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
   plot.table.M0 <- data.table(rt = as.numeric(unlist(strsplit(PC_object[IDX == IDXM0, RT.v], split = ","))),
                               int = as.numeric(unlist(strsplit(PC_object[IDX == IDXM0, Intensities.v], split = ","))) * iso / 100)
 
+
+  if(focus == TRUE){
+
+    wid <- PC_object[IDX == IDXM0, peaks.EndTime] - PC_object[IDX == IDXM0, peaks.StartTime]
+
+
+    plot.table.MX <- plot.table.MX[rt > PC_object[IDX == IDXM0, peaks.StartTime] - wid & rt < PC_object[IDX == IDXM0, peaks.EndTime] + wid]
+    plot.table.M0 <- plot.table.MX[rt > PC_object[IDX == IDXM0, peaks.StartTime] - wid & rt < PC_object[IDX == IDXM0, peaks.EndTime] + wid]
+
+  }
+
+
   p <- ggplot() +
     geom_line(data = plot.table.MX, aes(x = rt, y = int), color = "black") +
     geom_point(data = plot.table.MX, aes(x = rt, y = int), color = "black") +
@@ -125,6 +137,7 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 
 
     ggtitle(paste0(mol, " ", add, " ", round(iso, 2)))
+
 
   plotly::ggplotly(p, dynamicTicks = TRUE)
 
@@ -149,7 +162,7 @@ plot_Peak_with_predicted_peak  <- function(PC_object, IndexNumber){
 plot_Peak_per_mol  <- function(PC_object, mol, ia = 100, add = "M+H"){
 UT_comp = FALSE
 
-if(is.list(PC_object) == TRUE && data.table::is.data.table == FALSE){
+if(is.list(PC_object) == TRUE && data.table::is.data.table(PC_object) == FALSE){
   PC_object <- data.table::rbindlist(list(PC_object$Matches_BM_NPPpeaks, PC_object$Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 }
 

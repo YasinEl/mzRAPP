@@ -28,7 +28,6 @@ callmzRAPP <- function(){
     'Sharpness' = 'peaks.Sharpness',
     'Jaggedness' = 'peaks.Jaggedness',
     'Modality'  = 'peaks.Modality',
-    'SignificanceLevel' = 'peaks.SignificanceLevel',
     'Symmetry' = 'peaks.Symmetry',
     'TPASR' = 'peaks.TPASR',
     'MinDivMax' = 'peaks.MinDivMax',
@@ -67,7 +66,6 @@ callmzRAPP <- function(){
     'Sharpness' = 'peaks.Sharpness_b',
     'Jaggedness' = 'peaks.Jaggedness_b',
     'Modality'  = 'peaks.Modality_b',
-    'SignificanceLevel' = 'peaks.SignificanceLevel_b',
     'Symmetry' = 'peaks.Symmetry_b',
     'TPASR' = 'peaks.TPASR_b',
     'MinDivMax' = 'peaks.MinDivMax_b',
@@ -225,7 +223,7 @@ callmzRAPP <- function(){
                       label = "Would you like to screen for additional adducts? (Adducts with polarity not presents in target file will be ignored):",
                       choices = c(adducts$Name),
                       width = "350px",
-                      selected = c("M+H", "M-H", "2M+H", "2M-H", "M+Na", "M+Cl"),
+                      selected = c("M+H", "M-H"),
                       options = list(
                         non_selected_header = "Choose between:",
                         selected_header = "You have selected:"
