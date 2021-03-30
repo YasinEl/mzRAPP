@@ -1,6 +1,6 @@
 Package: mzRAPP
 Type: Package
-Title: Benchmark Dataset Generation And Non-Targeted Data Pre-Processing Assessment
+Title: Benchmark Dataset Generation and Non-Targeted Data Pre-Processing Assessment
 Version: 1.0.0
 Authors@R:c(person("Yasin", "El Abiead",
            email = "yasin.el.abiead@univie.ac.at",
