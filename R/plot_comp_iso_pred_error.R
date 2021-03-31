@@ -49,7 +49,7 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
 
   }else if(BMvsPPvsAl == TRUE){
 
-    IT_ratio_biases <- IT_ratio_biases[!is.na(sample_name_b) & !is.na(i.sample_name_b) & !is.na(area_b)]
+    IT_ratio_biases <- IT_ratio_biases[!is.na(sample_name_b) & !is.na(peak_area_b)]
     IT_ratio_biases[, diffH20PP := diffH20PP_ft]
     IT_ratio_biases[is.na(diffH20PP_ft), diffH20PP := diffH20PP_pp]
     IT_ratio_biases[diffH20PP_pp == "Inc. < 20%p" & (diffH20PP_ft == "Inc. > 20%p"), diffH20PP := "Feature Inc. > 20%p"]
@@ -65,7 +65,7 @@ plot_comp_iso_pred_error <- function(comparison_data, post_alignment = FALSE, BM
   }
 
   IT_ratio_biases[, grp_col := paste(molecule_b, adduct_b, isoab_b, sample_name_b, sep = "_;_")]
-  IT_ratio_biases <- IT_ratio_biases[!is.na(Pred_error)]
+  IT_ratio_biases <- IT_ratio_biases[!is.na(Pred_error) & !is.na(diffH20PP)]
 
   p <- ggplot(IT_ratio_biases[isoab_b < 100]) +
     suppressWarnings( geom_line(suppressWarnings( aes(x = data_type,

@@ -44,7 +44,8 @@ mzRAPP
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted
-data pre-processing (NPP) in the realm of liquid chromatography
+data pre-processing (NPP; XCMS, XCMS3, XCMS-online, MZmine 2, MS-DIAL,
+OpenMS, El-MAVEN,..) in the realm of liquid chromatography
 high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based
 on the increasing popularity of merging non-targeted with targeted
 metabolomics meaning that both types of data evaluation are often

@@ -505,7 +505,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   IT_ratio_biases <- IT_ratio_biases[isoab_b != 100][IT_ratio_biases[isoab_b == 100,
                                      c("sample_id_b", "sample_name_b", "molecule_b", "adduct_b", "area_g", "peak_area_b", "peak_area_ug", "peaks.rt_neighbors_b", "peaks.mz_neighbors_b")],
-                                on=.(sample_id_b, molecule_b, adduct_b),
+                                on=.(sample_name_b, molecule_b, adduct_b),
                                 nomatch = NA, allow.cartesian=TRUE][,c("benchmark",
                                                                        "NPP_peak picking",
                                                                        "NPP_features",
