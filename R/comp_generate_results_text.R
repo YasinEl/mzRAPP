@@ -70,14 +70,14 @@ derive_performance_metrics <- function(comparison_data){
                                                                type='basic')$basic
                          ),
                          Split_peaks = list(count = sum(sum_tab$Split_peaks, na.rm = TRUE),
-                                            CI = boot::boot.ci(boot::boot(sum_tab,
+                                            CI = if(sum(dt$Split_peaks, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(sum(dt$Split_peaks, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Split_peaks, na.rm = TRUE))*100,2)
                                                                           },
                                                                           R = 1000),
                                                                index=1,
-                                                               type='basic')$basic
+                                                               type='basic')$basic} else {rep(0,5)}
                          ),
                          Missing_peaks = list(
                            Systematic = sum(sum_tab$S_pp, na.rm = TRUE),
@@ -98,14 +98,14 @@ derive_performance_metrics <- function(comparison_data){
                          IR_quality = list(
                            Error_inc_below20pp = sum(sum_tab$IRb_ok_pp, na.rm = TRUE),
                            Error_inc_above20pp = list(count = sum(sum_tab$IRb_off_pp, na.rm = TRUE),
-                                                      CI = boot::boot.ci(boot::boot(sum_tab,
+                                                      CI =  if(sum(sum_tab$IRb_off_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
                                                                                       round(sum(dt$IRb_off_pp, na.rm = TRUE)/(sum(dt$IRb_off_pp, na.rm = TRUE) + sum(dt$IRb_ok_pp, na.rm = TRUE))*100,2)
                                                                                     },
                                                                                     R = 1000),
                                                                          index=1,
-                                                                         type='basic')$basic
+                                                                         type='basic')$basic} else {rep(0,5)}
                            )
                          )
                        ),

@@ -34,7 +34,7 @@ Different NPP performance metrics are assessed automatically via mzRAPP. During 
 <br>
 <b><p style="font-size:25px">Peak/feature detection</p></b>
 Peaks recovered from the benchmark after the step of peak picking (inner donut) and peak alignment (outer donut). Peaks appearing only after alignment could be due to filling gaps, errors in NPP peak alignment, or differences in peak matching between benchmark and NPP output after alignment.
-[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+[Click here](https://github.com/YasinEl/mzRAPP#matching-between-bm-and-npp-output-background) for more details.
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 dt_peak_presence <- data.table(metrics = c("Found_peaks_pp", "Found_peaks_al"),
                                values = c(paste0(result_list[["Before_alignment"]][["Found_peaks"]][["count"]],
@@ -71,7 +71,7 @@ plot_sunburst_peaks(result_list, params$comp_d)
 <br>
 <b><p style="font-size:25px">Peak/feature quality</p></b>
 The quality of reported NPP peak abundances is assessed via the increase of the isotopic ratio (IR) bias relative to the IR bias of the BM. The inner donut corresponds to IRs calculated from abundances reported after peak picking, the outer donut to abundances after alignment. Changes of IR qualities downstream of peak picking can be due to errors in peak alignments (see below).
-[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+[Click here](https://github.com/YasinEl/mzRAPP#peak-abundance-qualitydegenerated-ir) for more details.
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 dt_peakQual <- data.table(metrics = c("IR_bias>20%_pp", "IR_bias>20%_al"),
                           values = c(paste0(result_list[["Before_alignment"]][["IR_quality"]][["Error_inc_above20pp"]][["count"]],
@@ -115,7 +115,7 @@ plot_sunburst_peakQuality(result_list, params$comp_d)
 <br>
 <b><p style="font-size:25px">Peak alignment</p></b>
 The alignment process is responsible for assembling peaks of different samples into features. mzRAPP is counting errors in alignment by checking whether those assignments are performed symmetrically over different isotopologues of the same compound. This way alignment errors in the benchmark do not affect this count (confirmable errors). The number of additional benchmark divergences which can not be verified via isotopologues is also shown. However, its accuracy depends on the correct (user provided) alignment of the benchmark data set. "Lost peaks" are those which have been detected with a specific area before alignment, but the same peak (with the same area) is not present anymore after alignment.
-[Click here](https://github.com/YasinEl/mzRAPP) for more details.
+[Click here](https://github.com/YasinEl/mzRAPP#alignment-error-counting) for more details.
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 dt_alignment <- data.table(metrics = c("Lost_peaks", "Min._errors", "BM divergences"),
                            values = c(paste0(result_list[["Alignment"]][["Lost_b.A"]][["count"]],
