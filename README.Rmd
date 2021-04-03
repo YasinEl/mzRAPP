@@ -265,24 +265,29 @@ After performing those steps the assessment can be started via the blue "Start a
 algo = "XCMS"
 
 #load benchmark csv file
-benchmark <- check_benchmark_input(file = "Path_to_benchmark_csv_file.csv",
-                              algo = algo
-                              )
-
+benchmark <- 
+  check_benchmark_input(
+    file = "Path_to_benchmark_csv_file.csv",
+    algo = algo
+    )
 
 #load non-targeted output
-NPP_output <- check_nonTargeted_input(ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
-                             g_table_path = "Path_to_aligned_Output_csv_file.csv/.txt", 
-                             algo = algo,
-                             options_table = benchmark$options_table
-                             )
+NPP_output <- 
+  check_nonTargeted_input(
+    ug_table_path = "Path_to_unaligned_Output_csv_file.csv/.txt", #in case of multiple files (e.g. for MS-DIAL) supply a vector of paths
+    g_table_path = "Path_to_aligned_Output_csv_file.csv/.txt", 
+    algo = algo,
+    options_table = benchmark$options_table
+    )
 
 #compare benchmark with non-targeted output
-comparison <- compare_peaks(b_table = benchmark$b_table,
-                            ug_table = NPP_output$ug_table,
-                            g_table = NPP_output$g_table,
-                            algo = algo
-                            )
+comparison <- 
+  compare_peaks(
+    b_table = benchmark$b_table,
+    ug_table = NPP_output$ug_table,
+    g_table = NPP_output$g_table,
+    algo = algo
+    )
 
 #generate a list including different statistics of the comparison
 comp_stat <- derive_performance_metrics(comparison)

@@ -45,12 +45,8 @@ derive_performance_metrics <- function(comparison_data){
 
   #set.seed(12987)
 
-  UT_peaks <-
-    nrow(data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$nf_g), fill = TRUE))
   sum_tab <- comparison_data$Overview_per_molecule
-  main_peak_table <- comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE]
 
-  found_ug_peaks <- nrow(main_peak_table)#length(unique(main_peak_table$comp_id_ug))
 
   results_text <- list(Assessed_tool = comparison_data$BM_NPPoutput_size$algorithm,
                        Benchmark = list(
@@ -60,14 +56,14 @@ derive_performance_metrics <- function(comparison_data){
                        Before_alignment = list(
                          NT_peaks = NA,#UT_peaks,
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_pp, na.rm = TRUE),
-                                            CI = boot::boot.ci(boot::boot(sum_tab,
+                                            CI = if(sum(sum_tab$Found_peaks_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(sum(dt$Found_peaks_pp, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                           },
                                                                           R = 1000),
                                                                index=1,
-                                                               type='basic')$basic
+                                                               type='basic')$basic} else {rep(0,5)}
                          ),
                          Split_peaks = list(count = sum(sum_tab$Split_peaks, na.rm = TRUE),
                                             CI = if(sum(sum_tab$Split_peaks, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
@@ -153,14 +149,14 @@ derive_performance_metrics <- function(comparison_data){
                        ),
                        After_alignment = list(
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_ft, na.rm = TRUE),
-                                            CI =  boot::boot.ci(boot::boot(sum_tab,
+                                            CI =  if(sum(sum_tab$Found_peaks_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                            function(data, indices){
                                                                              dt<-data[indices,]
                                                                              round(sum(dt$Found_peaks_ft, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                            },
                                                                            R = 1000),
                                                                 index=1,
-                                                                type='basic')$basic
+                                                                type='basic')$basic} else rep(0,5)
                          ),
                          Found_features = nrow(unique(comparison_data$Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b) &
                                                                                       !is.na(area_g) &
@@ -185,7 +181,7 @@ derive_performance_metrics <- function(comparison_data){
                          IR_quality = list(
                            Error_inc_below20pp = sum(sum_tab$IRb_ok_ft, na.rm = TRUE),
                            Error_inc_above20pp = list(count = sum(sum_tab$IRb_off_ft, na.rm = TRUE),
-                                                      CI = boot::boot.ci(boot::boot(sum_tab,
+                                                      CI = if(sum(sum_tab$IRb_off_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                                     function(data, indices){
                                                                                       dt<-data[indices,]
                                                                                       ret <- round(sum(dt$IRb_off_ft, na.rm = TRUE)/(sum(dt$IRb_off_ft, na.rm = TRUE) + sum(dt$IRb_ok_ft, na.rm = TRUE))*100,2)
@@ -195,7 +191,8 @@ derive_performance_metrics <- function(comparison_data){
                                                                                     },
                                                                                     R = 1000),
                                                                          index=1,
-                                                                         type='basic')$basic)
+                                                                         type='basic')$basic} else{rep(0,5)}
+                                                      )
                          )
                        )
   )
