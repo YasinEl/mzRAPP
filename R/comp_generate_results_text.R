@@ -70,7 +70,7 @@ derive_performance_metrics <- function(comparison_data){
                                                                type='basic')$basic
                          ),
                          Split_peaks = list(count = sum(sum_tab$Split_peaks, na.rm = TRUE),
-                                            CI = if(sum(dt$Split_peaks, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
+                                            CI = if(sum(sum_tab$Split_peaks, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(sum(dt$Split_peaks, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Split_peaks, na.rm = TRUE))*100,2)
