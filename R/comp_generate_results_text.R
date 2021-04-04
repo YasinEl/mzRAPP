@@ -56,14 +56,15 @@ derive_performance_metrics <- function(comparison_data){
                        Before_alignment = list(
                          NT_peaks = NA,#UT_peaks,
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_pp, na.rm = TRUE),
-                                            CI = if(sum(sum_tab$Found_peaks_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
+                                            CI = if(sum(sum_tab$Found_peaks_pp, na.rm = TRUE) > 0 &
+                                                    sum(sum_tab$Not_Found_peaks_pp, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                           function(data, indices){
                                                                             dt<-data[indices,]
                                                                             round(sum(dt$Found_peaks_pp, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                           },
                                                                           R = 1000),
                                                                index=1,
-                                                               type='basic')$basic} else {rep(0,5)}
+                                                               type='basic')$basic} else if(sum(sum_tab$Found_peaks_pp, na.rm = TRUE) == 0){rep(0,5)} else {rep(100,5)}
                          ),
                          Split_peaks = list(count = sum(sum_tab$Split_peaks, na.rm = TRUE),
                                             CI = if(sum(sum_tab$Split_peaks, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
@@ -149,14 +150,15 @@ derive_performance_metrics <- function(comparison_data){
                        ),
                        After_alignment = list(
                          Found_peaks = list(count = sum(sum_tab$Found_peaks_ft, na.rm = TRUE),
-                                            CI =  if(sum(sum_tab$Found_peaks_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
+                                            CI =  if(sum(sum_tab$Found_peaks_ft, na.rm = TRUE) > 0 &
+                                                     sum(sum_tab$Not_Found_peaks_ft, na.rm = TRUE) > 0){boot::boot.ci(boot::boot(sum_tab,
                                                                            function(data, indices){
                                                                              dt<-data[indices,]
                                                                              round(sum(dt$Found_peaks_ft, na.rm = TRUE)/(sum(dt$Found_peaks_pp, na.rm = TRUE) + sum(dt$Not_Found_peaks_pp, na.rm = TRUE))*100,2)
                                                                            },
                                                                            R = 1000),
                                                                 index=1,
-                                                                type='basic')$basic} else rep(0,5)
+                                                                type='basic')$basic} else if(sum(sum_tab$Found_peaks_ft, na.rm = TRUE) == 0) {rep(0,5)} else {rep(100,5)}
                          ),
                          Found_features = nrow(unique(comparison_data$Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b) &
                                                                                       !is.na(area_g) &

@@ -225,7 +225,7 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                       'AlignmentErrors_per_moleculeAndAdduct' = AlignmentErrors_per_moleculeAndAdduct,
                       'Matches_BM_NPPpeaks_NPPfeatures' = Matches_BM_NPPpeaks_NPPfeatures)
 
-  message('Successful comparison!')
+  message('Done!')
 
 
   return(return_list)
