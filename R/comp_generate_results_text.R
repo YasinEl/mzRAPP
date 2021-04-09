@@ -43,10 +43,7 @@
 #'
 derive_performance_metrics <- function(comparison_data){
 
-  #set.seed(12987)
-
   sum_tab <- comparison_data$Overview_per_molecule
-
 
   results_text <- list(Assessed_tool = comparison_data$BM_NPPoutput_size$algorithm,
                        Benchmark = list(
@@ -115,7 +112,6 @@ derive_performance_metrics <- function(comparison_data){
                                                                            if(is.nan(ret)){
                                                                              return(0)
                                                                            } else return(ret)
-
                                                                          },
                                                                          R = 1000),
                                                               index=1,
