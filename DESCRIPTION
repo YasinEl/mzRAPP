@@ -41,6 +41,7 @@ Imports:
     plotly
 Suggests: 
     foreach,
+    utf8,
     stats,
     knitr,
     bit64,
