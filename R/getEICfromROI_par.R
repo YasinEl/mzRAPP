@@ -30,7 +30,7 @@ get_ROIs <-
 
     if(!isTRUE(is.data.frame(Target.table))){stop(paste0("Target.table has to be a data frame and/or data table!"))}
     if(!isTRUE(is.data.table(Target.table))){Target.table <- as.data.table(Target.table)}
-
+    if(any(duplicated(tools::file_path_sans_ext(basename(files))))){stop("Some of your selected files appear more than once!")}
     missing_cols <- setdiff(c("StartTime.EIC", "EndTime.EIC"), colnames(Target.table))
     if(length(missing_cols) > 0 && all(c("user.rtmin", "user.rtmax") %in% colnames(Target.table))){
       maxrt <- max(Target.table$user.rtmax, na.rm = TRUE)
@@ -74,6 +74,7 @@ get_ROIs <-
     if(any(duplicated(Target.table, by = c("molecule", "adduct", "isoab", "FileName")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exist more than once per FileName)!
                                                                                 Please, make sure that names given in the column 'molecule' are unique or have different adducts
                                                                                 in the column 'adduct'!" ))
+
 
     ##################################
     #initiate parallel processing
