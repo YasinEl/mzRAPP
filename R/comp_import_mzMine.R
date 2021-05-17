@@ -66,7 +66,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
     stop('Columns defined in options but not present in unaligned output: ', paste0(cols_not_found, sep = " - "))
   }
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   ug_table <- rename_columns_from_options(ug_table, options_table, 'ug_columns', 'internal_columns')
 
   #Rm file ext
@@ -158,7 +158,7 @@ import_grouped_mzmine <- function(file_path, options_table){
   g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
   g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, ' Peak area')]
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
 
   #Add a sample_id column based on the sample_names in options_dt

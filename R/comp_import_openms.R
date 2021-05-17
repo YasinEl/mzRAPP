@@ -187,7 +187,7 @@ import_grouped_openms <- function(file_path, options_table){
   g_table <- g_table[, 'peak_area' := as.numeric(as.character(peak_area))]
   g_table <- sampid[, c("sample_name", "vars")][g_table, on=.(vars)][, !"vars"]
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
 
   #Add a sample_id column based on the sample_names in options_dt

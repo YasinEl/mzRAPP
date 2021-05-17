@@ -117,7 +117,7 @@ import_grouped_msdial <- function(file_path, options_dt){
   measure_vars = stats::na.omit(options_dt[, g_samples])
   g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   g_table <- rename_columns_from_options(g_table, options_dt, 'g_columns', 'internal_columns')
 
 

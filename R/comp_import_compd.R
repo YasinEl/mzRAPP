@@ -32,7 +32,7 @@ import_ungrouped_cd <- function(file_path, options_table){
     stop('Columns defined in options but not present in Compound Discoverer ungrouped dataset: ', paste0(cols_not_found, sep = " - "))
   }
 
-  #rename all columns for internal use according to optiosn frame
+  #rename all columns for internal use according to options frame
   ug_table <- rename_columns_from_options(ug_table, options_table, 'ug_columns', 'internal_columns')
 
 	#Add a sample_id column based on the sample_names in options_dt
