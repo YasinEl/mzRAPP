@@ -24,8 +24,6 @@ Imports:
     lazyeval,
     doFuture,
     data.table,
-    mzR,
-    MSnbase,
     xcms,
     dplyr,
     shinyjs,
