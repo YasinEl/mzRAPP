@@ -2,7 +2,7 @@
 % Please edit documentation in R/comp_import_elmaven.R
 \name{import_grouped_elmaven}
 \alias{import_grouped_elmaven}
-\title{import_grouped_xcms}
+\title{import_grouped_elmaven}
 \usage{
 import_grouped_elmaven(file, options_dt)
 }
@@ -12,6 +12,6 @@ import_grouped_elmaven(file, options_dt)
 \item{options_dt}{options_dt}
 }
 \description{
-import_grouped_xcms
+import_grouped_elmaven
 }
 \keyword{internal}

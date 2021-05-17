@@ -13,7 +13,7 @@ compare_peaks(b_table, ug_table, g_table, algo)
 
 \item{g_table}{one of the listed objects (g_table) in output of \code{\link{check_nonTargeted_input}}.  e.g. check_nonTargeted_input_output$g_table}
 
-\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "El-Maven", "OpenMS", "MS-DIAL", "CompoundDiscoverer" or "MZmine 2"}
+\item{algo}{output format of ug_table and g_table. Can be "XCMS", "XCMS3", "Metaboanalyst", "El-Maven", "OpenMS", "MS-DIAL", "CompoundDiscoverer" or "MZmine 2"}
 }
 \value{
 returns list containing different tables including data from different types of comparisons

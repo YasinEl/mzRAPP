@@ -52,6 +52,21 @@ generate_options <- function(raw_b_table, algo){
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
+    'Metaboanalyst' = {
+      #Add ug columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
+                                                 'ug_columns' = c('maxo', 'into', 'sample', 'rtmin', 'rtmax', 'rt', 'mz', 'mzmin', 'mzmax')),
+                          all.x = TRUE, by=c('internal_columns'))
+      #Add g columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                                 'g_columns' = c('rt', 'mz')),
+                          all.x = TRUE, by=c('internal_columns'))
+
+      #Add ug samples
+      samples_dt <- samples_dt[, 'ug_samples' := sample_id]
+      #Add g samples
+      samples_dt <- samples_dt[, 'g_samples' := tools::file_path_sans_ext(b_samples)]
+    },
 'CompoundDiscoverer' = {
   #Add ug columns
   columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'sample_name', 'rt_start', 'rt_end', 'rt', 'mz'),

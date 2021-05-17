@@ -107,7 +107,7 @@ if (window.hljs) {
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 <!-- badges: end -->
-<p>The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP; XCMS, XCMS3, XCMS-online, MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of liquid chromatography high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based on the increasing popularity of merging non-targeted with targeted metabolomics meaning that both types of data evaluation are often performed on the same dataset. Following this assumption mzRAPP can utilize user-provided information on a set of molecules (the more molecules the better) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for which boundaries are provided for all (enviPat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance metrics for NPP performed on the same mzML files. An overview of mzRAPPs capabilities is given in this &lt; 3 min <a href="https://www.youtube.com/watch?v=FwZ_QxZoTcI&amp;feature=youtu.be">youtube video</a>, which was formerly recorded for the Metabolomics2020 conference.</p>
+<p>The goal of mzRAPP is to allow reliability assessment of non-targeted data pre-processing (NPP; XCMS, XCMS3, XCMS-online, Metaboanalyst, MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of liquid chromatography high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based on the increasing popularity of merging non-targeted with targeted metabolomics meaning that both types of data evaluation are often performed on the same dataset. Following this assumption mzRAPP can utilize user-provided information on a set of molecules (the more molecules the better) with known retention behavior. mzRAPP extracts and validates chromatographic peaks for which boundaries are provided for all (enviPat predicted) isotopologues of those target molecules directly from mzML files. The resulting benchmark dataset is used to extract different performance metrics for NPP performed on the same mzML files. An overview of mzRAPPs capabilities is given in this &lt; 3 min <a href="https://www.youtube.com/watch?v=FwZ_QxZoTcI&amp;feature=youtu.be">youtube video</a>, which was formerly recorded for the Metabolomics2020 conference.</p>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>First, install the most recent version of</p>
@@ -264,6 +264,14 @@ data.table::fwrite(xcms::peaks(xcmsSet_object), &quot;unaligned_file.csv&quot;)
 
 #aligned file:
 data.table::fwrite(xcms::peakTable(xcmsSet_object), &quot;aligned_file.csv&quot;)</code></pre>
+<p><br> <u>MetaboanalystR 3.0:</u> <br> MetaboanalystR 3.0 can be used to optimize XCMS parameters. It also allows subsequent data pre-processing within the Metaboanalyst framework leading to the slightly different output format compared to XCMS. After applying the ‘FormatPeakList’ function from MetaboanalystR the unaligned and aligned outputs for mzRAPP can be exported as follows:</p>
+<pre class="r"><code>#unaligned file:
+UnalignedOP &lt;- data.table::as.data.table(FormatPeakList_output@peakpicking[[&quot;chromPeaks&quot;]])
+data.table::fwrite(UnalignedOP, &quot;unaligned_file.csv&quot;)
+
+#aligned file:
+AlignedOP &lt;- data.table::as.data.table(FormatPeakList_output@dataSet)
+data.table::fwrite(AlignedOP, &quot;aligned_file.csv&quot;)</code></pre>
 <p><br> <u>any other tool:</u> <br> It is also possible to use the outputs of other tools. However, they have to be adapted so that they resemble the output of one of the tools listed above. If this is not possible for some cases but important to you please contact me at <a href="mailto:yasin.el.abiead@univie.ac.at" class="email">yasin.el.abiead@univie.ac.at</a> <br></p>
 </div>
 <div id="selecting-a-benchmark-dataset-and-starting-an-assessment" class="section level3">
@@ -274,7 +282,7 @@ data.table::fwrite(xcms::peakTable(xcmsSet_object), &quot;aligned_file.csv&quot;
 <h3>Perform reliability assessment via R-Script</h3>
 <pre class="r"><code>
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
-#options: XCMS, XCMS3, El-Maven, OpenMS, MS-DIAL or MZmine 2
+#options: XCMS, XCMS3, Metaboanalyst, El-Maven, OpenMS, MS-DIAL or MZmine 2
 algo = &quot;XCMS&quot;
 
 #load benchmark csv file

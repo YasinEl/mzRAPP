@@ -14,6 +14,7 @@ match_NPPpeaks_to_NPPfeatures <- function(Matches_BM_NPPpeaks,
   match_tables_with_alignment_recovery_info <- list()
   length(match_tables_with_alignment_recovery_info) <- 2
   names(match_tables_with_alignment_recovery_info) <- c("Matches_BM_NPPpeaks", "SplittedMatches_BM_NPPpeaks")
+  g_table[, peak_area_g := as.numeric(peak_area_g)]
 
   #Creating temp columns to prevent over-writing by join
   #If statement is solution for msdial

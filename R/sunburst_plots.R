@@ -71,6 +71,7 @@ plot_sunburst_alignment <- function(result_txt){
                     values= ~values,
                     type='sunburst',
                     branchvalues = 'total',
+                    textinfo = "label+percent entry",
                     marker = list(colors = as.list(dt1$colors))
     )
 
@@ -143,6 +144,7 @@ plot_sunburst_peaks <- function(result_txt, comparison_object){
                     values= ~values,
                     type='sunburst',
                     branchvalues = 'total',
+                    textinfo = "label+percent entry",
                     marker = list(colors = as.list(dt1$colors))
     )
 
@@ -228,8 +230,8 @@ plot_sunburst_peakQuality <- function(result_txt, comparison_object){
 
   dt1[labels == "total", labels := "Benchmark<br>isotopic ratios"]
   dt1[labels == "Missing peak", labels := "Missing peak(s)"]
-  dt1[labels == "IR bias<br>< 20%", labels := "IR bias<br>inc. < 20%"]
-  dt1[labels == "IR bias<br>> 20%", labels := "IR bias<br>inc. > 20%"]
+  dt1[labels == "IR bias<br>< 20%", labels := "IR bias<br>inc. < 20%p"]
+  dt1[labels == "IR bias<br>> 20%", labels := "IR bias<br>inc. > 20%p"]
 
   p <-
     plotly::plot_ly(data = dt1,
@@ -239,6 +241,7 @@ plot_sunburst_peakQuality <- function(result_txt, comparison_object){
                     values= ~values,
                     type='sunburst',
                     branchvalues = 'total',
+                    textinfo = "label+percent entry",
                     marker = list(colors = as.list(dt1$colors))
     )
 

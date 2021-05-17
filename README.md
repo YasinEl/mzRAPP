@@ -44,19 +44,20 @@ mzRAPP
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted
-data pre-processing (NPP; XCMS, XCMS3, XCMS-online, MZmine 2, MS-DIAL,
-OpenMS, El-MAVEN,..) in the realm of liquid chromatography
-high-resolution mass spectrometry (LC-HRMS). mzRAPPs approach is based
-on the increasing popularity of merging non-targeted with targeted
-metabolomics meaning that both types of data evaluation are often
-performed on the same dataset. Following this assumption mzRAPP can
-utilize user-provided information on a set of molecules (the more
-molecules the better) with known retention behavior. mzRAPP extracts and
-validates chromatographic peaks for which boundaries are provided for
-all (enviPat predicted) isotopologues of those target molecules directly
-from mzML files. The resulting benchmark dataset is used to extract
-different performance metrics for NPP performed on the same mzML files.
-An overview of mzRAPPs capabilities is given in this \< 3 min [youtube
+data pre-processing (NPP; XCMS, XCMS3, MetaboanalystR 3.0, XCMS-online,
+MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of liquid
+chromatography high-resolution mass spectrometry (LC-HRMS). mzRAPPs
+approach is based on the increasing popularity of merging non-targeted
+with targeted metabolomics meaning that both types of data evaluation
+are often performed on the same dataset. Following this assumption
+mzRAPP can utilize user-provided information on a set of molecules (the
+more molecules the better) with known retention behavior. mzRAPP
+extracts and validates chromatographic peaks for which boundaries are
+provided for all (enviPat predicted) isotopologues of those target
+molecules directly from mzML files. The resulting benchmark dataset is
+used to extract different performance metrics for NPP performed on the
+same mzML files. An overview of mzRAPPs capabilities is given in this \<
+3 min [youtube
 video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be),
 which was formerly recorded for the Metabolomics2020 conference.
 
@@ -414,6 +415,23 @@ data.table::fwrite(xcms::peaks(xcmsSet_object), "unaligned_file.csv")
 data.table::fwrite(xcms::peakTable(xcmsSet_object), "aligned_file.csv")
 ```
 
+<br> <u>MetaboanalystR 3.0:</u> <br> MetaboanalystR 3.0 can be used to
+optimize XCMS parameters. It also allows subsequent data pre-processing
+within the Metaboanalyst framework leading to the slightly different
+output format compared to XCMS. After applying the ‘FormatPeakList’
+function from MetaboanalystR the unaligned and aligned outputs for
+mzRAPP can be exported as follows:
+
+``` r
+#unaligned file:
+UnalignedOP <- data.table::as.data.table(FormatPeakList_output@peakpicking[["chromPeaks"]])
+data.table::fwrite(UnalignedOP, "unaligned_file.csv")
+
+#aligned file:
+AlignedOP <- data.table::as.data.table(FormatPeakList_output@dataSet)
+data.table::fwrite(AlignedOP, "aligned_file.csv")
+```
+
 <br> <u>any other tool:</u> <br> It is also possible to use the outputs
 of other tools. However, they have to be adapted so that they resemble
 the output of one of the tools listed above. If this is not possible for
@@ -434,7 +452,7 @@ the assessment can be started via the blue “Start assessment button”.
 ``` r
 
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
-#options: XCMS, XCMS3, El-Maven, OpenMS, MS-DIAL or MZmine 2
+#options: XCMS, XCMS3, Metaboanalyst, El-Maven, OpenMS, MS-DIAL or MZmine 2
 algo = "XCMS"
 
 #load benchmark csv file
