@@ -19,14 +19,11 @@ RoxygenNote: 7.1.1
 biocViews:
 Imports:
     tibble,
-    caret,
     ncdf4,
     scales,
     lazyeval,
     doFuture,
     data.table,
-    MSnbase,
-    xcms,
     dplyr,
     shinyjs,
     tcltk,
@@ -40,6 +37,8 @@ Imports:
     future,
     shiny,
     kableExtra,
+    MSnbase,
+    xcms,
     MetaClean,
     ggplot2,
     plotly
