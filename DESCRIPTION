@@ -19,6 +19,7 @@ RoxygenNote: 7.1.1
 biocViews:
 Imports:
     tibble,
+    caret,
     ncdf4,
     scales,
     lazyeval,
