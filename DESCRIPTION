@@ -18,8 +18,8 @@ LazyData: true
 RoxygenNote: 7.1.1
 biocViews:
 Imports:
-    ncdf4,
     tibble,
+    ncdf4,
     scales,
     lazyeval,
     doFuture,
