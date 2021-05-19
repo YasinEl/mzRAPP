@@ -59,6 +59,10 @@ library(mzRAPP)
 vignette("Vignette_mzRAPP_Example_workflow")
 ```
 
+## Citation
+
+Please cite the following publication if you use mzRAPP in your workflow:<br>
+Yasin El Abiead, Maximilian Milford, Reza M Salek, Gunda Koellensperger, mzRAPP: a tool for reliability assessment of data pre-processing in non-targeted metabolomics, Bioinformatics, 2021;, btab231, https://doi.org/10.1093/bioinformatics/btab231
 <span id="sBM_readme"> </span>
 
 ## Benchmark dataset generation

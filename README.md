@@ -1,43 +1,43 @@
 mzRAPP
 ================
 
-  - [Installation](#installation)
-  - [Use examples](#use-examples)
-  - [Benchmark dataset generation](#benchmark-dataset-generation)
-      - [Select mzML files](#select-mzml-files)
-      - [Select sample-group file](#select-sample-group-file)
-      - [Select target file](#select-target-file)
-      - [Select instrument and
+-   [Installation](#installation)
+-   [Use examples](#use-examples)
+-   [Citation](#citation)
+-   [Benchmark dataset generation](#benchmark-dataset-generation)
+    -   [Select mzML files](#select-mzml-files)
+    -   [Select sample-group file](#select-sample-group-file)
+    -   [Select target file](#select-target-file)
+    -   [Select instrument and
         resolution](#select-instrument-and-resolution)
-      - [Select additional adducts](#select-additional-adducts)
-      - [Setting parameters](#setting-parameters)
-      - [Starting benchmark generation](#starting-benchmark-generation)
-      - [How to check the benchmark](#how-to-check-the-benchmark)
-      - [Generate a benchmark via
+    -   [Select additional adducts](#select-additional-adducts)
+    -   [Setting parameters](#setting-parameters)
+    -   [Starting benchmark generation](#starting-benchmark-generation)
+    -   [How to check the benchmark](#how-to-check-the-benchmark)
+    -   [Generate a benchmark via
         R-script](#generate-a-benchmark-via-r-script)
-  - [Reliability assessment of non-targeted data
+-   [Reliability assessment of non-targeted data
     pre-processing](#reliability-assessment-of-non-targeted-data-pre-processing)
-      - [Exporting NPP outputs from different
+    -   [Exporting NPP outputs from different
         tools](#exporting-npp-outputs-from-different-tools)
-      - [Selecting a benchmark dataset and starting an
+    -   [Selecting a benchmark dataset and starting an
         assessment](#selecting-a-benchmark-dataset-and-starting-an-assessment)
-      - [Perform reliability assessment via
+    -   [Perform reliability assessment via
         R-Script](#perform-reliability-assessment-via-r-script)
-  - [Matching between BM and NPP output
+-   [Matching between BM and NPP output
     (background)](#matching-between-bm-and-npp-output-background)
-  - [Generation and interpretation of NPP performance
+-   [Generation and interpretation of NPP performance
     metrics](#generation-and-interpretation-of-npp-performance-metrics)
-      - [Found/not found peaks](#foundnot-found-peaks)
-      - [Split peaks](#split-peaks)
-      - [Missing peaks/values
+    -   [Found/not found peaks](#foundnot-found-peaks)
+    -   [Split peaks](#split-peaks)
+    -   [Missing peaks/values
         classification](#missing-peaksvalues-classification)
-      - [Peak abundance quality/degenerated
+    -   [Peak abundance quality/degenerated
         IR](#peak-abundance-qualitydegenerated-ir)
-      - [Alignment error counting](#alignment-error-counting)
-  - [References](#references)
+    -   [Alignment error counting](#alignment-error-counting)
+-   [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/YasinEl/mzRAPP/workflows/R-CMD-check/badge.svg)](https://github.com/YasinEl/mzRAPP/actions)
@@ -56,8 +56,8 @@ extracts and validates chromatographic peaks for which boundaries are
 provided for all (enviPat predicted) isotopologues of those target
 molecules directly from mzML files. The resulting benchmark dataset is
 used to extract different performance metrics for NPP performed on the
-same mzML files. An overview of mzRAPPs capabilities is given in this \<
-3 min [youtube
+same mzML files. An overview of mzRAPPs capabilities is given in this
+&lt; 3 min [youtube
 video](https://www.youtube.com/watch?v=FwZ_QxZoTcI&feature=youtu.be),
 which was formerly recorded for the Metabolomics2020 conference.
 
@@ -111,6 +111,14 @@ library(mzRAPP)
 vignette("Vignette_mzRAPP_Example_workflow")
 ```
 
+## Citation
+
+Please cite the following publication if you use mzRAPP in your
+workflow:<br> Yasin El Abiead, Maximilian Milford, Reza M Salek, Gunda
+Koellensperger, mzRAPP: a tool for reliability assessment of data
+pre-processing in non-targeted metabolomics, Bioinformatics, 2021;,
+btab231, <https://doi.org/10.1093/bioinformatics/btab231>
+
 <span id="sBM_readme"> </span>
 
 ## Benchmark dataset generation
@@ -122,7 +130,7 @@ for those molecules and applies provided RT boundaries. Only
 isotopologues for which the theoretically most abundant and at least one
 additional isotopologue are found are considered for the final
 benchmark. Isotopologue peaks with an area or height which is more than
-30% off the predicted value or a Pearson Correlation coef \< 0.85 (as
+30% off the predicted value or a Pearson Correlation coef &lt; 0.85 (as
 compared to the highest isotopologue) are removed. Since start- and
 end-time has to be provided for each compound it is advisable to set
 those boundaries using a tool for manual peak curation from which peak
@@ -244,7 +252,7 @@ be detected. <br> <br>
 
 In a next step a few parameters have to be set: <br> <b>Lowest iso. to
 be considered \[%\]:</b> Lowest relative isotopologue abundance to be
-considered for each molecule (\>= 0.05). <br> <b>Min. \# of scans per
+considered for each molecule (&gt;= 0.05). <br> <b>Min. \# of scans per
 peak:</b> Minimum number of points for a chromatographic peak to be
 considered as such. <br> <b>mz precision \[ppm\]:</b> Maximum spread of
 mass peaks in the mz dimension to be still considered part of the same
@@ -370,40 +378,40 @@ download all results from XCMS online via the button “Download Results”.
 Afterwards extract all Results from the zipped folder. <br> unaligned
 file: select the xcms3xset.Rda file <br> aligned file: select the same
 xcms3xset.Rda file <br> <br> <u>MS-DIAL:</u> <br> unaligned files:
-Export -\> Peak list result -\> \[Add all files\] -\> \[set Export
+Export -&gt; Peak list result -&gt; \[Add all files\] -&gt; \[set Export
 format to txt\] <br> aligned file: When performing the alignment make
 sure to activate the isotope tracking option in the alignment step (for
 most cases selecting 13C and 15N as labeling elements will be adequate).
-Afterwards export via: Export -\> Alignment result -\> \[check Raw data
-matrix Area\] -\> \[set Export format to msp\] <br> <br> <u>MZmine
-2:</u> <br> unaligned files: \[select all files generated in the
-chromatogram deconvolution step\] -\> Feature list methods -\>
-Export/Import -\> Export to CSV file -\> \[set Filename including
-pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -\> \[check “Peak
-name”, “Peak height”, “Peak area”, “Peak RT start”, “Peak RT end”, “Peak
-RT”, “Peak m/z”, “Peak m/z min” and “Peak m/z max”\] -\> \[set Filter
-rows to ALL\] <br> aligned file: \[select file after alignment step\]
--\> Feature list methods -\> Export/Import -\> Export to CSV file -\>
-\[additional to checks set for unaligned files check “Export row
-retention time” and “Export row m/z”\]<br> <br> <u>El-MAVEN:</u> <br>
-unaligned file: \[click the “Export csv” button in the “Peak
-Table”-panel\] -\> Export all groups -\> \[select “Peaks Detailed
-Format Comma Delimited (.csv)”\] <br> aligned file: \[click the “Export
-csv” button in the “Peak Table”-panel\] -\> Export all groups -\>
-\[select “Groups Summary Matrix Format Comma Delimited (.csv)”\] <br>
-<br> <u>OpenMS:</u> <br> When processing the FeatureFinderMetabo
+Afterwards export via: Export -&gt; Alignment result -&gt; \[check Raw
+data matrix Area\] -&gt; \[set Export format to msp\] <br> <br>
+<u>MZmine 2:</u> <br> unaligned files: \[select all files generated in
+the chromatogram deconvolution step\] -&gt; Feature list methods -&gt;
+Export/Import -&gt; Export to CSV file -&gt; \[set Filename including
+pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -&gt; \[check
+“Peak name”, “Peak height”, “Peak area”, “Peak RT start”, “Peak RT end”,
+“Peak RT”, “Peak m/z”, “Peak m/z min” and “Peak m/z max”\] -&gt; \[set
+Filter rows to ALL\] <br> aligned file: \[select file after alignment
+step\] -&gt; Feature list methods -&gt; Export/Import -&gt; Export to
+CSV file -&gt; \[additional to checks set for unaligned files check
+“Export row retention time” and “Export row m/z”\]<br> <br>
+<u>El-MAVEN:</u> <br> unaligned file: \[click the “Export csv” button in
+the “Peak Table”-panel\] -&gt; Export all groups -&gt; \[select “Peaks
+Detailed Format Comma Delimited (.csv)”\] <br> aligned file: \[click the
+“Export csv” button in the “Peak Table”-panel\] -&gt; Export all groups
+-&gt; \[select “Groups Summary Matrix Format Comma Delimited (.csv)”\]
+<br> <br> <u>OpenMS:</u> <br> When processing the FeatureFinderMetabo
 algorithm make sure to set local\_rt\_range as well as local\_mz\_range
 to 0. You will have to check ‘Show advanced parameters’ to make those
 parameters visible. Also set report\_covex\_hulls to true. <br>
 unaligned file: \[Connect a TextExporter node with separator set to ‘,’
-directly to the FeatureFinderMetabo node\] -\> \[connect TextExporter to
-Output Folder\] <br> aligned file: \[Connect a TextExporter node with
-separator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -\>
-\[connect TextExporter to Output Folder\] <br> <br> <u>PatRoon:</u> <br>
-patRoon is not supported directly but can still be loaded since it
-allows to generate <i>xcmsSet</i> objects internally. Hence, it has to
-be loaded into mzRAPP as “XCMS” output which has to be stated as such in
-the “Setup NPP assessment tab”.
+directly to the FeatureFinderMetabo node\] -&gt; \[connect TextExporter
+to Output Folder\] <br> aligned file: \[Connect a TextExporter node with
+separator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\]
+-&gt; \[connect TextExporter to Output Folder\] <br> <br>
+<u>PatRoon:</u> <br> patRoon is not supported directly but can still be
+loaded since it allows to generate <i>xcmsSet</i> objects internally.
+Hence, it has to be loaded into mzRAPP as “XCMS” output which has to be
+stated as such in the “Setup NPP assessment tab”.
 
 ``` r
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
@@ -450,7 +458,6 @@ the assessment can be started via the blue “Start assessment button”.
 ### Perform reliability assessment via R-Script
 
 ``` r
-
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
 #options: XCMS, XCMS3, Metaboanalyst, El-Maven, OpenMS, MS-DIAL or MZmine 2
 algo = "XCMS"
@@ -498,9 +505,7 @@ the non-targeted data pre-processing (NPP) output files against the
 benchmark (BM). How this is done is explained in the following.
 
 <h3>
-
 Comparison of benchmark with non-targeted output
-
 </h3>
 
 <b>Matching of benchmark peaks with NT peaks before alignment:</b> <br>
@@ -524,11 +529,8 @@ each IT with the highest IT reported via NPP is considered.
 <div class="figure">
 
 <img src="inst/md/Matching.png" alt="\label{fig:figure1}&lt;b&gt;Figure 1 | &lt;/b&gt; Matching between BM and NPP output" width="100%" height="100%" />
-
 <p class="caption">
-
-<b>Figure 1 | </b> Matching between BM and NPP output
-
+<b>Figure 1 \| </b> Matching between BM and NPP output
 </p>
 
 </div>
@@ -573,8 +575,8 @@ with an empirical confidence interval (alpha = 0.95) in percent which is
 supposed to be representative for the entirety of (unknown) peaks in the
 provided raw data (mzML files). It is calculated by summing up
 individual metrics (which are described below) per molecule and then
-bootstrapping molecules (R = 1000). Confidence intervals with values \<
-0 are rounded up to 0.<br> <br>
+bootstrapping molecules (R = 1000). Confidence intervals with values
+&lt; 0 are rounded up to 0.<br> <br>
 
 ### Found/not found peaks
 
@@ -598,11 +600,8 @@ benchmark peaks (confidence interval)</i>
 <div class="figure">
 
 <img src="inst/md/Peak_subsets.PNG" alt="\label{fig:figure2}&lt;b&gt;Figure 2 | &lt;/b&gt; Overview of different peak populations" width="30%" height="50%" />
-
 <p class="caption">
-
-<b>Figure 2 | </b> Overview of different peak populations
-
+<b>Figure 2 \| </b> Overview of different peak populations
 </p>
 
 </div>
@@ -653,11 +652,9 @@ missing values + Number of low missing values) (confidence interval)</i>
 <div class="figure">
 
 <img src="inst/md/Missing_value_graphic.PNG" alt="\label{fig:figure3}&lt;b&gt;Figure 3 | &lt;/b&gt; Diffentiation between classes of missing peaks/values" width="30%" height="50%" />
-
 <p class="caption">
-
-<b>Figure 3 | </b> Diffentiation between classes of missing peaks/values
-
+<b>Figure 3 \| </b> Diffentiation between classes of missing
+peaks/values
 </p>
 
 </div>
@@ -688,11 +685,8 @@ NPP abundances (confidence interval)</i>
 <div class="figure">
 
 <img src="inst/md/IR_tolerance.PNG" alt="\label{fig:figure4}&lt;b&gt;Figure 4 | &lt;/b&gt; Calculation of NPP abundance bias tolerance" width="50%" height="50%" />
-
 <p class="caption">
-
-<b>Figure 4 | </b> Calculation of NPP abundance bias tolerance
-
+<b>Figure 4 \| </b> Calculation of NPP abundance bias tolerance
 </p>
 
 </div>
@@ -731,11 +725,8 @@ interval)</i>
 <div class="figure">
 
 <img src="inst/md/Alignment_error_graphic.png" alt="\label{fig:figure5}&lt;b&gt;Figure 5 | &lt;/b&gt; Counting alignment errors" width="80%" height="80%" />
-
 <p class="caption">
-
-<b>Figure 5 | </b> Counting alignment errors
-
+<b>Figure 5 \| </b> Counting alignment errors
 </p>
 
 </div>

@@ -1,0 +1,16 @@
+citHeader("To cite mzRAPP in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "mzRAPP: a tool for reliability assessment of data pre-processing in non-targeted metabolomics",
+  author   = "Yasin El Abiead, Maximilian Milford, Reza M Salek and Gunda Koellensperger",
+  journal  = "Bioinformatics",
+  year     = "2021",
+  #volume   = ,
+  #number   = ,
+  #pages    = ,
+  url      = "https://doi.org/10.1093/bioinformatics/btab231",
+  textVersion = paste(
+"Yasin El Abiead, Maximilian Milford, Reza M Salek, Gunda Koellensperger, mzRAPP: a tool for reliability assessment of data pre-processing in non-targeted metabolomics, Bioinformatics, 2021;, btab231, https://doi.org/10.1093/bioinformatics/btab231"
+  )
+)
