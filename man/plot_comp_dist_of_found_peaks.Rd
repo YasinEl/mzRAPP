@@ -8,7 +8,8 @@ plot_comp_dist_of_found_peaks(
   comparison_data,
   var,
   choice_vector_comp,
-  post_alignment = FALSE
+  post_alignment = FALSE,
+  limits = NULL
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plot_comp_dist_of_found_peaks(
 \item{choice_vector_comp}{named vector containing variable to be plotted as element}
 
 \item{post_alignment}{TRUE/FALSE should data be plotted from before or after alignment.}
+
+\item{limits}{(optional) numeric vector of length 2, allowing to filter values of column var}
 }
 \value{
 plotly object

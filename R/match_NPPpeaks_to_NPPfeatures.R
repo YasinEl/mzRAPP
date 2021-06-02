@@ -41,7 +41,9 @@ match_NPPpeaks_to_NPPfeatures <- function(Matches_BM_NPPpeaks,
   #In case of duplicate area matches during ug - g match take the g-match which occurred most often for other peaks in the same BM feature
   Matches_BM_NPPpeaks[, N_fid := .N, by = .(molecule_b, adduct_b, isoab_b, feature_id_g)]
   Matches_BM_NPPpeaks <-  Matches_BM_NPPpeaks[order(-rank(N_fid))][, !"N_fid"]
-  Matches_BM_NPPpeaks <- unique(Matches_BM_NPPpeaks, by = c("molecule_b", "adduct_b", "isoab_b", "sample_id_b"))
+  Matches_BM_NPPpeaks <- unique(Matches_BM_NPPpeaks, by = c("molecule_b", "adduct_b", "isoab_b", "peak_area_g_temp", "sample_id_b"))
+
+
 
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
 
@@ -60,7 +62,6 @@ match_NPPpeaks_to_NPPfeatures <- function(Matches_BM_NPPpeaks,
 
   match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]] <- Matches_BM_NPPpeaks
   match_tables_with_alignment_recovery_info[["SplittedMatches_BM_NPPpeaks"]] <- SplittedMatches_BM_NPPpeaks
-
 
 
   #Make sure main peaks only occur once

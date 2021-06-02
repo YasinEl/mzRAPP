@@ -4,6 +4,7 @@
 #' @param var variable (column name) to be plotted
 #' @param choice_vector_comp named vector containing variable to be plotted as element
 #' @param post_alignment TRUE/FALSE should data be plotted from before or after alignment.
+#' @param limits (optional) numeric vector of length 2, allowing to filter values of column var
 #'
 #' @return plotly object
 #' @export
@@ -16,18 +17,31 @@
 #' @importFrom dplyr sym summarize
 #'
 #'
-plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE){
+plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_comp, post_alignment = FALSE, limits = NULL){
   if(missing(var) | missing(comparison_data)) return(plotly::ggplotly(ggplot() + ggtitle("Missing arguments")))
 
   if(missing(choice_vector_comp)){
     choice_vector_comp <- NULL
   }
 
+
+
   if(post_alignment == TRUE){
 
     feat_t <- comparison_data[["Matches_BM_NPPpeaks_NPPfeatures"]]
     feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
     BM_bu <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+
+    if(!is.null(limits)){
+
+      if(length(limits) == 2 & is.numeric(limits)){
+
+        BM_bu <- BM_bu[get(var) > limits[1] & get(var) < limits[2]]
+
+      }
+
+    }
+
     BM_bu$sample_id_b <- as.factor(BM_bu$sample_id_b)
     feat_t <- feat_t[main_feature == TRUE]
     vct <- colnames(BM_bu)[grepl("_b", colnames(BM_bu))]
@@ -48,6 +62,17 @@ plot_comp_dist_of_found_peaks <- function(comparison_data, var, choice_vector_co
   } else if(post_alignment == FALSE){
 
     f_nf_dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+
+    if(!is.null(limits)){
+
+      if(length(limits) == 2 & is.numeric(limits)){
+
+        f_nf_dt <- f_nf_dt[get(var) > limits[1] & get(var) < limits[2]]
+
+      }
+
+    }
+
     f_nf_plot <- f_nf_dt[, f_nf_col := ifelse(!is.na(peak_area_ug), 'TRUE', 'FALSE')]
 
   }

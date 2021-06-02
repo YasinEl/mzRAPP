@@ -11,7 +11,9 @@ pick_main_feature <- function(dt){
   main_features_dt <- dt[, pick_main_feature_sd(.SD), by=c('molecule_b', 'adduct_b'), .SDcols = c('feature_id_b', 'feature_id_g', 'isoab_b', 'total_area_b', 'total_area_g', 'samples_to_compare', all_g_samples)]
 
   dt <- merge(dt, main_features_dt[,c('feature_id_b', 'feature_id_g', 'main_feature')], by=c('feature_id_b', 'feature_id_g'), all.x=TRUE)
-  dt <- dt[, 'main_feature' := ifelse(main_feature == TRUE, TRUE, FALSE)]
+
+  dt[is.na(main_feature), main_feature := FALSE]
+  dt[!is.na(main_feature) & main_feature != FALSE, main_feature := TRUE]
 
   return(dt)
 }
@@ -26,15 +28,15 @@ pick_main_feature <- function(dt){
 pick_main_feature_sd <- function(dt){
   dt <- data.table::copy(dt)
 
-  #Get list of all avaiable iso_abbs
+  #Get list of all available iso_abs
   all_iso_abs <- sort(unique(dt[,isoab_b]), decreasing = TRUE)
 
-  if (nrow(dt)==length(all_iso_abs)){
-    #If list of features is equal to number of unique iso abbs set all to main peak
+  if (nrow(dt)==length(unique(all_iso_abs))){
+    #If list of features is equal to number of unique iso abs set all to main peak
     dt <- dt[, 'main_feature' := TRUE]
     return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])
-  } else if (length(all_iso_abs) == 1){
-    #If only one is abb is present no comparison can be done! Choose featurte with higher compareable mean area
+  } else if (length(unique(all_iso_abs)) == 1){
+    #If only one isoab is present no comparison can be done! Choose feature with higher comparable mean area
     dt$average_area <- apply(dt, 1, function(x){
       compare_samples <- paste0('sample_', unlist(x['samples_to_compare']), '_g')
       if(length(x[["samples_to_compare"]]) == 0){return(-1)}
@@ -43,7 +45,7 @@ pick_main_feature_sd <- function(dt){
     dt <- dt[, 'main_feature' := ifelse(average_area == min(average_area), TRUE, FALSE)]
     return(dt[, c('feature_id_b', 'feature_id_g', 'main_feature')])
   } else {
-    #Iso_abb Comparison
+    #Isoab Comparison
     dt[, merge_key := 1]
 
     #Check for features with same area, if present pick first one
@@ -90,9 +92,9 @@ best_feature_per_comparison <- function(dt){
                                                             if(i == 'sample__g'){
                                                               stop("Sample_g error")
                                                             }
-                                                            ratio_errors <- append(ratio_errors, (x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]])/x[['compare_ratio']])
+                                                            ratio_errors <- append(ratio_errors, (abs(x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]]-x[['compare_ratio']])))
                                                           }
-                                                          return(mean(unlist(ratio_errors)))
+                                                          return(median(unlist(ratio_errors)))
                                                         }
                                     )
                               )

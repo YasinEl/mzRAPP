@@ -19,12 +19,24 @@ metrics_per_molecule <- function(Matches_BM_NPPpeaks,
                                  MissingPeak_classification,
                                  AlignmentErrors_per_moleculeAndAdduct){
 
+
+  extra_pks_pp <- copy(Matches_BM_NPPpeaks[main_peak == FALSE])
   bm_tab <- data.table::rbindlist(list(Matches_BM_NPPpeaks[main_peak == TRUE], Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
   bm_tab[is.na(main_peak), main_peak := FALSE]
 
 
+  extra_peaks_pp <- extra_pks_pp[,.(Extra_peak_matches_pp = sum(main_peak == FALSE)), by = .(molecule_b)]
+
   peaks_pp <- bm_tab[,.(Found_peaks_pp = sum(main_peak),
                         Not_Found_peaks_pp = length(main_peak) - sum(main_peak)), by = .(molecule_b)]
+
+
+  extra_peaks_ft <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures[!is.na(peak_area_b) & main_feature == FALSE, .(Extra_feature_matches_ft = length(unique(feature_id_g[!is.na(area_g)]))),
+                                              by = .(molecule_b, adduct_b, isoab_b)])
+
+
+  extra_peaks_ft <- extra_peaks_ft[, .(Extra_feature_matches_ft = sum(Extra_feature_matches_ft)), by = .(molecule_b)]
+
 
   peaks_ft <- Matches_BM_NPPpeaks_NPPfeatures[!is.na(peak_area_b) & (is.na(area_g) | main_feature == TRUE), .(Found_peaks_ft = sum(!is.na(area_g)),
                                                                                                               Not_Found_peaks_ft = sum(is.na(area_g))),
@@ -53,8 +65,10 @@ metrics_per_molecule <- function(Matches_BM_NPPpeaks,
   colnames(ali_tab)[1] <- "molecule_b"
 
   sum_tab <- unique(bm_tab[!is.na(molecule_b), "molecule_b"])
+  sum_tab <- extra_peaks_pp[sum_tab, on = .(molecule_b)]
   sum_tab <- peaks_pp[sum_tab, on = .(molecule_b)]
   sum_tab <- peaks_ft[sum_tab, on = .(molecule_b)]
+  sum_tab <- extra_peaks_ft[sum_tab, on = .(molecule_b)]
   sum_tab <- split_pp[sum_tab, on = .(molecule_b)]
   sum_tab <- IRb[sum_tab, on = .(molecule_b)]
   sum_tab <- mw_tab[sum_tab, on = .(molecule_b)]

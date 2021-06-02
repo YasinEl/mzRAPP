@@ -40,7 +40,7 @@ nr_of_g_features: NF count
 
 algorithm: non-targeted output format
 
-\strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule.
+\strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule. (metrics are summed up over whole molecule)
 
 molecule_b: molecule name
 
@@ -48,7 +48,7 @@ Min.er: count of alignment errors as defined in the mzRAPP readme
 
 BM.div: count of alignment divergences as defined in the mzRAPP readme
 
-lost: count of NP for which no match among NaP was found (NP lost during alignment)
+lost: count of NP for which no match among NF was found (NP lost during alignment)
 
 R_pp: count of random (high) missing values in the unaligned non-targeted output as defined in mzRAPP readme
 
@@ -75,6 +75,10 @@ Not_Found_peaks_ft: count of BP for which no match among NF was detected. For de
 Found_peaks_pp: count of BP for which a match among NP was detected. For details on matching procedure see the mzRAPP readme
 
 Not_Found_peaks_pp: count of BP for which no match among NP was detected. For details on matching procedure see the mzRAPP readme
+
+Extra_feature_matches_ft: Number of additional NF matching on a given benchmark feature on top of best match
+
+Extra_peak_matches_pp: Number of additional NP matching on a given BP on top of the best match
 
 \strong{Matches_BM_NPPpeaks:} Extensive table allowing to inspect matches between the benchmark and the unaligned non-targeted output in detail.
 Unaligned non-targeted peaks are also matched to aligned non-targeted peaks via reported abundance values in order to count alignment errors.

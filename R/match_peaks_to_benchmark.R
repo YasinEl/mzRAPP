@@ -48,9 +48,8 @@ match_peaks_to_benchmark <- function(b_table,
 
 
   Matches_BM_NPPpeaks <- pick_main_peak(Matches_BM_NPPpeaks)
-  Matches_BM_NPPpeaks <- Matches_BM_NPPpeaks[main_peak == TRUE]
 
-
+  #Matches_BM_NPPpeaks <- Matches_BM_NPPpeaks[main_peak == TRUE]
   suppressWarnings(b_table[,grep('_temp$', colnames(b_table)):=NULL])
   suppressWarnings(ug_table[,grep('_temp$', colnames(ug_table)):=NULL])
   suppressWarnings(Matches_BM_NPPpeaks[,grep('_temp$', colnames(Matches_BM_NPPpeaks)):=NULL])

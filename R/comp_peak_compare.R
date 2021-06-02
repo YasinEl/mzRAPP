@@ -19,11 +19,11 @@
 #' @details nr_of_g_peaks: number of peaks reported in the aligned output
 #' @details nr_of_g_features: NF count
 #' @details algorithm: non-targeted output format
-#' @details \strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule.
+#' @details \strong{Overview_per_molecule:} Provides overview of different performance metrics per benchmark molecule. (metrics are summed up over whole molecule)
 #' @details molecule_b: molecule name
 #' @details Min.er: count of alignment errors as defined in the mzRAPP readme
 #' @details BM.div: count of alignment divergences as defined in the mzRAPP readme
-#' @details lost: count of NP for which no match among NaP was found (NP lost during alignment)
+#' @details lost: count of NP for which no match among NF was found (NP lost during alignment)
 #' @details R_pp: count of random (high) missing values in the unaligned non-targeted output as defined in mzRAPP readme
 #' @details S_pp: count of systematic (low) missing values in the unaligned non-targeted output as defined in mzRAPP readme
 #' @details R_ft: count of random (high) missing values in the aligned non-targeted output as defined in mzRAPP readme
@@ -37,6 +37,8 @@
 #' @details Not_Found_peaks_ft: count of BP for which no match among NF was detected. For details on matching procedure see the mzRAPP readme
 #' @details Found_peaks_pp: count of BP for which a match among NP was detected. For details on matching procedure see the mzRAPP readme
 #' @details Not_Found_peaks_pp: count of BP for which no match among NP was detected. For details on matching procedure see the mzRAPP readme
+#' @details Extra_feature_matches_ft: Number of additional NF matching on a given benchmark feature on top of best match
+#' @details Extra_peak_matches_pp: Number of additional NP matching on a given BP on top of the best match
 #' @details \strong{Matches_BM_NPPpeaks:} Extensive table allowing to inspect matches between the benchmark and the unaligned non-targeted output in detail.
 #' Unaligned non-targeted peaks are also matched to aligned non-targeted peaks via reported abundance values in order to count alignment errors.
 #' In order to allow the inspection of all input variables all variables available in benchmark and the non-targeted output are kept. It is worth noting that more than one match
@@ -163,7 +165,10 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   Matches_BM_NPPpeaks <- match_peaks_to_benchmark(b_table,
                                                   ug_table)
 
-  Unmatched_BM_NPPpeaks <- b_table[!b_table$comp_id_b %in% unique(Matches_BM_NPPpeaks$comp_id_b)]
+  Matches_BM_NPPpeaks_all <- data.table::copy(Matches_BM_NPPpeaks)
+
+
+  Unmatched_BM_NPPpeaks <- b_table[!b_table$comp_id_b %in% unique(Matches_BM_NPPpeaks[main_peak == TRUE]$comp_id_b)]
 
 
   #Finding split peaks
@@ -172,16 +177,18 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
 
   #Checking in which aligned features NPP peaks are
-  match_tables_with_alignment_recovery_info <- match_NPPpeaks_to_NPPfeatures(Matches_BM_NPPpeaks,
+  match_tables_with_alignment_recovery_info <- match_NPPpeaks_to_NPPfeatures(Matches_BM_NPPpeaks_all,
                                                                              SplittedMatches_BM_NPPpeaks,
                                                                              g_table)
 
-  Matches_BM_NPPpeaks <- match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]]
+
+  Matches_BM_NPPpeaks_all <- data.table::copy(match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]])
+  Matches_BM_NPPpeaks <- data.table::copy(match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]][main_peak == TRUE])
   SplittedMatches_BM_NPPpeaks <- match_tables_with_alignment_recovery_info[["SplittedMatches_BM_NPPpeaks"]]
 
 
   #Generate alignment error table
-  AlignmentErrors_per_moleculeAndAdduct <- assess_alignment(Matches_BM_NPPpeaks,
+  AlignmentErrors_per_moleculeAndAdduct <- assess_alignment(Matches_BM_NPPpeaks[main_peak == TRUE],
                                                             Unmatched_BM_NPPpeaks,
                                                             g_table)
 
@@ -189,44 +196,47 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
   #Generate feature table
   Matches_BM_NPPpeaks_NPPfeatures <- match_features_to_benchmark(g_table,
                                                                  b_table,
-                                                                 Matches_BM_NPPpeaks,
+                                                                 Matches_BM_NPPpeaks[main_peak == TRUE],
                                                                  Unmatched_BM_NPPpeaks)
 
+  Matches_BM_NPPpeaks_NPPfeatures_all <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures)
+  Matches_BM_NPPpeaks_NPPfeatures <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE])
 
   #Generate Random and systematic error DT
-  MissingPeak_classification <- check_missing_peaks(Matches_BM_NPPpeaks,
+  MissingPeak_classification <- check_missing_peaks(Matches_BM_NPPpeaks[main_peak == TRUE],
                                                     Unmatched_BM_NPPpeaks,
                                                     Matches_BM_NPPpeaks_NPPfeatures,
                                                     g_table)
 
   #Generate Isotopologe error dt
-  IT_ratio_biases <- check_IR_biases(Matches_BM_NPPpeaks,
+  IT_ratio_biases <- check_IR_biases(Matches_BM_NPPpeaks[main_peak == TRUE],
                                      Matches_BM_NPPpeaks_NPPfeatures,
                                      g_table,
                                      b_table)
 
   #create overview table per compound
-  sum_tab <- metrics_per_molecule(Matches_BM_NPPpeaks,
+  sum_tab <- metrics_per_molecule(Matches_BM_NPPpeaks_all,
                                   Unmatched_BM_NPPpeaks,
-                                  Matches_BM_NPPpeaks_NPPfeatures,
+                                  Matches_BM_NPPpeaks_NPPfeatures_all,
                                   IT_ratio_biases,
                                   SplittedMatches_BM_NPPpeaks,
                                   MissingPeak_classification,
                                   AlignmentErrors_per_moleculeAndAdduct)
 
+
+
   #Return in a list
   return_list <- list('BM_NPPoutput_size' = BM_NPPoutput_size,
                       'Overview_per_molecule' = sum_tab,
-                      'Matches_BM_NPPpeaks' = Matches_BM_NPPpeaks,
+                      'Matches_BM_NPPpeaks' = Matches_BM_NPPpeaks_all,
                       'Unmatched_BM_NPPpeaks' = Unmatched_BM_NPPpeaks,
                       'SplittedMatches_BM_NPPpeaks' = SplittedMatches_BM_NPPpeaks,
                       'MissingPeak_classification'= MissingPeak_classification,
                       'IT_ratio_biases' = IT_ratio_biases,
                       'AlignmentErrors_per_moleculeAndAdduct' = AlignmentErrors_per_moleculeAndAdduct,
-                      'Matches_BM_NPPpeaks_NPPfeatures' = Matches_BM_NPPpeaks_NPPfeatures)
+                      'Matches_BM_NPPpeaks_NPPfeatures' = Matches_BM_NPPpeaks_NPPfeatures_all)
 
   message('Done!')
-
 
   return(return_list)
 }

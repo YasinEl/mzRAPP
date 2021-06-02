@@ -18,7 +18,7 @@ Alignment_error_plot <- function(comparison_data, mol, add){
   if(missing(mol) | missing(add) | missing(comparison_data) | length(mol) < 1 | length(add) < 1) return(plotly::ggplotly(ggplot() +
                                                                                                                            ggtitle("Missing arguments")))
 
-  dt <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks, comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
+  dt <- data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE], comparison_data$Unmatched_BM_NPPpeaks), fill = TRUE)
 
   if('peak_area_rounded_ug' %in% colnames(dt)){
     dt <- dt[, 'peak_area_ug' := peak_area_rounded_ug]

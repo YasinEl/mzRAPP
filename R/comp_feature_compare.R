@@ -9,7 +9,7 @@
 #'
 feature_compare <- function(b_table, g_table, areaMatch_table = NA){
 
-  #Find smallest and largest mz and rt and area per feature
+  #Find smallest and largest mz and rt and area per BM feature to fine NPP candidates
   b_table <- b_table[, ':=' (min_mz_start = min(mz_start_b),
                              max_mz_end = max(mz_end_b),
                              min_rt_start = min(peak_core_rt_range_start_b),# - if(is.na(sd(rt_b))){ 0} else stats::sd(rt_b),
@@ -22,7 +22,7 @@ feature_compare <- function(b_table, g_table, areaMatch_table = NA){
   #Bring b_table into wide format
   b_table <- data.table::dcast(b_table, feature_id_b + molecule_b + isoab_b + adduct_b + total_area_b + min_mz_start + max_mz_end + min_rt_start + max_rt_end + present_samples_b ~ sample_id_b_suf, value.var=c('peak_area_b'))
 
-
+  #add NPP feature candidates if areas matched from NPP peaks
   if(length(areaMatch_table) > 1){
     areaMatch_table <- areaMatch_table[b_table, on = .(feature_id_b)]
   }

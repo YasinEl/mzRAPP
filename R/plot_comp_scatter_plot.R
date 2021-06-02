@@ -19,7 +19,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
 
   if(post_alignment == TRUE){
 
-    feat_t <- comparison_data[["Matches_BM_NPPpeaks_NPPfeatures"]]
+    feat_t <- comparison_data[["Matches_BM_NPPpeaks_NPPfeatures"]][main_feature == TRUE]
 
     feat_t <- feat_t[main_feature == TRUE & !is.na(area_b)]
 
@@ -46,7 +46,7 @@ plot_comp_scatter_plot <- function(comparison_data, x, y, col, choice_vector_com
   } else if(post_alignment == FALSE){
 
 
-    f_nf_dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
+    f_nf_dt <-  data.table::rbindlist(list(comparison_data$Matches_BM_NPPpeaks[main_peak == TRUE][, Split_peak := FALSE], comparison_data$SplittedMatches_BM_NPPpeaks[present_in_found == FALSE][, Split_peak := TRUE], comparison_data$Unmatched_BM_NPPpeaks[, Split_peak := FALSE]), fill = TRUE)
 
     f_nf_dt <- f_nf_dt[, NPP_status := ifelse(!is.na(peak_area_ug), ifelse(Split_peak == "TRUE", 'Split', 'Found'), 'Not Found')]
 

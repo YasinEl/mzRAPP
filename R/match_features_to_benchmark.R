@@ -17,9 +17,9 @@ match_features_to_benchmark <- function(g_table,
 
     ff_table_dt <- pick_main_feature(feature_compare(b_table, g_table, Matches_BM_NPPpeaks[, c("feature_id_b", "feature_id_g")]))
 
-    dt <- ff_table_dt[main_feature == TRUE]
-    dt[, dpl := duplicated(dt, by = c("feature_id_b"))]
-    dt <- dt[dpl != TRUE][, !"dpl"]
+    dt <- ff_table_dt#[main_feature == TRUE]
+    #dt[, dpl := duplicated(dt, by = c("feature_id_b"))]
+    #dt <- dt[dpl != TRUE][, !"dpl"]
 
     id.cols <- c("feature_id_b", "feature_id_g", "molecule_b", "isoab_b", "adduct_b",
                  "total_area_b", "min_mz_start", "max_mz_end", "min_rt_start",
@@ -32,7 +32,7 @@ match_features_to_benchmark <- function(g_table,
                                   variable.name = "sample_id_b",
                                   variable.factor = FALSE)
 
-    dt_melt_b$sample_id_b <-  as.factor(substr(dt_melt_b$sample_id_b, 8, nchar(dt_melt_b$sample_id_b) - 2))
+    dt_melt_b[, sample_id_b := as.factor(substr(dt_melt_b$sample_id_b, 8, nchar(dt_melt_b$sample_id_b) - 2))]
 
     dt_melt_g <- data.table::melt(dt,
                                   id.vars = id.cols,
@@ -41,8 +41,7 @@ match_features_to_benchmark <- function(g_table,
                                   variable.name = "sample_id_b",
                                   variable.factor = FALSE)
 
-    dt_melt_g$sample_id_b <- as.factor(substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2))
-
+    dt_melt_g[, sample_id_b := as.factor(substr(dt_melt_g$sample_id_b, 8, nchar(dt_melt_g$sample_id_b) - 2))]
 
 
     dt_n <- dt_melt_g[dt_melt_b, on = colnames(dt_melt_b)[-length(dt_melt_b)]]
