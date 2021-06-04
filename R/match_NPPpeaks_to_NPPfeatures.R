@@ -34,16 +34,28 @@ match_NPPpeaks_to_NPPfeatures <- function(Matches_BM_NPPpeaks,
   }
 
   #Join
-  Matches_BM_NPPpeaks <- g_table[Matches_BM_NPPpeaks, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
-                                 allow.cartesian = TRUE, nomatch=NA, mult='all']
+  #Matches_BM_NPPpeaks <- g_table[Matches_BM_NPPpeaks, on=.(peak_area_g_temp == peak_area_ug_temp, sample_id_g_temp == sample_id_b_temp),
+  #                              allow.cartesian = TRUE, nomatch=NA, mult='all']
+
+
+  Matches_BM_NPPpeaks <-
+    data.table::merge.data.table(Matches_BM_NPPpeaks,
+                                 g_table,
+                                 allow.cartesian = TRUE,
+                                 #by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"),
+                                 by.x = c("peak_area_ug_temp", "sample_id_b_temp"),
+                                 by.y = c("peak_area_g_temp", "sample_id_g_temp"),
+                                 all.x = TRUE,
+                                 all.y = FALSE)
+
+  Matches_BM_NPPpeaks[, sample_id_g_temp := sample_id_b_temp]
+  Matches_BM_NPPpeaks[, peak_area_g_temp := peak_area_ug_temp]
 
 
   #In case of duplicate area matches during ug - g match take the g-match which occurred most often for other peaks in the same BM feature
   Matches_BM_NPPpeaks[, N_fid := .N, by = .(molecule_b, adduct_b, isoab_b, feature_id_g)]
   Matches_BM_NPPpeaks <-  Matches_BM_NPPpeaks[order(-rank(N_fid))][, !"N_fid"]
   Matches_BM_NPPpeaks <- unique(Matches_BM_NPPpeaks, by = c("molecule_b", "adduct_b", "isoab_b", "peak_area_g_temp", "sample_id_b"))
-
-
 
   #Replace 0 in peak_area_g with NA (no idea why they appear in the first place)(maybe int64?)
 

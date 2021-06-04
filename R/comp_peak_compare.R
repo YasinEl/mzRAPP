@@ -167,7 +167,6 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
 
   Matches_BM_NPPpeaks_all <- data.table::copy(Matches_BM_NPPpeaks)
 
-
   Unmatched_BM_NPPpeaks <- b_table[!b_table$comp_id_b %in% unique(Matches_BM_NPPpeaks[main_peak == TRUE]$comp_id_b)]
 
 
@@ -181,16 +180,15 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                                              SplittedMatches_BM_NPPpeaks,
                                                                              g_table)
 
-
   Matches_BM_NPPpeaks_all <- data.table::copy(match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]])
   Matches_BM_NPPpeaks <- data.table::copy(match_tables_with_alignment_recovery_info[["Matches_BM_NPPpeaks"]][main_peak == TRUE])
   SplittedMatches_BM_NPPpeaks <- match_tables_with_alignment_recovery_info[["SplittedMatches_BM_NPPpeaks"]]
-
 
   #Generate alignment error table
   AlignmentErrors_per_moleculeAndAdduct <- assess_alignment(Matches_BM_NPPpeaks[main_peak == TRUE],
                                                             Unmatched_BM_NPPpeaks,
                                                             g_table)
+
 
 
   #Generate feature table
@@ -199,8 +197,11 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                                  Matches_BM_NPPpeaks[main_peak == TRUE],
                                                                  Unmatched_BM_NPPpeaks)
 
+
+
   Matches_BM_NPPpeaks_NPPfeatures_all <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures)
-  Matches_BM_NPPpeaks_NPPfeatures <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE])
+  Matches_BM_NPPpeaks_NPPfeatures <- data.table::copy(Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE | is.na(main_feature)])
+
 
   #Generate Random and systematic error DT
   MissingPeak_classification <- check_missing_peaks(Matches_BM_NPPpeaks[main_peak == TRUE],
@@ -208,11 +209,15 @@ compare_peaks <- function(b_table, ug_table, g_table, algo){
                                                     Matches_BM_NPPpeaks_NPPfeatures,
                                                     g_table)
 
+
+
+
   #Generate Isotopologe error dt
   IT_ratio_biases <- check_IR_biases(Matches_BM_NPPpeaks[main_peak == TRUE],
-                                     Matches_BM_NPPpeaks_NPPfeatures,
+                                     Matches_BM_NPPpeaks_NPPfeatures[main_feature == TRUE | is.na(main_feature)],
                                      g_table,
                                      b_table)
+
 
   #create overview table per compound
   sum_tab <- metrics_per_molecule(Matches_BM_NPPpeaks_all,

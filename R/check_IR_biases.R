@@ -15,15 +15,30 @@ check_IR_biases <- function(Matches_BM_NPPpeaks,
 
   if(nrow(g_table) > 0){
 
+
+
     IT_ratio_biases <- Matches_BM_NPPpeaks_NPPfeatures
 
-    IT_ratio_biases <- IT_ratio_biases[b_table[, c("molecule_b",
-                                                   "adduct_b",
-                                                   "isoab_b",
-                                                   "sample_name_b",
-                                                   "peaks.rt_neighbors_b",
-                                                   "peaks.mz_neighbors_b")], on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
+    IT_ratio_biases <-
+      data.table::merge.data.table(IT_ratio_biases[!is.na(peak_area_b)],
+                                   b_table[, c("molecule_b",
+                                               "adduct_b",
+                                               "isoab_b",
+                                               "sample_name_b",
+                                               "peaks.rt_neighbors_b",
+                                               "peaks.mz_neighbors_b")],
+                                   allow.cartesian = TRUE,
+                                   by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"),
+                                   all.x = TRUE,
+                                   all.y = TRUE)
+
+#    IT_ratio_biases <- IT_ratio_biases[b_table[, c("molecule_b",
+#                                                   "adduct_b",
+#                                                   "isoab_b",
+#                                                   "sample_name_b",
+#                                                   "peaks.rt_neighbors_b",
+#                                                   "peaks.mz_neighbors_b")], on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
 
   } else {
     Matches_BM_NPPpeaks[, sample_id_b := as.factor(sample_id_b)]

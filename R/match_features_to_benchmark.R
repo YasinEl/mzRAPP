@@ -54,14 +54,29 @@ match_features_to_benchmark <- function(g_table,
     ug_info <- data.table::rbindlist(list(Matches_BM_NPPpeaks, Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
 
 
-    Matches_BM_NPPpeaks_NPPfeatures <-
-      Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b)][ug_info[, c("molecule_b",
-                                                                  "adduct_b",
-                                                                  "isoab_b",
-                                                                  "sample_name_b",
-                                                                  "peak_area_b",
-                                                                  "peak_area_ug")],
-                                                      on = .(molecule_b, adduct_b, isoab_b, sample_name_b)]
+#    Matches_BM_NPPpeaks_NPPfeatures <-
+#      Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b)][ug_info[, c("molecule_b",
+#                                                                  "adduct_b",
+#                                                                  "isoab_b",
+#                                                                  "sample_name_b",
+#                                                                  "peak_area_b",
+#                                                                  "peak_area_ug")],
+#                                                      on = .(molecule_b, adduct_b, isoab_b, sample_name_b),
+#                                                      ]
+
+
+Matches_BM_NPPpeaks_NPPfeatures <-
+  data.table::merge.data.table(Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b)],
+        ug_info[, c("molecule_b",
+                    "adduct_b",
+                    "isoab_b",
+                    "sample_name_b",
+                    "peak_area_b",
+                    "peak_area_ug")],
+        allow.cartesian = TRUE,
+        by = c("molecule_b", "adduct_b", "isoab_b", "sample_name_b"),
+        all.x = TRUE,
+        all.y = TRUE)
 
   } else {
 
