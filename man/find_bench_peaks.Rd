@@ -18,7 +18,10 @@ find_bench_peaks(
   remove_isoab_outliers = TRUE,
   return_unsuc_searches = FALSE,
   max.rt.diff_sec = 20,
-  max.mz.diff_ppm = 5
+  max.mz.diff_ppm = 5,
+  max_bias_area = 35,
+  max_bias_height = 30,
+  area_height_bias_diff = 30
 )
 }
 \arguments{
@@ -49,6 +52,12 @@ find_bench_peaks(
 \item{max.rt.diff_sec}{maximum difference between user.rt in position of peak maximum in seconds}
 
 \item{max.mz.diff_ppm}{maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm}
+
+\item{max_bias_area}{maximal allowed area bias for isotopologues to be excepted}
+
+\item{max_bias_height}{maximal allowed height bias for isotopologues to be excepted}
+
+\item{area_height_bias_diff}{maximal allowed difference between height and area bias}
 }
 \value{
 data table with peak variables extracted from found peaks.

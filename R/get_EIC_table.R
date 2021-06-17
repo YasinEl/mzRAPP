@@ -9,13 +9,13 @@
 #' @keywords internal
 get_EIMatches_BM_NPPpeaks <- function(rt, int, Min.PpP) {
   EIC.dt <- data.table::data.table(
-    rt = rt,
-    int = int,
-    val = as.vector(S4Vectors::Rle(int > 0)),
-    len = unlist(lapply(S4Vectors::Rle(int > 0)@lengths, function(x) {
+    rt = rt[!duplicated(rt)],
+    int = int[!duplicated(rt)],
+    val = as.vector(S4Vectors::Rle(int[!duplicated(rt)] > 0)),
+    len = unlist(lapply(S4Vectors::Rle(int[!duplicated(rt)] > 0)@lengths, function(x) {
       rep(x, x)
     })),
-    int_wo_spikes = int
+    int_wo_spikes = int[!duplicated(rt)]
   )
 
 #  EIC.dt[val == TRUE &

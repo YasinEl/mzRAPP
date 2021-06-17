@@ -9,7 +9,10 @@ predict_Iso(
   SampleIdentifier_col,
   Molecule_Adduct_col,
   isoab_col,
-  flag_extremes = FALSE
+  flag_extremes = FALSE,
+  max_bias_area = 35,
+  max_bias_height = 30,
+  area_height_bias_diff = 30
 )
 }
 \arguments{

@@ -16,6 +16,10 @@
 #' @param return_unsuc_searches Should unsuccessful searches be returned (TRUE/FALSE)
 #' @param max.rt.diff_sec maximum difference between user.rt in position of peak maximum in seconds
 #' @param max.mz.diff_ppm maximum difference between intensity weighted mz of a peak and the calculated mz of the expected ion species in ppm
+#' @param max_bias_area maximal allowed area bias for isotopologues to be excepted
+#' @param max_bias_height maximal allowed height bias for isotopologues to be excepted
+#' @param area_height_bias_diff maximal allowed difference between height and area bias
+#'
 #'
 #' @return data table with peak variables extracted from found peaks.
 #'
@@ -87,7 +91,10 @@ find_bench_peaks <- function(files,
                            remove_isoab_outliers = TRUE,
                            return_unsuc_searches = FALSE,
                            max.rt.diff_sec = 20,
-                           max.mz.diff_ppm = 5)
+                           max.mz.diff_ppm = 5,
+                           max_bias_area = 35,
+                           max_bias_height = 30,
+                           area_height_bias_diff = 30)
 {
 
 
@@ -257,6 +264,27 @@ find_bench_peaks <- function(files,
                             ##################################
                             #add EIC of highest isotopologue (for lower isotopologues of an adduct) or EIC of main adduct (for most abundant isotopologue of other adducts) to EIC.dt
                             ##################################
+
+                            rt_v_m0 <- as.numeric(unlist(strsplit(
+                             MA.Isos[molecule == CompCol_xic[i]$molecule &
+                                        adduct == ifelse(iso.run == "MAiso",
+                                                         paste0(CompCol_xic[i]$main_adduct),
+                                                         paste0(CompCol_xic[i]$adduct)) &
+                                        FileName == raw_data@phenoData@data[["sample_name"]]][1]$RT.v,
+                              split = ","
+                          )))
+
+                            if(nrow(EIC.dt) != length(as.numeric(unlist(strsplit(
+                              MA.Isos[molecule == CompCol_xic[i]$molecule &
+                                      adduct == ifelse(iso.run == "MAiso",
+                                                       paste0(CompCol_xic[i]$main_adduct),
+                                                       paste0(CompCol_xic[i]$adduct)) &
+                                      FileName == raw_data@phenoData@data[["sample_name"]]][1]$Intensities.v,
+                              split = ","
+                            )))[!duplicated(rt_v_m0)])){
+                              stop(paste0("Some problem with ", CompCol_xic[i]$molecule))
+                            }
+
                             EIC.dt[, M0_int :=
                                      as.numeric(unlist(strsplit(
                                        MA.Isos[molecule == CompCol_xic[i]$molecule &
@@ -265,7 +293,7 @@ find_bench_peaks <- function(files,
                                                                   paste0(CompCol_xic[i]$adduct)) &
                                                  FileName == raw_data@phenoData@data[["sample_name"]]][1]$Intensities.v,
                                        split = ","
-                                     )))]
+                                     )))[!duplicated(rt_v_m0)]]
 
 
                             ##################################
@@ -479,7 +507,10 @@ find_bench_peaks <- function(files,
                         "FileName",
                         c("molecule", "adduct", "peaks.M0.grp"),
                         "isoab",
-                        flag_extremes = TRUE
+                        flag_extremes = TRUE,
+                        max_bias_area = 35,
+                        max_bias_height = 30,
+                        area_height_bias_diff = 30
   )
 
   if(remove_isoab_outliers == TRUE){

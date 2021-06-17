@@ -11,7 +11,7 @@
 #'
 #' @keywords internal
 #'
-predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, isoab_col, flag_extremes = FALSE)
+predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, isoab_col, flag_extremes = FALSE, max_bias_area = 35, max_bias_height = 30, area_height_bias_diff = 30)
 {
 
   DTT <- DTT[, eval(substitute(isoab_col)) := as.numeric(get(isoab_col))]
@@ -38,7 +38,7 @@ predict_Iso <- function(DTT, SampleIdentifier_col, Molecule_Adduct_col, isoab_co
   if(flag_extremes == TRUE){
 
     Output$isoab_ol <- TRUE
-    Output[(abs(ErrorRel_A) < 35 & abs(ErrorRel_H) < 35 & abs(ErrorRel_H - ErrorRel_A) < 30) | isoab == 100]$isoab_ol <- FALSE
+    Output[(abs(ErrorRel_A) < max_bias_area & abs(ErrorRel_H) < max_bias_height & abs(ErrorRel_H - ErrorRel_A) < area_height_bias_diff) | isoab == 100]$isoab_ol <- FALSE
 
   }
   Output
