@@ -20,7 +20,7 @@ metrics_per_molecule <- function(Matches_BM_NPPpeaks,
                                  AlignmentErrors_per_moleculeAndAdduct){
 
 
-  extra_pks_pp <- copy(Matches_BM_NPPpeaks[main_peak == FALSE])
+  extra_pks_pp <- data.table::copy(Matches_BM_NPPpeaks[main_peak == FALSE])
   bm_tab <- data.table::rbindlist(list(Matches_BM_NPPpeaks[main_peak == TRUE], Unmatched_BM_NPPpeaks), fill = TRUE, use.names = TRUE)
   bm_tab[is.na(main_peak), main_peak := FALSE]
 
