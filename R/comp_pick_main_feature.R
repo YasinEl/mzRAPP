@@ -15,6 +15,10 @@ pick_main_feature <- function(dt){
   dt[is.na(main_feature), main_feature := FALSE]
   dt[!is.na(main_feature) & main_feature != FALSE, main_feature := TRUE]
 
+  dt[, dupl := duplicated(dt, by = c("molecule_b", "adduct_b", "isoab_b", "main_feature")) & main_feature == TRUE]
+  dt[dupl == TRUE, main_feature := FALSE]
+  dt[, dupl := NULL]
+
   return(dt)
 }
 
