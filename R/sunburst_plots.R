@@ -106,7 +106,7 @@ plot_sunburst_alignment <- function(result_txt){
 #'
 plot_sunburst_peaks <- function(result_txt, comparison_object){
 
-  summary_tab <- comparison_object[["Matches_BM_NPPpeaks_NPPfeatures"]][main_feature == TRUE | is.na(main_feature)]
+  summary_tab <- comparison_object[["Matches_BM_NPPpeaks_NPPfeatures"]][main_feature == TRUE | is.na(main_feature)][!is.na(peak_area_b)]
 
 
   dt <- data.table(BM = c("peaks<br>not found", "peaks<br>not found", "peaks<br>found", "peaks<br>found"),
