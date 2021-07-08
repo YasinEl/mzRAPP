@@ -44,16 +44,16 @@ mzRAPP
 <!-- badges: end -->
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted
-data pre-processing (NPP; XCMS, XCMS3, MetaboanalystR 3.0, XCMS-online,
-MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of liquid
-chromatography high-resolution mass spectrometry (LC-HRMS). mzRAPPs
-approach is based on the increasing popularity of merging non-targeted
-with targeted metabolomics meaning that both types of data evaluation
-are often performed on the same dataset. Following this assumption
-mzRAPP can utilize user-provided information on a set of molecules (the
-more molecules the better) with known retention behavior. mzRAPP
-extracts and validates chromatographic peaks for which boundaries are
-provided for all (enviPat predicted) isotopologues of those target
+data pre-processing (NPP; XCMS, XCMS3, MetaboanalystR 3.0, SLAW,
+XCMS-online, MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of
+liquid chromatography high-resolution mass spectrometry (LC-HRMS).
+mzRAPPs approach is based on the increasing popularity of merging
+non-targeted with targeted metabolomics meaning that both types of data
+evaluation are often performed on the same dataset. Following this
+assumption mzRAPP can utilize user-provided information on a set of
+molecules (the more molecules the better) with known retention behavior.
+mzRAPP extracts and validates chromatographic peaks for which boundaries
+are provided for all (enviPat predicted) isotopologues of those target
 molecules directly from mzML files. The resulting benchmark dataset is
 used to extract different performance metrics for NPP performed on the
 same mzML files. An overview of mzRAPPs capabilities is given in this
@@ -440,11 +440,16 @@ AlignedOP <- data.table::as.data.table(FormatPeakList_output@dataSet)
 data.table::fwrite(AlignedOP, "aligned_file.csv")
 ```
 
-<br> <u>any other tool:</u> <br> It is also possible to use the outputs
-of other tools. However, they have to be adapted so that they resemble
-the output of one of the tools listed above. If this is not possible for
-some cases but important to you please contact me at
-<yasin.el.abiead@univie.ac.at> <br>
+<br> <u>SLAW:</u> <br> SLAW automatically exports all necessary files.
+<br> unaligned file: SLAW-output folder -&gt;
+folder\_named\_like\_used\_algorithm (e.g. CENTWAVE) -&gt; csv files in
+folder peaktables <br> aligned file: SLAW-output folder -&gt;
+datamatrices -&gt; csv-file named datamatrix\_xxxxxxx <br> <br> <u>any
+other tool:</u> <br> It is also possible to use the outputs of other
+tools. However, they have to be adapted so that they resemble the output
+of one of the tools listed above. If this is not possible for some cases
+but important to you please contact me at <yasin.el.abiead@univie.ac.at>
+<br>
 
 ### Selecting a benchmark dataset and starting an assessment
 
@@ -459,7 +464,7 @@ the assessment can be started via the blue “Start assessment button”.
 
 ``` r
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
-#options: XCMS, XCMS3, Metaboanalyst, El-Maven, OpenMS, MS-DIAL or MZmine 2
+#options: XCMS, XCMS3, Metaboanalyst, SLAW, El-Maven, OpenMS, MS-DIAL or MZmine 2
 algo = "XCMS"
 
 #load benchmark csv file

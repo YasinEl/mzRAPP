@@ -64,8 +64,16 @@ feature_compare <- function(b_table, g_table, areaMatch_table = NA){
   }
 
 
+  if(nrow(cf_table) == 1){
 
-  cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
+    cf_table$samples_to_compare <- paste0(apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))}), collapse = ",")
+
+  }else{
+
+    cf_table$samples_to_compare <- apply(cf_table,1,function(x){paste(intersect(unlist(strsplit(x['present_samples_g'], ',')), unlist(strsplit(x['present_samples_b'], ','))))})
+
+  }
+
 
   return(cf_table)
 }
