@@ -38,7 +38,7 @@ Imports:
     shiny,
     kableExtra,
     MSnbase,
-    xcms,
+    xcms (>= 3.14.0),
     MetaClean,
     ggplot2,
     plotly

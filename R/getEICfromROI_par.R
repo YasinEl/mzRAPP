@@ -118,12 +118,12 @@ get_ROIs <-
           ##################################
           trash <- utils::capture.output({
             suppressWarnings(
-              ROI.list <- xcms:::findmzROI(xr,
-                                           dev = PrecisionMZtol * 1E-6,
-                                           minCentroids = minCentroids,
-                                           scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
-                                           prefilter = c(minCentroids,0),
-                                           noise = 0)
+              ROI.list <- xcms::findmzROI(xr,
+                                          dev = PrecisionMZtol * 1E-6,
+                                          minCentroids = minCentroids,
+                                          scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
+                                          prefilter = c(minCentroids,0),
+                                          noise = 0)
             )})
           ROI.dt <- data.table::rbindlist(ROI.list)
           if(nrow(ROI.dt) == 0) return(NULL)
