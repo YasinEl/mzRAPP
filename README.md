@@ -94,9 +94,7 @@ library(mzRAPP)
 callmzRAPP()
 ```
 
-or use mzRAPP without the shiny interface as described below. Please
-note that mzRAPP is primarily intended for use via the shiny user
-interface.
+or use mzRAPP without the shiny interface as described below.
 
 ## Use examples
 
