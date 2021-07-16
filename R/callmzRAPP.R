@@ -97,6 +97,8 @@ callmzRAPP <- function(){
     'Error_predicted height (abs)' = 'ErrorAbs_H_b'
   )
 
+  tcltk_on <- FALSE #grepl("windows", .Platform$OS.type)
+
   ui <- shinydashboard::dashboardPage(
     shinydashboard::dashboardHeader(title = "mzRAPP"),
     shinydashboard::dashboardSidebar(
@@ -147,7 +149,7 @@ callmzRAPP <- function(){
 
                 shiny::fluidRow(
                     shiny::column(6,
-                                  if((grepl("windows", .Platform$OS.type))){
+                                  if(tcltk_on){
                                   shiny::fluidRow(
                                     shiny::column(4,
                                                   shiny::actionButton(inputId = 'mzML_upload',
@@ -235,7 +237,7 @@ callmzRAPP <- function(){
                                           ))
                   ),
                   shiny::conditionalPanel(condition = "input.use_envipat_res_list",
-                                          if(grepl("windows", .Platform$OS.type)){
+                                          if(tcltk_on){
                                                                   shiny::column(2, shiny::actionButton(inputId = 'custom_res_mz',
                                                                                                        label = 'Select Res vs mz table',
                                                                                                        width = '100%'))
@@ -453,7 +455,7 @@ callmzRAPP <- function(){
                 ),
              #   shiny::conditionalPanel(condition = grepl("windows", .Platform$OS.type),
                                         shiny::fluidRow(
-                                          if((grepl("windows", .Platform$OS.type))){
+                                          if(tcltk_on){
                                           shiny::column(
                                             12,
                                             style = "display: inline-flex;",
@@ -527,7 +529,7 @@ callmzRAPP <- function(){
                                             style = "display: inline-flex;",
                                             shiny::div(style = "width:190px",
                                                        shiny::conditionalPanel(condition = "!input.use_generated_benchmark",
-                                                                               if((grepl("windows", .Platform$OS.type))){
+                                                                               if(tcltk_on){
                                                                                shiny::actionButton(inputId = 'benchmark_upload',
                                                                                                    label = 'Select benchmark file',
                                                                                                    width = '190px')
@@ -547,7 +549,7 @@ callmzRAPP <- function(){
 
 
                                                        shiny::conditionalPanel(condition = "!input.use_generated_options",
-                                                                               if((grepl("windows", .Platform$OS.type))){
+                                                                               if(tcltk_on){
                                                                                  shiny::div(style = "width:190px",
                                                                                shiny::actionButton(inputId = 'options_upload',
                                                                                                    label = 'Select options files',
@@ -877,7 +879,7 @@ callmzRAPP <- function(){
     data_dir <- reactiveVal(getwd())
     benchmark_data <- reactiveVal(NULL)
     comparison_data <- reactiveVal(NULL)
-    if(!grepl("windows",.Platform$OS.type)){
+    if(!tcltk_on){
       volumes = shinyFiles::getVolumes()
     }
 
@@ -895,7 +897,7 @@ callmzRAPP <- function(){
     #File input reactives
     #Benchmark
     mzML_files <- shiny::eventReactive(input$mzML_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "mzML_upload", roots = volumes, session = session)
         if(!is.null(input$mzML_upload)){
           # browser()
@@ -911,7 +913,7 @@ callmzRAPP <- function(){
       } else {
 
         if (input$mzML_upload == 0){return(NULL)}
-        else if(grepl("windows",.Platform$OS.type)){
+        else if(tcltk_on){
           files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
           if (length(files) > 1){
             output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
@@ -928,7 +930,7 @@ callmzRAPP <- function(){
 
 
     grps_file <- shiny::eventReactive(input$grps_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "grps_upload", roots = volumes, session = session)
         if(!is.null(input$grps_upload)){
           # browser()
@@ -944,7 +946,7 @@ callmzRAPP <- function(){
       } else {
 
         if(input$grps_upload[1] == 0){return(NULL)}
-        else if(grepl("windows",.Platform$OS.type)) {
+        else if(tcltk_on) {
           file <- paste(tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter), collapse = " ")
           output$grps_upload_file <- renderText(paste0(basename(file)))
           return(file)
@@ -963,7 +965,7 @@ callmzRAPP <- function(){
 
     })
     coi_file <- shiny::eventReactive(input$coi_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "coi_upload", roots = volumes, session = session)
         if(!is.null(input$coi_upload)){
           # browser()
@@ -979,7 +981,7 @@ callmzRAPP <- function(){
       } else {
 
         if(input$coi_upload == 0){return(NULL)}
-        else  if(grepl("windows",.Platform$OS.type)) {
+        else  if(tcltk_on) {
           file <- paste(tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter), collapse = " ")
           output$coi_upload_file <- renderText(paste0(basename(file)))
           return(file)
@@ -992,7 +994,7 @@ callmzRAPP <- function(){
 
 
     res_file <- shiny::eventReactive(input$custom_res_mz, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "custom_res_mz", roots = volumes, session = session)
         if(!is.null(input$custom_res_mz)){
           # browser()
@@ -1008,7 +1010,7 @@ callmzRAPP <- function(){
       } else {
 
         if(input$custom_res_mz == 0){return(NULL)}
-        else if(grepl("windows",.Platform$OS.type)){
+        else if(tcltk_on){
           file <- paste(tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter),collapse = " ")
           output$custom_res_mz_file <- renderText(paste0(basename(file)))
           return(file)
@@ -1056,7 +1058,7 @@ callmzRAPP <- function(){
 
     #Comparison
     ug_files <- shiny::eventReactive(input$ug_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "ug_upload", roots = volumes, session = session)
         if(!is.null(input$ug_upload)){
           # browser()
@@ -1072,7 +1074,7 @@ callmzRAPP <- function(){
       } else {
 
         if (input$ug_upload == 0){return(NULL)}
-        else if(grepl("windows", .Platform$OS.type)){
+        else if(tcltk_on){
           files <- tcltk::tk_choose.files(caption = 'Select unaligned file(s)', multi = TRUE, filters = csv_filter)
           if (length(files) > 1){
             output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
@@ -1087,7 +1089,7 @@ callmzRAPP <- function(){
 
 
     g_file <- shiny::eventReactive(input$g_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "g_upload", roots = volumes, session = session)
         if(!is.null(input$g_upload)){
           # browser()
@@ -1103,7 +1105,7 @@ callmzRAPP <- function(){
       } else {
 
         if (input$g_upload == 0) {return(NULL)}
-        else if(grepl("windows", .Platform$OS.type)){
+        else if(tcltk_on){
           file <- paste(tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter), collapse = " ")
           output$g_upload_file <- renderText(paste0(basename(file)))
 
@@ -1116,7 +1118,7 @@ callmzRAPP <- function(){
 
 
     benchmark_file <- shiny::eventReactive(input$benchmark_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "benchmark_upload", roots = volumes, session = session)
         if(!is.null(input$benchmark_upload)){
           # browser()
@@ -1132,7 +1134,7 @@ callmzRAPP <- function(){
       } else {
 
         if (input$benchmark_upload == 0){return(NULL)}
-        else if(grepl("windows", .Platform$OS.type)){
+        else if(tcltk_on){
           file <- paste(tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter), collapse = " ")
           output$benchmark_upload_file <- renderText(paste0(basename(file)))
           return(file)
@@ -1143,7 +1145,7 @@ callmzRAPP <- function(){
 
 
     options_file <- shiny::eventReactive(input$options_upload, {
-      if(!grepl("windows",.Platform$OS.type)){
+      if(!tcltk_on){
         shinyFiles::shinyFileChoose(input, "options_upload", roots = volumes, session = session)
         if(!is.null(input$options_upload)){
           # browser()
@@ -1159,7 +1161,7 @@ callmzRAPP <- function(){
       } else {
 
         if (input$options_upload == 0){return(NULL)}
-        else if(grepl("windows", .Platform$OS.type)){
+        else if(tcltk_on){
           file <- paste(tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter), collapse = " ")
           output$options_upload_file <- renderText(paste0(basename(file)))
           return(file)
