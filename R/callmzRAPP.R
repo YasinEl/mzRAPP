@@ -97,6 +97,8 @@ callmzRAPP <- function(){
     'Error_predicted height (abs)' = 'ErrorAbs_H_b'
   )
 
+  tcltk_on <- FALSE #grepl("windows", .Platform$OS.type)
+
   ui <- shinydashboard::dashboardPage(
     shinydashboard::dashboardHeader(title = "mzRAPP"),
     shinydashboard::dashboardSidebar(
@@ -146,36 +148,71 @@ callmzRAPP <- function(){
                 ),
 
                 shiny::fluidRow(
-                  shiny::column(6,
-                         shiny::fluidRow(
-                           shiny::column(4,
-                                  shiny::actionButton(inputId = 'mzML_upload',
-                                               label = 'Select mzML files',
-                                               width = '100%')
-                           ),
-                           shiny::column(4,
-                                  shiny::actionButton(inputId = 'grps_upload',
-                                               label = 'Select sample-group file',
-                                               width = '100%')
-                           ),
-                           shiny::column(4,
-                                  shiny::actionButton(inputId = 'coi_upload',
-                                               label = 'Select target file',
-                                               width = '100%')
-                           )
-                         ),
-                         shiny::fluidRow(
-                           shiny::column(4,
-                                  shiny::verbatimTextOutput(outputId = 'mzML_upload_files',placeholder = TRUE)
-                           ),
-                           shiny::column(4,
-                                  shiny::verbatimTextOutput(outputId = 'grps_upload_file',placeholder = TRUE)
-                           ),
-                           shiny::column(4,
-                                  shiny::verbatimTextOutput(outputId = 'coi_upload_file',placeholder = TRUE)
-                           )
-                         )
-                  )
+                    shiny::column(6,
+                                  if(tcltk_on){
+                                  shiny::fluidRow(
+                                    shiny::column(4,
+                                                  shiny::actionButton(inputId = 'mzML_upload',
+                                                                      label = 'Select mzML files',
+                                                                      width = '100%')
+                                    ),
+                                    shiny::column(4,
+                                                  shiny::actionButton(inputId = 'grps_upload',
+                                                                      label = 'Select sample-group file',
+                                                                      width = '100%')
+                                    ),
+                                    shiny::column(4,
+                                                  shiny::actionButton(inputId = 'coi_upload',
+                                                                      label = 'Select target file',
+                                                                      width = '100%')
+                                    )
+                                  )
+
+                                    } else {
+                                      shiny::fluidRow(
+                                        shiny::column(4,
+                                        shinyFiles::shinyFilesButton(id = "mzML_upload",
+                                                                     label = "Select mzML files" ,
+                                                                     title = "Please select a file:",
+                                                                     multiple = TRUE,
+                                                                     style = "width: 100%;",
+                                                                     buttonType = "default",
+                                                                     class = NULL)
+                                        ),
+                                  shiny::column(4,
+                                                shinyFiles::shinyFilesButton(id = "grps_upload",
+                                                                             label = "Select sample-group file" ,
+                                                                             title = "Please select a file:",
+                                                                             multiple = FALSE,
+                                                                             style = "width: 100%;",
+                                                                             buttonType = "default",
+                                                                             class = NULL)
+                                  ),
+                                  shiny::column(4,
+                                                shinyFiles::shinyFilesButton(id = "coi_upload",
+                                                                             label = "Select target file" ,
+                                                                             title = "Please select a file:",
+                                                                             style = "width: 100%;",
+                                                                             multiple = FALSE,
+                                                                             buttonType = "default",
+                                                                             class = NULL)
+                                  )
+                                      )
+
+                                    },
+                                  shiny::fluidRow(
+                                    shiny::column(4,
+                                                  shiny::verbatimTextOutput(outputId = 'mzML_upload_files',placeholder = TRUE)
+                                    ),
+                                    shiny::column(4,
+                                                  shiny::verbatimTextOutput(outputId = 'grps_upload_file',placeholder = TRUE)
+                                    ),
+                                    shiny::column(4,
+                                                  shiny::verbatimTextOutput(outputId = 'coi_upload_file',placeholder = TRUE)
+                                    )
+                                  )
+                    )
+
                 ),
 
                 shiny::fluidRow(shiny::column(6,shiny::br())),
@@ -203,15 +240,29 @@ callmzRAPP <- function(){
                                           ))
                   ),
                   shiny::conditionalPanel(condition = "input.use_envipat_res_list",
-                                   shiny::column(2, shiny::actionButton(inputId = 'custom_res_mz',
-                                                          label = 'Select Res vs mz table',
-                                                          width = '100%'))
+                                          if(tcltk_on){
+                                                                  shiny::column(2, shiny::actionButton(inputId = 'custom_res_mz',
+                                                                                                       label = 'Select Res vs mz table',
+                                                                                                       width = '100%'))
+                                          } else {
+                                            shiny::column(2,
+                                            shinyFiles::shinyFilesButton(id = "custom_res_mz",
+                                                                         label = "Select Res vs mz table" ,
+                                                                         title = "Select Res vs mz table:",
+                                                                         multiple = FALSE,
+                                                                         style = "width: 190px;",
+                                                                         buttonType = "default",
+                                                                         class = NULL)
+                                            )
+
+                                     }
+                                     #     )
                   )
                 ),
 
                 shiny::fluidRow(
                   shiny::conditionalPanel(condition = "input.use_envipat_res_list",
-                                   shiny::column(2, shiny::verbatimTextOutput(outputId = 'custom_res_mz', placeholder = TRUE)
+                                   shiny::column(2, shiny::verbatimTextOutput(outputId = 'custom_res_mz_file', placeholder = TRUE)
                                    )
                   )
                 ),
@@ -406,19 +457,41 @@ callmzRAPP <- function(){
                     shiny::br()
                   )
                 ),
-
-                shiny::fluidRow(
-                  shiny::column(
-                    12,
-                    style = "display: inline-flex;",
-                    shiny::actionButton(inputId = 'ug_upload',
-                                 label = 'Select unaligned file(s)',
-                                 width = '190px'),
-                    shiny::div(style = "width: 20px;"),
-                    shiny::actionButton(inputId = 'g_upload',
-                                 label = 'Select aligned file',
-                                 width = '190px')
-                  )
+             #   shiny::conditionalPanel(condition = grepl("windows", .Platform$OS.type),
+                                        shiny::fluidRow(
+                                          if(tcltk_on){
+                                          shiny::column(
+                                            12,
+                                            style = "display: inline-flex;",
+                                            shiny::actionButton(inputId = 'ug_upload',
+                                                                label = 'Select unaligned file(s)',
+                                                                width = '190px'),
+                                            shiny::div(style = "width: 20px;"),
+                                            shiny::actionButton(inputId = 'g_upload',
+                                                                label = 'Select aligned file',
+                                                                width = '190px')
+                                          )
+                                          } else {
+                                            shiny::column(
+                                              12,
+                                              style = "display: inline-flex;",
+                                              shinyFiles::shinyFilesButton(id = "ug_upload",
+                                                                           label = "Select unaligned file(s)" ,
+                                                                           title = "Select unaligned file(s)",
+                                                                           style = "width: 190px;",
+                                                                           multiple = TRUE,
+                                                                           buttonType = "default",
+                                                                           class = NULL),
+                                              shiny::div(style = "width: 20px;"),
+                                              shinyFiles::shinyFilesButton(id = "g_upload",
+                                                                           label = "Select aligned file" ,
+                                                                           title = "Select aligned file",
+                                                                           multiple = FALSE,
+                                                                           buttonType = "default",
+                                                                           style = "width: 190px;",
+                                                                           class = NULL)
+                                            )
+                                          }
                 ),
 
                 shiny::fluidRow(
@@ -454,26 +527,61 @@ callmzRAPP <- function(){
                   )
                 ),
 
-                shiny::fluidRow(
-                  shiny::column(
-                    12,
-                    style = "display: inline-flex;",
-                    shiny::div(style = "width:190px",
-                        shiny::conditionalPanel(condition = "!input.use_generated_benchmark",
-                                         shiny::actionButton(inputId = 'benchmark_upload',
-                                                      label = 'Select benchmark file',
-                                                      width = '190px')
-                        )
-                    ),
-                    shiny::div(style = "width: 20px;"),
-                    shiny::div(style = "width:190px",
-                        shiny::conditionalPanel(condition = "!input.use_generated_options",
-                                         shiny::actionButton(inputId = 'options_upload',
-                                                      label = 'Select options files',
-                                                      width = '190px')
-                        )
-                    )
-                  )
+
+
+                                        shiny::fluidRow(
+                                          shiny::column(
+                                            12,
+                                            style = "display: inline-flex;",
+                                            shiny::div(style = "width:190px",
+                                                       shiny::conditionalPanel(condition = "!input.use_generated_benchmark",
+                                                                               if(tcltk_on){
+                                                                               shiny::actionButton(inputId = 'benchmark_upload',
+                                                                                                   label = 'Select benchmark file',
+                                                                                                   width = '190px')
+                                                                               } else {
+                                                                                 shinyFiles::shinyFilesButton(id = "benchmark_upload",
+                                                                                                              label = "Select benchmark file" ,
+                                                                                                              title = "Select benchmark file",
+                                                                                                              multiple = FALSE,
+                                                                                                              style = "width: 190px;",
+                                                                                                              buttonType = "default",
+                                                                                                              class = NULL)
+                                                                               }
+
+                                                       )
+                                            ),
+                                            shiny::div(style = "width: 20px;"),
+
+
+
+                                                       shiny::conditionalPanel(condition = "!input.use_generated_options",
+                                                                               if(tcltk_on){
+                                                                                 shiny::div(style = "width:190px",
+                                                                               shiny::actionButton(inputId = 'options_upload',
+                                                                                                   label = 'Select options files',
+                                                                                                   width = '190px')
+                                                                                 )
+
+                                                                               }else {
+
+                                                                                 shiny::div(style = "width:190px",
+                                                                                 shinyFiles::shinyFilesButton(id = "options_upload",
+                                                                                                              label = "Select options files" ,
+                                                                                                              title = "Select options files",
+                                                                                                              multiple = FALSE,
+                                                                                                              style = "width: 190px;",
+                                                                                                              buttonType = "default",
+                                                                                                              class = NULL)
+                                                                                 )
+
+                                                                               }
+                                                       )
+
+
+                                          #  )
+                                          )
+
                 ),
 
                 shiny::fluidRow(
@@ -779,7 +887,9 @@ callmzRAPP <- function(){
     data_dir <- reactiveVal(getwd())
     benchmark_data <- reactiveVal(NULL)
     comparison_data <- reactiveVal(NULL)
-
+    if(!tcltk_on){
+      volumes = shinyFiles::getVolumes()
+    }
 
     ##File Filters for choice dialogues
     #mzML_filter <- matrix(c('mzML Files (*.mzML)', '*.mzML'), nrow = 1, ncol = 2)
@@ -794,45 +904,129 @@ callmzRAPP <- function(){
 
     #File input reactives
     #Benchmark
-    mzML_files <- reactive({
-      if (input$mzML_upload == 0){return(NULL)}
-      else {
-        files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
-        if (length(files) > 1){
-          output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
-        } else {
-          output$mzML_upload_files <- renderText(paste0(basename(files)))
+    mzML_files <- shiny::eventReactive(input$mzML_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "mzML_upload", roots = volumes, session = session)
+        if(!is.null(input$mzML_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$mzML_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$mzML_upload_files <- renderText(paste0(basename(files)))
+          }
+          return(files)
         }
-        return(files)
+      } else {
+
+        if (input$mzML_upload == 0){return(NULL)}
+        else if(tcltk_on){
+          files <- tcltk::tk_choose.files(caption = 'Select .mzML files', multi = TRUE, filters = mzML_filter)
+          if (length(files) > 1){
+            output$mzML_upload_files <- renderText(paste0(length(files), ' Files selected'))
+          } else {
+            output$mzML_upload_files <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+
+
       }
     })
 
-    grps_file <- reactive({
-      if(input$grps_upload[1] == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter), collapse = " ")
-        output$grps_upload_file <- renderText(paste0(basename(file)))
-        return(file)
+
+
+    grps_file <- shiny::eventReactive(input$grps_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "grps_upload", roots = volumes, session = session)
+        if(!is.null(input$grps_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$grps_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$grps_upload_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$grps_upload_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if(input$grps_upload[1] == 0){return(NULL)}
+        else if(tcltk_on) {
+          file <- paste(tcltk::tk_choose.files(caption = 'Select sample-group file', multi = FALSE, filters = csv_filter), collapse = " ")
+          output$grps_upload_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
       }
     })
+
+
+
+
+
+
 
     coi_file <- reactive({
-      if(input$coi_upload == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter), collapse = " ")
-        output$coi_upload_file <- renderText(paste0(basename(file)))
-        return(file)
+
+    })
+    coi_file <- shiny::eventReactive(input$coi_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "coi_upload", roots = volumes, session = session)
+        if(!is.null(input$coi_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$coi_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$coi_upload_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$coi_upload_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if(input$coi_upload == 0){return(NULL)}
+        else  if(tcltk_on) {
+          file <- paste(tcltk::tk_choose.files(caption = 'Select target file', multi = FALSE, filters = csv_filter), collapse = " ")
+          output$coi_upload_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
       }
     })
 
-    res_file <- reactive({
-      if(input$custom_res_mz == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter),collapse = " ")
-        output$custom_res_mz <- renderText(paste0(basename(file)))
-        return(file)
+
+
+
+    res_file <- shiny::eventReactive(input$custom_res_mz, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "custom_res_mz", roots = volumes, session = session)
+        if(!is.null(input$custom_res_mz)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$custom_res_mz)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$custom_res_mz_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$custom_res_mz_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if(input$custom_res_mz == 0){return(NULL)}
+        else if(tcltk_on){
+          file <- paste(tcltk::tk_choose.files(caption = 'Select Res/mz file', multi = FALSE, filters = csv_filter),collapse = " ")
+          output$custom_res_mz_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
       }
     })
+
 
     observeEvent(input$Skyline_export, {
 
@@ -871,44 +1065,119 @@ callmzRAPP <- function(){
 
 
     #Comparison
-    ug_files <- reactive({
-      if (input$ug_upload == 0){return(NULL)}
-      else {
-        files <- tcltk::tk_choose.files(caption = 'Select unaligned file(s)', multi = TRUE, filters = csv_filter)
-        if (length(files) > 1){
-          output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
-        } else {
-          output$ug_upload_files <- renderText(paste0(basename(files)))
+    ug_files <- shiny::eventReactive(input$ug_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "ug_upload", roots = volumes, session = session)
+        if(!is.null(input$ug_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$ug_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$ug_upload_files <- renderText(paste0(basename(files)))
+          }
+          return(files)
         }
-        return(files)
-      }
-    })
-    g_file <- reactive({
-      if (input$g_upload == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter), collapse = " ")
-        output$g_upload_file <- renderText(paste0(basename(file)))
+      } else {
 
-        output$g_upload_file <- renderText(paste0(basename(file)))
-        return(file)
+        if (input$ug_upload == 0){return(NULL)}
+        else if(tcltk_on){
+          files <- tcltk::tk_choose.files(caption = 'Select unaligned file(s)', multi = TRUE, filters = csv_filter)
+          if (length(files) > 1){
+            output$ug_upload_files <- renderText(paste0(length(files), ' Files selected'))
+          } else {
+            output$ug_upload_files <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+
       }
     })
-    benchmark_file <- reactive({
-      if (input$benchmark_upload == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter), collapse = " ")
-        output$benchmark_upload_file <- renderText(paste0(basename(file)))
-        return(file)
+
+
+    g_file <- shiny::eventReactive(input$g_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "g_upload", roots = volumes, session = session)
+        if(!is.null(input$g_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$g_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$g_upload_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$g_upload_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if (input$g_upload == 0) {return(NULL)}
+        else if(tcltk_on){
+          file <- paste(tcltk::tk_choose.files(caption = 'Select aligned file', multi = FALSE, filters = csv_filter), collapse = " ")
+          output$g_upload_file <- renderText(paste0(basename(file)))
+
+          output$g_upload_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
       }
     })
-    options_file <- reactive({
-      if (input$options_upload == 0){return(NULL)}
-      else {
-        file <- paste(tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter), collapse = " ")
-        output$options_upload_file <- renderText(paste0(basename(file)))
-        return(file)
+
+
+    benchmark_file <- shiny::eventReactive(input$benchmark_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "benchmark_upload", roots = volumes, session = session)
+        if(!is.null(input$benchmark_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$benchmark_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$benchmark_upload_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$benchmark_upload_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if (input$benchmark_upload == 0){return(NULL)}
+        else if(tcltk_on){
+          file <- paste(tcltk::tk_choose.files(caption = 'Select benchmark file', multi = FALSE, filters = csv_filter), collapse = " ")
+          output$benchmark_upload_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
       }
     })
+
+
+    options_file <- shiny::eventReactive(input$options_upload, {
+      if(!tcltk_on){
+        shinyFiles::shinyFileChoose(input, "options_upload", roots = volumes, session = session)
+        if(!is.null(input$options_upload)){
+          # browser()
+          files<-shinyFiles::parseFilePaths(volumes, input$options_upload)
+          files <- unname(files$datapath)
+          if (length(files) > 1){
+            output$options_upload_file <- renderText(paste0(length(files), ' Files selected'))
+          } else if (length(files == 1)){
+            output$options_upload_file <- renderText(paste0(basename(files)))
+          }
+          return(files)
+        }
+      } else {
+
+        if (input$options_upload == 0){return(NULL)}
+        else if(tcltk_on){
+          file <- paste(tcltk::tk_choose.files(caption = 'Select options file', multi = FALSE, filters = csv_filter), collapse = " ")
+          output$options_upload_file <- renderText(paste0(basename(file)))
+          return(file)
+        }
+
+      }
+    })
+
 
     #General Observers
     observe({mzML_files()})

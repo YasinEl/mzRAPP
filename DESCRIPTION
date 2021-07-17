@@ -1,7 +1,7 @@
 Package: mzRAPP
 Type: Package
 Title: Benchmark Dataset Generation and Non-Targeted Data Pre-Processing Assessment
-Version: 1.1.4
+Version: 1.1.6
 Authors@R:c(person("Yasin", "El Abiead",
            email = "yasin.el.abiead@univie.ac.at",
            role = c("aut", "cre"),
@@ -18,9 +18,7 @@ LazyData: true
 RoxygenNote: 7.1.1
 biocViews:
 Imports:
-    tibble,
     ncdf4,
-    scales,
     lazyeval,
     doFuture,
     data.table,
@@ -32,7 +30,6 @@ Imports:
     enviPat,
     DescTools,
     signal,
-    future.apply,
     S4Vectors,
     future,
     shiny,
@@ -41,9 +38,11 @@ Imports:
     xcms (>= 3.14.0),
     MetaClean,
     ggplot2,
+    shinyFiles,
     plotly
 Suggests: 
     foreach,
+    tibble,
     utf8,
     stats,
     knitr,

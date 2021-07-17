@@ -50,4 +50,5 @@ utils::globalVariables(c("adduct_b", "isoab_b", "idx", "int_wo_spikes", "rt", "S
                          "missing_peaks", "plot_group", "ord", "ErrorRel_A_b", "order_temp",
                          ".I", "area_diff", "..entrustedGrp", "Peptide", "NPP_peak", "Peptide Modified Sequence", ".",
                          ":=", "NPP_peak", "NPP_peak picking", "focus", "ug_samples", "i.sample_name_b", "mz_b",
-                         "rt_start_b_temp", "rt_end_b_temp", "match_tables_with_alignment_recovery_info", "Sample", "raw_files", "raw_files_stspl"))
+                         "rt_start_b_temp", "rt_end_b_temp", "match_tables_with_alignment_recovery_info", "Sample", "raw_files", "raw_files_stspl",
+                         "Extra_feature_matches_ft", "dupl"))
