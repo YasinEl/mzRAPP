@@ -175,6 +175,7 @@ callmzRAPP <- function(){
                                                                      label = "Select mzML files" ,
                                                                      title = "Please select a file:",
                                                                      multiple = TRUE,
+                                                                     style = "width: 100%;",
                                                                      buttonType = "default",
                                                                      class = NULL)
                                         ),
@@ -183,6 +184,7 @@ callmzRAPP <- function(){
                                                                              label = "Select sample-group file" ,
                                                                              title = "Please select a file:",
                                                                              multiple = FALSE,
+                                                                             style = "width: 100%;",
                                                                              buttonType = "default",
                                                                              class = NULL)
                                   ),
@@ -190,6 +192,7 @@ callmzRAPP <- function(){
                                                 shinyFiles::shinyFilesButton(id = "coi_upload",
                                                                              label = "Select target file" ,
                                                                              title = "Please select a file:",
+                                                                             style = "width: 100%;",
                                                                              multiple = FALSE,
                                                                              buttonType = "default",
                                                                              class = NULL)
@@ -247,6 +250,7 @@ callmzRAPP <- function(){
                                                                          label = "Select Res vs mz table" ,
                                                                          title = "Select Res vs mz table:",
                                                                          multiple = FALSE,
+                                                                         style = "width: 190px;",
                                                                          buttonType = "default",
                                                                          class = NULL)
                                             )
@@ -474,6 +478,7 @@ callmzRAPP <- function(){
                                               shinyFiles::shinyFilesButton(id = "ug_upload",
                                                                            label = "Select unaligned file(s)" ,
                                                                            title = "Select unaligned file(s)",
+                                                                           style = "width: 190px;",
                                                                            multiple = TRUE,
                                                                            buttonType = "default",
                                                                            class = NULL),
@@ -483,6 +488,7 @@ callmzRAPP <- function(){
                                                                            title = "Select aligned file",
                                                                            multiple = FALSE,
                                                                            buttonType = "default",
+                                                                           style = "width: 190px;",
                                                                            class = NULL)
                                             )
                                           }
@@ -538,6 +544,7 @@ callmzRAPP <- function(){
                                                                                                               label = "Select benchmark file" ,
                                                                                                               title = "Select benchmark file",
                                                                                                               multiple = FALSE,
+                                                                                                              style = "width: 190px;",
                                                                                                               buttonType = "default",
                                                                                                               class = NULL)
                                                                                }
@@ -563,6 +570,7 @@ callmzRAPP <- function(){
                                                                                                               label = "Select options files" ,
                                                                                                               title = "Select options files",
                                                                                                               multiple = FALSE,
+                                                                                                              style = "width: 190px;",
                                                                                                               buttonType = "default",
                                                                                                               class = NULL)
                                                                                  )
