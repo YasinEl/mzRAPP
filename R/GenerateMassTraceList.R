@@ -1,10 +1,10 @@
 #' @title get_mz_table
 #'
 #' @description This is basically a wrapper-function around the enviPat package. It takes a table with columns "molecule", "SumForm_c" and
-#' "adduct_c" and calculates theoretical m/z values and abundances for isotopologues down to a user-defined abundance threshold.
+#' "main_adduct" and calculates theoretical m/z values and abundances for isotopologues down to a user-defined abundance threshold.
 #'
 #'
-#' @param DT data.table with columns "molecule", "SumForm_c" and "adduct_c" (see details)
+#' @param DT data.table with columns "molecule", "SumForm_c", "adduct_c". Additional columns with "user.rtmin", and "user.rtmax" (start and end times of peaks in seconds won't be required by this, but the next function in the mzRAPP pipeline so it is recommended to add them already here.) (see details)
 #' @param instrumentRes data frame with mz vs resolution dependence (see \code{\link{resolution_list}}) e.g. "resolution_list$`OTFusion,QExactiveHF_120000@200`"
 #' @param RelInt_threshold relative abundance of the lowest isotopologue to be considered as percentage
 #' @param stick_method method that should be used to calculate discrete m/z values from calculated profile pattern e.g. "intensoid" (see \code{\link{vdetect}})

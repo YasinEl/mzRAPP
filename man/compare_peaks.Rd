@@ -105,7 +105,7 @@ R (random): random (high) missing value as defined in mzRAPP readme
 S (systematic): systematic (low) missing value as defined in mzRAPP readme
 
 \strong{IT_ratio_biases:} Table showing the status of calculated isotopologue ratio biases as compared to enviPat predicted ratios calculated from abundances reported
-from BP ("benchmark"), NP ("NPP_peak picking") and NF ("NPP_features"). Biases are classified for NP ("diffH20PP_pp") and NF ("diffH20PP_ft") into good ("Inc. < 20%p") or bad ("Inc. > 20%p")
+from BP ("benchmark"), NP ("NPP_peak picking") and NF ("NPP_features"). Biases are classified for NP ("diffH20PP_pp") and NF ("diffH20PP_ft") into good ("Inc. < 20 percentage points") or bad ("Inc. > 20 percentage points")
 as defined in the mzRAPP readme.
 
 \strong{AlignmentErrors_per_moleculeAndAdduct:} Overview of alignment problems per molecule and adduct.
