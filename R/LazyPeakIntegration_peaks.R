@@ -119,11 +119,34 @@ find_bench_peaks <- function(files,
 
 
 
+
+
+  missing_cols <- setdiff(c("eic_mzmin", "eic_mzmax"), colnames(CompCol_all))
+  if(length(missing_cols) > 0){
+
+    CompCol_all[, eic_mzmin := mz_ex - (mz_ex * max.mz.diff_ppm * 1E-6)]
+    CompCol_all[, eic_mzmax := mz_ex + (mz_ex * max.mz.diff_ppm * 1E-6)]
+    CompCol_all[, FileName := tools::file_path_sans_ext(basename(FileName))]
+
+  }
+
+  missing_cols <- setdiff(c("StartTime.EIC", "EndTime.EIC"), colnames(CompCol_all))
+
+  if(length(missing_cols) > 0 && all(c("user.rtmin", "user.rtmax") %in% colnames(CompCol_all))){
+    maxrt <- max(CompCol_all$user.rtmax, na.rm = TRUE)
+    CompCol_all[, rownames := rownames(CompCol_all)]
+    CompCol_all <- CompCol_all[, .(StartTime.EIC = max(c(1, user.rtmin - (user.rtmax - user.rtmin) * 3)),
+                                     EndTime.EIC = min(c(user.rtmax + (user.rtmax - user.rtmin) * 3, maxrt+1))),
+                                 by = rownames(CompCol_all)][CompCol_all, on = .(rownames)]
+
+    CompCol_all <- CompCol_all[, !"rownames"]
+
+  }
+
   if(all(c("user.rtmin", "user.rtmax") %in% colnames(CompCol_all))){
     colnames(CompCol_all)[which(names(CompCol_all) == "user.rtmin")] <- "rtmin"
     colnames(CompCol_all)[which(names(CompCol_all) == "user.rtmax")] <- "rtmax"
   }
-
 
   CompCol <-
     stats::na.omit(CompCol_all,
@@ -148,7 +171,7 @@ find_bench_peaks <- function(files,
   #future::plan(multiprocess(workers = 40))
   Output <- list()
   Output <-
-    foreach::foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
+   foreach::foreach(file = 1:nrow(unique(CompCol[, "FileName"])),
             .packages = c("mzRAPP", "data.table")) %dopar% {
 #                          for(file in 1:nrow(unique(CompCol[, "FileName"]))){
 
@@ -175,6 +198,7 @@ find_bench_peaks <- function(files,
               for (adduct.run in c("main_adduct", "screen_adducts")) {
                 for (iso.run in c("MAiso", "LAisos")) {
 
+
                   Bureau <- NULL
                   if(adduct.run == "main_adduct" & iso.run == "MAiso" | nrow(MA.Isos) > 0 & "peaks.PpP" %in% colnames(MA.Isos)){
                     .CompCol_xic <- Limit_Target_list(CompCol, MA.Isos, iso.run, adduct.run, files[file], Min.PointsperPeak)
@@ -185,6 +209,8 @@ find_bench_peaks <- function(files,
                     ##################################
                     #extract EICs, add according file names and create empty list for storage of peak information
                     ##################################
+
+
                     suppressWarnings(
                     .ChromData <- MSnbase::chromatogram(
                       .raw_data,
@@ -306,6 +332,7 @@ find_bench_peaks <- function(files,
                                                                    paste0(CompCol_xic[i]$adduct)) &
                                                   FileName == raw_data@phenoData@data[["sample_name"]]]
 
+
                           }
 
 
@@ -392,7 +419,9 @@ find_bench_peaks <- function(files,
 
                               Integration_baseL_factor_set <- Integration_baseL_factor
 
-                              l.peaks <- l.peaks[l.peaks[, .(StartTime = GetFWXM(
+
+                              l.peaks <- l.peaks[l.peaks[, .(
+                                StartTime = GetFWXM(
                                      EIC.dt[rt >= rtmin &
                                               rt <= rtmax &
                                               !is.na(int_wo_spikes)]$rt,
@@ -496,6 +525,7 @@ find_bench_peaks <- function(files,
 
   Result <- data.table::rbindlist(Output, fill = TRUE, use.names = TRUE)
   Result <- unique(Result, by = c("molecule", "isoab", "adduct", "peaks.M0.grp", "FileName"))
+
 
 
   if(!("peaks.FW50M" %in% colnames(Result))){stop("No peaks were confirmed for benchmark!")}

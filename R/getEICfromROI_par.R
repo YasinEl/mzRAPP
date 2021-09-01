@@ -109,6 +109,7 @@ get_ROIs <-
                                           on = .(molecule)]
 
 
+
       matches_perfile_list <-
         lapply(unique(.Target.table.wk$molecule), function(molec, xr = .xr, Target.table.wk = .Target.table.wk){
 
@@ -119,6 +120,7 @@ get_ROIs <-
           trash <- utils::capture.output({
             suppressWarnings(
               ROI.list <- xcms::findmzROI(xr,
+                                          #dev = mean(.Target.table.wk[molecule == molec]$mz) * PrecisionMZtol * 1E-6,
                                           dev = PrecisionMZtol * 1E-6,
                                           minCentroids = minCentroids,
                                           scanrange = c(Target.table.wk[molecule == molec]$StartXICScan[1], Target.table.wk[molecule == molec]$EndXICScan[1]),
@@ -126,6 +128,8 @@ get_ROIs <-
                                           noise = 0)
             )})
           ROI.dt <- data.table::rbindlist(ROI.list)
+
+
           if(nrow(ROI.dt) == 0) return(NULL)
           ROI.dt[, roi_id := 1:nrow(ROI.dt)]
           ROI.dt <- ROI.dt[, `:=` (rtmin = xr@scantime[scmin],
