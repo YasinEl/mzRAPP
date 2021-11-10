@@ -45,12 +45,12 @@ mzRAPP
 
 The goal of mzRAPP is to allow reliability assessment of non-targeted
 data pre-processing (NPP; XCMS, XCMS3, MetaboanalystR 3.0, SLAW,
-XCMS-online, MZmine 2, MS-DIAL, OpenMS, El-MAVEN,..) in the realm of
-liquid chromatography high-resolution mass spectrometry (LC-HRMS).
-mzRAPPs approach is based on the increasing popularity of merging
-non-targeted with targeted metabolomics meaning that both types of data
-evaluation are often performed on the same dataset. Following this
-assumption mzRAPP can utilize user-provided information on a set of
+XCMS-online, MZmine 2, MZmine 3, MS-DIAL, OpenMS, El-MAVEN,..) in the
+realm of liquid chromatography high-resolution mass spectrometry
+(LC-HRMS). mzRAPPs approach is based on the increasing popularity of
+merging non-targeted with targeted metabolomics meaning that both types
+of data evaluation are often performed on the same dataset. Following
+this assumption mzRAPP can utilize user-provided information on a set of
 molecules (the more molecules the better) with known retention behavior.
 mzRAPP extracts and validates chromatographic peaks for which boundaries
 are provided for all (enviPat predicted) isotopologues of those target
@@ -391,25 +391,36 @@ pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -&gt; \[check
 Filter rows to ALL\] <br> aligned file: \[select file after alignment
 step\] -&gt; Feature list methods -&gt; Export/Import -&gt; Export to
 CSV file -&gt; \[additional to checks set for unaligned files check
-“Export row retention time” and “Export row m/z”\]<br> <br>
-<u>El-MAVEN:</u> <br> unaligned file: \[click the “Export csv” button in
-the “Peak Table”-panel\] -&gt; Export all groups -&gt; \[select “Peaks
-Detailed Format Comma Delimited (.csv)”\] <br> aligned file: \[click the
-“Export csv” button in the “Peak Table”-panel\] -&gt; Export all groups
--&gt; \[select “Groups Summary Matrix Format Comma Delimited (.csv)”\]
-<br> <br> <u>OpenMS:</u> <br> When processing the FeatureFinderMetabo
-algorithm make sure to set local\_rt\_range as well as local\_mz\_range
-to 0. You will have to check ‘Show advanced parameters’ to make those
-parameters visible. Also set report\_covex\_hulls to true. <br>
-unaligned file: \[Connect a TextExporter node with separator set to ‘,’
-directly to the FeatureFinderMetabo node\] -&gt; \[connect TextExporter
-to Output Folder\] <br> aligned file: \[Connect a TextExporter node with
-separator set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\]
--&gt; \[connect TextExporter to Output Folder\] <br> <br>
-<u>PatRoon:</u> <br> patRoon is not supported directly but can still be
-loaded since it allows to generate <i>xcmsSet</i> objects internally.
-Hence, it has to be loaded into mzRAPP as “XCMS” output which has to be
-stated as such in the “Setup NPP assessment tab”.
+“Export row retention time” and “Export row m/z”\]<br> <br> <u>MZmine
+3:</u> <br> unaligned files: \[select all files generated in the
+chromatogram deconvolution step\] -&gt; Feature list methods -&gt;
+Export feature list -&gt; CSV (legacy MZmine 2) -&gt; \[set Filename
+including pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -&gt;
+\[check “Feature name”, “Feature height”, “Feature area”, “Feature RT
+start”, “Feature RT end”, “Feature RT”, “Feature m/z”, “Feature m/z min”
+and “Feature m/z max”\] -&gt; \[set Filter rows to ALL\] <br> aligned
+file: \[select file after alignment step\] -&gt; Feature list methods
+-&gt; Export feature list -&gt; CSV (legacy MZmine 2) -&gt; \[additional
+to checks set for unaligned files check “Export row retention time” and
+“Export row m/z”\]<br> <br> <u>El-MAVEN:</u> <br> unaligned file:
+\[click the “Export csv” button in the “Peak Table”-panel\] -&gt; Export
+all groups -&gt; \[select “Peaks Detailed Format Comma Delimited
+(.csv)”\] <br> aligned file: \[click the “Export csv” button in the
+“Peak Table”-panel\] -&gt; Export all groups -&gt; \[select “Groups
+Summary Matrix Format Comma Delimited (.csv)”\] <br> <br> <u>OpenMS:</u>
+<br> When processing the FeatureFinderMetabo algorithm make sure to set
+local\_rt\_range as well as local\_mz\_range to 0. You will have to
+check ‘Show advanced parameters’ to make those parameters visible. Also
+set report\_covex\_hulls to true. <br> unaligned file: \[Connect a
+TextExporter node with separator set to ‘,’ directly to the
+FeatureFinderMetabo node\] -&gt; \[connect TextExporter to Output
+Folder\] <br> aligned file: \[Connect a TextExporter node with separator
+set to ‘,’ directly to the FeatureLinkerUnlabeledQT node\] -&gt;
+\[connect TextExporter to Output Folder\] <br> <br> <u>PatRoon:</u> <br>
+patRoon is not supported directly but can still be loaded since it
+allows to generate <i>xcmsSet</i> objects internally. Hence, it has to
+be loaded into mzRAPP as “XCMS” output which has to be stated as such in
+the “Setup NPP assessment tab”.
 
 ``` r
 xcmsSet_object <- patRoon::getXCMSSet(patRoon_features_object)
@@ -462,7 +473,7 @@ the assessment can be started via the blue “Start assessment button”.
 
 ``` r
 #select the output format of which tool you would like to read in (exportable from the different tools as described above)
-#options: XCMS, XCMS3, Metaboanalyst, SLAW, El-Maven, OpenMS, MS-DIAL or MZmine 2
+#options: XCMS, XCMS3, Metaboanalyst, SLAW, El-Maven, OpenMS, MS-DIAL, MZmine 3, or MZmine 2
 algo = "XCMS"
 
 #load benchmark csv file

@@ -160,7 +160,22 @@ generate_options <- function(raw_b_table, algo){
       #Add g samples
       samples_dt <- samples_dt[, 'g_samples' := b_samples]
     },
-    {return(NULL)})
+    'MZmine 3' = {
+      #Add ug columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
+                                                 'ug_columns' = c('Feature height', 'Feature area', 'Feature RT start', 'Feature RT end', 'Feature RT', 'Feature m/z', 'Feature m/z min', 'Feature m/z max')),
+                          all.x = TRUE, by=c('internal_columns'))
+      #Add g columns
+      columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
+                                                 'g_columns' = c('row retention time', 'row m/z')),
+                          all.x = TRUE, by=c('internal_columns'))
+
+      #Add ug samples
+      samples_dt <- samples_dt[, 'ug_samples' := b_samples]
+      #Add g samples
+      samples_dt <- samples_dt[, 'g_samples' := b_samples]
+    },
+{return(NULL)})
 
   #Find smaller column and pad it with NA
   if(nrow(samples_dt) > nrow(columns_dt)){

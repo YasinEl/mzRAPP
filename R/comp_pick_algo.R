@@ -3,7 +3,7 @@
 #' @param ug_table_path path to unaligned table(s)
 #' @param g_table_path path to aligned table
 #' @param options_table output from \code{\link{check_benchmark_input}}
-#' @param algo tool output format of ug_table and g_table. can be XCMS, XCMS3, Metaboanalyst, SLAW, El-Maven, OpenMS, MS-DIAL, CompoundDiscoverer or MZmine 2. Outputs from different tools can also be used as long as they are reformatted to one of those types.
+#' @param algo tool output format of ug_table and g_table. can be XCMS, XCMS3, Metaboanalyst, SLAW, El-Maven, OpenMS, MS-DIAL, CompoundDiscoverer, MZmine 2. or MZmine 3. Outputs from different tools can also be used as long as they are reformatted to one of those types.
 #'
 #' @return returns unaligned and aligned outputs from non-targeted tool in a format readable via \code{\link{compare_peaks}}
 #' @export
@@ -57,6 +57,10 @@ check_nonTargeted_input <- function(ug_table_path, g_table_path, options_table =
       g_table = NULL
     },
     'MZmine 2' = {
+      ug_table <-import_ungrouped_mzmine(ug_table_path, options_table)
+      g_table <- import_grouped_mzmine(g_table_path, options_table)
+    },
+    'MZmine 3' = {
       ug_table <-import_ungrouped_mzmine(ug_table_path, options_table)
       g_table <- import_grouped_mzmine(g_table_path, options_table)
     },

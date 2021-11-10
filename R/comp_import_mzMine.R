@@ -19,18 +19,29 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
     stop('There should be multiple files for the unaligned MZmine 2 output!')
   }
 
+
   for (i in 1:length(folder_path)){
     file_path <- folder_path[i]
     #Check if ug_table exists, if not: create
     if(!exists("temp_dt")){
       ug_table <- data.table::fread(file_path, integer64 = 'numeric')
-      #get sample name from Peak Name column
 
-      if(length(names(ug_table)[grep(' Peak name$', names(ug_table))]) < 1){
+      #check if MZmine2 or MZmine 3
+      peak_nomenclature <- NULL
+      if(sum(grepl("Peak", colnames(ug_table))) > 3){ peak_nomenclature <- ' Peak '}
+      if(sum(grepl("Feature", colnames(ug_table))) > 3){ peak_nomenclature <- ' Feature '}
+
+
+      if(is.null(peak_nomenclature)){
         stop(paste("It seems MZmine 2 specific columns are missing in file ", file_path))
       }
 
-      sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
+      #get sample name from Peak Name column
+      if(length(names(ug_table)[grep(paste0(peak_nomenclature, 'name$'), names(ug_table))]) < 1){
+        stop(paste("It seems MZmine 2 specific columns are missing in file ", file_path))
+      }
+
+      sample_name <- strsplit(names(ug_table)[grep(paste0(peak_nomenclature, 'name$'), names(ug_table))],paste0(peak_nomenclature, 'name'))[[1]]
 
       ug_table <- ug_table[, 'sample_name' := sample_name]
 
@@ -44,7 +55,7 @@ import_ungrouped_mzmine <- function(folder_path, options_table){
     } else {
       ug_table <- data.table::fread(file_path, integer64 = 'numeric')
       #get sample name from Peak Name column
-      sample_name <- strsplit(names(ug_table)[grep(' Peak name$', names(ug_table))], ' Peak name')[[1]]
+      sample_name <- strsplit(names(ug_table)[grep(paste0(peak_nomenclature, 'name$'), names(ug_table))], paste0(peak_nomenclature, 'name'))[[1]]
 
       ug_table <- ug_table[, 'sample_name' := sample_name]
 
@@ -128,6 +139,18 @@ import_grouped_mzmine <- function(file_path, options_table){
   #Import csv file
   g_table <- data.table::fread(file_path)
 
+
+
+
+  #check if MZmine2 or MZmine 3
+  peak_nomenclature <- NULL
+  if(sum(grepl("Peak", colnames(g_table))) > 2){ peak_nomenclature <- ' Peak '}
+  if(sum(grepl("Feature", colnames(g_table))) > 2){ peak_nomenclature <- ' Feature '}
+  if(is.null(peak_nomenclature)){
+    stop(paste("It seems MZmine 2 specific columns are missing in file ", file_path))
+  }
+
+
   #Check if all columns defined in optionsframe are present
   g_req_cols <- stats::na.omit(options_table$g_columns)
   if(!all(g_req_cols %in% colnames(g_table))){
@@ -142,7 +165,7 @@ import_grouped_mzmine <- function(file_path, options_table){
 
   #Removing file extensions from column names and transforming table from wide to long format, creating 1 peak-per-row format
   id_vars <- append(stats::na.omit(options_table[['g_columns']]), 'feature_id')
-  measure_vars <- paste0(stats::na.omit(options_table[, g_samples]), ' Peak area')
+  measure_vars <- paste0(stats::na.omit(options_table[, g_samples]), paste0(peak_nomenclature, 'area'))
 
   colnames(g_table) <-
     sapply(colnames(g_table), function(x){
@@ -156,7 +179,7 @@ import_grouped_mzmine <- function(file_path, options_table){
     USE.NAMES = FALSE)
 
   g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
-  g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, ' Peak area')]
+  g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, paste0(peak_nomenclature, 'area'))]
 
   #rename all columns for internal use according to options frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
