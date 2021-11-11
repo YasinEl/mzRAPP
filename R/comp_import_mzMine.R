@@ -165,7 +165,7 @@ import_grouped_mzmine <- function(file_path, options_table){
 
   #Removing file extensions from column names and transforming table from wide to long format, creating 1 peak-per-row format
   id_vars <- append(stats::na.omit(options_table[['g_columns']]), 'feature_id')
-  measure_vars <- paste0(stats::na.omit(options_table[, g_samples]), paste0(peak_nomenclature, 'area'))
+  measure_vars <- paste0(stats::na.omit(options_table[, g_samples]), paste0(' Peak ', 'area'))#paste0(peak_nomenclature, 'area'))
 
   colnames(g_table) <-
     sapply(colnames(g_table), function(x){
@@ -179,7 +179,7 @@ import_grouped_mzmine <- function(file_path, options_table){
     USE.NAMES = FALSE)
 
   g_table <- data.table::melt(g_table, id.vars = id_vars, measure.vars = measure_vars, variable.name = 'sample_name', value.name = 'peak_area')
-  g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, paste0(peak_nomenclature, 'area'))]
+  g_table <- g_table[, sample_name := data.table::tstrsplit(sample_name, paste0(' Peak ', 'area'))]#paste0(peak_nomenclature, 'area'))]
 
   #rename all columns for internal use according to options frame
   g_table <- rename_columns_from_options(g_table, options_table, 'g_columns', 'internal_columns')
