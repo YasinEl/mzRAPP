@@ -396,12 +396,12 @@ CSV file -&gt; \[additional to checks set for unaligned files check
 chromatogram deconvolution step\] -&gt; Feature list methods -&gt;
 Export feature list -&gt; CSV (legacy MZmine 2) -&gt; \[set Filename
 including pattern/curly brackets (e.g. blabla\_{}\_blabla.csv)\] -&gt;
-\[check “Feature name”, “Feature height”, “Feature area”, “Feature RT
-start”, “Feature RT end”, “Feature RT”, “Feature m/z”, “Feature m/z min”
-and “Feature m/z max”\] -&gt; \[set Filter rows to ALL\] <br> aligned
-file: \[select file after alignment step\] -&gt; Feature list methods
--&gt; Export feature list -&gt; CSV (legacy MZmine 2) -&gt; \[additional
-to checks set for unaligned files check “Export row retention time” and
+\[check “Feature name”, “Peak height”, “Peak area”, “Feature RT start”,
+“Feature RT end”, “Feature RT”, “Feature m/z”, “Feature m/z min” and
+“Feature m/z max”\] -&gt; \[set Filter rows to ALL\] <br> aligned file:
+\[select file after alignment step\] -&gt; Feature list methods -&gt;
+Export feature list -&gt; CSV (legacy MZmine 2) -&gt; \[additional to
+checks set for unaligned files check “Export row retention time” and
 “Export row m/z”\]<br> <br> <u>El-MAVEN:</u> <br> unaligned file:
 \[click the “Export csv” button in the “Peak Table”-panel\] -&gt; Export
 all groups -&gt; \[select “Peaks Detailed Format Comma Delimited

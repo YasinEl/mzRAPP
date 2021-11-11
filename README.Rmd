@@ -228,7 +228,7 @@ unaligned files: [select all files generated in the chromatogram deconvolution s
 aligned file: [select file after alignment step] -> Feature list methods -> Export/Import -> Export to CSV file -> [additional to checks set for unaligned files check "Export row retention time" and "Export row m/z"]<br>
 <br>
 <u>MZmine 3:</u> <br>
-unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export feature list -> CSV (legacy MZmine 2) -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Feature name", "Feature height", "Feature area", "Feature RT start", "Feature RT end", "Feature RT", "Feature m/z", "Feature m/z min" and "Feature m/z max"] -> [set Filter rows to ALL] <br>
+unaligned files: [select all files generated in the chromatogram deconvolution step] -> Feature list methods -> Export feature list -> CSV (legacy MZmine 2) -> [set Filename including pattern/curly brackets (e.g. blabla_{}_blabla.csv)] -> [check "Feature name", "Peak height", "Peak area", "Feature RT start", "Feature RT end", "Feature RT", "Feature m/z", "Feature m/z min" and "Feature m/z max"] -> [set Filter rows to ALL] <br>
 aligned file: [select file after alignment step] -> Feature list methods -> Export feature list -> CSV (legacy MZmine 2) -> [additional to checks set for unaligned files check "Export row retention time" and "Export row m/z"]<br>
 <br>
 <u>El-MAVEN:</u> <br>

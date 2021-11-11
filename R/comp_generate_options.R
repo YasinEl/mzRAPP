@@ -163,7 +163,7 @@ generate_options <- function(raw_b_table, algo){
     'MZmine 3' = {
       #Add ug columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('peak_height', 'peak_area', 'rt_start', 'rt_end', 'rt', 'mz', 'mz_start', 'mz_end'),
-                                                 'ug_columns' = c('Feature height', 'Feature area', 'Feature RT start', 'Feature RT end', 'Feature RT', 'Feature m/z', 'Feature m/z min', 'Feature m/z max')),
+                                                 'ug_columns' = c('Peak height', 'Peak area', 'Feature RT start', 'Feature RT end', 'Feature RT', 'Feature m/z', 'Feature m/z min', 'Feature m/z max')),
                           all.x = TRUE, by=c('internal_columns'))
       #Add g columns
       columns_dt <- merge(columns_dt, data.table('internal_columns' = c('rt', 'mz'),
