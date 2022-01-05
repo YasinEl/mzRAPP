@@ -61,9 +61,9 @@ get_mz_table <- function(DT, instrumentRes, RelInt_threshold = 0.05, stick_metho
 
   }
 
-  if(any(duplicated(DT, by = c("molecule", "adduct_c")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exist more than once per FileName)!
-                                                                                Please, make sure that names given in the column 'molecule' are unique or have different adducts
-                                                                                in the column 'adduct'!" ))
+  if(any(duplicated(DT, by = c("molecule", "adduct_c")))) stop(paste0("Your Target.table includes duplicates (some molecule - adduct combinations exist more than once per FileName) ",
+                                                                                "or you have more than one SumForm_c per molecule. Please, make sure that names given in the column 'molecule' are unique or have different adducts",
+                                                                                "in the column 'adduct_c'!" ))
 
 
 
