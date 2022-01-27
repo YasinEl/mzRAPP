@@ -538,9 +538,9 @@ find_bench_peaks <- function(files,
                         c("molecule", "adduct", "peaks.M0.grp"),
                         "isoab",
                         flag_extremes = TRUE,
-                        max_bias_area = 35,
-                        max_bias_height = 30,
-                        area_height_bias_diff = 30
+                        max_bias_area = max_bias_area,
+                        max_bias_height = max_bias_height,
+                        area_height_bias_diff = area_height_bias_diff
   )
 
   if(remove_isoab_outliers == TRUE){
