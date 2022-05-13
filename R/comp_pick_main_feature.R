@@ -84,25 +84,43 @@ pick_main_feature_sd <- function(dt){
 #'
 #' @keywords internal
 best_feature_per_comparison <- function(dt){
+
   dt <- data.table::copy(dt)
-  dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
-                                                          if(length(compare_samples) < 1){
-                                                            return(as.numeric(NULL))
-                                                          }
+ # dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){compare_samples <- intersect(unlist(x['samples_to_compare.x']), unlist(x['samples_to_compare.y']))
+ #                                                         if(length(compare_samples) < 1){
+ #                                                           return(as.numeric(NULL))
+ #                                                         }
+#
+ #                                                         compare_samples <- paste0('sample_', compare_samples, '_g')
+ #                                                         ratio_errors <- list()
+ #                                                         for (i in compare_samples){
+ #                                                           if(i == 'sample__g'){
+ #                                                             stop("Sample_g error")
+ #                                                           }
+ #                                                           ratio_errors <- append(ratio_errors, (abs(x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]]-x[['compare_ratio']])))
+ #                                                         }
+ #                                                         return(median(unlist(ratio_errors)))
+ #                                                       }
+ #                                   )
+ #                             )
 
-                                                          compare_samples <- paste0('sample_', compare_samples, '_g')
-                                                          ratio_errors <- list()
-                                                          for (i in compare_samples){
-                                                            if(i == 'sample__g'){
-                                                              stop("Sample_g error")
-                                                            }
-                                                            ratio_errors <- append(ratio_errors, (abs(x[[paste0(i,'.y')]]/x[[paste0(i,'.x')]]-x[['compare_ratio']])))
-                                                          }
-                                                          return(median(unlist(ratio_errors)))
-                                                        }
-                                    )
-                              )
+  dt$ratio_diff <- as.numeric(apply(dt, 1, function(x){
+    compare_samples <- intersect(unlist(strsplit(x['samples_to_compare.x'], ",")), unlist(strsplit(x['samples_to_compare.y'], ",")))
+    if(length(compare_samples) < 1){
+      return(as.numeric(NULL))
+    }
 
+    compare_samples <- paste0('sample_', compare_samples, '_g')
+    ratio_errors <- list()
+    for (i in compare_samples){
+      if(i == 'sample__g'){
+        stop("Sample_g error")
+      }
+      ratio_errors <- append(ratio_errors, (abs(as.numeric(x[[paste0(i,'.y')]])/as.numeric(x[[paste0(i,'.x')]])-as.numeric(x[['compare_ratio']]))))
+    }
+    return(median(unlist(ratio_errors)))
+  }
+))
 
   #Prevent warning in min()
   if(all(is.na(dt$ratio_diff))){

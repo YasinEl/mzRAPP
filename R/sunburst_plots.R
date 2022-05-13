@@ -22,7 +22,6 @@ plot_sunburst_alignment <- function(result_txt){
                    correct = c("NA", "NA", "correct", "incorrect", "incorrect"),
                    type = c("NA", "NA", "NA", "BM div", "min errors"))
 
-  #print(dt)
   dt1 <- as.sunburstDF(dt)
 
   dt1 <- dt1[grepl("NA", ids) == FALSE]
