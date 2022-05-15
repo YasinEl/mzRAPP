@@ -36,10 +36,11 @@ Imports:
     kableExtra,
     MSnbase,
     xcms (>= 3.14.0),
-    MetaClean,
     ggplot2,
     shinyFiles,
     plotly
+Remotes:
+    KelseyChetnik/MetaClean
 Suggests: 
     foreach,
     tibble,
