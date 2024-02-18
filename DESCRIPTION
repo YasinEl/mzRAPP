@@ -40,7 +40,7 @@ Imports:
     shinyFiles,
     plotly
 Remotes:
-    KelseyChetnik/MetaClean
+    KelseyChetnik/MetaClean,
     souravc83/fastAdaboost
 Suggests: 
     foreach,
