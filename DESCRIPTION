@@ -1,8 +1,8 @@
 Package: mzRAPP
 Type: Package
 Title: Benchmark Dataset Generation and Non-Targeted Data Pre-Processing Assessment
-Version: 1.2.0
-Authors@R:c(person("Yasin", "El Abiead",
+Version: 1.2.1
+Authors@R: c(person("Yasin", "El Abiead",
            email = "yasin.el.abiead@univie.ac.at",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4392-7706")),
@@ -15,7 +15,7 @@ Description: Generates and evaluates liquid chromatography-high resolution mass 
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 biocViews:
 Imports:
     ncdf4,
@@ -41,6 +41,7 @@ Imports:
     plotly
 Remotes:
     KelseyChetnik/MetaClean
+    souravc83/fastAdaboost
 Suggests: 
     foreach,
     tibble,

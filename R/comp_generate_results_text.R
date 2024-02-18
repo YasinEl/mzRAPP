@@ -45,6 +45,7 @@ derive_performance_metrics <- function(comparison_data){
 
   sum_tab <- comparison_data$Overview_per_molecule
 
+
   results_text <- list(Assessed_tool = comparison_data$BM_NPPoutput_size$algorithm,
                        Benchmark = list(
                          BM_peaks = (sum(sum_tab$Found_peaks_pp, na.rm = TRUE) + sum(sum_tab$Not_Found_peaks_pp, na.rm = TRUE)),
@@ -159,7 +160,7 @@ derive_performance_metrics <- function(comparison_data){
                          Found_features = nrow(unique(comparison_data$Matches_BM_NPPpeaks_NPPfeatures[!is.na(area_b) &
                                                                                       !is.na(area_g) &
                                                                                       main_feature == TRUE,
-                                                                                    c("molecule_b", "adduct_b", "isoab_b")], cols = c("molecule_b", "adduct_b", "isoab_b"))),
+                                                                                    c("molecule_b", "adduct_b", "isoab_b")])),
                          Missing_peaks = list(
                            Systematic = sum(sum_tab$S_ft, na.rm = TRUE),
                            Random =  list(count = sum(sum_tab$R_ft, na.rm = TRUE),
