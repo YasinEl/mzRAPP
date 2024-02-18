@@ -26,6 +26,7 @@ Imports:
     shinyjs,
     tcltk,
     hutils,
+    retistruct,
     enviPat,
     DescTools,
     signal,
@@ -40,8 +41,7 @@ Imports:
     plotly
 Remotes:
     KelseyChetnik/MetaClean,
-    souravc83/fastAdaboost,
-    davidcsterratt/retistruct@v0.7.x
+    souravc83/fastAdaboost
 Suggests: 
     foreach,
     tibble,
