@@ -182,9 +182,11 @@ find_bench_peaks <- function(files,
               suppressWarnings(
               .raw_data <- MSnbase::readMSData(
                 files = files[file],
-                pdata = new("NAnnotatedDataFrame", Grps[sample_name == sub(pattern = "(.*)\\..*$",
-                                                                           replacement = "\\1",
-                                                                           basename(files[file]))]),
+                pdata = Biobase::AnnotatedDataFrame(Grps[sample_name == sub(
+                pattern = "(.*)\\..*$",
+                replacement = "\\1",
+                basename(files[file])
+              )]),
                 msLevel. = 1,
                 mode = "onDisk"
               )
